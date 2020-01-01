@@ -32,6 +32,15 @@ function init_typeform_survey($survey_file_name){
      if(is_null($doc)){ return false; }
      $doc = walk_the_doc($doc);
 
+// checks whether or not survey is already stored
+     // $survey_title = $doc['title'];
+     // $survey = get_survey_by_title($survey_title)[0];
+     $survey_ref = $doc['id'];
+     $survey = get_survey_by_ref($survey_ref)[0];
+     if(!is_null($survey)){
+          return false;
+     }
+
 // inserts a post of type survey
      $survey_type = 'typeform'; 
      $survey_ref = $doc['id'];

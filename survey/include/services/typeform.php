@@ -4,7 +4,7 @@ add_action('admin_post_exec_edit_typeform_survey', 'exec_edit_typeform_survey');
 function exec_edit_typeform_survey(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -12,7 +12,7 @@ function exec_edit_typeform_survey(){
      $ref = trim_incoming_string($_POST['bucket']); 
      $coll = get_typeform_surveys_by_ref($ref);
 
-     $message = esc_html(__('edit', 'nosuch'));
+     $message = esc_html(__('edit', 'bookbuilder'));
      echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -21,7 +21,7 @@ function exec_construct_all_surveys(){
 
 // policy
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -40,7 +40,7 @@ function exec_construct_typeform_survey(){
 
 // policy
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -96,7 +96,7 @@ add_action('admin_post_exec_download_typeform_survey', 'exec_download_typeform_s
 function exec_download_typeform_survey(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return;
      }
@@ -121,7 +121,7 @@ function exec_download_typeform_survey(){
      $doc = json_decode($doc);
 
      if(is_null($doc)){
-          $message = esc_html(__('no document: ', 'nosuch'));
+          $message = esc_html(__('no document: ', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return;
      }
@@ -152,12 +152,12 @@ function exec_download_typeform_survey(){
 add_action('admin_post_exec_get_typeform_surveys', 'exec_get_typeform_surveys');
 function exec_get_typeform_surveys(){
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
      $coll = get_typeform_surveys();
-     $message = esc_html(__('edit', 'nosuch'));
+     $message = esc_html(__('edit', 'bookbuilder'));
      echo json_encode(['res'=>'success', 'message'=>$message, 'coll'=>$coll]);
 }
 

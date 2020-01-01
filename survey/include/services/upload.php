@@ -4,7 +4,7 @@ add_action('admin_post_exec_init_asset_by_panel_ref', 'exec_init_asset_by_panel_
 function exec_init_asset_by_panel_ref(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -23,7 +23,7 @@ function exec_init_asset_by_panel_ref(){
 
      $temp = base64_decode($image, true);
      if(false == $temp){
-          $message = esc_html(__('corrupt', 'nosuch'));
+          $message = esc_html(__('corrupt', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'image'=>$image));
           return false;
      }
@@ -31,7 +31,7 @@ function exec_init_asset_by_panel_ref(){
      $finf = new finfo(FILEINFO_MIME);
      $temp = $finf->buffer($temp);
      if(-1 == strpos('image/png', $temp)){
-          $message = esc_html(__('corrupt', 'nosuch'));
+          $message = esc_html(__('corrupt', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'image'=>$image));
           return false;
      }
@@ -39,7 +39,7 @@ function exec_init_asset_by_panel_ref(){
      $finf = new finfo(FILEINFO_DEVICES);
      $temp = $finf->buffer($temp);
      if(-1 == strpos('ASCII text', $temp)){
-          $message = esc_html(__('corrupt', 'nosuch'));
+          $message = esc_html(__('corrupt', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'image'=>$image));
           return false;
      }
@@ -136,7 +136,7 @@ function exec_init_asset_by_panel_ref(){
      $max = 1;
      $coll['assets'] = get_assets_by_panel_ref($section_id, $panel_ref, $max);
 
-     $message = esc_html(__('file is uploaded', 'nosuch'));
+     $message = esc_html(__('file is uploaded', 'bookbuilder'));
      echo json_encode(['res'=>'success', 'message'=>$message, 'coll'=>$coll]);
 };
 
@@ -144,7 +144,7 @@ add_action('admin_post_exec_get_assets_by_panel_ref', 'exec_get_assets_by_panel_
 function exec_get_assets_by_panel_ref(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -160,7 +160,7 @@ function exec_get_assets_by_panel_ref(){
      $max = 1;
      $res = get_assets_by_panel_ref($section_id, $panel_ref, $max);
 
-     $message = esc_html(__('assets loaded', 'nosuch'));
+     $message = esc_html(__('assets loaded', 'bookbuilder'));
      echo json_encode(['res'=>'success', 'message'=>$message, 'coll'=>$res, 'panel_id'=>$panel_id]);
 };
 

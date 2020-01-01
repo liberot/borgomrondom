@@ -48,9 +48,9 @@ class Path {
 
      static private final function get_base_dir(){
           $base = plugin_dir_path(__DIR__);
-          $base = preg_match('/^(.{0,1024})\/nosuch\/survey\//', $base, $mtch);
+          $base = preg_match('/^(.{0,1024})\/bookbuilder\/survey\//', $base, $mtch);
           $base = $mtch[1];
-          return sprintf('%s%s', $base, '/nosuch/survey');
+          return sprintf('%s%s', $base, '/bookbuilder/survey');
      }
 }
 

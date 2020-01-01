@@ -4,7 +4,7 @@ add_action('admin_post_exec_init_layout', 'exec_init_layout');
 function exec_init_layout(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -15,7 +15,7 @@ function exec_init_layout(){
      $doc = walk_the_doc($_POST['doc']);
      $doc = pigpack($doc);
      if(false == $doc){
-          $message = esc_html(__('doc invalid', 'nosuch'));
+          $message = esc_html(__('doc invalid', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -30,7 +30,7 @@ function exec_init_layout(){
      ];
 
      $coll = init_layout($conf);
-     $message = esc_html(__('layout inited', 'nosuch'));
+     $message = esc_html(__('layout inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'term_id'=>$term_id));
 }
 
@@ -38,14 +38,14 @@ add_action('admin_post_exec_get_layouts_by_group', 'exec_get_layouts_by_group');
 function exec_get_layouts_by_group(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      $group = trim_incoming_filename($_POST['group']);
      $coll = get_layouts_by_group($group);
-     $message = esc_html(__('layouts loaded', 'nosuch'));
+     $message = esc_html(__('layouts loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -53,7 +53,7 @@ add_action('admin_post_exec_get_layout_by_group_and_rule', 'exec_get_layout_by_g
 function exec_get_layout_by_group_and_rule(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -61,7 +61,7 @@ function exec_get_layout_by_group_and_rule(){
      $group = trim_incoming_filename($_POST['group']);
      $rule = trim_incoming_filename($_POST['rule']);
      $coll = get_layout_by_group_and_rule($group, $rule);
-     $message = esc_html(__('layouts loaded', 'nosuch'));
+     $message = esc_html(__('layouts loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -86,7 +86,7 @@ add_action('admin_post_exec_import_layouts', 'exec_import_layouts');
 function exec_import_layouts(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -95,7 +95,7 @@ function exec_import_layouts(){
      $path = Path::get_layout_template_dir();
 
      if(!is_dir($path)){
-          $message = esc_html(__('nothing to import', 'nosuch'));
+          $message = esc_html(__('nothing to import', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
      }
@@ -146,7 +146,7 @@ function exec_import_layouts(){
           $coll['paths'][]= $svg_path;
      }
 
-     $message = esc_html(__('did import the layouts', 'nosuch'));
+     $message = esc_html(__('did import the layouts', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 

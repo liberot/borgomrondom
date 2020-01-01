@@ -3,7 +3,7 @@
 add_action('admin_post_exec_get_surveys', 'exec_get_surveys');
 function exec_get_surveys(){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -14,7 +14,7 @@ function exec_get_surveys(){
 add_action('admin_post_exec_get_survey_by_id', 'exec_get_survey_by_id');
 function exec_get_survey_by_id(){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -22,14 +22,14 @@ function exec_get_survey_by_id(){
      $coll = [];
      $coll['survey'] = get_survey_by_id($survey_id);
      $coll['threads'] = get_threads_by_survey_id($survey_id);
-     $message = esc_html(__('survey is loaded', 'nosuch'));
+     $message = esc_html(__('survey is loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
 add_action('admin_post_exec_save_question', 'exec_save_question');
 function exec_save_question(){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -39,7 +39,7 @@ function exec_save_question(){
 
      $coll = get_question_by_id($question_id)[0];
      if(null == $coll){
-          $message = esc_html(__('no such question', 'nosuch'));
+          $message = esc_html(__('no such question', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$question_id));
           return false;
      }
@@ -55,7 +55,7 @@ function exec_save_question(){
      $coll->post_content = pigpack($coll->post_content);
      $res = wp_insert_post($coll);
 
-     $message = esc_html(__('question is saved', 'nosuch'));
+     $message = esc_html(__('question is saved', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 

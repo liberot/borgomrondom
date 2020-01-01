@@ -5,7 +5,7 @@ add_action('admin_menu', 'setup_admin_menu');
 function setup_admin_menu() {
 
      $page_title = 'surveyprint';
-     $menu_title = esc_html(__('Book Builder', 'nosuch'));
+     $menu_title = esc_html(__('Book Builder', 'bookbuilder'));
      $menu_slug = 'surveyprint_admin_utils';
      $capability = 'administrator';
      $function = '';
@@ -74,8 +74,8 @@ function build_surveyprint_utils_view(){
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
 
-     $headline = esc_html(__('Book Builder Plugin Utilities', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
+     $headline = esc_html(__('Book Builder Plugin Utilities', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -83,16 +83,16 @@ function build_surveyprint_utils_view(){
                <hr class='wp-header-end'>
      EOD;
 
-     $actions = esc_html(__('Actions:', 'nosuch'));
-     $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'nosuch'));
-     $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
-     $clean_survey_page = esc_html(__('Deletion the Survey Page', 'nosuch'));
-     $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
-     $clean_bookbuilder_db = esc_html(__('Deletion of all BookBuilder DB Entries', 'nosuch'));
-     $clean_layouts = esc_html(__('Deletion of all parsed Layout Records', 'nosuch'));
-     $dump_surveys = esc_html(__('Dump of Stored Surveys', 'nosuch'));
-     $dump_threads = esc_html(__('Dump of Client Threads', 'nosuch'));
-     $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
+     $actions = esc_html(__('Actions:', 'bookbuilder'));
+     $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'bookbuilder'));
+     $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'bookbuilder'));
+     $clean_survey_page = esc_html(__('Deletion the Survey Page', 'bookbuilder'));
+     $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'bookbuilder'));
+     $clean_bookbuilder_db = esc_html(__('Deletion of all BookBuilder DB Entries', 'bookbuilder'));
+     $clean_layouts = esc_html(__('Deletion of all parsed Layout Records', 'bookbuilder'));
+     $dump_surveys = esc_html(__('Dump of Stored Surveys', 'bookbuilder'));
+     $dump_threads = esc_html(__('Dump of Client Threads', 'bookbuilder'));
+     $edit = esc_html(__('Edit of a Questionnaire', 'bookbuilder'));
      echo <<<EOD
      <div class='edit'>
           <div class='unit'>{$actions}</div>
@@ -118,8 +118,8 @@ function build_typeform_utils_view(){
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
 
-     $headline = esc_html(__('Book Builder Typeform Utilities', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
+     $headline = esc_html(__('Book Builder Typeform Utilities', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -127,15 +127,15 @@ function build_typeform_utils_view(){
                <hr class='wp-header-end'>
      EOD;
 
-     $auth_token = esc_html(__('Typeform Auth Token:', 'nosuch'));
-     $download_survey = esc_html(__('Download of the Typeform Questionnaire', 'nosuch'));
-     $actions = esc_html(__('Actions:', 'nosuch'));
-     $bucket_name = esc_html(__('Bucket name:', 'nosuch'));
-     $download_resultset = esc_html(__('Download of a Typeform Resultset', 'nosuch'));
-     $construction = esc_html(__('Construciton of a Questionnaire', 'nosuch'));
-     $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
-     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'nosuch'));
-     $construct_surveys_from_folder = esc_html(__('Construction of all Surveys from "./asset/typeform/*.json"', 'nosuch'));
+     $auth_token = esc_html(__('Typeform Auth Token:', 'bookbuilder'));
+     $download_survey = esc_html(__('Download of the Typeform Questionnaire', 'bookbuilder'));
+     $actions = esc_html(__('Actions:', 'bookbuilder'));
+     $bucket_name = esc_html(__('Bucket name:', 'bookbuilder'));
+     $download_resultset = esc_html(__('Download of a Typeform Resultset', 'bookbuilder'));
+     $construction = esc_html(__('Construciton of a Questionnaire', 'bookbuilder'));
+     $edit = esc_html(__('Edit of a Questionnaire', 'bookbuilder'));
+     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'bookbuilder'));
+     $construct_surveys_from_folder = esc_html(__('Construction of all Surveys from "./asset/typeform/*.json"', 'bookbuilder'));
      echo <<<EOD
      <div class='edit'>
           <div class='unit'>{$auth_token}</div>
@@ -170,19 +170,19 @@ function build_thread_view(){
 add_shortcode('thread_list_view', 'build_thread_list_view');
 function build_thread_list_view(){
 
-     $headline = esc_html(__('List of the Threads of some Client', 'nosuch'));
-     $welcome = esc_html(__('Todo', 'nosuch'));
+     $headline = esc_html(__('List of the Threads of some Client', 'bookbuilder'));
+     $welcome = esc_html(__('Todo', 'bookbuilder'));
 
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
      wp_enqueue_style('admin_style');
 
-     $headline = esc_html(__('Book Builder Client Threads', 'nosuch'));
-     $id = esc_html(__('ID', 'nosuch'));
-     $title = esc_html(__('Title', 'nosuch'));
-     $excerpt = esc_html(__('Type', 'nosuch'));
-     $date = esc_html(__('Date of Init', 'nosuch'));
-     $author_id = esc_html(__('Author', 'nosuch'));
-     $action = esc_html(__('Action', 'nosuch'));
+     $headline = esc_html(__('Book Builder Client Threads', 'bookbuilder'));
+     $id = esc_html(__('ID', 'bookbuilder'));
+     $title = esc_html(__('Title', 'bookbuilder'));
+     $excerpt = esc_html(__('Type', 'bookbuilder'));
+     $date = esc_html(__('Date of Init', 'bookbuilder'));
+     $author_id = esc_html(__('Author', 'bookbuilder'));
+     $action = esc_html(__('Action', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -202,7 +202,7 @@ function build_thread_list_view(){
                </thead>
 EOD;
 
-     $edit = esc_html(__('Entries', 'nosuch'));
+     $edit = esc_html(__('Entries', 'bookbuilder'));
      $style = 'column-primary';
      $coll = get_threads();
      if(!is_null($coll[0])){
@@ -260,19 +260,19 @@ function build_thread_entries_view(){
      $sections = get_sections_by_thread_id($thread_id, $client_id);
      if(is_null($sections)){ return false; }
 
-     $headline = esc_html(__('Book Builder Thread Fields from Book TOC', 'nosuch'));
-     $id = esc_html(__('ID', 'nosuch'));
-     $ref = esc_html(__('Reference', 'nosuch'));
-     $title = esc_html(__('Title', 'nosuch'));
-     $excerpt = esc_html(__('Type', 'nosuch'));
-     $date = esc_html(__('Date of Init', 'nosuch'));
-     $author_id = esc_html(__('Author', 'nosuch'));
-     $action = esc_html(__('Action', 'nosuch'));
-     $question = esc_html(__('Question', 'nosuch'));
-     $answer = esc_html(__('Answer', 'nosuch'));
-     $edit = esc_html(__('Edit', 'nosuch'));
-     $assits = esc_html(__('Assets', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
+     $headline = esc_html(__('Book Builder Thread Fields from Book TOC', 'bookbuilder'));
+     $id = esc_html(__('ID', 'bookbuilder'));
+     $ref = esc_html(__('Reference', 'bookbuilder'));
+     $title = esc_html(__('Title', 'bookbuilder'));
+     $excerpt = esc_html(__('Type', 'bookbuilder'));
+     $date = esc_html(__('Date of Init', 'bookbuilder'));
+     $author_id = esc_html(__('Author', 'bookbuilder'));
+     $action = esc_html(__('Action', 'bookbuilder'));
+     $question = esc_html(__('Question', 'bookbuilder'));
+     $answer = esc_html(__('Answer', 'bookbuilder'));
+     $edit = esc_html(__('Edit', 'bookbuilder'));
+     $assits = esc_html(__('Assets', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
 
      echo <<<EOD
           <div class='wrap'>
@@ -369,14 +369,14 @@ function build_question_view(){
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');
 
-     $message = esc_html(__('List of Questions', 'nosuch'));
-     $id = esc_html(__('ID', 'nosuch'));
-     $title = esc_html(__('Question', 'nosuch'));
-     $headline = esc_html(__('Book Builder Stored Questionnaire', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
-     $excerpt = esc_html(__('Reference', 'nosuch'));
-     $parent = esc_html(__('Group', 'nosuch'));
-     $date = esc_html(__('Date of Init', 'nosuch'));
+     $message = esc_html(__('List of Questions', 'bookbuilder'));
+     $id = esc_html(__('ID', 'bookbuilder'));
+     $title = esc_html(__('Question', 'bookbuilder'));
+     $headline = esc_html(__('Book Builder Stored Questionnaire', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
+     $excerpt = esc_html(__('Reference', 'bookbuilder'));
+     $parent = esc_html(__('Group', 'bookbuilder'));
+     $date = esc_html(__('Date of Init', 'bookbuilder'));
 
      echo <<<EOD
 
@@ -464,16 +464,16 @@ EOD;
 add_shortcode('questionnaire_list_view', 'build_questionnaire_list_view');
 function build_questionnaire_list_view(){
 
-     $message = esc_html(__('List of stored Questionnaire:', 'nosuch'));
-     $id = esc_html(__('ID', 'nosuch'));
-     $excerpt = esc_html(__('Reference', 'nosuch'));
-     $title = esc_html(__('Title', 'nosuch'));
-     $date = esc_html(__('Date of Init', 'nosuch'));
-     $action = esc_html(__('Action', 'nosuch'));
-     $edit = esc_html(__('Edit Fields', 'nosuch'));
+     $message = esc_html(__('List of stored Questionnaire:', 'bookbuilder'));
+     $id = esc_html(__('ID', 'bookbuilder'));
+     $excerpt = esc_html(__('Reference', 'bookbuilder'));
+     $title = esc_html(__('Title', 'bookbuilder'));
+     $date = esc_html(__('Date of Init', 'bookbuilder'));
+     $action = esc_html(__('Action', 'bookbuilder'));
+     $edit = esc_html(__('Edit Fields', 'bookbuilder'));
 
-     $headline = esc_html(__('Questionnaire', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
+     $headline = esc_html(__('Questionnaire', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -552,8 +552,8 @@ function build_spreads_view() {
      wp_register_style('constructor_style', WP_PLUGIN_URL.SURVeY.'/css/spread-viewer/style.css');
      wp_enqueue_style('constructor_style');
 
-     $headline = esc_html(__('Spread Manager', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
+     $headline = esc_html(__('Spread Manager', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
      $res = <<<EOD
      <div class='wrap'>
           <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -609,8 +609,8 @@ function build_layouts_view() {
      wp_register_style('viewer_style', WP_PLUGIN_URL.SURVeY.'/css/spread-viewer/style.css');
      wp_enqueue_style('viewer_style');
 
-     $headline = esc_html(__('Layout Manager', 'nosuch'));
-     $welcome = esc_html(__('Welcome', 'nosuch'));
+     $headline = esc_html(__('Layout Manager', 'bookbuilder'));
+     $welcome = esc_html(__('Welcome', 'bookbuilder'));
      $res = <<<EOD
      <div class='wrap'>
           <h1 class='wp-heading-inline'>{$headline}</h1>

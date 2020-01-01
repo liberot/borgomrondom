@@ -31,7 +31,7 @@ function build_start_thread_view(){
 // sets up lets get it on click
      $page_id = $_REQUEST['page_id'];
      $href = sprintf('?page_id=%s&thread_id=%s', $page_id, 'init');
-     echo sprintf('<span><a href="%s">%s</a></span>', $href, esc_html(__('Lets get it on', 'nosuch')));
+     echo sprintf('<span><a href="%s">%s</a></span>', $href, esc_html(__('Lets get it on', 'bookbuilder')));
 }
 
 
@@ -282,7 +282,7 @@ function build_short_text_panel($panel){
 
      $title = $panel->post_content['title'];
 
-     $send = __('Send', 'nosuch');
+     $send = __('Send', 'bookbuilder');
      $action = sprintf('?page_id=%s&thread_id=%s&section_id=%s&panel_ref=%s', $page_id, $thread_id, $section_id, $panel_ref);
 
      echo <<<EOD
@@ -328,7 +328,7 @@ function build_thread_web_view($thread_id){
      if(is_null($panel)){ return false; }
      $panel->post_content = pagpick($panel->post_content);
      echo sprintf('<p><span class="question-out">%s</span></p>', $panel->post_content['question']);
-     $next_question = esc_html(__('Next Question', 'nosuch'));
+     $next_question = esc_html(__('Next Question', 'bookbuilder'));
      $href = sprintf('?page_id=%s&survey_id=%s&thread_id=%s&question_ref=%s', $page_id, $survey_id, $thread_id, $question_ref);
      switch($panel->post_content['type']){
           case 'short_text':

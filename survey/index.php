@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
-define ('NOSUCH_VERSION', '005.001001001001001001001001001');
-define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'nosuch', DIRECTORY_SEPARATOR, 'survey'));
+define ('BOOKBUILDER_VERSION', 'kracksonny.meekjulash.0.1');
+define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'bookbuilder', DIRECTORY_SEPARATOR, 'survey'));
 
 require_once('include/config/config.php');
 

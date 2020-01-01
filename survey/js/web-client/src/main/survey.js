@@ -157,7 +157,7 @@ console.log('recSection(): ', this.model.sections);
      }
 */
      showValidationError(msg){
-         alert(__survey.__('invalid', 'nosuch'));
+         alert(__survey.__('invalid', 'bookbuilder'));
      }
 
      bindSavedPanel(msg){
@@ -755,7 +755,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
                case 'yes_no':
                    buf1st = this.fillTemplate(__yes_no_tmpl__, { 
                         question: question, 
-                        yes: __survey.__('yes', 'nosuch'), no: __survey.__('no', 'nosuch'),
+                        yes: __survey.__('yes', 'bookbuilder'), no: __survey.__('no', 'bookbuilder'),
                         ref: this.model.panel.post_content.ref
                    });
                    break;

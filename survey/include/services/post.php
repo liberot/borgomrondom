@@ -1,7 +1,7 @@
 <?php
 
 $abs = (dirname(__FILE__));
-$abs = str_replace('/wp-content/plugins/nosuch/survey/include/services', '', $abs);
+$abs = str_replace('/wp-content/plugins/bookbuilder/survey/include/services', '', $abs);
 
 require_once(sprintf('%s%s', $abs, '/wp-load.php'));
 require_once(sprintf('%s%s', $abs, '/wp-admin/includes/admin.php'));

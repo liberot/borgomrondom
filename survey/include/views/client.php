@@ -3,10 +3,10 @@
 add_shortcode('survey_view', 'build_survey_view');
 function build_survey_view(){
 
-     wp_register_style('client_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
+     wp_register_style('client_style', WP_PLUGIN_URL.'/bookbuilder/survey/css/web-client/style.css');
      wp_enqueue_style('client_style');
 
-     wp_register_script(     'config', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/config-client.js', ['jquery']);
+     wp_register_script(     'config', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/config-client.js', ['jquery']);
      wp_enqueue_script(      'config');
 
      if(!is_user_logged_in()){
@@ -17,13 +17,13 @@ function build_survey_view(){
           return;
      }
 
-     wp_register_script(       'main', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/main.js');
-     wp_register_script(     'client', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/survey.js');
-     wp_register_script(        'net', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/net/main.js');
-     wp_register_script('client_util', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/util/main.js');
-     wp_register_script('client_i18n', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/i18n/main.js');
-     wp_register_script(     'base64', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/lib/base64.js');
-     wp_register_script('client_init', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/init.js');
+     wp_register_script(       'main', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/main.js');
+     wp_register_script(     'client', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/survey.js');
+     wp_register_script(        'net', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/module/net/main.js');
+     wp_register_script('client_util', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/module/util/main.js');
+     wp_register_script('client_i18n', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/module/i18n/main.js');
+     wp_register_script(     'base64', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/lib/base64.js');
+     wp_register_script('client_init', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/init.js');
      wp_enqueue_script( 'client_i18n');
      wp_enqueue_script(        'main');
      wp_enqueue_script(      'client');
@@ -56,16 +56,16 @@ EOD;
 add_shortcode('constructor_view', 'build_constructor_view');
 function build_constructor_view() {
 
-     wp_register_script(     'viewer-config', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/config-client.js');
-     wp_register_script(              'main', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/main.js');
-     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/tools/main.js');
-     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/main.js');
-     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/correct.js');
-     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/bitmap.js');
-     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/lib/svg.js');
-     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/util/main.js');
-     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/init.js', array('jquery'));
+     wp_register_script(     'viewer-config', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/config-client.js');
+     wp_register_script(              'main', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/main.js');
+     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/module/tools/main.js');
+     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/module/screen/main.js');
+     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/module/screen/correct.js');
+     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/module/screen/bitmap.js');
+     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/lib/svg.js');
+     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/module/util/main.js');
+     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.'/bookbuilder/survey/js/spread-viewer/init.js', array('jquery'));
 
      wp_enqueue_script('viewer-config');
      wp_enqueue_script('main');
@@ -78,7 +78,7 @@ function build_constructor_view() {
      wp_enqueue_script('viewer-layout_net');
      wp_enqueue_script('viewer-layout_init');
 
-     wp_register_style('viewer_style', WP_PLUGIN_URL.'/nosuch/survey/css/spread-viewer/style.css');
+     wp_register_style('viewer_style', WP_PLUGIN_URL.'/bookbuilder/survey/css/spread-viewer/style.css');
      wp_enqueue_style('viewer_style');
 
      $res = <<<EOD

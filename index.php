@@ -7,7 +7,7 @@
  * Version: 0.0.0.0.1
  * Author: Book Builder
  *
- * @package nosuch_survey
+ * @package bookbuilder_survey
  */
 
 defined('ABSPATH') || exit;

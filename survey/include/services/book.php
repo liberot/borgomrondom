@@ -4,14 +4,14 @@ add_action('admin_post_exec_get_books', 'exec_get_books');
 function exec_get_books(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      $coll = get_books();
 
-     $message = esc_html(__('books loaded', 'nosuch'));
+     $message = esc_html(__('books loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -19,7 +19,7 @@ add_action('admin_post_exec_get_book_by_id', 'exec_get_book_by_id');
 function exec_get_book_by_id(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -29,7 +29,7 @@ function exec_get_book_by_id(){
      $coll['book'] = get_book_by_id($book_id);
      $coll['chapter'] = get_chapter_by_book_id($book_id);
 
-     $message = esc_html(__('the book is loaded', 'nosuch'));
+     $message = esc_html(__('the book is loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -37,7 +37,7 @@ add_action('admin_exec_get_chapter_by_book_id', 'exec_get_chapter_by_book_by_id'
 function exec_get_chapter_by_book_id(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -45,7 +45,7 @@ function exec_get_chapter_by_book_id(){
      $book_id = trim_incoming_numeric($_POST['book_id']);
      $coll = get_chapters_by_book_id($book_id);
 
-     $message = esc_html(__('the chapters is loaded', 'nosuch'));
+     $message = esc_html(__('the chapters is loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -53,7 +53,7 @@ add_action('admin_exec_get_spreads_by_chapter_id', 'exec_get_spreads_by_chapter_
 function exec_get_spreads_by_chapter_id(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -61,7 +61,7 @@ function exec_get_spreads_by_chapter_id(){
      $chapter_id = trim_incoming_numeric($_POST['chapter_id']);
      $coll = get_spreads_by_chapter_id($chapter_id);
 
-     $message = esc_html(__('the spreads is loaded', 'nosuch'));
+     $message = esc_html(__('the spreads is loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$spreads, 'coll'=>$coll));
 
      return true;
@@ -71,7 +71,7 @@ add_action('admin_post_exec_init_book_by_thread_id', 'exec_init_book_by_thread_i
 function exec_init_book_by_thread_id(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -83,7 +83,7 @@ function exec_init_book_by_thread_id(){
 
      $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){
-          $message = esc_html(__('no such thread', 'nosuch'));
+          $message = esc_html(__('no such thread', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -151,7 +151,7 @@ function exec_init_book_by_thread_id(){
           }
      }
 
-     $message = esc_html(__('book is inited', 'nosuch'));
+     $message = esc_html(__('book is inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 

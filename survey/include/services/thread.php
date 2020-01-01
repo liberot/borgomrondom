@@ -8,12 +8,12 @@
 add_action('admin_post_exec_get_thread_of_client', 'exec_get_thread_of_client');
 function exec_get_thread_of_client(){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
      $coll = get_thread_of_client();
-     $message = esc_html(__('thread is loaded', 'nosuch'));
+     $message = esc_html(__('thread is loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -27,7 +27,7 @@ function exec_init_thread(){
 
 // policy
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -46,7 +46,7 @@ function exec_init_thread(){
           set_session_ticket('section_id', $coll['sections'][0]->ID, true);
 
 // res
-          $message = esc_html(__('stored thread is loaded', 'nosuch'));
+          $message = esc_html(__('stored thread is loaded', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
      }
@@ -57,7 +57,7 @@ function exec_init_thread(){
 
      $survey = get_survey_by_title(Proc::KICKOFF_SURVEY)[0];
      if(is_null($survey)){
-          $message = esc_html(__('no cover and preface survey', 'nosuch'));
+          $message = esc_html(__('no cover and preface survey', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -84,7 +84,7 @@ function exec_init_thread(){
      $thread_id = init_thread($conf);
 
      if(is_null($thread_id)){
-          $message = esc_html(__('could not init a thread', 'nosuch'));
+          $message = esc_html(__('could not init a thread', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -92,7 +92,7 @@ function exec_init_thread(){
 // generation of a section
      $section_id = init_section_from_survey($thread_id, $survey->post_excerpt);
      if(is_null($section_id)){
-          $message = esc_html(__('no section', 'nosuch'));
+          $message = esc_html(__('no section', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -109,7 +109,7 @@ function exec_init_thread(){
      $coll['thread'] = get_thread_by_id($thread_id)[0];
      $coll['sections'] = get_sections_by_thread_id($thread_id);
 
-     $message = esc_html(__('thread inited', 'nosuch'));
+     $message = esc_html(__('thread inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
      return true;
 }
@@ -124,7 +124,7 @@ function exec_get_next_section(){
 
 // policy
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -135,7 +135,7 @@ function exec_get_next_section(){
 
      $current_section = get_section_by_id($section_id)[0];
      if(is_null($current_section)){
-          $message = esc_html(__('no such section', 'nosuch'));
+          $message = esc_html(__('no such section', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$section_id));
           return false;
      }
@@ -148,7 +148,7 @@ function exec_get_next_section(){
 // evals ref of next survey
      preg_match('/\/to\/(.{0,124})#/', $redirect, $mtch);
      if(empty($mtch)){
-          $message = esc_html(__('no next survey defined', 'nosuch'));
+          $message = esc_html(__('no next survey defined', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$redirect));
           return false;
      }
@@ -158,7 +158,7 @@ function exec_get_next_section(){
 // loads next section from db
      $next_section = get_section_by_ref($thread_id, $ref)[0];
      if(!is_null($next_section)){
-          $message = esc_html(__('next section loaded', 'nosuch'));
+          $message = esc_html(__('next section loaded', 'bookbuilder'));
           $coll['section'] = $next_section;
           $coll['redirect'] = $redirect;
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
@@ -170,7 +170,7 @@ function exec_get_next_section(){
      $ref = $mtch[1];
      $survey = get_survey_by_ref($ref)[0];
      if(is_null($survey)){
-          $message = esc_html(__('no such survey', 'nosuch'));
+          $message = esc_html(__('no such survey', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$ref));
           return false;
      }
@@ -180,7 +180,7 @@ function exec_get_next_section(){
 // setup of a section
      $section_id = init_section_from_survey($thread_id, $ref);
      if(empty($section_id)){
-          $message = esc_html(__('could not init section', 'nosuch'));
+          $message = esc_html(__('could not init section', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -194,7 +194,7 @@ function exec_get_next_section(){
 
      set_session_ticket('section_id', $section_id, true);
 
-     $message = esc_html(__('next section inited', 'nosuch'));
+     $message = esc_html(__('next section inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 
      return true;
@@ -205,7 +205,7 @@ function exec_save_thread(){
 
 // policy
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -229,7 +229,7 @@ function exec_save_thread(){
 
      $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){
-          $message = esc_html(__('no such thread', 'nosuch'));
+          $message = esc_html(__('no such thread', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message));
           return false;
      }
@@ -247,7 +247,7 @@ function exec_save_thread(){
 
      $coll = get_thread_by_id($thread_id);
 
-     $message = esc_html(__('thread is saved', 'nosuch'));
+     $message = esc_html(__('thread is saved', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 

@@ -4,13 +4,13 @@ add_action('admin_post_exec_export_prints', 'exec_export_prints');
 function exec_export_prints(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      if(false == file_exists(Path::INKSCAPE)){
-          $message = esc_html(__('no inkscape', 'nosuch'));
+          $message = esc_html(__('no inkscape', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -41,7 +41,7 @@ function exec_export_prints(){
      $res = @exec($cmd);
 
      $coll = ['cmd'=>$cmd, 'svg'=>$svg_path, 'pdf'=>$pdf_path, 'png'=>$png_path];
-     $message = esc_html(__('prints done', 'nosuch'));
+     $message = esc_html(__('prints done', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -49,13 +49,13 @@ add_action('admin_post_exec_export_separations', 'exec_export_separations');
 function exec_export_separations(){
 
      if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'nosuch'));
+          $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      if(false == file_exists(Path::GHOSTSCRIPT)){
-          $message = esc_html(__('no inkscape', 'nosuch'));
+          $message = esc_html(__('no inkscape', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -67,13 +67,13 @@ function exec_export_separations(){
      $output_pdf = preg_replace('/(\..{1,10})$/', '_cmyk.pdf', $input_pdf);
 
      if(-1 == strpos($input_pdf, '.pdf')){
-          $message = esc_html(__('no input', 'nosuch'));
+          $message = esc_html(__('no input', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      if(false == file_exists($input_pdf)){
-          $message = esc_html(__('no input file', 'nosuch'));
+          $message = esc_html(__('no input file', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'file'=>$input_pdf));
           return false;
      }
@@ -99,7 +99,7 @@ function exec_export_separations(){
           'output_tiff'=>$output_tiff
      ];
 
-     $message = esc_html(__('seps written', 'nosuch'));
+     $message = esc_html(__('seps written', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 };
 
