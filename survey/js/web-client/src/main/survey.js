@@ -68,11 +68,10 @@ console.log('bindSection(): this.model.section: ', this.model.section);
           this.evalHiddenFields();
           this.recSection();
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
-          let panel = this.model.section.post_content.toc.refs[0];
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.section.post_content.toc.refs[0];
 
-          this.loadPanel(section, panel);
+          this.loadPanel(sectionId, panelRef);
      }
 
      evalHiddenFields(){
@@ -84,28 +83,34 @@ console.log('bindSection(): this.model.section: ', this.model.section);
 // this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}';
 // this.model.redirect = '#';
 // 
-          let temp = null;
+          let temp;
+
           let sectionId = this.model.section.ID;
           let panelRef = this.model.section.post_content.toc.refs[0];
+
           let hash = this.model.redirect.match(/\#(.{1,256})/);
           if(null == hash){ return false; }
           if(null == hash[1]){ return false; }
           hash = hash[1];
           hash = hash.split('&');
-          for(let idx in hash){
-               temp = hash[idx].split('=');
-               let title = temp[0];
-               let ref = temp[1];
-                   // ref = ref.replace('{{', '');
-                   // ref = ref.replace('}}', '');
-                   ref = ref.replace(/[{}]/g, '');
-                   ref = ref.split(':');
-                   if(null == ref){ return false; }
-                   if(false == jQuery.isArray(ref)){ return false; }
-                   if(null == ref[1]){ return false; }
-                   ref = ref[1];
 
-               this.pushHiddenField(sectionId, panelRef, title, ref);
+          for(let idx in hash){
+
+               temp = hash[idx].split('=');
+
+               let fieldTitle = temp[0];
+
+               let fieldRef = temp[1];
+                   fieldRef = fieldRef.replace(/[{}]/g, '');
+                   fieldRef = fieldRef.split(':');
+
+                   if(null == fieldRef){ return false; }
+                   if(false == jQuery.isArray(fieldRef)){ return false; }
+
+                   if(null == fieldRef[1]){ return false; }
+                   panelRef = fieldRef[1];
+
+               this.pushHiddenField(sectionId, panelRef, fieldRef, fieldTitle);
           }
      }
 
@@ -178,24 +183,17 @@ console.log('saveThread(): ', msg);
           this.model.panels = [];
 
 // loads the current panel by its reference
-          let section; 
-          let panel; 
+          let sectionId; 
+          let panelRef; 
 
           if(SurveyConfig.resetSurveyState){
                if(0 <= this.model.thread.post_content.history.length){
                     let history = this.model.thread.post_content.history.pop();
                     if(null != history){
-                         section = history.section;
-                         panel = history.panel;
+                         sectionId = history.sectionId;
+                         panelRef = history.panelRef;
                     }
                }
-          }
-
-// loads from the start 
-          if(null == panel){
-               // section = this.model.section.post_excerpt;
-               section = this.model.section.ID;
-               panel = this.model.section.post_content.toc.refs[0];
           }
 
 console.log('bindThread(): ', this.model.thread);
@@ -203,8 +201,14 @@ console.log('bindThread(): ', this.model.thread);
 // link hash
           this.setLink();
 
+// loads from the start 
+          if(null == panelRef){
+               sectionId = this.model.section.ID;
+               panelRef = this.model.section.post_content.toc.refs[0];
+          }
+
 // loads panel as in initial panel
-          this.loadPanel(section, panel);
+          this.loadPanel(sectionId, panelRef);
 
      }
 
@@ -225,9 +229,8 @@ console.log('bindThread(): ', this.model.thread);
 
      bindUploadInput(msg){
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
-          let panel = this.model.panel.post_content.ref;
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
           let val = 'asset::uploaded';
@@ -244,7 +247,7 @@ console.log('bindThread(): ', this.model.thread);
                     break;
           }
 
-          this.bindInput(section, panel, ref, val);
+          this.bindInput(sectionId, panelRef, ref, val);
      }
 
      bindSelectStatement(msg){
@@ -292,9 +295,8 @@ console.log('bindOpinion: ', msg);
 
      bindMultipleChoiceInput(msg){
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
-          let panel = this.model.panel.post_content.ref;
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
           let val = '';
@@ -307,37 +309,39 @@ console.log('bindOpinion: ', msg);
                }
           };
 
-          this.clearInput(section, panel, ref, val);
-          this.bindInput(section, panel, ref, val);
+          this.clearInput(sectionId, panelRef, ref, val);
+          this.bindInput(sectionId, panelRef, ref, val);
      }
 
      bindYesNoInput(msg){
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
-          let panel = this.model.panel.post_content.ref;
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
           let val = msg.model.arguments[2] == 'true' ? 'true' : 'false';
 
-          this.bindInput(section, panel, ref, val);
+          this.bindInput(sectionId, panelRef, ref, val);
      }
 
-     clearInput(section, panel, ref, val){
+     clearInput(sectionId, panelRef, ref, val){
+
           let target = this.model.thread.post_content.conditions;
           let copy = [];
+
           for(let idx in target){
-               if(section == target[idx].section){
-                    if(panel == target[idx].panel){
+               if(sectionId == target[idx].sectionId){
+                    if(panelRef == target[idx].panelRef){
                          continue;
                     }
                }
                copy.push(target[idx]);
           }
+
           this.model.thread.post_content.conditions = copy;
      }
 
-     bindInput(section, panel, key, val){
+     bindInput(sectionId, panelRef, key, val){
 
           if('undefined' == typeof(val)){ val = ''; }
           let answer = SurveyUtil.trimIncomingString(val);
@@ -349,16 +353,23 @@ console.log('bindOpinion: ', msg);
           this.model.panel.post_content.condition_ref = key;
           this.model.panel.post_content.answer = answer;
 
-          this.setCondition(section, panel, key, val);
+          this.setCondition(sectionId, panelRef, key, val);
+
           this.notify(new Message('input::done', this.model));
      }
 
-     setCondition(section, panel, key, val){
+     setCondition(sectionId, panelRef, key, val){
+
           let target = this.model.thread.post_content.conditions;
+
           let conditionRec = false;
+
           for(let idx in target){
-               if(section == target[idx].section){
-                    if(panel == target[idx].panel){
+
+               if(sectionId == target[idx].sectionId){
+
+                    if(panelRef == target[idx].panelRef){
+
                          if(key == target[idx].key){
                               target[idx].val = val;
                               conditionRec = 0x01;
@@ -366,26 +377,32 @@ console.log('bindOpinion: ', msg);
                     }
                }
           }
+
           if(false == conditionRec){
-               target.push({section: section, panel: panel, key: key, val: val});
+               target.push({sectionId: sectionId, panelRef: panelRef, key: key, val: val});
           }
 
 console.log('setCondition(): ', target);
 
      }
 
-     getCondition(section, panel, key){
+     getCondition(sectionId, panelRef, key){
+
           let res = null;
+
           let target = this.model.thread.post_content.conditions;
+
           for(let idx in target){
-               if(section == target[idx].section){
-                    if(panel == target[idx].panel){
+
+               if(sectionId == target[idx].sectionId){
+                    if(panelRef == target[idx].panelRef){
                          if(key == target[idx].key){
                              res = target[idx].key;
                          }
                     }
                }
           }
+
           return res;
      }
 
@@ -449,42 +466,41 @@ console.log('corrQuestion(): mtch: ', mtch);
 
           if(null == this.model.panel){ return false; }
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
-          let panel = this.model.panel.post_content.ref;
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.panel.post_content.ref;
 
           let target = this.model.thread.post_content;
           let panelRec = false;
 
           for(let idx in target.book){
-               if(section == target.book[idx].section){
-                    if(panel == target.book[idx].panel){
+               if(sectionId == target.book[idx].sectionId){
+                    if(panelRef == target.book[idx].panelRef){
                          panelRec = true;
                     }
                }
           }
 
           if(!panelRec){
-              target.book.push({section: section, panel: panel });
+              target.book.push({sectionId: sectionId, panelRef: panelRef });
           }
 
 console.log('pushBook(): ', target.book);
      }
 
-     pushHiddenField(sectionId, panelRf, title, ref){
+     pushHiddenField(sectionId, panelRef, fieldRef, fieldTitle){
 
           let target = this.model.thread.post_content.hidden_fields;
 
           let rec = {
-               section : sectionId,
-               panel: panelRef,
-               title: title,
-               ref: ref
+               sectionId : sectionId,
+               panelRef: panelRef,
+               fieldRef: fieldRef,
+               fieldTitle: fieldTitle
           }
 
           let temp;
 
-          if(null == (temp = this.getHiddenField(sectionId, panelRef, title, ref))){
+          if(null == (temp = this.getHiddenField(sectionId, panelRef, fieldRef, fieldTitle))){
                target.push(rec);
           }
           else {
@@ -494,15 +510,15 @@ console.log('pushBook(): ', target.book);
 console.log('pushHiddenField(): ', target);
      }
 
-     getHiddenField(sectionId, panelRef, title, ref){
+     getHiddenField(sectionId, panelRef, fieldRef, fieldTitle){
 
           let target = this.model.thread.post_content.hidden_fields;
 
           for(let idx in target){
                if(sectionId == target[idx].section){
-                    if(panelRef == target[idx].panel){
-                         if(title == target[idx].title){
-                              if(ref == target[idx].ref){
+                    if(panelRef == target[idx].panelRef){
+                         if(fieldRef == target[idx].fieldRef){
+                              if(fieldTitle == target[idx].fieldTitle){
                                    return { idx: idx, val: target[idx] };
                               }
                          }
@@ -513,22 +529,22 @@ console.log('pushHiddenField(): ', target);
           return null;
      }
 
-     getHiddenFieldValue(ref){
+     getHiddenFieldValue(fieldRef){
 
           let target = this.model.thread.post_content.hidden_fields;
           let res;
           let field;
 
           for(let idx in target){
-               if(ref == target[idx].title){
-                    if(target[idx].title != target[idx].ref){
+               if(fieldRef == target[idx].fieldTitle){
+                    if(target[idx].fieldTitle != target[idx].fieldRef){
                          field = target[idx];
                     }
                }
           }
 
           if(null != field){
-               res = this.getAnswer(field.ref);
+               res = this.getAnswer(field.fieldRef);
           }
 
           return res;
@@ -542,12 +558,11 @@ console.log('pushHiddenField(): ', target);
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
-          let panel = this.model.panel.post_content.ref;
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
 
-          target.history.push({ section: section, panel: panel });
+          target.history.push({ sectionId: sectionId, panelRef: panelRef });
 
 console.log('pushHistory(): ', target.history);
      }
@@ -568,10 +583,7 @@ console.log('loadPanel(): ', sectionId, panelRef);
                }
           }
 
-          this.model.requestedSectionId = sectionId;
-          this.model.requestedPanelRef = panelRef;
-
-          this.notify(new Message('load::panel', this.model));
+          this.notify(new Message('load::panel', { threadId: this.model.thread.ID, sectionId: sectionId, panelRef: panelRef } ));
      }
 
      bindPanel(msg){
@@ -585,7 +597,7 @@ console.log('bindPanel(): ', msg);
           this.model.panel = msg.model.e.coll['panel'][0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
 
-          this.selectSection(msg.model.e.coll['section_ref']);
+          this.selectSection(msg.model.e.coll['section_id']);
 
           this.initPanel();
      }
@@ -594,7 +606,6 @@ console.log('bindPanel(): ', msg);
 
           let section;
           for(let idx in this.model.sections){
-               // if(ref == this.model.sections[idx].post_excerpt){
                if(sectionId == this.model.sections[idx].ID){
                     section = this.model.sections[idx];
                }
@@ -954,28 +965,31 @@ console.log('evalGroup(): condition: "always" found');
                     case 'choice':
                     case 'constant':
 
-                         // let section = this.model.section.post_excerpt;
-                         let section = this.model.section.ID;
+                         let sectionId = this.model.section.ID;
                          let condition = this.model.panel.post_content.condition_ref;
-
-                         let panel = this.model.panel.post_content.ref;
+                         let panelRef = this.model.panel.post_content.ref;
                          let key = rule.vars[idx].value;
 
-                         rule.vars[idx].result = condition == this.getCondition(section, panel, key);
+                         rule.vars[idx].result = condition == this.getCondition(sectionId, panelRef, key);
                          break;
                }
           }
      }
 
      evalPrevPanel(){
+
           let target = this.model.thread.post_content;
+
           let history = target.history.pop();
               history = target.history.pop();
+
           if(null == history){
                this.loadPrevPanel();
                return false;
           }
-          this.loadPanel(history.section, history.panel);
+
+          this.loadPanel(history.sectionId, history.panelRef);
+
           return true;
      }
 
@@ -989,13 +1003,12 @@ console.log('evalGroup(): condition: "always" found');
           let settings = this.model.section.post_content.survey.settings;
 
           let toc = this.model.section.post_content.toc;
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
+          let sectionId = this.model.section.ID;
 
 // loads panel from logic
-          let panel = this.evalLogicAction(toc);
-          if(null != panel){
-               this.loadPanel(section, panel);
+          let panelRef = this.evalLogicAction(toc);
+          if(null != panelRef){
+               this.loadPanel(sectionId, panelRef);
                return true;
           }
 
@@ -1007,6 +1020,7 @@ console.log('evalGroup(): condition: "always" found');
      evalLogicAction(toc){
 
 // evaluatess the conditions of logic jummps
+
           let ref = this;
           let links = [];
           let panel = this.model.panel;
@@ -1064,9 +1078,9 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
           let target = this.model.section.post_content.toc;
+
+          let sectionId = this.model.section.ID;
 
 console.log('loadNextPanel(): ', target);
 
@@ -1077,10 +1091,11 @@ console.log('loadNextPanel(): ', target);
               pos = target.refs.length -1;
           }
 
-          let panel = target.refs[pos];
-console.log('loadNextPanel(): next link from default: ', section, panel);
+          let panelRef = target.refs[pos];
+console.log('loadNextPanel(): next link from default: ', sectionId, panelRef);
 
-          this.loadPanel(section, panel);
+          this.loadPanel(sectionId, panelRef);
+
           return true;
      }
 
@@ -1089,34 +1104,33 @@ console.log('loadNextPanel(): next link from default: ', section, panel);
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
           let target = this.model.section.post_content.toc;
+          let sectionId = this.model.section.ID;
 
           let pos = target.refs.indexOf(this.model.panel.post_content.ref);
               pos-= 1;
 
           if(pos <= 0){ pos = 0; }
 
-          let panel = target.refs[pos];
-console.log('loadPrevPanel(): prev link from default: ', section, panel);
+          let panelRef = target.refs[pos];
+console.log('loadPrevPanel(): prev link from default: ', sectionId, panelRef);
 
-          this.loadPanel(section, panel);
+          this.loadPanel(sectionId, panelRef);
           return true;
      }
 
      selectPanel(pos){
 
-          // let section = this.model.section.post_excerpt;
-          let section = this.model.section.ID;
           let target = this.model.section.post_content.toc;
+          let sectionId = this.model.section.ID;
 
           if(pos <= 0){ pos = 0; }
           if(pos >= target.refs.length -1){ pos = target.refs.length -1; }
 
-          let panel = target.refs[pos];
+          let panelRef = target.refs[pos];
 
-          this.loadPanel(section, panel);
+          this.loadPanel(sectionId, panelRef);
+
           return true;
      }
 

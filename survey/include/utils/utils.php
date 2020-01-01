@@ -104,8 +104,8 @@ function trim_incoming_book($toc){
      $res = [];
      foreach($toc as $item){
           $temp = [];
-          $temp['section'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
-          $temp['panel'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
+          $temp['sectionId'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
+           $temp['panelRef'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
           $res[]= $temp;
      }
      return $res;
@@ -116,11 +116,11 @@ function trim_incoming_conditions($coll){
      if(false == is_array($coll)){ return $res; }
      $res = [];
      foreach($coll as $item){
-          $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
-            $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
+        $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
+         $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
               $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
               $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['val']);
-             $res[]= ['section'=>$section, 'panel'=>$panel, 'key'=>$key, 'val'=>$val];
+             $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'key'=>$key, 'val'=>$val];
      }
      return $res;
 }
@@ -130,9 +130,9 @@ function trim_incoming_history($coll){
      if(false == is_array($coll)){ return $res; }
      $res = [];
      foreach($coll as $item){
-          $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
-            $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
-             $res[]= ['section'=>$section, 'panel'=>$panel];
+          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
+           $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
+             $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef];
      }
      return $res;
 }
@@ -142,24 +142,12 @@ function trim_incoming_hidden_fields($coll){
      if(false == is_array($coll)){ return $res; }
      $res = [];
      foreach($coll as $item){
-          $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
-            $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
-            $title = preg_replace('/[^A-Za-z0-9-]/', '', $item['title']);
-              $ref = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['ref']);
-             $res[]= ['section'=>$section, 'panel'=>$panel, 'title'=>$title, 'ref'=>$ref];
+          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
+           $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
+           $fieldRef = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['fieldRef']);
+         $fieldTitle = preg_replace('/[^A-Za-z0-9-]/', '', $item['fieldTitle']);
+               $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'fieldRef'=>$fieldRef, 'title'=>$fieldTitle];
      }
-     return $res;
-}
-
-function validate_incoming_toc($toc, $ref_toc){
-     $res = false;
-     $i = 1;
-     foreach($toc as $ref){
-          if(in_array($ref, $ref_toc)){
-               $i++;
-          }
-     }
-     if($i >= count($toc)){ $res = true; }
      return $res;
 }
 

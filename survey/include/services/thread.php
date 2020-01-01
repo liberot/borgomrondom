@@ -133,7 +133,7 @@ function exec_get_next_section(){
      $thread_id = get_session_ticket('thread_id');
      $section_id = get_session_ticket('section_id');
 
-     $current_section = get_section_by_id($section_id)[0];
+     $current_section = get_section_by_id($thread_id, $section_id)[0];
      if(is_null($current_section)){
           $message = esc_html(__('no such section', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$section_id));
@@ -189,7 +189,7 @@ function exec_get_next_section(){
      $panels = init_panels_from_survey($section_id, $survey_id);
 
 // result
-     $coll['section'] = get_section_by_id($section_id)[0];
+     $coll['section'] = get_section_by_id($thread_id, $section_id)[0];
      $coll['redirect'] = $redirect;
 
      set_session_ticket('section_id', $section_id, true);

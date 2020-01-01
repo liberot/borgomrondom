@@ -162,7 +162,7 @@ function exec_get_panel_by_ref(){
      $coll['panel'] = get_panel_by_ref($section_id, $panel_ref);
 
 // result
-     $coll['section_ref'] = $section_ref;
+     $coll['section_id'] = $section_id;
      $coll['panel_ref'] = $panel_ref;
 
 // session tickets

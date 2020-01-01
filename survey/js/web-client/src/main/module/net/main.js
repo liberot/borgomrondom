@@ -30,9 +30,9 @@ class SurveyNet extends Controller {
           let ref = this;
           let data = {
                'action': 'exec_get_panel_by_ref',
-               'thread_id': msg.model.thread.ID,
-               'section_id': msg.model.requestedSectionId,
-               'panel_ref': msg.model.requestedPanelRef
+               'thread_id': msg.model.threadId,
+               'section_id': msg.model.sectionId,
+               'panel_ref': msg.model.panelRef
           }
           let cb = function(e){
                ref.notify(new Message('panel::loaded', { e }));
