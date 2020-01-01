@@ -301,7 +301,7 @@ EOD;
 
      foreach($thread->post_content['book'] as $item){
 
-          $panel = get_panel_by_ref($item['section'], $item['panel'], $client_id)[0];
+          $panel = get_panel_by_ref($item['sectionId'], $item['panelRef'], $client_id)[0];
 
           if(is_null($panel)){ continue; }
           $panel->post_content = pagpick($panel->post_content);
