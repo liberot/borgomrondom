@@ -77,7 +77,10 @@ console.log('bindSection(): this.model.section: ', this.model.section);
      evalHiddenFields(){
 
           this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
+console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
+
           if(null == this.model.redirect){ return false; }
+
 // mock
 // this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}&partner={{field:c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d}}}}';
 // this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}';
@@ -91,6 +94,7 @@ console.log('bindSection(): this.model.section: ', this.model.section);
           let hash = this.model.redirect.match(/\#(.{1,256})/);
           if(null == hash){ return false; }
           if(null == hash[1]){ return false; }
+
           hash = hash[1];
           hash = hash.split('&');
 
@@ -106,9 +110,9 @@ console.log('bindSection(): this.model.section: ', this.model.section);
 
                    if(null == fieldRef){ return false; }
                    if(false == jQuery.isArray(fieldRef)){ return false; }
-
                    if(null == fieldRef[1]){ return false; }
-                   panelRef = fieldRef[1];
+
+                   fieldRef = fieldRef[1];
 
                this.pushHiddenField(sectionId, panelRef, fieldRef, fieldTitle);
           }
@@ -119,6 +123,7 @@ console.log('bindSection(): this.model.section: ', this.model.section);
           if(-1 == this.model.sections.indexOf(this.model.section)){
                this.model.sections.push(this.model.section);
           }
+
 console.log('recSection(): ', this.model.sections);
      }
 
@@ -406,14 +411,19 @@ console.log('setCondition(): ', target);
           return res;
      }
 
-     getAnswer(key){
+     getStoredAnswer(key){
+
+console.log('getStoredAnswer(): key: ', key);
           let res = null;
           let target = this.model.thread.post_content.conditions;
+
+console.log('getStoredAnswer(): target: ', target);
           for(let idx in target){
                if(key == target[idx].key){
                    res = target[idx].val;
                }
           }
+
           return res;
      }
 
@@ -436,7 +446,7 @@ console.log('corrQuestion(): mtch: ', mtch);
                switch(type){
 
                    case 'field':
-                        val = this.getAnswer(key);
+                        val = this.getStoredAnswer(key);
                         break;
 
                    case 'hidden':
@@ -503,9 +513,6 @@ console.log('pushBook(): ', target.book);
           if(null == (temp = this.getHiddenField(sectionId, panelRef, fieldRef, fieldTitle))){
                target.push(rec);
           }
-          else {
-               target[temp.idx] = temp.val;
-          }
 
 console.log('pushHiddenField(): ', target);
      }
@@ -515,10 +522,15 @@ console.log('pushHiddenField(): ', target);
           let target = this.model.thread.post_content.hidden_fields;
 
           for(let idx in target){
-               if(sectionId == target[idx].section){
+
+               if(sectionId == target[idx].sectionId){
+
                     if(panelRef == target[idx].panelRef){
+
                          if(fieldRef == target[idx].fieldRef){
+
                               if(fieldTitle == target[idx].fieldTitle){
+
                                    return { idx: idx, val: target[idx] };
                               }
                          }
@@ -529,23 +541,29 @@ console.log('pushHiddenField(): ', target);
           return null;
      }
 
-     getHiddenFieldValue(fieldRef){
+     getHiddenFieldValue(fieldTitle){
+
+console.log('getHiddenFieldValue(): fieldTitle: ', fieldTitle);
 
           let target = this.model.thread.post_content.hidden_fields;
+console.log('getHiddenFieldValue(): target: ', target);
+
           let res;
           let field;
 
           for(let idx in target){
-               if(fieldRef == target[idx].fieldTitle){
-                    if(target[idx].fieldTitle != target[idx].fieldRef){
-                         field = target[idx];
-                    }
+               // there is forwarded ref names within the hidden fields 
+               //     like {{child::child}}
+               // and then {{chid::ae123}}
+               if(target[idx].fieldTitle == target[idx].fieldRef){
+                    continue;
+               }
+               if(fieldTitle == target[idx].fieldTitle){
+                    res = this.getStoredAnswer(target[idx].fieldRef);
                }
           }
 
-          if(null != field){
-               res = this.getAnswer(field.fieldRef);
-          }
+console.log('getHiddenFieldValue(): res: ', res);
 
           return res;
      }

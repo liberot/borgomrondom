@@ -106,7 +106,7 @@ function trim_incoming_book($toc){
           $temp = [];
           $temp['sectionId'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
            $temp['panelRef'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-          $res[]= $temp;
+                       $res[]= $temp;
      }
      return $res;
 }
@@ -132,7 +132,7 @@ function trim_incoming_history($coll){
      foreach($coll as $item){
           $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
            $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-             $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef];
+               $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef];
      }
      return $res;
 }
@@ -146,7 +146,7 @@ function trim_incoming_hidden_fields($coll){
            $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
            $fieldRef = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['fieldRef']);
          $fieldTitle = preg_replace('/[^A-Za-z0-9-]/', '', $item['fieldTitle']);
-               $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'fieldRef'=>$fieldRef, 'title'=>$fieldTitle];
+               $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'fieldRef'=>$fieldRef, 'fieldTitle'=>$fieldTitle];
      }
      return $res;
 }
