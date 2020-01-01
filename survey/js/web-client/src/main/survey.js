@@ -36,9 +36,6 @@ class Survey extends Controller {
           this.register(new Subscription(   'nextsection::loaded', this.bindSection));
           this.register(new Subscription(  'bottompanel::reached', this.bindBottomPanel));
           this.register(new Subscription(     'toppanel::reached', this.bindTopPanel));
-          // ------
-          // 127.0.0.1:8083/welcome.php?page_id=112932/#/child=joséf&mother=marikkah
-          this.extractHiddenFields();
 
           // ------
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
@@ -71,7 +68,8 @@ console.log('bindSection(): this.model.section: ', this.model.section);
           this.evalHiddenFields();
           this.recSection();
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.section.post_content.toc.refs[0];
 
           this.loadPanel(section, panel);
@@ -87,8 +85,8 @@ console.log('bindSection(): this.model.section: ', this.model.section);
 // this.model.redirect = '#';
 // 
           let temp = null;
-          let section = this.model.section.post_excerpt;
-          let panel = this.model.section.post_content.toc.refs[0];
+          let sectionId = this.model.section.ID;
+          let panelRef = this.model.section.post_content.toc.refs[0];
           let hash = this.model.redirect.match(/\#(.{1,256})/);
           if(null == hash){ return false; }
           if(null == hash[1]){ return false; }
@@ -107,7 +105,7 @@ console.log('bindSection(): this.model.section: ', this.model.section);
                    if(null == ref[1]){ return false; }
                    ref = ref[1];
 
-               this.pushHiddenField(section, panel, title, ref);
+               this.pushHiddenField(sectionId, panelRef, title, ref);
           }
      }
 
@@ -119,43 +117,6 @@ console.log('bindSection(): this.model.section: ', this.model.section);
 console.log('recSection(): ', this.model.sections);
      }
 
-     extractHiddenFields(){
-          this.model.hiddenFields = [];
-/*
-          let lnk = window.location.hash.substr(1);
-          let tmp = lnk.split('/');
-          if(tmp.length <= 1){ return false; }
-          for(let idx in tmp){
-               let t = tmp[idx].split(':');
-               if(2 < t.length){ continue; }
-               if(null == t[0] || '' == t[0]){ continue; }
-               this.model.hiddenFields.push({ key: t[0], val: t[1] });
-          }
-*/
-          // let link = window.location.search.substr(1);
-/*
-          let link = window.location.hash.substr(1);
-          let prms = link.split('&');
-          for(let idx in prms){
-               let temp = prms[idx].split('=');
-               if(null == temp || 2 < temp.length){ continue; }
-               this.model.hiddenFields.push({ key: unescape(temp[0]), val: unescape(temp[1]) });
-          }
-*/
-     }
-
-/*
-     getHiddenFieldVal(key){
-          let res = null;
-          if(null == this.model.hiddenFields){ return res; }
-          for(let idx in this.model.hiddenFields){
-               if(key == this.model.hiddenFields[idx].key){
-                   res = this.model.hiddenFields[idx].val;
-               }
-          }
-          return res;
-     }
-*/
      showValidationError(msg){
          alert(__survey.__('invalid', 'bookbuilder'));
      }
@@ -165,10 +126,10 @@ console.log('recSection(): ', this.model.sections);
      }
  
      saveThread(msg){
-// fixdiss
 console.log('saveThread(): ', msg);
-          this.notify(new Message('save::thread', this.model));
           this.notify(new Message('save::panel', this.model));
+// fixdiss
+          this.notify(new Message('save::thread', this.model));
      }
 
      bindHashChange(e){
@@ -180,21 +141,6 @@ console.log('saveThread(): ', msg);
      }
 
      setLink(){
-/*
-          if(null == this.model.hiddenFields){ return false; }
-
-          let ref = this;
-          let lnk = window.location.href.substr(1);
-          let chunk = '';
-
-          if(lnk.match(/\/+$/)){ chunk = chunk.replace(/^\//, '');}
-          let temp = '';
-          for(let idx in this.model.hiddenFields){
-              temp+= '/'+this.model.hiddenFields[idx].key +':' +this.model.hiddenFields[idx].val;
-          }
-
-          window.location.hash = chunk +temp;
-*/
      }
 
      bindThread(msg){
@@ -207,6 +153,11 @@ console.log('saveThread(): ', msg);
 
           this.model.thread = msg.model.e.coll.thread;
           this.model.thread.post_content = SurveyUtil.pagpick(this.model.thread.post_content);
+
+// hidden fields
+          if(null == this.model.thread.post_content.hidden_fields){
+               this.model.thread.post_content.hidden_fields = [];
+          }
 
 // sections
           if(null == msg.model.e.coll.sections[0]){
@@ -242,7 +193,8 @@ console.log('saveThread(): ', msg);
 
 // loads from the start 
           if(null == panel){
-               section = this.model.section.post_excerpt;
+               // section = this.model.section.post_excerpt;
+               section = this.model.section.ID;
                panel = this.model.section.post_content.toc.refs[0];
           }
 
@@ -273,7 +225,8 @@ console.log('bindThread(): ', this.model.thread);
 
      bindUploadInput(msg){
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
@@ -296,7 +249,8 @@ console.log('bindThread(): ', this.model.thread);
 
      bindSelectStatement(msg){
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
@@ -312,7 +266,8 @@ console.log('bindOpinion: ', msg);
 
      bindTextInput(msg){
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
@@ -337,7 +292,8 @@ console.log('bindOpinion: ', msg);
 
      bindMultipleChoiceInput(msg){
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
@@ -357,7 +313,8 @@ console.log('bindOpinion: ', msg);
 
      bindYesNoInput(msg){
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
 
           let ref = msg.model.arguments[1];
@@ -492,7 +449,8 @@ console.log('corrQuestion(): mtch: ', mtch);
 
           if(null == this.model.panel){ return false; }
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
 
           let target = this.model.thread.post_content;
@@ -513,24 +471,20 @@ console.log('corrQuestion(): mtch: ', mtch);
 console.log('pushBook(): ', target.book);
      }
 
-     pushHiddenField(section, panel, title, ref){
-
-          if(null == this.model.thread.post_content.hidden_fields){
-               this.model.thread.post_content.hidden_fields = [];
-          }
+     pushHiddenField(sectionId, panelRf, title, ref){
 
           let target = this.model.thread.post_content.hidden_fields;
 
           let rec = {
-               section : section, 
-               panel: panel,
+               section : sectionId,
+               panel: panelRef,
                title: title,
                ref: ref
           }
 
           let temp;
 
-          if(null == (temp = this.getHiddenField(section, panel, title, ref))){
+          if(null == (temp = this.getHiddenField(sectionId, panelRef, title, ref))){
                target.push(rec);
           }
           else {
@@ -540,13 +494,13 @@ console.log('pushBook(): ', target.book);
 console.log('pushHiddenField(): ', target);
      }
 
-     getHiddenField(section, panel, title, ref){
+     getHiddenField(sectionId, panelRef, title, ref){
 
           let target = this.model.thread.post_content.hidden_fields;
 
           for(let idx in target){
-               if(section == target[idx].section){
-                    if(panel == target[idx].panel){
+               if(sectionId == target[idx].section){
+                    if(panelRef == target[idx].panel){
                          if(title == target[idx].title){
                               if(ref == target[idx].ref){
                                    return { idx: idx, val: target[idx] };
@@ -588,7 +542,8 @@ console.log('pushHiddenField(): ', target);
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let panel = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
 
@@ -597,28 +552,30 @@ console.log('pushHiddenField(): ', target);
 console.log('pushHistory(): ', target.history);
      }
 
-     loadPanel(section, panel){
-console.log('loadPanel(): ', section, panel);
+     loadPanel(sectionId, panelRef){
 
-          if(null == section){ return false; }
-          if(null == panel){ return false; }
+console.log('loadPanel(): ', sectionId, panelRef);
 
-          if(null != this.model.sections[section]){ 
-               this.model.section = this.model.sections[section];
-               if(null != this.model.panels[panel]){
-                    this.model.panel = this.model.panels[panel];
+          if(null == sectionId){ return false; }
+          if(null == panelRef){ return false; }
+
+          if(null != this.model.sections[sectionId]){ 
+               this.model.section = this.model.sections[sectionId];
+               if(null != this.model.panels[panelRef]){
+                    this.model.panel = this.model.panels[panelRef];
                     this.initPanel();
                     return;
                }
           }
 
-          this.model.requestedPanel = panel;
-          this.model.requestedSection = section;
+          this.model.requestedSectionId = sectionId;
+          this.model.requestedPanelRef = panelRef;
 
           this.notify(new Message('load::panel', this.model));
      }
 
      bindPanel(msg){
+console.log('bindPanel(): ', msg);
 
           if(null == msg.model.e.coll['panel'][0]){ 
                console.log('bindPanel(): no panel');
@@ -628,18 +585,17 @@ console.log('loadPanel(): ', section, panel);
           this.model.panel = msg.model.e.coll['panel'][0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
 
-console.log('bindPanel(): ', msg);
           this.selectSection(msg.model.e.coll['section_ref']);
 
           this.initPanel();
      }
 
-     selectSection(ref){
+     selectSection(sectionId){
 
           let section;
-
           for(let idx in this.model.sections){
-               if(ref == this.model.sections[idx].post_excerpt){
+               // if(ref == this.model.sections[idx].post_excerpt){
+               if(sectionId == this.model.sections[idx].ID){
                     section = this.model.sections[idx];
                }
           }
@@ -675,7 +631,8 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           let buf3rd = '';
 
           let parent = this.model.panel.post_content.conf.parent;
-          let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
+          // let section = this.model.section.post_excerpt;
           // let section = this.model.section.post_content.title;
 
           let question = this.model.panel.post_content.title;
@@ -997,7 +954,8 @@ console.log('evalGroup(): condition: "always" found');
                     case 'choice':
                     case 'constant':
 
-                         let section = this.model.section.post_excerpt;
+                         // let section = this.model.section.post_excerpt;
+                         let section = this.model.section.ID;
                          let condition = this.model.panel.post_content.condition_ref;
 
                          let panel = this.model.panel.post_content.ref;
@@ -1031,7 +989,8 @@ console.log('evalGroup(): condition: "always" found');
           let settings = this.model.section.post_content.survey.settings;
 
           let toc = this.model.section.post_content.toc;
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
 
 // loads panel from logic
           let panel = this.evalLogicAction(toc);
@@ -1105,7 +1064,8 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let target = this.model.section.post_content.toc;
 
 console.log('loadNextPanel(): ', target);
@@ -1129,7 +1089,8 @@ console.log('loadNextPanel(): next link from default: ', section, panel);
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let target = this.model.section.post_content.toc;
 
           let pos = target.refs.indexOf(this.model.panel.post_content.ref);
@@ -1146,7 +1107,8 @@ console.log('loadPrevPanel(): prev link from default: ', section, panel);
 
      selectPanel(pos){
 
-          let section = this.model.section.post_excerpt;
+          // let section = this.model.section.post_excerpt;
+          let section = this.model.section.ID;
           let target = this.model.section.post_content.toc;
 
           if(pos <= 0){ pos = 0; }
@@ -1390,8 +1352,8 @@ class SurveyModel extends Model {
           this.maxImageAssets;
 // deeplink -----------------------------
           this.requestedThread;
-          this.requestedSection;
-          this.requestedPanel;
+          this.requestedSectionId;
+          this.requestedPanelRef;
 // hidden fields ------------------------
           this.hiddenFields;
           this.redirect;

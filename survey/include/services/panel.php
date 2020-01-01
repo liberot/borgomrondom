@@ -136,8 +136,8 @@ function exec_get_panel_by_ref(){
 
      $thread_id = get_session_ticket('thread_id');
 
-     $section_ref = trim_incoming_filename($_POST['section_ref']);
-     if(is_null($section_ref)){
+     $section_id = trim_incoming_filename($_POST['section_id']);
+     if(is_null($section_id)){
           $message = esc_html(__('section corrupt', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -145,19 +145,18 @@ function exec_get_panel_by_ref(){
 
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
      if(is_null($panel_ref)){
-          $message = esc_html(__('ref corrupt', 'bookbuilder'));
+          $message = esc_html(__('panel corrupt', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
 // todo:: init section if not there
-     $section = get_section_by_ref($thread_id, $section_ref)[0];
+     $section = get_section_by_id($thread_id, $section_id)[0];
      if(is_null($section)){
           $message = esc_html(__('no such section', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     $section_id = $section->ID;
 
 // loads the panel
      $coll['panel'] = get_panel_by_ref($section_id, $panel_ref);

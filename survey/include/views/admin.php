@@ -113,8 +113,9 @@ EOD;
 add_shortcode('typeform_utils_view', 'build_typeform_utils_view');
 function build_typeform_utils_view(){
 
-     wp_register_script('service_i18n',    WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
-     wp_register_script('service',         WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_register_script(  'service_i18n', WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
+     wp_register_script(       'service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
 
@@ -253,9 +254,9 @@ function build_thread_entries_view(){
      if(is_null($thread)){ return false; }
      $thread->post_content = pagpick($thread->post_content);
 
-     $toc = get_toc_by_thread_id($thread_id, $client_id)[0];
-     if(is_null($toc)){ return false; }
-     $toc->post_content = pagpick($toc->post_content);
+     // $toc = get_toc_by_thread_id($thread_id, $client_id)[0];
+     // if(is_null($toc)){ return false; }
+     // $toc->post_content = pagpick($toc->post_content);
 
      $sections = get_sections_by_thread_id($thread_id, $client_id);
      if(is_null($sections)){ return false; }
@@ -298,13 +299,10 @@ EOD;
 
      $section_id = $sections[0]->ID;
 
-     if(is_null($toc->post_content['booktoc'])){
-          $toc->post_content['booktoc'] = [];
-     }
+     foreach($thread->post_content['book'] as $item){
 
-     foreach($toc->post_content['booktoc'] as $panel_ref){
+          $panel = get_panel_by_ref($item['section'], $item['panel'], $client_id)[0];
 
-          $panel = get_panel_by_ref($section_id, $panel_ref, $client_id)[0];
           if(is_null($panel)){ continue; }
           $panel->post_content = pagpick($panel->post_content);
 

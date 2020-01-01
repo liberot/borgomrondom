@@ -114,13 +114,15 @@ EOD;
      return $res;
 }
 
-function get_section_by_id($section_id){
+function get_section_by_id($thread_id, $section_id){
+     $thread_id = esc_sql($thread_id);
      $section_id = esc_sql($section_id);
      $author_id = esc_sql(get_author_id());
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}' 
+               and post_parent = '{$thread_id}' 
                and  ID = '{$section_id}'
                limit 1
 EOD;
