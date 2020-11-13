@@ -32,7 +32,6 @@ require_once('include/views/web.php');
 require_once('include/utils/utils.php');
 
 function on_plugin_activation(){
-     init_db_client();
      init_ref_table();
      init_survey_page();
      init_test_page();

@@ -65,7 +65,7 @@ class Correct extends Controller {
           target.conf.ypos = parseFloat(slotY) +yoffset;
           this.notify(new Message('asset::corrected'));
  
-          console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
+          // console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
      }
 
      corrBlockWidth(target){

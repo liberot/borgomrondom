@@ -292,7 +292,7 @@ function init_layout_doc($svg_path){
                               $node['width'] = $xmax -$xmin;
                               $node['height'] = $ymax -$ymin;
                               $node['layout_code'] = 'P';
-                              if(floatval($xmax) >= floatval($ymax)){ 
+                              if(floatval($node['width']) >= floatval($node['height'])){ 
                                    $node['layout_code'] = 'L';
                               }
                               if('px' == $doc['unit']){
@@ -309,6 +309,7 @@ function init_layout_doc($svg_path){
                               }
                               $node['xpos']+= $xoffset;
                               $node['ypos']+= $yoffset;
+                              $node['depth']+= 750;
                          }
                     }
                     $node['attributes']['color'] = $color;
@@ -327,10 +328,9 @@ M566.93-14.17v737
 M230.92,464.68A174.94,174.94,0,1,0,56,289.74,174.94,174.94,0,0,0,230.92,464.68Z
 M566.93-14.17v737
 M876.29,652a66.77,66.77,0,1,0-66.76-66.77A66.77,66.77,0,0,0,876.29,652Z
+print_r($d);
+print "\n";
 */
-
-// print_r($d);
-// print "\n";
                          preg_match('/M(.{1,64}?)[v]/', $d, $vmc);
                          preg_match('/M(.{1,64}?)(a|A)/', $d, $cmc);
                          preg_match('/(a|A)(.{1,10}?),/', $d, $rmc);
@@ -406,12 +406,8 @@ function insert_image_assets($poly_nodes){
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
      foreach($poly_nodes as $node){
-          $layout_code = 'P';
-          $chunki = $portrait;
           if(false != $node['slot']){
-               if('L' == $node['layout_code']){
-                   $chunki = $landscape;
-               }
+               $chunki = 'L' == $node['layout_code'] ? $landscape : $portrait;
                $image_asset = [];
                $image_asset['type'] = 'image'; 
                $image_asset['indx'] = sprintf('image_%s', $idx);
@@ -526,9 +522,8 @@ function extract_poly_assets($poly_nodes){
           $poly_asset['conf']['unit'] = 'px';
           $poly_asset['conf']['color'] = [];
           $poly_asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($node['attributes']['color']));
-          $poly_asset['conf']['depth'] = '500';
+          $poly_asset['conf']['depth'] = '100';
           if(false != $node['slot']){
-               $poly_asset['slot'];
                $poly_asset['slot']['xpos'] = $node['xpos'];
                $poly_asset['slot']['ypos'] = $node['ypos'];
                $poly_asset['slot']['width'] = $node['width'];

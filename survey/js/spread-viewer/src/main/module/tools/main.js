@@ -760,6 +760,7 @@ console.log(this.model.spread);
           this.selectLibraryItem(null);
           jQuery('.select_ppi select').val(this.model.doc.ppi);
           this.notify(new Message('document::inited', this.model.doc));
+console.log(this.model.doc);
      }
 
      // toolbar is not inited by the document
