@@ -218,15 +218,21 @@ class Screen extends Controller {
      renderSelection(){
           for(var idx in this.model.doc.assets){
                let target = this.model.doc.assets[idx];
+
                if(!target.selected){ continue; }
+
                let margin = 13;
-               let sx = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
-               let sy = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.ypos, target.conf.unit);
+
+               let sx = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.xpos), target.conf.unit);
+
+               let sy = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.ypos), target.conf.unit);
                    sy-= margin;
-               let rw = parseFloat(target.conf.width);
-                   rw = LayoutUtil.unitToPx(this.model.doc.ppi, rw);
+
+               let rw = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.width), target.conf.unit);
+
                let l = '' +'0' +',' +'0' +' ';
                    l+= '' +rw  +',' +'0' +' ';
+
                let polyline = this.model.currentScreen.polyline(l);
                    polyline.fill('none').move(sx, sy)
                    polyline.stroke({ color: '#ff4d4d', width: 5 })
