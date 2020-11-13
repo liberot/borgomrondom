@@ -1,0 +1,14 @@
+.survey-list-entry {
+     margin-right: 0.5em;
+}
+.survey-title {
+     font-size: 2em;
+}
+.question-out {
+     font-size: 2em;
+}
+.answer-in {
+     font-size: 2em;
+     font-weight: bold;
+     font-family: American Typewriter;
+}

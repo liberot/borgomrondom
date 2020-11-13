@@ -1,0 +1,356 @@
+<?php defined('ABSPATH') || exit;
+
+function random_string($length=21){
+     return substr(
+          str_shuffle(
+               str_repeat(
+                    $x='abcdefghijklmnopqrstuvwxyz0123456789',
+                    ceil($length/strlen($x))
+               )
+          ), 1, $length
+     );
+}
+
+function policy_match($policies){
+     $res = false;
+     foreach($policies as $policy){
+          if(current_user_can($policy)){
+               $res = true;
+               return $res;
+          }
+     }
+     return $res;
+}
+
+function fetch($url, $token){
+     $auth = "Authorization: Bearer ".$token;
+     $post = json_encode(new stdClass());
+     $ch = curl_init();
+     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $auth));
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     curl_setopt($ch, CURLOPT_URL, $url);
+     // curl_setopt($ch, POSTFIELDS, $post);
+     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+     $res = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+     $res = curl_exec($ch);
+     curl_close($ch);
+     return $res; 
+}
+
+// add_action('wp_logout','ps_redirect_after_logout');
+function ps_redirect_after_logout(){
+     $referrer = $_SERVER['HTTP_REFERER'];
+         wp_redirect($referrer);
+         exit();
+}
+
+// add_action('wp_login_failed', 'my_front_end_login_fail');
+function my_front_end_login_fail($username) {
+     $referrer = $_SERVER['HTTP_REFERER'];
+     if(!empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
+          // wp_redirect( $referrer . '?login=failed' );
+          wp_redirect($referrer);
+          exit();
+     }
+}
+
+// add_filter('authenticate', 'blank_username_password', 1, 3);
+function blank_username_password($user, $username, $password) {
+     $referrer = $_SERVER['HTTP_REFERER'];
+     $login_page = 'LOGIN_PAGE_URL';
+     if($username == '' || $password == '' ) {
+          wp_redirect($referrer);
+          exit();
+     }
+}
+
+function trim_incoming_numeric($val){
+     $val = substr($val, 0, 15);
+     $val = preg_replace('/[^0-9]/', '', $val);
+     return $val;
+}
+
+// wp_check_invalid_utf8();
+// wp_strip_all_tags();
+function trim_incoming_filename($val){
+     $val = substr($val, 0, 128);
+     $val = sanitize_textarea_field($val);
+     $val = preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $val);
+     return $val;
+}
+
+function trim_incoming_string($val){
+     $val = substr($val, 0, 1024 *8);
+     $val = sanitize_textarea_field($val);
+     return $val;
+}
+
+function walk_the_doc($doc){
+     $res = null;
+     if(is_object($doc)){ $doc = get_object_vars($doc); }
+     if(false == is_array($doc)){ return false; }
+     $res = trim_doc_node($doc);
+     return $res;
+}
+
+function trim_doc_node($node){
+     if(is_array($node)){
+          foreach($node as $key=>$value){
+               if(is_array($value)){
+                    $node[$key] = trim_doc_node($value);
+                    continue;
+               }
+               if(is_object($value)){
+                    $value = get_object_vars($value);
+                    $node[$key] = trim_doc_node($value);
+                    continue;
+               }
+               $node[$key] = trim_for_print($value);
+          }
+     }
+     return $node;
+}
+
+function trim_for_print($string){
+     $res = $string;
+     $res = preg_replace('/\\+\"/', '“', $res);
+     $res = preg_replace('/\\+\'/', '’', $res);
+     $res = preg_replace('/\"/', '“', $res);
+     $res = preg_replace('/\'/', '’', $res);
+     $res = preg_replace('/\\n+/', "\n\r", $res);
+     $res = stripslashes($res);
+     return $res;
+}
+
+function insert_survey_client(){
+     $role = add_role(
+          'customer', __('Customer', 'survey')
+     );
+     $client = wp_insert_user([
+          'user_email'=>'__deb__survey__email__',
+          'user_pass'=>'__deb__survey__password__',
+          'user_login'=>'__deb__survey__client__',
+          'user_nicename'=>'__deb__survey__client__',
+          'display_name'=>'__deb__survey__client__',
+          'nickname'=>'__deb__survey__nickname__',
+          'first_name'=>'__deb__survey__forename__',
+          'last_name'=>'__deb__survey__name__',
+          'description'=>'__deb__survey__description__',
+          'rich_editing'=>'false',
+          'use_ssl'=>'true',
+          'user_activation_key'=>'activation_key',
+          'role'=>'customer'
+     ]);
+     return $client;
+}
+
+function auth_survey_client(){
+     $client = wp_signon([
+               'user_login'=>'__deb__survey__client__',
+               'user_password'=>'__deb__survey__password__',
+               'remember'=>true
+          ],
+          true
+     );
+     return $client;
+}
+
+function pigpack($doc){
+     $temp = json_encode($doc);
+     if(null == $temp){ return false; }
+     $temp = base64_encode($temp);
+     if(null == $temp){ return false; }
+     return $temp;
+}
+
+function pagpick($pack){
+     if(null == $pack){ return false; }
+
+     $temp = base64_decode($pack, true);
+
+     if(null == $temp){ return false; }
+     $temp = json_decode($temp, true);
+     if(null == $temp){ return false; }
+     return $temp;
+}
+
+function psuuid(){
+     $res = sprintf('%s::%s', random_string(24), mktime()); 
+     return $res;
+}
+
+function select_meta($coll){ 
+     if(!is_null($coll)){
+          foreach($coll as $item){
+               $item->meta_input = get_post_meta($item->ID);
+          }
+     }
+     return $coll;
+}
+
+function get_author_id(){
+     return get_current_user_id();
+}
+
+function remove_base_from_chunk($chunk){
+     // $res = str_replace('data:image/png;base64,', '', $chunk);
+     $res = preg_replace('/data:image\/png;base64,/', '', $chunk);
+     return $res;
+}
+
+function add_base_to_chunk($chunk){
+     $res = remove_base_from_chunk($chunk);
+     $res = sprintf('data:image/png;base64,%s', $res);
+     return $res;
+}
+
+function set_session_var($key, $value){
+     session_start();
+     $_SESSION[$key] = $value;
+}
+
+function get_session_var($key){
+     session_start();
+     return $_SESSION[$key];
+}
+
+function debug_sql($sql){
+     $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
+     $sql.= "\n"; 
+     file_put_contents('/tmp/sql', $sql, FILE_APPEND);
+     return $sql;
+}
+
+function px_to_unit($ppi, $pxs, $unit){
+     if(is_null($ppi)){ $ppi = 300; }
+     if(is_null($pxs)){ $pxs = 0; }
+     if(is_null($unit)){ $unit = 'mm'; }
+     $pxs = floatval($pxs);
+     $ppi = floatval($ppi);
+     $res = 0;
+     switch($unit){
+          case 'px':
+               $res = $pxs;
+               break;
+          case 'inch':
+               $res = $pxs /( (2540 /100 /300) *$ppi);
+               break;
+          case 'mm':
+               $res = $pxs /( (2540 /210 /300) *$ppi);
+               break;
+     }
+     return $res;
+}
+
+
+function unit_to_px($ppi, $val, $unit){
+     if(is_null($ppi)){ $ppi = 300; }
+     if(is_null($val)){ $val = 0; }
+     if(is_null($unit)){ $unit = 'mm'; }
+     $val = floatval($val);
+     $px = 0;
+     switch(unit){
+          case 'px':
+              $px = $val;
+              break;
+          case 'inch':
+              $px = ( (2540 /100 /300) *$ppi) *val;
+              break;
+          case 'mm':
+              $px = ( (2480 /210 /300) *$ppi) *val;
+              break;
+     }
+     return $px;
+}
+
+// https://www.rapidtables.com/convert/color/rgb-to-cmyk.html
+function rgb2cmyk($rgb){
+     $res = ['c'=>0, 'm'=>0, 'y'=>0, 'k'=>1];
+     if(null == $rgb){ return $res; }
+     $res = [];
+     $rrr = intval($rgb['r']) /255;
+     $ggg = intval($rgb['g']) /255;
+     $bbb = intval($rgb['b']) /255;
+     $res['k'] = floatval(1 -max($rrr, $ggg, $bbb));
+     $res['c'] = floatval((1 -$rrr -$res['k']) /(1 -$res['k']));
+     $res['m'] = floatval((1 -$ggg -$res['k']) /(1 -$res['k']));
+     $res['y'] = floatval((1 -$bbb -$res['k']) /(1 -$res['k']));
+     return $res;
+}
+
+function hex2rgb($hex) {
+     $color = str_replace('#','',$hex);
+     $rgb = array(
+          'r'=>hexdec(substr($color,0,2)),
+          'g'=>hexdec(substr($color,2,2)),
+          'b'=>hexdec(substr($color,4,2)),
+     );
+     return $rgb;
+}
+
+function px_pump($px, $ppi_1st, $ppi_2nd){
+     $ppi_1st = floatval($ppi_1st);
+     $ppi_2nd = floatval($ppi_2nd);
+     $res = floatval($px);
+     $res /= $ppi_1st;
+     $res *= $ppi_2nd;
+     return $res;
+}
+
+function fit_image_asset_to_slot($asset){
+     // $asset['src'] = 'http://127.0.0.1:8083/wp-content/plugins/nosuch/survey/asset/test.300.png';
+     $temp = $asset['src'];
+     $temp = remove_base_from_chunk($temp);
+     $temp = preg_replace('/\s+/', '', $temp);
+     $vali = base64_decode($temp, true);
+     $xali = base64_encode($vali);
+     $size = null;
+     if($temp == $xali){
+          $temp = add_base_to_chunk($temp);
+          $size = getimagesize('data://'.$temp);
+     }
+     else {
+     }
+     if(null == $size){
+          return $asset;
+     }
+     $width = $size[0];
+     $height = $size[1];
+     $r = 1;
+     $w = $width;
+     $h = $height;
+     switch($asset['conf']['layoutCode']){
+          case 'L':
+               if($width >= $asset['conf']['slotW']){
+                    $r = $asset['conf']['slotW'] /$width;
+                    $w = $width *$r;
+                    $h = $height *$r;
+               }
+               if($h >= $asset['conf']['slotH']){
+                    $r = $asset['conf']['slotH'] /$height;
+                    $w = $width *$r;
+                    $h = $height *$r;
+               }
+               break;
+          case 'P':
+               if($height >= $asset['conf']['slotH']){
+                    $r = $asset['conf']['slotH'] /$height;
+                    $w = $width *$r;
+                    $h = $height *$r;
+               }
+               if($w >= $asset['conf']['slotW']){
+                    $r = $asset['conf']['slotW'] /$width;
+                    $w = $width *$r;
+                    $h = $height *$r;
+               }
+               break;
+     }
+     $asset['conf']['xoffset'] = ($asset['conf']['slotW'] -$w) /2;
+     $asset['conf']['yoffset'] = ($asset['conf']['slotH'] -$h) /2;
+     $asset['conf']['scale'] = $r;
+     $asset['conf']['width'] = $w;
+     $asset['conf']['height'] = $h; 
+     $asset['conf']['xpos'] += $asset['conf']['xoffset']; 
+     $asset['conf']['ypos'] += $asset['conf']['yoffset']; 
+     return $asset;
+}

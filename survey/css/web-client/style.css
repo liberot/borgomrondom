@@ -1,0 +1,87 @@
+/** theme ****************************************/
+/*************************************************/
+/*************************************************/
+#secondary,
+#masthead,
+#colophon,
+#comments,
+.entry-meta {
+     display: none;
+}
+
+.site-content {
+     float: left;
+     width: 100%;
+}
+
+.site {
+}
+/*************************************************/
+
+
+
+
+/** spred viewer *********************************/
+/*************************************************/
+/*************************************************/
+.layout-controls {
+}
+.layout-rows {
+     width: 100% !important;
+}
+/*************************************************/
+
+.survey {
+     font-size: 1.3em;
+}
+
+.question-output {
+     font-size: 2em;
+     line-height: 1.3 !important;
+     margin-bottom: 5px;
+}
+
+.choice-output img {
+     height: 5em;
+}
+
+.choice-output {
+     font-size: 1.5em;
+     line-height: 1.3 !important;
+     margin-bottom: 5px;
+}
+
+.yesno-input {
+     font-size: 1.5em;
+     line-height: 1.3 !important;
+     margin-bottom: 5px;
+}
+
+.answer-input input {
+     font-size: 2.95em;
+     width: 98%;
+}
+
+.survey-messages {
+
+     background-color: white;
+     margin-bottom: 12px;
+     margin-right: 36px;
+     font-size: 0.5em;
+}
+
+.survey-list {
+     font-size: 0.5em;
+     font-weight: bold;
+}
+
+.survey-thread {
+     font-size: 0.5em;
+     line-height: 2em;
+}
+
+a:hover {
+     background-color: red;
+}
+
+

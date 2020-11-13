@@ -1,0 +1,1571 @@
+class Tools extends Controller {
+
+     constructor(queue){
+          super(queue);
+          this.model = new ToolsModel();
+          let ref = this;
+          jQuery('.layout-messages').html(__msg__001__tmpl);
+          // control sequences
+          this.register(new Subscription('fontbtn::released',       this.bindFontSetting));
+          this.register(new Subscription('textinput::updated',      this.bindTextInput));
+          this.register(new Subscription('assetinput::updated',     this.bindAssetInput));
+          this.register(new Subscription('asset::selected',         this.setupEditor));
+          this.register(new Subscription('font::selected',          this.bindFontSelection));
+          this.register(new Subscription('ppibtn::released',        this.setPpi))
+          this.register(new Subscription('printsize::selected',     this.setPrintSize))
+          this.register(new Subscription('nextsectbtn::released',   this.nextSpread));
+          this.register(new Subscription('prevsectbtn::released',   this.prevSpread));
+          this.register(new Subscription('savebtn::released',       this.saveDocument));
+          this.register(new Subscription('pagesize::selected',      this.bindPageSize));
+          this.register(new Subscription('savelayoutbtn::released', this.saveLayout));
+          this.register(new Subscription('layoutgroup::selected',   this.bindLayoutGroup));
+          // event messages
+          this.register(new Subscription('mousedrag::released',     this.bindMouseDrag));
+          this.register(new Subscription('layout::loaded',          this.bindLayout));
+          this.register(new Subscription('document::loaded',        this.initDocument));
+          this.register(new Subscription('textinput::focused',      this.lockControlKeys));
+          this.register(new Subscription('textinput::done',         this.unlockControlKeys));
+          this.register(new Subscription('mocksection::loaded',     this.bindFrame));
+          this.register(new Subscription('image::loaded',           this.bindImageAsset));
+          this.register(new Subscription('book::loaded',            this.bindBook));
+          this.register(new Subscription('unitbtn::released',       this.bindUnit));
+          this.register(new Subscription('layoutgroup::loaded',     this.bindLoadedLayoutGroup));
+          this.register(new Subscription('layoutpresets::loaded',   this.bindLoadedLayoutPresets));
+          this.register(new Subscription('layouts::imported',       this.bindImportedLayouts));
+          //
+          this.setupAssetPossibs();
+          if(SpreadViewerConfig.mouseControls){ this.setupMouseControls(); }
+          this.loadLocalDocument();
+          this.setupToolbar();
+          this.notify(new Message('spread-iewer::inited', this.model));
+     }
+
+     bindImportedLayouts(msg){
+          console.log(msg);
+          jQuery('.layout-messages').html(msg.model.rules.join('; '));
+     }
+
+     setupAssetPossibs(){
+          let keys = ['P', 'L'];
+          let tab0 = [];
+          let tab1 = [];
+          let tab2 = [];
+          let tab3 = [];
+          let tab4 = [];
+          let node = function(name){ this.name = name; this.childs = []; }
+          let tree = new node('x');
+          for(let idx = 0; idx < keys.length; idx++){
+              tree.childs[idx] = new node(keys[idx]);
+              tab1.push([keys[idx]]);
+              for(let iidx = 0; iidx < keys.length; iidx++){
+                   tree.childs[idx].childs[iidx] = new node(keys[iidx]);
+                   tab2.push([keys[idx], keys[iidx]]);
+                   for(let iiidx = 0; iiidx < keys.length; iiidx++){
+                        tree.childs[idx].childs[iidx].childs[iiidx] = new node(keys[iiidx]);
+                        tab3.push([keys[idx], keys[iidx], keys[iiidx]]);
+                        for(let iiiidx = 0; iiiidx < keys.length; iiiidx++){
+                             tree.childs[idx].childs[iidx].childs[iiidx].childs[iiiidx] = new node(keys[iiiidx]);
+                             tab4.push([keys[idx], keys[iidx], keys[iiidx], keys[iiiidx]]);
+                        }
+                   }
+              }
+          }
+          this.model.layoutDescriptor = [ tab0, tab1, tab2, tab3, tab4 ];
+     }
+
+     getLayoutIndex(coll){
+          let ldx = coll.length;
+          if(ldx < 0 || ldx >= this.model.layoutDescriptor.length -1){
+              return null;
+          }
+          let tmp = this.model.layoutDescriptor[ldx];
+          let srk = coll.join('');
+          for(let idx in tmp){
+               if(tmp[idx].join('') == srk){
+                    return { idx: idx, ldx: ldx };
+               }
+          }
+          return null;
+     }
+
+     bindUnit(msg){
+          if(null == this.model.selectedLibraryItem){
+               return;
+          }
+          switch(msg.model.arguments[1]){
+               case 'inch':
+                    this.changeUnit(this.model.selectedLibraryItem, 'inch');
+                    break;
+               case 'mm':
+                    this.changeUnit(this.model.selectedLibraryItem, 'mm');
+                    break;
+               case 'px':
+                    this.changeUnit(this.model.selectedLibraryItem, 'px');
+                    break;
+          }
+          this.updateEditor();
+     }
+
+     loadSession(){
+          let coll = window.location.href.split('/');
+          if(coll.length >= 4){
+               this.notify(new Message('thread::requested', { threadId: coll[4] } ));
+          }
+     }
+
+     lockControlKeys(msg){
+          this.model.controlKeysLocked = true;
+     }
+
+     unlockControlKeys(msg){
+          this.model.controlKeysLocked = false;
+     }
+
+     bindModifier(key){
+          this.model.modifierKey = key;
+     }
+
+     releaseModifier(key ){
+          this.model.modifierKey = null;
+     }
+
+     selectAsset(key){
+          let idx = parseInt(parseInt(key) -1);
+          if(null != this.model.doc.assets[idx]){
+               let indx = this.model.doc.assets[idx].indx;
+               let model = {
+                    arguments: [ 'asset::selected', indx ]
+               }
+               this.notify(new Message('asset::selected', model ));
+          };
+     }
+
+     handleArrowKeydown(key){
+          switch(key){
+
+               case 'ArrowLeft':
+                    if(null == this.model.selectedLibraryItem){
+                         this.prevSpread();
+                         return;
+                    }
+                    this.transformSelectedItem(-1, +0, +0, +0);
+                    break;
+
+               case 'ArrowRight':
+                    if(null == this.model.selectedLibraryItem){
+                         this.nextSpread();
+                         return;
+                    }
+                    this.transformSelectedItem(+1, +0, +0, +0);
+                    break;
+
+               case 'ArrowDown':
+                    this.transformSelectedItem(+0, +1, +0, +0);
+                    break;
+
+               case 'ArrowUp':
+                    this.transformSelectedItem(+0, -1, +0, +0);
+                    break;
+
+          }
+          this.notify(new Message('arrowkey::pressed', this.model.doc));
+     }
+
+     transformSelectedItem(xpos, ypos, width, height){
+          if(null == this.model.selectedLibraryItem){
+               return;
+          }
+          let r = 1;
+          switch(this.model.selectedLibraryItem.unit){
+               case 'px':
+                    r *= 100;
+               case 'mm':
+               case 'unit':
+                    break;
+          }
+          switch(this.model.modifierKey){
+               case 'Shift':
+                    r *= 10;
+                    break;
+          }
+          this.model.selectedLibraryItem.conf.xpos = parseFloat(this.model.selectedLibraryItem.conf.xpos);
+          this.model.selectedLibraryItem.conf.ypos = parseFloat(this.model.selectedLibraryItem.conf.ypos);
+          this.model.selectedLibraryItem.conf.width = parseFloat(this.model.selectedLibraryItem.conf.width);
+          this.model.selectedLibraryItem.conf.height = parseFloat(this.model.selectedLibraryItem.conf.height);
+          this.model.selectedLibraryItem.conf.xpos += parseFloat(xpos) *r;
+          this.model.selectedLibraryItem.conf.ypos += parseFloat(ypos) *r;
+          this.model.selectedLibraryItem.conf.width += parseFloat(width) *r;
+          this.model.selectedLibraryItem.conf.height += parseFloat(height) *r;
+     }
+
+     setupMouseControls(){
+          let ref = this;
+          jQuery(document).off('mouseup');
+          jQuery(document).off('mousedown');
+          jQuery(document).off('mousemove');
+          jQuery(document).mouseup(function(){
+               if(null == ref.model.mouseDownRec){
+                    return;
+               }
+               if(SpreadViewerConfig.quantize){
+                    ref.model.selectedLibraryItem.conf.xpos-= ref.model.selectedLibraryItem.conf.xpos %5;
+                    ref.model.selectedLibraryItem.conf.ypos-= ref.model.selectedLibraryItem.conf.ypos %5;
+                    ref.model.selectedLibraryItem.conf.xpos = parseInt(ref.model.selectedLibraryItem.conf.xpos);
+                    ref.model.selectedLibraryItem.conf.ypos = parseInt(ref.model.selectedLibraryItem.conf.ypos);
+               }
+               ref.changeUnit(ref.model.selectedLibraryItem, ref.model.mouseDownRec.unit);
+               ref.model.mouseDownRec = null;
+               ref.notify(new Message('mousedrag::released', ref.model.doc));
+          });
+          jQuery('.screen').mousedown(function(e){
+               ref.model.selectedLibraryItem = ref.selectLibraryItemByMouse(arguments[0].clientX, arguments[0].clientY);
+               if(null == ref.model.selectedLibraryItem){
+                    return;
+               }
+               let unit = ref.model.selectedLibraryItem.conf.unit;
+               // ref.changeUnit(ref.model.selectedLibraryItem, 'mm');
+               ref.model.mouseDownRec = { 
+                    x: parseFloat(arguments[0].clientX), 
+                    y: parseFloat(arguments[0].clientY), 
+                    ctrlKey: arguments[0].ctrlKey,
+                    xpos: parseFloat(ref.model.selectedLibraryItem.conf.xpos),
+                    ypos: parseFloat(ref.model.selectedLibraryItem.conf.ypos),
+                    width: parseFloat(ref.model.selectedLibraryItem.conf.width),
+                    height: parseFloat(ref.model.selectedLibraryItem.conf.height),
+                    sw: jQuery('.screen').width(),
+                    sh: jQuery('.screen').height(),
+                    unit: unit
+               };
+          });
+          jQuery('.screen').mousemove(function(){
+               if(null == ref.model.doc || null == ref.model.mouseDownRec){
+                    return;
+               }
+               let xmove  = parseFloat(arguments[0].clientX) -parseFloat(ref.model.mouseDownRec.x);
+                   xmove /= parseFloat(parseFloat(ref.model.mouseDownRec.sw)
+                              /parseFloat(ref.model.doc.printSize.width))
+                              /parseInt(ref.model.doc.pageSize)
+
+               let ymove  = parseFloat(arguments[0].clientY) -parseFloat(ref.model.mouseDownRec.y);
+                   ymove /= parseFloat(parseFloat(ref.model.mouseDownRec.sh) /parseFloat(ref.model.doc.printSize.height));
+
+               let xpos = parseFloat(ref.model.mouseDownRec.xpos) +xmove; 
+               let ypos = parseFloat(ref.model.mouseDownRec.ypos) +ymove
+// todo
+               ref.model.selectedLibraryItem.conf.xpos = xpos;
+               ref.model.selectedLibraryItem.conf.ypos = ypos;
+
+               switch(ref.model.selectedLibraryItem.type){
+                    case 'image':
+                         ref.notify(new Message('image::moved', ref.model.selectedLibraryItem));
+                         break;
+                    case 'text':
+                         ref.notify(new Message('text::moved', ref.model.selectedLibraryItem));
+                         break;
+               }
+          });
+     }
+
+     selectLibraryItemByMouse(mx, my){
+          if(null != this.model.selectedLibraryItem){
+               return this.model.selectedLibraryItem;
+          }
+          let res = null;
+          let offset = jQuery('.screen').offset();
+          let posY = offset.top -jQuery(window).scrollTop();
+          let posX = offset.left -jQuery(window).scrollLeft(); 
+
+          for(let idx in this.model.doc.assets){
+              let target = this.model.doc.assets[idx];
+              let tmp, mxx, myy, lft, top;
+              lft = LayoutUtil.unitToPx(this.model.doc.ppi, posX, target.conf.unit);
+              top = LayoutUtil.unitToPx(this.model.doc.ppi, posY, target.conf.unit);
+              mxx = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(mx), target.conf.unit) -lft;
+              mxx/= parseInt(this.model.doc.pageSize);
+              myy = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(my), target.conf.unit) -top;
+
+              tmp = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.xpos), target.conf.unit);
+              if(mxx <= tmp){
+                   continue;
+              }
+              tmp = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.xpos) +parseFloat(target.conf.width), target.conf.unit);
+              if(mxx >= tmp){
+                   continue;
+              }
+              tmp = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.ypos));
+              if(myy <= tmp){
+                   continue;
+              }
+              tmp = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.ypos) +parseFloat(target.conf.width), target.conf.unit);
+              if(myy >= tmp){
+                   continue;
+              }
+              this.selectLibraryItem(target);
+              return target;
+          }
+     }
+
+     setupKeyControls(){
+          let ref = this;
+          jQuery(document).off('keydown');
+          jQuery(document).keydown(function(e){
+               if(true == ref.model.controlKeysLocked){
+                    return;
+               }
+               switch(e.key){
+                    case 'ArrowLeft':
+                    case 'ArrowRight':
+                    case 'ArrowUp':
+                    case 'ArrowDown':
+                         ref.handleArrowKeydown(e.key);
+                         break;
+               }
+               switch(e.key){
+                    case 'Shift':
+                    case 'Meta':
+                         ref.bindModifier(e.key);
+                         break;
+               }
+          });
+          jQuery(document).keyup(function(e){
+               if(true == ref.model.controlKeysLocked){
+                    return;
+               }
+               switch(e.key){
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                         ref.selectAsset(e.key);
+                         break;
+                    case 'Shift':
+                    case 'Meta':
+                         ref.releaseModifier();
+                         break;
+                    case 'Escape':
+                         ref.closeEditor();
+                         break;
+                    case 'Enter':
+                         // ref.saveDocument();
+                         break;
+               }
+          });
+     }
+
+     loadLocalDocument(){
+          this.model.doc = new MockModel().model;
+          this.initDocument();
+     }
+
+     bindPageSize(msg){
+          this.model.doc.pageSize = parseInt(msg.model.pageSize);
+          jQuery('.select_page select').val(this.model.doc.pageSize);
+          this.notify(new Message('pagesize::updated', this.model.doc.pageSize));
+     }
+
+     bindRenderedImageAsset(msg){
+          for(let idx in this.model.doc.assets){
+               if(msg.model.ref == this.model.doc.assets[idx].indx){
+                    this.model.doc.assets[idx].locator = this.model.doc.assets[idx].src;
+                    this.model.doc.assets[idx].src = msg.model.res;
+               }
+          }
+     }
+
+     bindImageAsset(msg){
+          this.model.doc.assets.push(msg.model);
+          this.selectedLibraryItemByIndx(msg.model.indx);
+          this.notify(new Message('asset::updated', this.model.doc));
+     }
+
+     bindBook(msg){
+          if(null == msg.model.book){
+              console.log('no book');
+              return false;
+          }
+          this.model.book = msg.model.book;
+          if(null == msg.model.chapter){
+              console.log('no chapter');
+              return false;
+          }
+          this.model.chapter = msg.model.chapter;
+          if(null == msg.model.toc){
+              console.log('no toc');
+              return false;
+          }
+          this.model.toc = msg.model.toc[0];
+          this.model.toc.post_content = LayoutUtil.pagpick(this.model.toc.post_content);
+          this.model.spreads = [];
+          this.model.spidx = 0;
+// todo 
+// the first chapter
+          for(let idx in this.model.chapter){
+               this.model.spreads = this.model.spreads.concat(this.model.chapter[idx].spreads);
+          }
+          for(let idx in this.model.spreads){
+               this.model.spreads[idx].post_content = LayoutUtil.pagpick(this.model.spreads[idx].post_content);
+          }
+// todo......
+          this.loadSpread();
+     }
+
+     nextSpread(){
+          if(null == this.model.spreads){ return; }
+          this.model.spidx +=1
+          if(this.model.spidx >= this.model.toc.post_content.spread_refs.length){
+               this.model.spidx = this.model.toc.post_content.spread_refs.length -1;
+          }
+          this.loadSpread();
+     }
+
+     prevSpread(){
+          if(null == this.model.spreads){ return; }
+          this.model.spidx -=1;
+          if(this.model.spidx <= 0){ this.model.spidx = 0; }
+          this.loadSpread();
+     }
+    
+     evalSpread(pos){
+          if(null == this.model.spreads){ return; }
+          let ref = this.model.toc.post_content.spread_refs[pos];
+          let res = null;
+          for(let idx in this.model.spreads){
+               if(this.model.spreads[idx].post_excerpt == ref){
+                    return this.model.spreads[idx];
+               }
+          }
+          return null;
+     }
+ 
+     loadSpread(){
+          if(null == this.model.spreads){ return; }
+
+          this.model.spread = this.evalSpread(this.model.spidx);
+
+
+console.log(this.model.spread);
+
+          if(null == this.model.spread){ return; }
+          this.model.doc = this.model.spread.post_content;
+          for(let idx in this.model.doc.assets){
+               let target = this.model.doc.assets[idx]; 
+               switch(target.type){
+                    case 'image':
+                         this.initAsset(target);
+                    break;
+                    case 'text':
+                         for(let iidx in target.text){
+                              target.text[iidx] = 
+                                   LayoutUtil.sanitizePrint(target.text[iidx]);
+                         }
+                         break;
+               }
+          }
+          this.initDocument();
+     }
+
+     initAsset(asset){
+         // console.log(this.model.spread);
+         // console.log(asset);
+     }
+
+     saveDocument(msg){
+          let model = {
+               doc: this.model.doc
+          }
+          this.notify(new Message('save::document', model));
+     }
+
+     saveLayout(msg){
+          let rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
+          if(null == rule){ return false; };
+              rule = rule.join('');
+          let model = {
+               group: 'default',
+               rule: rule, 
+               doc: this.model.doc
+          }
+          this.notify(new Message('save::layout', model));
+     }
+
+     bindLayoutGroup(msg){
+          this.model.selectedLayoutGroupName = 'default';
+          let model = {
+               group: this.model.selectedLayoutGroupName
+          }
+          this.notify(new Message('load::layoutgroup', model));
+     }
+
+     bindLoadedLayoutGroup(msg){
+          this.model.loadedLayoutGroup = msg.model;
+          for(let idx in this.model.loadedLayoutGroup){
+               this.model.loadedLayoutGroup[idx].post_content = LayoutUtil.pagpick(this.model.loadedLayoutGroup[idx].post_content);
+          }
+     }
+
+     bindLoadedLayoutPresets(msg){
+          this.model.loadedLayoutPresets = msg.model;
+          if(null == this.model.loadedLayoutPresets){
+               return false;
+          }
+          for(let idx in this.model.loadedLayoutPresets){
+               this.model.loadedLayoutPresets[idx].post_content = LayoutUtil.pagpick(this.model.loadedLayoutPresets[idx].post_content);
+          }
+          if(null == this.model.loadedLayoutPresets[0]){
+                this.buildLayoutPreset();
+                return true;
+          }
+          this.model.doc = this.model.loadedLayoutPresets[0].post_content;
+          this.initDocument();
+     }
+
+     changeUnit(asset, unit){
+          asset.conf.xpos = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.xpos, asset.conf.unit);
+          asset.conf.ypos = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.ypos, asset.conf.unit);
+          asset.conf.xpos = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.xpos, unit);
+          asset.conf.ypos = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.ypos, unit);
+          asset.conf.width = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.width, asset.conf.unit);
+          asset.conf.height = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.height, asset.conf.unit);
+          asset.conf.width = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.width, unit);
+          asset.conf.height = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.height, unit);
+          if('text' == asset.type){
+               asset.conf.font.size = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.font.size, asset.conf.unit);
+               asset.conf.font.size = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.font.size, unit);
+               asset.conf.font.space = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.font.space, asset.conf.unit);
+               asset.conf.font.space = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.font.space, unit);
+               asset.conf.font.lineHeight = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.font.lineHeight, asset.conf.unit);
+               asset.conf.font.lineHeight = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.font.lineHeight, unit);
+          }
+          asset.conf.unit = unit;
+          return asset;
+     }
+
+     setPpi(msg){
+
+          if(null == this.model.doc){
+               return;
+          }
+
+          if('px' == this.model.doc.unit){
+               this.model.doc.printSize.width = parseInt(LayoutUtil.pxPump(this.model.doc.printSize.width, this.model.doc.ppi, msg.model.ppiSize));
+               this.model.doc.printSize.height = parseInt(LayoutUtil.pxPump(this.model.doc.printSize.height, this.model.doc.ppi, msg.model.ppiSize));
+          }
+
+          for(let idx in this.model.doc.assets){
+               if('px' == this.model.doc.assets[idx].conf.unit){
+                    let target = this.model.doc.assets[idx];
+                        target.conf.xpos = parseFloat(LayoutUtil.pxPump(target.conf.xpos, this.model.doc.ppi, msg.model.ppiSize));
+                        target.conf.ypos = parseFloat(LayoutUtil.pxPump(target.conf.ypos, this.model.doc.ppi, msg.model.ppiSize));
+                        target.conf.height = parseFloat(LayoutUtil.pxPump(target.conf.height, this.model.doc.ppi, msg.model.ppiSize));
+                        target.conf.width = parseFloat(LayoutUtil.pxPump(target.conf.width, this.model.doc.ppi, msg.model.ppiSize));
+                        if(null != target.conf.font){
+                             target.conf.font.size = parseFloat(LayoutUtil.pxPump(target.conf.font.size, this.model.doc.ppi, msg.model.ppiSize));
+                             target.conf.font.space = parseFloat(LayoutUtil.pxPump(target.conf.font.space, this.model.doc.ppi, msg.model.ppiSize));
+                             target.conf.font.lineHeight = parseFloat(LayoutUtil.pxPump(target.conf.font.lineHeight, this.model.doc.ppi, msg.model.ppiSize));
+                        }
+                        if(null != target.conf.points){
+                             let tmp = target.conf.points.split(' ');
+                             for(let tdx in tmp){
+                                 tmp[tdx] = parseFloat(LayoutUtil.pxPump(tmp[tdx], this.model.doc.ppi, msg.model.ppiSize));
+                             }
+                             target.conf.points = tmp.join(' ');
+                        }
+                        if(null != target.conf.diam){
+                             target.conf.diam = parseFloat(LayoutUtil.pxPump(target.conf.diam, this.model.doc.ppi, msg.model.ppiSize));
+                        }
+                        if('image' == target.type){
+                             target.conf.slotX = parseFloat(LayoutUtil.pxPump(target.conf.slotX, this.model.doc.ppi, msg.model.ppiSize));
+                             target.conf.slotY = parseFloat(LayoutUtil.pxPump(target.conf.slotY, this.model.doc.ppi, msg.model.ppiSize));
+                             target.conf.slotW = parseFloat(LayoutUtil.pxPump(target.conf.slotW, this.model.doc.ppi, msg.model.ppiSize));
+                             target.conf.slotH = parseFloat(LayoutUtil.pxPump(target.conf.slotH, this.model.doc.ppi, msg.model.ppiSize));
+                             this.notify(new Message('asset::iloaded', { target: target } ));
+                        }
+               }
+          }
+          this.model.doc.ppi = parseFloat(msg.model.ppiSize);
+          this.notify(new Message('ppi::updated', this.model.doc));
+     }
+
+     setPrintSize(msg){
+          if(null == this.model.doc){
+               return;
+          }
+          this.model.doc.printSize = this.getPrintSize(msg.model.printSizeIndex);
+          this.notify(new Message('printsize::updated', this.model.doc));
+     }
+
+     getPrintSize(idx){
+          let res = { 'idx': 'A4', 'width': '210', 'height': '297' };
+          if(null != this.model.printSizes[idx]){
+               res = this.model.printSizes[idx];
+          }
+          return res;
+     }
+
+     bindFontSelection(msg){
+          this.model.doc.assets[msg.model.indx].conf.font.family = msg.model.font;
+          this.notify(new Message('font::updated', this.model.doc));
+     }
+
+     bindFontSetting(msg){
+          let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
+          switch(msg.model.arguments[2]){     
+               case 'left':
+               case 'center':
+               case 'right':
+               case 'block':
+                    this.model.doc.assets[idx].conf.font.align = msg.model.arguments[2];
+                    break;
+          }
+          this.notify(new Message('font::updated', this.model.doc));     
+     }
+
+     bindAssetInput(msg){
+          let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
+          if(null == this.model.doc.assets[idx]){
+               return;
+          }
+          if('' == msg.model.arguments[3]){
+               return;
+          }
+          let target = this.model.doc.assets[idx];
+          let value = parseFloat(msg.model.arguments[3]);
+          switch(msg.model.arguments[2]){
+               case 'src': 
+                    break;
+               case 'opacity': 
+                    target.conf.opacity = value; 
+                    break;
+               case 'xpos':
+                    target.conf.xpos = value;
+                    break;
+               case 'ypos':
+                    target.conf.ypos = value; 
+                    break;
+               case 'width':
+                    target.conf.width = value;
+                    break;
+               case 'height':
+                    target.conf.height = value;
+                    break;
+               case 'scale':
+                    let xow = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.ow, target.conf.unit);
+                    let xoh = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.oh, target.conf.unit);
+                    target.conf.width = parseFloat(xow) *value;
+                    target.conf.height = parseFloat(xoh) *value;
+                    target.conf.scale = value;
+                    break;
+          }
+          this.notify(new Message('asset::updated', this.model.doc));
+     }
+
+     bindTextInput(msg){
+          let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
+          if(null == this.model.doc.assets[idx]){
+               return;
+          }
+          switch(msg.model.arguments[2]){
+               case 'text': 
+                    msg.model.arguments[3] = msg.model.arguments[3].replace(/\"/gm, '“');;
+                    msg.model.arguments[3] = msg.model.arguments[3].replace(/\'/gm, '’');;
+                    // msg.model.arguments[3] = msg.model.arguments[3].replace(/\"/gm, '\u0027');;
+                    // msg.model.arguments[3] = msg.model.arguments[3].replace(/\'/gm, '\u0022');;
+                    msg.model.arguments[3] = msg.model.arguments[3].replace(/\\/gm, '');;
+                    msg.model.arguments[3] = msg.model.arguments[3].split(/\n/);;
+                    this.model.doc.assets[idx].text = msg.model.arguments[3];
+                    break;
+               case 'xpos': 
+                    this.model.doc.assets[idx].conf.xpos = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'ypos': 
+                    this.model.doc.assets[idx].conf.ypos = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'width': 
+                    this.model.doc.assets[idx].conf.width = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'height': 
+                    this.model.doc.assets[idx].conf.height = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'size': 
+                    this.model.doc.assets[idx].conf.font.size = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'space': 
+                    this.model.doc.assets[idx].conf.font.space = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'line':
+                    this.model.doc.assets[idx].conf.font.lineHeight = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'c': 
+                    this.model.doc.assets[idx].conf.color['cmyk'].c =  parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'm':
+                    this.model.doc.assets[idx].conf.color['cmyk'].m = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'y':
+                    this.model.doc.assets[idx].conf.color['cmyk'].y = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'k':
+                    this.model.doc.assets[idx].conf.color['cmyk'].k = parseFloat(msg.model.arguments[3]);
+                    break;
+               case 'opacity':
+                    this.model.doc.assets[idx].conf.opacity = parseFloat(msg.model.arguments[3]);
+                    break;
+          }
+          this.model.controlKeysLocked = false;
+          this.notify(new Message('text::updated', this.model.doc));
+     }
+
+     update(msg){
+     }
+
+     bindMouseDrag(msg){
+          this.updateEditor();
+     }
+
+     updateEditor(msg){
+          if(null == this.model.selectedLibraryItem){
+               return;
+          }
+          jQuery('.xpos').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.xpos));
+          jQuery('.ypos').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.ypos));
+          jQuery('.width').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.width));
+          jQuery('.height').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.height));
+          jQuery('.scale').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.scale));
+          if('text' != this.model.selectedLibraryItem.type){ return; }
+          jQuery('.size').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.font.size));
+          jQuery('.line').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.font.lineHeight));
+          jQuery('.space').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.font.space));
+     }
+
+     initDocument(){
+          switch(SpreadViewerConfig.mode){
+               case SpreadViewerConfig.WEB_CLIENT:
+                    this.setupNavigation();
+                    break;
+               case SpreadViewerConfig.SPREAD_CLIENT:
+                    this.setupTools();
+                    this.setupLibrary();
+                    break;
+               case SpreadViewerConfig.LAYOUT_CLIENT:
+                    this.setupTools();
+                    this.setupLibrary();
+                    break;
+          }
+          this.selectLibraryItem(null);
+          jQuery('.select_ppi select').val(this.model.doc.ppi);
+          this.notify(new Message('document::inited', this.model.doc));
+     }
+
+     // toolbar is not inited by the document
+     setupToolbar(){
+          let ref = this;
+          jQuery('.layout-toolbar').html(__tool__bar__tmpl);
+          jQuery('.layout-controlbar').html(__control__bar__tmpl);
+          jQuery('.select_preset_size select').off();
+          jQuery('.select_preset_size select').val(this.model.selectedLayoutImageSize);
+          jQuery('.select_preset_size select').change(function(e){
+               ref.model.selectedLayoutImageSize = parseInt(e.target.value);
+               let buf = '';
+               let ldx = e.target.value;
+               for(let idx in ref.model.layoutDescriptor[ldx]){
+                    buf+= '<option value="'+idx+'">';
+                    buf+= ref.model.layoutDescriptor[ldx][idx].join(' - ');
+                    buf+= '</option>';
+               }
+               jQuery('.select_preset_rule select').off();
+               jQuery('.select_preset_rule select').html(buf);
+               jQuery('.select_preset_rule select').change(function(e){
+                    ref.model.selectedLayoutRule = parseInt(e.target.value);
+                    ref.loadLayoutPresets();
+               });
+               ref.model.selectedLayoutRule = parseInt(0);
+               ref.loadLayoutPresets();
+          });
+          jQuery('.select_group select').val(0);
+     }
+
+
+     loadLayoutPresets(){
+          let ref = this;
+          let rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
+          if(null == rule){
+             return false;
+          }
+          rule = rule.join('');
+          let model = {
+               group: this.model.selectedLayoutGroupName,
+               rule: rule
+          }
+          ref.notify(new Message('load::layoutpresets', model));
+     }
+
+     buildLayoutPreset(){
+          let rule = null;
+          if(0 != this.model.selectedImageSize){
+               rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
+          }
+          // let doc = {...this.model.doc};
+          this.model.doc.printSize = { "idx": "5A", "width": "210", "height": "148" };
+          this.model.doc.unit = 'mm';
+          this.model.doc.ppi = '300';
+          this.model.doc.assets = [];
+          this.addTextAsset('question',  '20', '50', this.model.mockText1st);
+          this.addTextAsset('answer', '230', '50', this.model.mockText2nd);
+          let psrc = SpreadViewerConfig.portraitPngLoc;
+          let lsrc = SpreadViewerConfig.landscapePngLoc;
+          let indx = '';
+          let xpos = 25;
+          let ypos = 25;
+          let icnt = 0;
+          for(let idx in rule){
+               switch(rule[idx]){
+                    case 'P':
+                         indx = 'image_'+icnt;
+                         this.addImageAsset(indx, xpos, ypos, 50, 90, psrc);
+                         xpos += 75;
+                         icnt++;
+                         break;
+                    case 'L':
+                         indx = 'image_'+icnt;
+                         this.addImageAsset(indx, xpos, ypos, 90, 50, lsrc);
+                         xpos += 115;
+                         icnt++;
+                         break;
+               }
+          }
+          this.initDocument();
+     }
+
+     setupNavigation(){
+          jQuery('.layout-pages').html(__tool__991__tmpl);
+     }
+
+     setupTools(msg){
+          let ref = this;
+          jQuery('.layout-tools').empty();
+          jQuery('.layout-tools').html(__tool__001__tmpl);
+          jQuery('.select_ppi select').off();
+          jQuery('.select_ppi select').change(function(){
+               ref.notify(new Message('ppibtn::released', { ppiSize: jQuery(this).val() }));
+          });
+          jQuery('.select_ppi select').val(this.model.doc.ppi);
+          let tmp = '<select>';
+          for(var idx in this.model.printSizes){
+               let title = idx;
+                    title+= ': ';
+                    title+= this.model.printSizes[idx].width
+                    title+= 'mm';
+                    title+= ' x ';
+                    title+= this.model.printSizes[idx].height;
+                    title+= 'mm';
+               tmp+= '<option value="'+idx+'">'+title+'</option>';
+          }
+          tmp+= '</select>';
+          jQuery('.select_size').html(tmp);
+          jQuery('.select_size select').off();
+          jQuery('.select_size select').change(function(){
+               ref.notify(new Message('printsize::selected', { printSizeIndex: jQuery(this).val() }));
+          });
+          jQuery('.select_size select').val(this.model.doc.printSize.idx);
+          jQuery('.select_pagesize select').off();
+          jQuery('.select_pagesize select').change(function(){
+               ref.notify(new Message('pagesize::selected', { pageSize: jQuery(this).val() }));
+          });
+          jQuery('.select_pagesize select').val(this.model.doc.pageSize);
+     }
+
+     setupLibrary(){
+          jQuery('.layout-library').empty();
+          jQuery('.layout-library').append(__lib__003__tmpl);
+          for(let idx in this.model.doc.assets){
+               let model = {
+                    'title': this.model.doc.assets[idx].indx,
+                    'type': this.model.doc.assets[idx].type
+               }
+               let tmpl = this.fillTemplate(__lib__002__tmpl, model);
+               jQuery('.items').append(tmpl);
+          }
+          let model = {
+               'indx': 'controls'
+          }
+          jQuery('.layout-actions').empty();
+          jQuery('.layout-actions').append(this.fillTemplate(__lib__007__tmpl, model));
+     }
+
+     getIndexOfAssetBy(indx){
+          let res = 0;
+          for(let idx in this.model.doc.assets){
+               if(indx == this.model.doc.assets[idx].indx){
+                    res = idx;
+               }
+          }
+          return res;
+     }
+
+     renderLayoutEditor(msg){
+          let ref = this;
+          let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
+          this.selectLibraryItem(this.model.doc.assets[idx])
+     }
+
+     setupEditor(msg){
+          let ref = this;
+          let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
+          let model;
+          switch(this.model.doc.assets[idx].type){
+               case 'text':
+                    let text = '';
+                    for(let lnx in this.model.doc.assets[idx].text){
+                         text+= this.model.doc.assets[idx].text[lnx];
+                         text+= "\n";
+                    }
+                    model = {
+                         'indx':    this.model.doc.assets[idx].indx,
+                         'text':    text,
+                         'xpos':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.xpos),
+                         'ypos':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.ypos),
+                         'width':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.width),
+                         'height':  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.height),
+                         'size':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.size),
+                         'space':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.space),
+                         'line':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.lineHeight),
+                         'opacity': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.opacity),
+                         'color':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color)
+                    }
+                    if(null != this.model.doc.assets[idx].conf.color['cmyk']){
+                         model.c =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].c);
+                         model.m =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].m);
+                         model.y =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].y);
+                         model.k =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].k);
+                    }
+
+                    jQuery('.assetedit').html('');
+                    jQuery('.textedit').html(this.fillTemplate(__lib__001__tmpl, model));
+                    let tmp = '<select>';
+                    for(let idx in this.model.fonts){
+                         tmp += '<option value="'+this.model.fonts[idx].family+'">'+this.model.fonts[idx].family+'</option>';
+                    }
+                    tmp+= '</select>';
+                    jQuery('.select_font select').off();
+                    jQuery('.select_font').html(tmp);
+                    jQuery('.select_font select').change(function(){
+                         let model = {
+                              font: jQuery(this).val(),
+                              indx: idx
+                         };
+                         ref.notify(new Message('font::selected', model));
+                    });     
+                    jQuery('.select_font select').val(this.model.doc.assets[idx].conf.font.family);
+                    jQuery('.select_unit select').val(this.model.doc.assets[idx].conf.unit);
+                    break;
+               case 'image':
+                    let scale = this.model.doc.assets[idx].conf.scale;
+                    if(null == scale){
+                         scale = 1;
+                    }
+                    if(0.5 > scale){
+                         scale = 0.5;
+                    }
+                    if(2 < scale){
+                         scale = 2;
+                    }
+                    model = {
+                             'indx': this.model.doc.assets[idx].indx,
+                              'src': this.model.doc.assets[idx].src,
+                             'xpos': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.xpos),
+                             'ypos': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.ypos),
+                            'width': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.width),
+                           'height': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.height),
+                          'opacity': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.opacity),
+                            'scale': LayoutUtil.formatSettingFloat(scale)
+                    }
+                    jQuery('.textedit').html('');
+                    jQuery('.assetedit').html(this.fillTemplate(__lib__004__tmpl, model));
+                    jQuery('.select_unit select').val(this.model.doc.assets[idx].conf.unit);
+                    break;
+          }
+          this.selectLibraryItem(this.model.doc.assets[idx])
+     }
+
+     selectedLibraryItemByIndx(indx){
+          for(let idx in this.model.doc.assets){
+               if(indx == this.model.doc.assets[idx].indx){
+                    this.selectLibraryItem(this.model.doc.assets[idx]);
+                    return;
+               }
+          }
+     }
+
+     selectLibraryItem(item){
+          this.model.selectedLibraryItem = item;
+          for(let idx in this.model.doc.assets){
+               this.model.doc.assets[idx].selected = false;
+               if(item == this.model.doc.assets[idx]){
+                    this.model.doc.assets[idx].selected = true;
+               }
+          }
+          this.notify(new Message('item::selected'));
+     }
+
+     closeEditor(msg){
+          jQuery('.textedit').empty();
+          jQuery('.assetedit').empty();
+          this.model.selectedLibraryItem = null;
+     }
+
+     addTextAsset(indx, xpos, ypos, text){
+          if(null == indx){ indx = 'T_' +parseInt(Math.random() *1000); }
+          let model = {
+               "indx": indx,
+               "type": "text",
+               "text": [ 
+                    text
+               ],
+               "conf": {
+                    "unit": "mm",
+                    "font": {
+                         "family": "American Typewriter",
+                         "size": "10",
+                         "space": "0",
+                         "lineHeight": "13",
+                         "align": "left"
+                    },
+                    "color": {
+                         "cmyk": { "c": "0.0", "m": "0.0", "y": "0.0", "k": "1.0" }
+                    },
+                    "xpos": xpos,
+                    "ypos": ypos,
+                    "width": "190",
+                    "opacity": "1.0",
+                    "depth": "30"
+               } 
+          }
+          this.model.doc.assets.push(model);
+     }
+
+     addImageAsset(indx, xpos, ypos, width, height, src){
+          let asset = {
+               "indx": indx,
+               "type": "image",
+               "conf": {
+                    "unit": "mm",
+                    "xpos": xpos,
+                    "ypos": ypos,
+                    "width": width,
+                    "height": height,
+                    "scale": "1",
+                    "opacity": "1"
+                },
+                "src": src 
+          }
+          this.model.doc.assets.push(asset);
+          let model = { src: src, scale: 1.0, ref: indx }
+          this.notify(new Message('image::targeted', model ));
+     }
+
+     splitModels(){
+          if(null == this.model.doc){
+               return null;
+          }
+          let models = [];
+          let max = parseInt(this.model.doc.pageSize);
+          for(let idx = 0; idx < max; idx++){
+               let model = {...this.model.doc};
+                    model.pageSize = 1; 
+                    let xmin = parseInt(model.printSize.width) *idx;
+                    let xmax = xmin +parseInt(model.printSize.width);
+                    let assets = [];
+                    for(let iidx in model.assets){
+                         let currx = parseInt(model.assets[iidx].conf.xpos);
+                         if(currx > xmin && currx <= xmax){
+                              assets.push(model.assets[iidx]);
+                         }
+                    }
+               model.assets = assets;
+               models.push(model);
+          }
+          return models;
+     }
+}
+
+let __msg__001__tmpl = `
+`;
+
+
+
+let __control__bar__tmpl = `
+<div class='row'>
+<div class='block'>
+     <a href='javascript:layoutQueue.route("savelayoutbtn::released")'>i would like to save this layout</a></select>
+</div>
+</div>
+<div class='row'>
+<div class='block'>
+     <a href='javascript:layoutQueue.route("import::layouts")'>i would like to import the layouts</a></select>
+</div>
+</div>
+`;
+
+
+
+let __tool__bar__tmpl = `
+
+<div class='row'>
+<div class='block select_group'>
+     <select onchange='javascript:layoutQueue.route("layoutgroup::selected", this.value)'>
+          <option value='x'>Layout Groups</option>
+          <option value='0'>Default Group</option>
+     </select>
+</div>
+</div>
+
+<div class='row'>
+<div class='block select_preset_size'>
+     <select>
+          <option value='x'>Layout Image Size</option>
+          <option value='0'>No Image</option>
+          <option value='1'>One Image</option>
+          <option value='2'>Two Images</option>
+          <option value='3'>Three Images</option>
+          <option value='4'>Four Images</option>
+     </select>
+</div>
+</div>
+
+<div class='row'>
+<div class='block select_preset_rule'>
+     <select>
+          <option value='x'>Layout Preset Rules</option>
+     </select>
+</div>
+</div>
+
+`
+
+
+
+let __tool__001__tmpl = `
+<div class='row'>
+<div class='block'>
+<a href='javascript:layoutQueue.route("exportbtn::released");'>i would like to export the spreads</a>
+</div>
+</div>
+
+<div class='row'>
+<div class='block select_ppi'>
+     <select>
+          <option value='600'>600 ppi</option>
+          <option value='300'>300 ppi</option>
+          <option value='150'>150 ppi</option>
+          <option value='96'>96 ppi</option>
+          <option value='72'>72 ppi</option>
+     </select>
+</div>
+</div>
+
+<div class='row'>
+     <div class='block select_size'></div>
+</div>
+
+<div class='row'>
+<div class='block select_pagesize'>
+     <select>
+          <option value='5'>5</option>
+          <option value='3'>3</option>
+          <option value='2'>2</option>
+          <option value='1'>1</option>
+     </select>
+</div>
+</div>
+`;
+
+
+
+let __tool__981__tmpl = `
+<div>
+     <a href='javascript:layoutQueue.route("prevsectbtn::released", "");'>prev</a>
+     <a href='javascript:layoutQueue.route("nextsectbtn::released", "");'>next</a>
+</div>
+
+`;
+
+
+
+let __tool__991__tmpl = `
+<div>
+     <a href='javascript:layoutQueue.route("prevsectbtn::released", "");'>prev</a>
+     <a href='javascript:layoutQueue.route("nextsectbtn::released", "");'>next</a>
+</div>
+`;
+
+
+
+let __lib__003__tmpl = `
+<div class='items'></div>
+<div class='textedit'></div>
+<div class='assetedit'></div>
+<div class='file'></div>
+
+`;
+
+
+
+let __lib__004__tmpl = `
+<div class='imgpanel'>
+     <img src='{src}' height='71'/>
+</div>
+
+<div class='label'>unit:</div>
+<div class='row'>
+     <div class='block select_unit'>
+          <select onchange='javascript:layoutQueue.route("unitbtn::released", this.value);''>
+               <option value='mm'>mm</option>
+               <option value='inch'>inch</option>
+               <option value='px'>px</option>
+          </select>
+     </div>
+</div>
+
+<div class='label'>pos:</div>
+<div class='row'>
+     <div class='block'>
+          <input class='xpos' type='number' step='1' value='{xpos}'
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'xpos', this.value);"
+          ></input>
+     </div>
+     <div class='block'>
+          <input class='ypos' type='number' step='1' value='{ypos}' 
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'ypos', this.value);"
+          ></input>
+     </div>
+</div>
+<div class='label'>size:</div>
+<div class='row'>
+     <div class='block'>
+          <input class='width' type='number' step='any' value='{width}'
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'width', this.value);"
+          ></input>
+     </div>
+     <div class='block'>
+          <input class='height' type='number' step='any' value='{height}'
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'height', this.value);"
+          ></input>
+     </div>
+</div>
+
+<div class='row'>
+     <div class='block'>
+          <input type="number" step='0.01' min='0.5' max='2' value="{scale}" 
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'scale', this.value);"
+          ></input>
+     </div>
+</div>
+
+<div class='label'>opac:</div>
+<div class='row'>
+     <div class='block'>
+          <input type="number" step='0.01' min='0' max='1' value="{opacity}" 
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'opacity', this.value);"
+          ></input>
+     </div>
+</div>
+
+`;
+
+
+
+let __lib__002__tmpl = `
+<a href='javascript:layoutQueue.route("asset::selected", "{title}")'>{title}</a>
+`;
+
+
+
+let __lib__001__tmpl = `
+<div class='row'>
+<div class='block'>
+     <textarea 
+          onchange='javascript:layoutQueue.route("textinput::updated", "{indx}", "text", this.value);'
+     >{text}</textarea>
+</div>
+</div>
+
+<div class='row'>
+<div class='block'>
+     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "left");'>left</a>
+     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "center");'>center</a>
+     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "right");'>right</a>
+     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "block");'>block</a>
+     <a href='javascript:layoutQueue.route("recalcbtn::released", "{indx}", "fit");'>fixfits</a>
+</div>
+</div>
+
+<div class='label'>font:</div>
+<div class='row'>
+     <div class='block select_font'></div>
+</div>
+<div class='row'>
+<div class='block'>
+     <input class='size' type='number' step='0.1' value='{size}'
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'size', this.value);"
+     ></input>
+</div>
+<div class='block'>
+     <input class='space' type='number' step='0.1' value='{space}' 
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'space', this.value);"
+     ></input>
+</div>
+<div class='block'>
+     <input class='line' type='number' step='0.1' value='{line}' 
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'line', this.value);"
+     ></input>
+</div>
+</div>
+
+<div class='label'>unit:</div>
+<div class='row'>
+<div class='block select_unit'>
+     <select onchange="javascript:layoutQueue.route('unitbtn::released', this.value);">
+          <option value='mm'>mm</option>
+          <option value='inch'>inch</option>
+          <option value='px'>px</option>
+     </select>
+</div>
+</div>
+
+<div class='label'>pos:</div>
+<div class='row'>
+<div class='block'>
+     <input class='xpos' type='number' step='1' value='{xpos}' 
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'xpos', this.value);"
+     ></input>
+ </div>
+<div class='block'>
+     <input class='ypos' type='number' step='1' value='{ypos}' 
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'ypos', this.value);"
+     ></input>
+</div>
+</div>
+<div class='row'>
+<div class='block'>
+     <input class='width' type='number' step='1' value="{width}" 
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'width', this.value);"
+     ></input>
+</div>
+</div>
+
+<div class='label'>color:</div>
+<div class='row'>
+<div class='block'>
+     <input type="number" step='0.01' min='0' max='1' value='{c}'
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'c', this.value);"
+     ></input>
+</div>
+<div class='block'>
+     <input type="number" step='0.01' min='0' max='1' value='{m}'
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'm', this.value);"
+     ></input>
+</div>
+<div class='block'>
+     <input type="number" step='0.01' min='0' max='1' value='{y}'
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'y', this.value);"
+     ></input>
+</div>
+<div class='block'>
+     <input type="number" step='0.01' min='0' max='1' value='{k}'
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'k', this.value);"
+     ></input>
+</div>
+</div>
+<div class='row'>
+<div class='block'>
+     <input type="number" step='0.01' min='0' max='1' value='{opacity}'
+          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'opacity', this.value);"
+     ></input>
+</div>
+</div>
+
+</div>
+`;
+
+
+
+let __lib__007__tmpl = `
+<!--
+<div class='ctitle'></div>
+<div>
+          <span><a href='javascript:layoutQueue.route("addimagebtn::released");'>add image asset</a></span>
+          <span><a href='javascript:layoutQueue.route("addtextbtn::released");'>add text asset</a></span>
+</div>
+<div>
+          <span><a href='javascript:layoutQueue.route("savebtn::released");'>save</a></span>
+          <span>export be batched process: </span>
+          <span><a href='javascript:layoutQueue.route("exportbtn::released", "{indx}", "svg");'>export print formats</a></span>
+</div>
+//-->
+`;
+
+
+
+let __lib__009__tmpl = `
+<form>
+     <input type='file' class='fileupload' name='filename' multiple='multiple'></inpupt>
+</form>
+`;
+
+class ToolsModel extends Model {
+     constructor(){
+          super();
+          this.spidx = 0;
+          this.tocidx = 0;
+          this.spreads;
+          this.spread;
+          this.printSizes = new PrintSizes().sizes;
+          this.fonts = new Font().fonts;
+          this.doc;
+          this.selectedLibraryItem;
+          this.selectedEditor;
+          this.surveys;
+          this.env;
+          this.modifierKey;
+          this.controlKeysLocked;
+          this.deeplink;
+          this.collection;
+          this.section;
+          this.selectedLayouts;
+          this.layoutDescriptor;
+          this.selectedLayoutRule = 'x';
+          this.selectedLayoutImageSize = 'x';
+          this.selectedLayoutGroupName = 'default';
+          this.loadedLayoutGroup;
+          this.loadedLayoutPresets;
+          this.mockText1st = 'Local punk Kyla Waters has spent the past 24 hours trying to decide if her roommate’s new tattoo either looks nothing like Jack…';
+          this.mockText2nd = 'Local anarcho-punk Noah Wallin claimed today that he is prepared to take the lives of Scottish indie-rock…';
+     }
+}
+
+class PrintSizes extends Model {
+     constructor(){
+          super();
+          this.sizes = {
+               "A4": { "idx": "A4", "width": "210", "height": "297" },
+               "4A": { "idx": "4A", "width": "297", "height": "210" },
+               "A5": { "idx": "A5", "width": "148", "height": "210" },
+               "5A": { "idx": "5A", "width": "210", "height": "148" },
+               "A6": { "idx": "A6", "width": "105", "height": "140" },
+               "6A": { "idx": "6A", "width": "140", "height": "105" },
+               "A7": { "idx": "A7", "width":  "74", "height": "105" },
+               "7A": { "idx": "7A", "width": "105", "height": "148" },
+               "B5": { "idx": "B5", "width": "176", "height": "250" },
+               "5B": { "idx": "5B", "width": "250", "height": "176" },
+               "B6": { "idx": "B6", "width": "125", "height": "176" },
+               "6B": { "idx": "6B", "width": "176", "height": "250" },
+               "B7": { "idx": "B7", "width":  "88", "height": "125" },
+               "7B": { "idx": "7B", "width": "125", "height":  "88" },
+          }
+     }
+}
+
+class Font extends Model {
+     constructor(){
+          super();
+          this.fonts = [
+               { family: "Georgia" },
+               { family: "Helvetica" },
+               { family: "American Typewriter" },
+               { family: "Arial" },
+               { family: "Arial Black" },
+               { family: "Andale Mono" },
+               { family: "American Typewriter" },
+               { family: "Times New Roman" },
+               { family: "Trebuchet MS" },
+               { family: "Courier" },
+          ]
+     }
+}
+
+class MockModel extends Model {
+     constructor(){
+          super();
+          this.model = {
+               "uuid": "",
+               "surveyId": "",
+               "questionId": "",
+               "pageSize": "2",
+               "unit": "mm",
+               "ppi": "300",
+               "printSize": { "idx": "5A", "width": "210", "height": "148" },
+               "layout": {
+                    "frame": {
+                         "x": "5",
+                         "y": "10"
+                    }
+               },
+               "opt": "",
+               "assets": [
+                    { 
+                         "indx": "question",
+                         "type": "text",
+                         "text": [
+                              "The Question"
+                         ],
+                         "selected": "false",
+                         "conf": {
+                              "unit": "mm",
+                              "font": {
+                                   "family": "American Typewriter", 
+                                   "size": "9.5",
+                                   "space": "1",
+                                   "weight": "300",
+                                   "lineHeight": "11",
+                                   "align": "left"
+                              },
+                              "color": {
+                                   "cmyk": { "c": "0.05", "m": "0.75", "y": "1", "k": "0" }
+                              },
+                              "xpos": "20",
+                              "ypos": "35",
+                              "width": "170",
+                              "height": "0",
+                              "opacity": "1.0",
+                              "depth": "10"
+                         }
+                    },
+                    {
+                         "indx": "answer",
+                         "type": "text",
+                         "text": [
+                              "The Answer"
+                         ],
+                         "selected": "false",
+                         "conf": {
+                              "unit": "mm",
+                              "font": {
+                                   "family": "American Typewriter",
+                                   "size": "19.0",
+                                   "space": "0.05",
+                                   "weight": "300",
+                                   "lineHeight": "18",
+                                   "align": "right"
+                              },
+                              "color": { 
+                                   "cmyk": { "c": "1", "m": "0.35", "y": "0.1", "k": "0" }
+                              },
+                              "xpos": "230",
+                              "ypos": "70",
+                              "width": "170",
+                              "height": "0",
+                              "opacity": "1.0",
+                              "depth": "20"
+                         }, 
+                    }
+               ]
+          };
+     }
+}
+

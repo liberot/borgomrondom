@@ -1,0 +1,123 @@
+body {
+     font-size: 0.9em;
+     background-color: #eeeee;
+     background-color: #fff;
+}
+
+.layout-edit {
+     margin-top: 12px;
+     margin-bottom: 36px;
+}
+
+.layout-main {
+     width: 100%;
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+}
+
+.layout-rows {
+     width: 100%;
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+}
+
+.layout-buff {
+     width: 100%;
+}
+
+.screen {
+     border-style: dotted;
+     border-width: 1px;
+     border-color: rgba(10, 10, 10, 0.1);
+     margin: 0px;
+     padding: 0px;
+     -webkit-touch-callout: none;
+     -webkit-user-select: none;
+     -khtml-user-select: none;
+     -moz-user-select: none;
+     -ms-user-select: none;
+     user-select: none;
+     -webkit-user-drag: none; 
+     -khtml-user-drag: none; 
+     -moz-user-drag: none; 
+     -o-user-drag: none; 
+     user-drag: none; 
+}
+
+.layout-messages {
+     margin-bottom: 12px;
+     margin-right: 36px;
+     font-size: 0.7em;
+}
+
+.offscreen {
+     position: absolute;
+     top: 0px;
+     left: -5000px;
+}
+
+.printscreen {
+     visibility: hidden;
+     display: none;
+}
+
+.layout-tools {
+     width: 100%;
+}
+
+
+.layout-controls {
+     width: 300px;
+     margin-left: 16px;
+}
+
+.layout-controls textarea {
+      resize: none;
+      width: 100%;
+      height: 75px;
+}
+
+.layout-controls .label {
+     width: 100%;
+     float: left;
+     margin-right: 12px;
+}
+
+.layout-controls .input {
+     float: none;
+}
+
+.imgpanel {
+     width: 100%;
+     text-align: center;
+     background-color: rgba(192, 192, 192, 1);
+     padding: 13px 0px 13px 0px;
+}
+
+.row {
+     width: 100%;
+     display: flex;
+     flex-direction: row;
+     justify-conent: center;
+}
+
+.block {
+     width: 100%;
+}
+
+.block input, .block select {
+     width: 100%;
+     max-width: 100% !important;
+}
+
+.docicon {
+     font-size: 0.7em;
+     margin-right: 3px;
+}
+
+a:hover {
+     background-color: red;
+}
+
