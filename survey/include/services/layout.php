@@ -401,13 +401,19 @@ function get_layout_code_of_spread($nodes){
 function insert_image_assets($poly_nodes){
      $res = [];
      $idx = 0;
+
      $landscape = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.900.base');
      $portrait = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.009.base');
+
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
+
      foreach($poly_nodes as $node){
+
           if(false != $node['slot']){
+
                $chunki = 'L' == $node['layout_code'] ? $landscape : $portrait;
+
                $image_asset = [];
                $image_asset['type'] = 'image'; 
                $image_asset['indx'] = sprintf('image_%s', $idx);
@@ -422,7 +428,6 @@ function insert_image_assets($poly_nodes){
                $image_asset['conf']['slotH'] = $node['height'];
                $image_asset['conf']['slotX'] = $node['xpos'];
                $image_asset['conf']['slotY'] = $node['ypos'];
-               $image_asset['conf']['layoutCode'] = $node['layout_code'];
                $image_asset['conf']['opacity'] = '1';
                $image_asset['conf']['depth'] = intval(10000) +intval($idx);
                $res[]= $image_asset;

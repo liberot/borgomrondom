@@ -22,14 +22,25 @@ function policy_match($policies){
      return $res;
 }
 
+function dload($url){
+     $ch = curl_init();
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     curl_setopt($ch, CURLOPT_URL, $url);
+     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+     $res = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+     $res = curl_exec($ch);
+     curl_close($ch);
+     return $res; 
+}
+
 function fetch($url, $token){
      $auth = "Authorization: Bearer ".$token;
-     $post = json_encode(new stdClass());
+     $post = json_encode([]);
      $ch = curl_init();
      curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $auth));
      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
      curl_setopt($ch, CURLOPT_URL, $url);
-     // curl_setopt($ch, POSTFIELDS, $post);
+     curl_setopt($ch, POSTFIELDS, $post);
      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
      $res = curl_getinfo($ch, CURLINFO_HTTP_CODE);
      $res = curl_exec($ch);
@@ -193,7 +204,6 @@ function get_author_id(){
 }
 
 function remove_base_from_chunk($chunk){
-     // $res = str_replace('data:image/png;base64,', '', $chunk);
      $res = preg_replace('/data:image\/png;base64,/', '', $chunk);
      return $res;
 }
@@ -241,7 +251,6 @@ function px_to_unit($ppi, $pxs, $unit){
      }
      return $res;
 }
-
 
 function unit_to_px($ppi, $val, $unit){
      if(is_null($ppi)){ $ppi = 300; }
@@ -298,28 +307,47 @@ function px_pump($px, $ppi_1st, $ppi_2nd){
 }
 
 function fit_image_asset_to_slot($asset){
+
      // $asset['src'] = 'http://127.0.0.1:8083/wp-content/plugins/nosuch/survey/asset/test.300.png';
+     // $asset['src'] = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.300.png';
+
      $temp = $asset['src'];
      $temp = remove_base_from_chunk($temp);
      $temp = preg_replace('/\s+/', '', $temp);
+
      $vali = base64_decode($temp, true);
-     $xali = base64_encode($vali);
+     $ilav = base64_encode($vali);
      $size = null;
-     if($temp == $xali){
+
+     if($temp == $ilav){
           $temp = add_base_to_chunk($temp);
           $size = getimagesize('data://'.$temp);
      }
      else {
+          if(@file_exists($asset['src'])){
+               $temp = @file_get_contents($asset['src']);
+          }
+          else if(false != parse_url($asset['src'])){
+               $temp = dload($asset['src']);
+          }
+          $temp = add_base_to_chunk(base64_encode($temp));
+          $asset['src'] = $temp;
+          $size = getimagesize('data://'.$temp);
      }
-     if(null == $size){
-          return $asset;
-     }
+
+     if(null == $size){ return $asset; }
+
      $width = $size[0];
      $height = $size[1];
+
+     $layout_code = $width >= $height ? 'P' : 'L';
+
      $r = 1;
      $w = $width;
      $h = $height;
+
      switch($asset['conf']['layoutCode']){
+
           case 'L':
                if($width >= $asset['conf']['slotW']){
                     $r = $asset['conf']['slotW'] /$width;
@@ -332,6 +360,7 @@ function fit_image_asset_to_slot($asset){
                     $h = $height *$r;
                }
                break;
+
           case 'P':
                if($height >= $asset['conf']['slotH']){
                     $r = $asset['conf']['slotH'] /$height;
@@ -345,6 +374,7 @@ function fit_image_asset_to_slot($asset){
                }
                break;
      }
+
      $asset['conf']['xoffset'] = ($asset['conf']['slotW'] -$w) /2;
      $asset['conf']['yoffset'] = ($asset['conf']['slotH'] -$h) /2;
      $asset['conf']['scale'] = $r;
@@ -352,5 +382,7 @@ function fit_image_asset_to_slot($asset){
      $asset['conf']['height'] = $h; 
      $asset['conf']['xpos'] += $asset['conf']['xoffset']; 
      $asset['conf']['ypos'] += $asset['conf']['yoffset']; 
+     $asset['conf']['layoutCode'] = $layout_code; 
+
      return $asset;
 }
