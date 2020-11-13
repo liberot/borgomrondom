@@ -199,31 +199,37 @@ class Tools extends Controller {
      }
 
      setupMouseControls(){
+
           let ref = this;
           jQuery(document).off('mouseup');
           jQuery(document).off('mousedown');
           jQuery(document).off('mousemove');
+
           jQuery(document).mouseup(function(){
-               if(null == ref.model.mouseDownRec){
-                    return;
-               }
+               
+               if(null == ref.model.mouseDownRec){ return; }
+
                if(SpreadViewerConfig.quantize){
                     ref.model.selectedLibraryItem.conf.xpos-= ref.model.selectedLibraryItem.conf.xpos %5;
                     ref.model.selectedLibraryItem.conf.ypos-= ref.model.selectedLibraryItem.conf.ypos %5;
                     ref.model.selectedLibraryItem.conf.xpos = parseInt(ref.model.selectedLibraryItem.conf.xpos);
                     ref.model.selectedLibraryItem.conf.ypos = parseInt(ref.model.selectedLibraryItem.conf.ypos);
                }
-               ref.changeUnit(ref.model.selectedLibraryItem, ref.model.mouseDownRec.unit);
+
+               // ref.changeUnit(ref.model.selectedLibraryItem, ref.model.mouseDownRec.unit);
                ref.model.mouseDownRec = null;
                ref.notify(new Message('mousedrag::released', ref.model.doc));
           });
+
           jQuery('.screen').mousedown(function(e){
+
                ref.model.selectedLibraryItem = ref.selectLibraryItemByMouse(arguments[0].clientX, arguments[0].clientY);
-               if(null == ref.model.selectedLibraryItem){
-                    return;
-               }
+
+               if(null == ref.model.selectedLibraryItem){ return; }
+
                let unit = ref.model.selectedLibraryItem.conf.unit;
-               // ref.changeUnit(ref.model.selectedLibraryItem, 'mm');
+               ref.changeUnit(ref.model.selectedLibraryItem, ref.model.doc.unit);
+
                ref.model.mouseDownRec = { 
                     x: parseFloat(arguments[0].clientX), 
                     y: parseFloat(arguments[0].clientY), 
@@ -237,10 +243,11 @@ class Tools extends Controller {
                     unit: unit
                };
           });
+
           jQuery('.screen').mousemove(function(){
-               if(null == ref.model.doc || null == ref.model.mouseDownRec){
-                    return;
-               }
+
+               if(null == ref.model.mouseDownRec || null == ref.model.doc){ return; }
+
                let xmove  = parseFloat(arguments[0].clientX) -parseFloat(ref.model.mouseDownRec.x);
                    xmove /= parseFloat(parseFloat(ref.model.mouseDownRec.sw)
                               /parseFloat(ref.model.doc.printSize.width))
@@ -251,14 +258,16 @@ class Tools extends Controller {
 
                let xpos = parseFloat(ref.model.mouseDownRec.xpos) +xmove; 
                let ypos = parseFloat(ref.model.mouseDownRec.ypos) +ymove
-// todo
+
                ref.model.selectedLibraryItem.conf.xpos = xpos;
                ref.model.selectedLibraryItem.conf.ypos = ypos;
 
                switch(ref.model.selectedLibraryItem.type){
+
                     case 'image':
                          ref.notify(new Message('image::moved', ref.model.selectedLibraryItem));
                          break;
+
                     case 'text':
                          ref.notify(new Message('text::moved', ref.model.selectedLibraryItem));
                          break;

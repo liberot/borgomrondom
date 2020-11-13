@@ -40,7 +40,7 @@ class Screen extends Controller {
                 }
                 this.model.doc.assets[idx].conf.depth = parseInt(this.model.doc.assets[idx].conf.depth);
            }
-           this.model.doc.assets = this.model.doc.assets.sort(function(a,b){ return a.conf.depth >= b.conf.depth });
+           this.model.doc.assets = this.model.doc.assets.sort(function(a, b){return a.conf.depth >= b.conf.depth});
      }
 
      updateScreen(msg){

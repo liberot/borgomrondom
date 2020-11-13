@@ -483,6 +483,7 @@ function extract_text_assets($string_nodes){
      $string_asset = [];
      $string_asset['type'] = 'text';
      $string_asset['text'] = $txt;
+     $string_asset['indx'] = random_string();
 
      $string_asset['conf'] = [];
 
