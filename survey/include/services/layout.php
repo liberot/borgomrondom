@@ -405,7 +405,7 @@ function insert_image_assets($poly_nodes){
      $idx = 0;
 
      $landscape = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.900.base');
-     $portrait = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.009.base');
+     $portrait = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.p.base');
 
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
@@ -436,8 +436,8 @@ function insert_image_assets($poly_nodes){
 
 // todo
 // depends on ppi 
-               $image_asset['conf']['scale_type'] = 'cut_into_slot';
-               $image_asset['conf']['max_scale_ratio'] = '2';
+               $image_asset['conf']['scaleType'] = 'cut_into_slot';
+               $image_asset['conf']['maxScaleRatio'] = '2';
 // todo
 
                $res[]= $image_asset;

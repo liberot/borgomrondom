@@ -18,7 +18,8 @@ class Correct extends Controller {
      }
 
      corrAssetSize(msg){
-return;
+
+
           let target = msg.model.target;
           let width = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.ow, target.conf.unit);
           let height = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.oh, target.conf.unit);
@@ -26,10 +27,25 @@ return;
           let slotH = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.slotH, target.conf.unit);
           let slotX = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.slotX, target.conf.unit);
           let slotY = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.slotY, target.conf.unit);
+          let maxScaleRatio = parseFloat(target.conf.maxScaleRatio);
           let w = width;
           let h = height;
           let r = 1;
-          switch(target.conf.layoutCode){
+
+          switch(target.conf.scaleType){
+          case 'cut_into_slot':
+               let xr = slotW /width;
+               let yr = slotH /height;
+               r = xr >= yr ? xr : yr;
+               if(r >= maxScaleRatio){
+                   r = maxScaleRatio;
+               }
+               w = width *r;
+               h = height *r;
+               break;
+
+          default:
+               switch(target.conf.layoutCode){
                case 'L':
                     if(width >= slotW){
                          r = slotW /width;
@@ -54,18 +70,22 @@ return;
                          h = height *r;
                     }
                     break;
-           
+               }
           }
+
           let xoffset = (slotW -w) /2;
           let yoffset = (slotH -h) /2;
+
           target.conf.scale = r;
           target.conf.width = w;
           target.conf.height = h;
           target.conf.opacity = parseFloat(target.conf.opacity);
+
           target.conf.xpos = parseFloat(slotX) +xoffset;
           target.conf.ypos = parseFloat(slotY) +yoffset;
+
           this.notify(new Message('asset::corrected'));
- 
+
           console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
      }
 

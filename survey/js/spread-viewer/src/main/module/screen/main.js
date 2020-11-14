@@ -264,7 +264,6 @@ class Screen extends Controller {
           });
           img.attr(attr);
 
-
           let slotX = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotX, target.conf.unit);
           let slotY = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotY, target.conf.unit);
           let slotW = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotW, target.conf.unit);
@@ -272,7 +271,7 @@ class Screen extends Controller {
           let rect = this.model.currentScreen.rect(slotW, slotH)
               rect.move(slotX, slotY);
 
-          img.clipWith(rect);
+           img.clipWith(rect);
 
           // img.on('mouseover', function(e){ console.log(e); })
      }
