@@ -337,60 +337,90 @@ function fit_image_asset_to_slot($asset){
 
      if(null == $size){ return $asset; }
 
-     $width = $size[0];
-     $height = $size[1];
+     $width = floatval($size[0]);
+     $height = floatval($size[1]);
+     $layout_code = $width >= $height ? 'L' : 'P';
 
-     $layout_code = $width >= $height ? 'P' : 'L';
+     $asset['conf']['ow'] = $width;
+     $asset['conf']['oh'] = $height;
 
      $r = 1;
      $w = $width;
      $h = $height;
+     $xoffset = 0;
+     $yoffset = 0;
+     $slot_width = floatval($asset['conf']['slotW']);
+     $slot_height = floatval($asset['conf']['slotH']);
+     $slot_x = floatval($asset['conf']['slotX']);
+     $slot_y = floatval($asset['conf']['slotY']);
+     $max_scale_ratio = floatval($asset['conf']['max_scale_ratio']);
+     $scale_type = $asset['conf']['scale_type'];
 
-     switch($asset['conf']['layoutCode']){
+     switch($layout_code){
 
           case 'L':
-               if($width >= $asset['conf']['slotW']){
-                    $r = $asset['conf']['slotW'] /$width;
+
+               if($width >= $slot_width){
+                    $r = $slot_width /$width;
                     $w = $width *$r;
                     $h = $height *$r;
                }
-               if($h >= $asset['conf']['slotH']){
-                    $r = $asset['conf']['slotH'] /$height;
+               if($h >= $slot_height){
+                    $r = $slot_height /$h;
                     $w = $width *$r;
                     $h = $height *$r;
                }
+
+               if('cut_into_slot' == $scale_type){
+                    $r = $slot_height /$h;
+                    if($r >= $max_scale_ratio){ 
+                        $r = $max_scale_ratio; 
+                    }
+                    $w = $width *$r;
+                    $h = $height *$r;
+               }
+
+               $xoffset = ($slot_width -$w) /2;
+               $yoffset = ($slot_height -$h) /2;
                break;
 
           case 'P':
-               if($height >= $asset['conf']['slotH']){
-                    $r = $asset['conf']['slotH'] /$height;
+
+               if($height >= $slot_height){
+                    $r = $slot_height /$height;
                     $w = $width *$r;
                     $h = $height *$r;
                }
-               if($w >= $asset['conf']['slotW']){
-                    $r = $asset['conf']['slotW'] /$width;
+               if($w >= $slot_width){
+                    $r = $slot_width /$w;
                     $w = $width *$r;
                     $h = $height *$r;
                }
+
+               if('cut_into_slot' == $scale_type){
+                    $r = $slot_width /$width;
+                    if($r >= $max_scale_ratio){ 
+                        $r = $max_scale_ratio; 
+                    }
+                    $w = $width *$r;
+                    $h = $height *$r;
+               }
+
+               $xoffset = ($slot_width -$w) /2;
+               $yoffset = ($slot_height -$h) /2;
                break;
      }
 
-     if('cut_into_slot' == $asset['conf']['scale_type']){
-          if(floatval($asset['conf']['max_scale_ratio']) >= $r){
-               $r = floatval($asset['conf']['max_scale_ratio']) /$r;
-               $h *= $r;
-               $w *= $r;
-          }
-     }
-
-     $asset['conf']['scale'] = $r;
+     $asset['conf']['xpos'] = $slot_x +$xoffset; 
+     $asset['conf']['ypos'] = $slot_x +$yoffset; 
      $asset['conf']['width'] = $w;
      $asset['conf']['height'] = $h; 
-     $asset['conf']['xoffset'] = ($asset['conf']['slotW'] -$w) /2;
-     $asset['conf']['yoffset'] = ($asset['conf']['slotH'] -$h) /2;
-     $asset['conf']['xpos'] += $asset['conf']['xoffset']; 
-     $asset['conf']['ypos'] += $asset['conf']['yoffset']; 
+     $asset['conf']['xoffset'] = $xoffset;
+     $asset['conf']['yoffset'] = $yoffset;
+     $asset['conf']['scale'] = $r;
      $asset['conf']['layoutCode'] = $layout_code; 
+
+     // print_r($asset['conf']);
 
      return $asset;
 }
