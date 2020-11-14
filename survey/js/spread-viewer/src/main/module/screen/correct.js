@@ -18,6 +18,7 @@ class Correct extends Controller {
      }
 
      corrAssetSize(msg){
+return;
           let target = msg.model.target;
           let width = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.ow, target.conf.unit);
           let height = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.oh, target.conf.unit);
@@ -65,7 +66,7 @@ class Correct extends Controller {
           target.conf.ypos = parseFloat(slotY) +yoffset;
           this.notify(new Message('asset::corrected'));
  
-          // console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
+          console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
      }
 
      corrBlockWidth(target){

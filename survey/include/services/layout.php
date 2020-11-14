@@ -369,6 +369,7 @@ print "\n";
      $doc['assets'] = array_merge($doc['assets'], extract_text_assets($string_nodes));
      $doc['assets'] = array_merge($doc['assets'], extract_poly_assets($poly_nodes));
      $doc['assets'] = array_merge($doc['assets'], extract_path_assets($path_nodes));
+
      $doc['layout']['code'] = get_layout_code_of_spread($poly_nodes);
 
      $res = insert_image_assets($poly_nodes);
@@ -399,6 +400,7 @@ function get_layout_code_of_spread($nodes){
 }
 
 function insert_image_assets($poly_nodes){
+
      $res = [];
      $idx = 0;
 
@@ -430,6 +432,14 @@ function insert_image_assets($poly_nodes){
                $image_asset['conf']['slotY'] = $node['ypos'];
                $image_asset['conf']['opacity'] = '1';
                $image_asset['conf']['depth'] = intval(10000) +intval($idx);
+
+
+// todo
+// depends on ppi 
+               $image_asset['conf']['scale_type'] = 'cut_into_slot';
+               $image_asset['conf']['max_scale_ratio'] = '2';
+// todo
+
                $res[]= $image_asset;
                $idx++;
           }

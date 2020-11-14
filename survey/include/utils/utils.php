@@ -375,11 +375,19 @@ function fit_image_asset_to_slot($asset){
                break;
      }
 
-     $asset['conf']['xoffset'] = ($asset['conf']['slotW'] -$w) /2;
-     $asset['conf']['yoffset'] = ($asset['conf']['slotH'] -$h) /2;
+     if('cut_into_slot' == $asset['conf']['scale_type']){
+          if(floatval($asset['conf']['max_scale_ratio']) >= $r){
+               $r = floatval($asset['conf']['max_scale_ratio']) /$r;
+               $h *= $r;
+               $w *= $r;
+          }
+     }
+
      $asset['conf']['scale'] = $r;
      $asset['conf']['width'] = $w;
      $asset['conf']['height'] = $h; 
+     $asset['conf']['xoffset'] = ($asset['conf']['slotW'] -$w) /2;
+     $asset['conf']['yoffset'] = ($asset['conf']['slotH'] -$h) /2;
      $asset['conf']['xpos'] += $asset['conf']['xoffset']; 
      $asset['conf']['ypos'] += $asset['conf']['yoffset']; 
      $asset['conf']['layoutCode'] = $layout_code; 
