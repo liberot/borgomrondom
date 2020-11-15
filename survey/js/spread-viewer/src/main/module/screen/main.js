@@ -29,18 +29,21 @@ class Screen extends Controller {
           this.model.doc = msg.model;
           this.setViewSize();
           this.initLayers();
-          this.render();     
+          this.render();
      }
 
      initLayers(){
-           this.model.layers = [];
+           let temp = [];
            for(let idx in this.model.doc.assets){
                 if(null == this.model.doc.assets[idx].conf.depth){
                      this.model.doc.assets[idx].conf.depth = parseInt(idx);
                 }
                 this.model.doc.assets[idx].conf.depth = parseInt(this.model.doc.assets[idx].conf.depth);
+                temp.push({d: this.model.doc.assets[idx].conf.depth, i: parseInt(idx)});
            }
-           this.model.doc.assets = this.model.doc.assets.sort(function(a, b){return a.conf.depth >= b.conf.depth});
+           temp.sort(function(a, b){ return a.d >= b.d });
+           if(window.chrome) { temp.sort(function(a, b){ return a.d >= b.d ? 1 : -1 }); }
+           this.model.layers = temp;
      }
 
      updateScreen(msg){
@@ -55,7 +58,7 @@ class Screen extends Controller {
           this.model.printFrame = false;
           let width = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)));
           let height = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)));
-          this.model.currentScreen.viewbox(0, 0, width, height); 
+          this.model.currentScreen.viewbox(0, 0, width, height);
           // parts
 
           /*
@@ -134,19 +137,21 @@ class Screen extends Controller {
 
      render(){
           this.model.currentScreen.clear();
-          for(let idx in this.model.doc.assets){
-               switch(this.model.doc.assets[idx].type){
+          // for(let idx in this.model.doc.assets){
+          for(let idx in this.model.layers){
+               let target = this.model.doc.assets[this.model.layers[idx].i];
+               switch(target.type){
                     case 'circle':
-                         this.renderCircle(this.model.doc.assets[idx]);
+                         this.renderCircle(target);
                          break;
                     case 'poly':
-                         this.renderPoly(this.model.doc.assets[idx]);
+                         this.renderPoly(target);
                          break;
                     case 'image':
-                         this.renderImage(this.model.doc.assets[idx]);
+                         this.renderImage(target);
                          break;
                     case 'text':
-                         this.renderText(this.model.doc.assets[idx]);
+                         this.renderText(target);
                          break;
                }
           }
