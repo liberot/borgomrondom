@@ -91,14 +91,14 @@ class Survey extends Controller {
                }
           }
           if(tmp.length >= 3){
-               let id = this.getLinkVal('thread', tmp[2]);
+               let id = this.getLinkVal('section', tmp[2]);
                if(id != this.model.rThread){
                    this.model.rThread = id;
                    this.model.rThreadNav = true;
                }
           }
           if(tmp.length >= 2){
-               let id = this.getLinkVal('survey', tmp[1]);
+               let id = this.getLinkVal('thread', tmp[1]);
                if(id != this.model.rSurvey){
                    this.model.rSurvey = id;
                    this.model.rSurveyNav = true;
@@ -134,7 +134,6 @@ class Survey extends Controller {
                     }
                }
                let model = { 'arguments': [ '', this.model.rSurvey ] }
-               this.notify(new Message('select::survey', model));
                this.model.rSurveyNav = false;
           }
      }
@@ -147,9 +146,9 @@ class Survey extends Controller {
                chunk = chunk.replace(/^\//, '');
           }
           if(null != this.model.thread){
-               chunk+= '/survey:'+this.model.thread.ID;
+               chunk+= '/thread:'+this.model.thread.ID;
                if(null != this.model.section){
-                    chunk+= '/thread:'+this.model.section.ID;
+                    chunk+= '/section:'+this.model.section.ID;
                }
           }
           window.location.hash = chunk;
