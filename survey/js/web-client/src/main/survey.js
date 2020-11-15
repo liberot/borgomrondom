@@ -36,8 +36,7 @@ class Survey extends Controller {
 
      storeInput(msg){
           if(false == this.model.clientAuthed){
-
-               return;
+               // return;
           }
           this.notify(new Message('save::toc', this.model));
           this.notify(new Message('save::panel', this.model));

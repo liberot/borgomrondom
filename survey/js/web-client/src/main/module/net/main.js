@@ -73,10 +73,9 @@ class SurveyNet extends Controller {
           let ref = this;
           let data = {
                action: 'exec_init_panel',
-               panel_id: msg.model.panel.ID,
-               panel: msg.model.panel.post_content,
-               ref: msg.model.panel.post_content.ref,
-               thread_id: msg.model.thread.ID
+               section_id: msg.model.section.ID,
+               panel_ref: msg.model.panel.post_content.ref,
+               doc: msg.model.panel.post_content
           }
           let cb = function(e){
                ref.notify(new Message('panel::saved', { e }));

@@ -46,23 +46,25 @@ function exec_init_panel(){
      }
 
      $author_id = get_current_user_id();
-     $panel_id = trim_incoming_string($_POST['panel_id']);
+     $panel_ref = trim_incoming_filename($_POST['panel_ref']);
 
      $thread_id = $_POST['thread_id'];
-     $thread_id = get_session_ticket('thread_id');
+     $section_id = get_session_ticket('thread_id');
 
-     $ref = trim_incoming_string($_POST['ref']);
+     $section_id = $_POST['section_id'];
+     $section_id = get_session_ticket('section_id');
 
-     $coll = [];
+     $doc = $_POST['doc'];
+     $doc = pigpack($_POST['doc']);
 
-// the id updates the existing panel
+// id updates the existing panel
      $conf = [
 //        'ID'=>$panel_id,
           'post_author'=>$author_id,
           'post_type'=>'surveyprint_panel',
-          'post_parent'=>$thread_id,
-          'post_excerpt'=>$ref,
-          'post_content'=>pigpack(walk_the_doc($_POST['panel']))
+          'post_parent'=>$section_id,
+          'post_excerpt'=>$panel_ref,
+          'post_content'=>$doc
      ];
      $panel_id = init_panel($conf);
 

@@ -68,9 +68,7 @@ function exec_init_thread(){
 
 
 
-
-
-
+// thread is goint to be authd at some point 
      return false;
 
 
@@ -159,17 +157,68 @@ function exec_get_thread_by_id(){
 }
 */
 
+
+
+// --------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
+// public fielding questions that is going to be private at the 13th step... 
+// --------------------------------------------------------------------------------
+add_action('init', 'init_survey_guest');
+function init_survey_guest(){
+     if(1 != is_user_logged_in()){
+          $res = auth_guest_client();
+          set_session_ticket('unique_guest', random_string(64), true);
+     }
+}
+
+add_action('admin_post_exec_get_initial_thread', 'exec_get_initial_thread');
+function exec_get_initial_thread(){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+// pump of a previosly inited guest survey
+
+     $thread_id = get_session_ticket('thread_id');
+     if(!is_null($thread_id)){
+          $coll = [];
+          $coll['thread'] = get_thread_by_id($thread_id);
+          $coll['toc'] = get_toc_by_thread_id($thread_id);
+          $coll['sections'] = get_sections_by_thread_id($thread_id);
+     }
+
+     if(!is_null($coll['thread'][0])){
+          $message = esc_html(__('cached thread is loaded', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+          return true;
+     }
+
+
+// init of a guest thread
+     $coll = init_guest_thread();
+     if(false == $coll){ return false; }
+
+     $message = esc_html(__('thread is loaded', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
+
 function init_guest_thread(){
 
      if(!policy_match([Role::CUSTOMER])){
           $message = esc_html(__('policy match', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'survey'=>$survey));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
      $surveyprint_uuguest = get_session_ticket('unique_guest');
+
      $survey = get_survey_by_title('__fielding_questions__')[0];
 
      if(is_null($survey)){
@@ -198,7 +247,7 @@ function init_guest_thread(){
      $conf = [
           'post_type'=>'surveyprint_section',
           'post_author'=>$author_id,
-          'post_title'=>$surveyprint_uuguest,
+  'post_title'=>$surveyprint_uuguest,
           'post_excerpt'=>$survey->post_excerpt,
           'post_name'=>$surveyprint_uuid,
           'post_content'=>$surveyprint_uuid,
@@ -261,24 +310,3 @@ function init_guest_thread(){
 */
      return $coll;
 }
-
-// guest kickoff
-add_action('init', 'init_survey_guest');
-function init_survey_guest(){
-     set_session_ticket('unique_guest', random_string(64));
-     if(1 != is_user_logged_in()){
-          $res = auth_guest_client();
-     }
-}
-add_action('admin_post_exec_get_initial_thread', 'exec_get_initial_thread');
-function exec_get_initial_thread(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
-          $message = esc_html(__('policy match', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-     $coll = init_guest_thread();
-     $message = esc_html(__('survey is loaded', 'nosuch'));
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
-}
-
