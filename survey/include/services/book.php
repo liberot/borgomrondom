@@ -322,12 +322,7 @@ function add_toc($book_id, $title, $toc, $spread_ids, $spread_refs){
 function add_spread($section_id, $title, $chapter_id, $panel_ref){
 
      $panel = get_panel_by_ref($section_id, $panel_ref)[0];
-/*
-print ">";
-print "\n";
-print_r($panel);
-print "\n";
-*/
+
      $author_id = get_author_id();
 
      if(null == $panel){ return false; }
