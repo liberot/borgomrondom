@@ -81,6 +81,9 @@ function exec_init_book_by_thread_id(){
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
 
+     $section_id = trim_incoming_filename($_POST['section_id']);
+     $section_id = get_session_ticket('section_id');
+
      $thread_toc = get_toc_by_thread_id($thread_id)[0];
      if(is_null($thread_toc)){
           $message = esc_html(__('no toc', 'nosuch'));
@@ -89,7 +92,7 @@ function exec_init_book_by_thread_id(){
      }
      $thread_toc->post_content = pagpick($thread_toc->post_content);
 
-     if(null == $thread_toc->post_content['walkytalky']){
+     if(null == $thread_toc->post_content['booktoc']){
           $message = esc_html(__('no toc records', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -124,8 +127,8 @@ function exec_init_book_by_thread_id(){
 
 
 // ---------------------------- pages
-     foreach($thread_toc->post_content['walkytalky'] as $panel){
-          $res = add_spread($thread_id, 'Title of a Spread', $chapter_id, $panel);
+     foreach($thread_toc->post_content['booktoc'] as $panel){
+          $res = add_spread($section_id, 'Title of a Spread', $chapter_id, $panel);
           if(false != $res){
                $spread_ids[]= $res['spread_id'];
                $spread_refs[]= $res['spread_ref'];
@@ -316,9 +319,15 @@ function add_toc($book_id, $title, $toc, $spread_ids, $spread_refs){
      return $toc_id;
 }
 
-function add_spread($thread_id, $title, $chapter_id, $panel_ref){
+function add_spread($section_id, $title, $chapter_id, $panel_ref){
 
-     $panel = get_panel_by_ref($thread_id, $panel_ref)[0];
+     $panel = get_panel_by_ref($section_id, $panel_ref)[0];
+/*
+print ">";
+print "\n";
+print_r($panel);
+print "\n";
+*/
      $author_id = get_author_id();
 
      if(null == $panel){ return false; }
@@ -367,7 +376,7 @@ $layout_code = 'P';
           $asset['locator'] = '';
           $asset['conf']['ow'] = '';
           $asset['conf']['oh'] = '';
-          $uploaded_asset = get_assets_by_panel_ref($thread_id, $panel->post_excerpt, $max)[0];
+          $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $max)[0];
           if(null != $uploaded_asset){
                $asset['src'] = add_base_to_chunk($uploaded_asset->post_content);
                $asset = fit_image_asset_to_slot($asset);

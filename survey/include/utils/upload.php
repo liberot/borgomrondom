@@ -40,9 +40,9 @@ function get_asset_by_id($asset_id){
      return $res;
 }
 
-function get_assets_by_panel_ref($thread_id, $panel_ref, $limit=10){
+function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10){
      $panel_ref = esc_sql($panel_ref);
-     $thread_id = esc_sql($thread_id);
+     $section_id = esc_sql($section_id);
      $limit = esc_sql($limit);
      $author_id = esc_sql(get_author_id());
      global $wpdb;
@@ -50,7 +50,7 @@ function get_assets_by_panel_ref($thread_id, $panel_ref, $limit=10){
           select * from wp_posts 
                where post_type = 'surveyprint_asset' 
                and post_author = '{$author_id}' 
-               and post_parent = '{$thread_id}' 
+               and post_parent = '{$section_id}' 
                and post_excerpt = '{$panel_ref}' 
                order by ID desc
                limit {$limit};

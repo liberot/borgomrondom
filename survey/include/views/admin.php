@@ -268,8 +268,8 @@ function build_thread_entries_view(){
 EOD;
 
      $style = 'column-primary';
-     if(null == $coll->post_content['walkytalky']){ $coll->post_content['walkytalky'] = []; }
-     foreach($coll->post_content['walkytalky'] as $ref){
+     if(null == $coll->post_content['booktoc']){ $coll->post_content['booktoc'] = []; }
+     foreach($coll->post_content['booktoc'] as $ref){
           $panel = get_panel_by_ref($thread_id, $ref)[0];
           $panel->post_content = pagpick($panel->post_content);
           $assets = get_assets_by_panel_ref($thread_id, $panel->post_excerpt);

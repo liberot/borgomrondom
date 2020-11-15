@@ -176,8 +176,8 @@ class Survey extends Controller {
 
           this.model.toc = msg.model.e.coll.toc[0];
           this.model.toc.post_content = SurveyUtil.pagpick(this.model.toc.post_content);
-          if(null == this.model.toc.post_content.walkytalky){
-               this.model.toc.post_content.walkytalky = [];
+          if(null == this.model.toc.post_content.booktoc){
+               this.model.toc.post_content.booktoc = [];
           }
           if(null == this.model.toc.post_content.history){
                this.model.toc.post_content.history = [];
@@ -199,9 +199,9 @@ class Survey extends Controller {
                }
           }
           else {
-               target = this.model.toc.post_content.walkytalky;
-               if(null != this.model.toc.post_content.walkytalky[this.model.toc.post_content.tocstep -1]){
-                    link = this.model.toc.post_content.walkytalky[this.model.toc.post_content.tocstep -1];
+               target = this.model.toc.post_content.booktoc;
+               if(null != this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep -1]){
+                    link = this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep -1];
                }
           }
 
@@ -281,7 +281,7 @@ class Survey extends Controller {
      }
 
      corrToc(ref){
-          let pos = this.model.toc.post_content.walkytalky.indexOf(ref);
+          let pos = this.model.toc.post_content.booktoc.indexOf(ref);
           if(-1 != pos){ this.model.toc.post_content.tocstep = pos; }
      }
 
@@ -292,7 +292,7 @@ class Survey extends Controller {
      }
 
      pushToc(){
-          this.model.toc.post_content.walkytalky[this.model.toc.post_content.tocstep] = this.model.panel.post_content.ref;
+          this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep] = this.model.panel.post_content.ref;
           this.model.toc.post_content.history[this.model.toc.post_content.navstep] = this.model.panel.post_content.ref;
           this.model.toc.post_content.tocstep = this.model.toc.post_content.tocstep;
           this.model.toc.post_content.initstep = this.model.toc.post_content.initstep;
@@ -307,7 +307,7 @@ class Survey extends Controller {
           this.model.toc.post_content.navstep--;
           this.model.toc.post_content.navstep--;
           if(this.model.toc.post_content.tocstep <= 0){ this.model.toc.post_content.tocstep = 0; }
-          let target = this.model.toc.post_content.walkytalky;
+          let target = this.model.toc.post_content.booktoc;
           let res = null;
           if(null != target[this.model.toc.post_content.tocstep]){
                res = target[this.model.toc.post_content.tocstep];
@@ -717,11 +717,12 @@ console.log('prev link from default: ', ref);
      }
 
      uploadAssets(msg){
+console.log('will not upload until client is authed');
+console.log(this.model.clientAuthed);
           for(let idx in this.model.panel.assetCopies){
                if(true != this.model.panel.assetCopies[idx].upload){ continue; }
                let model = {
-                    panelId: this.model.panel.ID,
-                    threadId: this.model.thread.ID,
+                    sectionId: this.model.section.ID,
                     panelRef: this.model.panel.post_excerpt,
                     image: this.model.panel.assetCopies[idx],
                     panel: this.model.panel.post_content

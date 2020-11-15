@@ -12,12 +12,16 @@ function exec_init_asset_by_panel_ref(){
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
 
+     $section_id = trim_incoming_filename($_POST['section_id']);
+     $section_id = get_session_ticket('section_id');
+
      $indx = trim_incoming_filename($_POST['indx']);
-     $panel_id = trim_incoming_filename($_POST['panel_id']);
+
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
+
      $layout_code = trim_incoming_filename($_POST['layout_code']);
 
-     $panel = get_panel_by_ref($thread_id, $panel_ref)[0];
+     $panel = get_panel_by_ref($section_id, $panel_ref)[0];
      if(is_null($panel)){
           $message = esc_html(__('no panel', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -52,18 +56,18 @@ function exec_init_asset_by_panel_ref(){
 
      $conf = [
           'post_type'=>'surveyprint_asset',
-          'post_author'=>get_current_user_id(),
+          'post_author'=>get_author_id(),
           'post_title'=>$indx,
           'post_excerpt'=>$panel_ref,
           'post_name'=>$layout_code,
-          'post_parent'=>$thread_id,
+          'post_parent'=>$section_id,
           'post_content'=>$image
      ];
 
      $res = init_asset($conf);
 
      $max = 1;
-     $coll['assets'] = get_assets_by_panel_ref($thread_id, $panel_ref, $max);
+     $coll['assets'] = get_assets_by_panel_ref($section_id, $panel_ref, $max);
 
      $message = esc_html(__('file is uploaded', 'nosuch'));
      echo json_encode(['res'=>'success', 'message'=>$message, 'coll'=>$coll]);
@@ -81,11 +85,13 @@ function exec_get_assets_by_panel_ref(){
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
 
+     $section_id = trim_incoming_filename($_POST['section_id']);
+     $section_id = get_session_ticket('section_id');
+
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
-     $panel_id = trim_incoming_filename($_POST['panel_id']);
 
      $max = 1;
-     $res = get_assets_by_panel_ref($thread_id, $panel_ref, $max);
+     $res = get_assets_by_panel_ref($section_id, $panel_ref, $max);
      $message = esc_html(__('assets loaded', 'nosuch'));
      echo json_encode(['res'=>'success', 'message'=>$message, 'coll'=>$res, 'panel_id'=>$panel_id]);
 };

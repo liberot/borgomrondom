@@ -38,8 +38,7 @@ class SurveyNet extends Controller {
           let ref = this;
           let data = {
                'action': 'exec_init_asset_by_panel_ref',
-               'thread_id': msg.model.threadId,
-               'panel_id': msg.model.panelId,
+               'section_id': msg.model.sectionId,
                'panel_ref': msg.model.panelRef,
                'layout_code': msg.model.image.layoutCode,
                'image': msg.model.image.post_content
