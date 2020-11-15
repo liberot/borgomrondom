@@ -29,7 +29,7 @@ function exec_get_panels_by_thread_id(){
      }
 
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
 
      $coll = get_panels_by_thread_id($thread_id);
      $message = esc_html(__('panels is loaded', 'nosuch'));
@@ -49,7 +49,7 @@ function exec_init_panel(){
      $panel_id = trim_incoming_string($_POST['panel_id']);
 
      $thread_id = $_POST['thread_id'];
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
 
      $ref = trim_incoming_string($_POST['ref']);
 
@@ -77,11 +77,19 @@ function exec_get_panel_by_ref(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     $thread_id = trim_incoming_filename($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+
+     $section_id = trim_incoming_filename($_POST['section_id']);
+     $section_id = get_session_ticket('section_id');
+
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
-     $coll = get_panel_by_ref($thread_id, $panel_ref);
+     $coll = get_panel_by_ref($section_id, $panel_ref);
+
      $message = esc_html(__('panel is loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
+
+add_action('exec_test', 'test');
+function test(){
+    print_r($_POST);
 }
 

@@ -25,10 +25,13 @@ function exec_construct_typeform_survey(){
           return false;
      }
 
-// todo :: select downloaded survey
-// store it some place else
+     $survey_file_name = trim_incoming_filename($_POST['survey_file_name']);
+     if(is_null($survey_file_name)){
+          $survey_file_name = 'typeform_survey.json';
+     }
+
      $ds = DIRECTORY_SEPARATOR;
-     $path = WP_PLUGIN_DIR.SURVeY.$ds.'asset'.$ds.'typeform_survey.json';
+     $path = WP_PLUGIN_DIR.SURVeY.$ds.'asset'.$ds.$survey_file_name;
      $data = @file_get_contents($path);
      if(is_null($data)){
           $message = esc_html(__('no json', 'nosuch'));
@@ -42,11 +45,9 @@ function exec_construct_typeform_survey(){
           echo json_encode(array('res'=>'failed', 'message'=>$message.$path));
           return;
      }
-// fixdiss
      $doc = walk_the_doc($doc);
 
      $survey_type = 'typeform'; 
-// survay has no ref
      $survey_ref = $doc['id'];
      $survey_title = $doc['title'];
 
@@ -58,6 +59,7 @@ function exec_construct_typeform_survey(){
           'post_excerpt'=>$survey_ref,
           'post_content'=>pigpack($doc)
      ]);
+
      if(is_null($survey_id)){
           $message = esc_html(__('no survey write', 'nosuch'));
           echo json_encode(
@@ -129,7 +131,7 @@ function exec_construct_typeform_survey(){
           }
      }
      $post_content = [];
-     $post_contetn['toc'] = [];
+     $post_content['toc'] = [];
      $post_content['rulez'] = $doc['logic'];
      $post_content['init_refs'] = $refs;
      $post_content['init_ids'] = $ids;

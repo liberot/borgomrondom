@@ -1,3 +1,11 @@
+function constructFieldingQuestions(){
+      let data = { 
+           action: 'exec_construct_typeform_survey',
+           survey_file_name: 'fielding_questions.json'
+      };
+      this.postCommand(data);
+}
+
 function saveQuestion(id, max, group){
       let data = {
            action: 'exec_save_question',
@@ -32,7 +40,8 @@ function downloadTypeformSurvey(){
 
 function constructTypeformSurvey(){
       let data = {
-           action: 'exec_construct_typeform_survey'
+           action: 'exec_construct_typeform_survey',
+           survey_file_name: 'typeform_survey.js'
       };
       this.postCommand(data);
 }

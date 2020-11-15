@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
 class Role {
-     const CUSTOMER = 'customer';
+     const CUSTOMER = 'surveyprint_customer';
      const ADMIN = 'administrator';
 }
 

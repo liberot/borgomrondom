@@ -1,13 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
 function init_survey_page(){
-     $res = query_posts([
-          'post_type'=>'page',
-          'post_name'=>'__survey__thread__view__'
-     ]);
-     if(!is_null($res[0])){
-          return;
-     }
      $conti = <<<EOD
         <p>[survey_view]</p>
         <p>[constructor_view]</p>
@@ -31,18 +24,13 @@ function remove_survey_page(){
 add_shortcode('survey_view', 'build_survey_view');
 function build_survey_view(){
 
-     if(true != is_user_logged_in()){
-          $message = esc_html(__('view needs auth', 'nosuch'));
-          return '<p><a href="wp-login.php">'.$message.'</p>';
-     }
-
-     wp_register_script('config',       WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/config-client.js');
-     wp_register_script('main',         WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/main.js');
-     wp_register_script('client',       WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/survey.js');
-     wp_register_script('net',          WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/net/main.js');
-     wp_register_script('client_util',  WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/util/main.js');
-     wp_register_script('client_i18n',  WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/i18n/main.js');
-     wp_register_script('client_init',  WP_PLUGIN_URL.'/nosuch/survey/js/web-client/init.js', ['jquery']);
+     wp_register_script(     'config', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/config-client.js');
+     wp_register_script(       'main', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/main.js');
+     wp_register_script(     'client', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/survey.js');
+     wp_register_script(        'net', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/net/main.js');
+     wp_register_script('client_util', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/util/main.js');
+     wp_register_script('client_i18n', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/i18n/main.js');
+     wp_register_script('client_init', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/init.js', ['jquery']);
 
      wp_enqueue_script('config');
      wp_enqueue_script('client_i18n');
@@ -52,8 +40,8 @@ function build_survey_view(){
      wp_enqueue_script('client_util');
      wp_enqueue_script('client_init');
 
-     wp_register_style('client_style',  WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
-     wp_register_style('upload_style',  WP_PLUGIN_URL.'/nosuch/survey/css/web-client/upload.css');
+     wp_register_style('client_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
+     wp_register_style('upload_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/upload.css');
 
      wp_enqueue_style('client_style');
      wp_enqueue_style('upload_style');
@@ -98,16 +86,16 @@ function build_constructor_view() {
           return '<p><a href="/wp-login.php">'.$message.'</p>';
      }
 
-     wp_register_script('viewer-config',       WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/config-client.js');
-     wp_register_script('main',                WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/main.js');
-     wp_register_script('viewer-tools',        WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/tools/main.js');
-     wp_register_script('viewer-screen',       WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/main.js');
-     wp_register_script('viewer-correct',      WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/correct.js');
-     wp_register_script('viewer-bitmap',       WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/bitmap.js');
-     wp_register_script('viewer-svg',          WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/lib/svg.js');
-     wp_register_script('viewer-layout_util',  WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/util/main.js');
-     wp_register_script('viewer-layout_net',   WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init',  WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/init.js', array('jquery'));
+     wp_register_script(     'viewer-config', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/config-client.js');
+     wp_register_script(              'main', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/main.js');
+     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/tools/main.js');
+     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/main.js');
+     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/correct.js');
+     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/screen/bitmap.js');
+     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/lib/svg.js');
+     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/util/main.js');
+     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/init.js', array('jquery'));
 
      wp_enqueue_script('viewer-config');
      wp_enqueue_script('main');

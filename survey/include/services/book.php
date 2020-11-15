@@ -79,7 +79,7 @@ function exec_init_book_by_thread_id(){
      $author_id = get_author_id();
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
 
      $thread_toc = get_toc_by_thread_id($thread_id)[0];
      if(is_null($thread_toc)){
@@ -154,7 +154,7 @@ function setup_new_book($title){
      $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
      $thread_id = trim_incoming_filename($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
      $uuid = psuuid();
 
      $conf = [

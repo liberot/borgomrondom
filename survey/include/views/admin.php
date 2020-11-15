@@ -17,7 +17,15 @@ function setup_admin_menu() {
 
      $parent_slug = 'surveyprint_admin_utils';
      $page_title = 'utils';
-     $menu_slug = 'utils';
+     $menu_slug = 'surveyprint_utils';
+     $capability = 'administrator';
+     $menu_title = esc_html(__('SurveyPrint Utilities', 'survey'));
+     $function = 'build_surveyprint_utils_view';
+     add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
+
+     $parent_slug = 'surveyprint_admin_utils';
+     $page_title = 'utils';
+     $menu_slug = 'typeform_utils';
      $capability = 'administrator';
      $menu_title = esc_html(__('Typeform Utilities', 'survey'));
      $function = 'build_typeform_utils_view';
@@ -57,6 +65,36 @@ function setup_admin_menu() {
 
      remove_submenu_page('surveyprint_admin_utils', 'surveyprint_admin_utils');
 };
+
+// surveyprint utilities
+add_shortcode('surveyprint_utils_view', 'build_surveyprint_utils_view');
+function build_surveyprint_utils_view(){
+
+     wp_register_script('service_i18n',    WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
+     wp_register_script('service',         WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_enqueue_script('service_i18n');
+     wp_enqueue_script('service');
+
+     $headline = esc_html(__('SurveyPrint Utilities', 'nosuch'));
+     $welcome = esc_html(__('Welcome', 'nosuch'));
+     echo <<<EOD
+          <div class='wrap'>
+               <h1 class='wp-heading-inline'>{$headline}</h1>
+               <div class='page-title-action messages'><span>{$welcome}</span></div>
+               <hr class='wp-header-end'>
+     EOD;
+
+     $actions = esc_html(__('Actions:', 'nosuch'));
+     $constructFieldingQuestions = esc_html(__('Construciton of the Fielding Questions', 'nosuch'));
+     $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
+     echo <<<EOD
+     <div class='edit'>
+          <div class='unit'>{$actions}</div>
+          <div><a href='javascript:constructFieldingQuestions();'>{$constructFieldingQuestions}</a></div>
+     </div>
+EOD;
+
+}
 
 // typeform utilities
 add_shortcode('typeform_utils_view', 'build_typeform_utils_view');

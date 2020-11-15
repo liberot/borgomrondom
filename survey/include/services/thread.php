@@ -24,28 +24,60 @@ function exec_init_thread(){
           return false;
      }
 
-     $survey_id = trim_incoming_filename($_POST['survey_id']);
-     $survey = get_survey_by_id($survey_id)[0]; 
-     if(is_null($survey)){
-          $message = esc_html(__('no such survey', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'id'=>$survey_id));
+     $author_id = get_author_id();
+
+     $conf = [
+          'post_type'=>'surveyprint_thread',
+          'post_title'=>$survey->post_title,
+          'post_author'=>get_author_id(),
+          'post_name'=>$surveyprint_uuid,
+          'post_excerpt'=>$surveyprint_uuid,
+          'post_content'=>$surveyprint_uuid
+     ];
+
+     $thread_id = init_thread($conf);
+
+     if(is_null($thread_id)){
+          $message = esc_html(__('could not insert thread', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
      $surveyprint_uuid = psuuid();
-     $thread_id = wp_insert_post([
-          'post_type'=>'surveyprint_thread',
+
+     $conf = [
+          'post_type'=>'surveyprint_section',
           'post_title'=>$survey->post_title,
           'post_author'=>get_author_id(),
           'post_name'=>$surveyprint_uuid,
           'post_excerpt'=>$survey->post_excerpt,
           'post_content'=>$survey->post_content,
-          'post_parent'=>$survey_id
-     ]);
+          'post_parent'=>$thread_id
+     ];
 
-     set_session_var('thread_id', $thread_id);
+     $section_id = init_section($conf);
+
+     if(is_null($thread_id)){
+          $message = esc_html(__('could not insert section', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $message = esc_html(__('no such section', 'nosuch'));
+     echo json_encode(array('res'=>'failed', 'message'=>$message, 'thread_id'=>$thread_id));
+
+
+
+
+
+
+     return false;
+
+
+
 
      $questions = get_questions_by_survey_id($survey_id);
+
      foreach($questions as $question){
           $surveyprint_uuid = psuuid();
           $conf = [
@@ -92,6 +124,7 @@ function exec_init_thread(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
+/*****
 add_action('admin_post_exec_get_thread_by_id', 'exec_get_thread_by_id');
 function exec_get_thread_by_id(){
 
@@ -102,14 +135,12 @@ function exec_get_thread_by_id(){
      }
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
-     set_session_var('thread_id', $thread_id);
-
+     set_session_ticket('thread_id', $thread_id, true);
 
      $coll = [];
      $coll['thread'] = get_thread_by_id($thread_id);
      $coll['toc'] = get_toc_by_thread_id($thread_id);
      $coll['panels'] = [];
-
 
      $tmp = clone $coll['toc'][0];
      if(null == $tmp){ 
@@ -126,5 +157,128 @@ function exec_get_thread_by_id(){
      $message = esc_html(__('thread is loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
+*/
 
+function init_guest_thread(){
+
+     if(!policy_match([Role::CUSTOMER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'survey'=>$survey));
+          return false;
+     }
+
+     $author_id = get_author_id();
+     $surveyprint_uuid = psuuid();
+     $surveyprint_uuguest = get_session_ticket('unique_guest');
+     $survey = get_survey_by_title('__fielding_questions__')[0];
+
+     if(is_null($survey)){
+          $message = esc_html(__('no survey', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'survey'=>$survey));
+          return false;
+     }
+
+     $conf = [
+          'post_type'=>'surveyprint_thread',
+          'post_author'=>$author_id,
+          'post_title'=>$surveyprint_uuguest,
+          'post_excerpt'=>$surveyprint_uuid,
+          'post_name'=>$surveyprint_uuid,
+          'post_content'=>$surveyprint_uuid
+     ];
+     $thread_id = init_thread($conf);
+     if(is_null($thread_id)){
+          $message = esc_html(__('no thread', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     set_session_ticket('thread_id', $thread_id, true);
+
+     $surveyprint_uuid = psuuid();
+     $conf = [
+          'post_type'=>'surveyprint_section',
+          'post_author'=>$author_id,
+          'post_title'=>$surveyprint_uuguest,
+          'post_excerpt'=>$survey->post_excerpt,
+          'post_name'=>$surveyprint_uuid,
+          'post_content'=>$surveyprint_uuid,
+          'post_parent'=>$thread_id
+     ];
+     $section_id = init_section($conf);
+     if(is_null($section_id)){
+          $message = esc_html(__('no section', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     set_session_ticket('section_id', $section_id, true);
+
+     $questions = get_questions_by_survey_id($survey->ID);
+     foreach($questions as $question){
+          $surveyprint_uuid = psuuid();
+          $conf = [
+               'post_type'=>'surveyprint_panel',
+               'post_author'=>$author_id,
+               'post_title'=>$question->post_title,
+               'post_excerpt'=>$question->post_excerpt,
+               'post_name'=>$surveyprint_uuid,
+               'post_content'=>$question->post_content,
+               'post_parent'=>$section_id
+          ];
+          $panel_id = init_panel($conf);
+     }
+
+     $toc = get_toc_by_survey_id($survey->ID)[0];
+     if(is_null($toc)){
+          $message = esc_html(__('no toc', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $surveyprint_uuid = psuuid();
+     $conf = [
+          'post_type'=>'surveyprint_toc',
+          'post_title'=>$toc->post_title,
+          'post_name'=>$surveyprint_uuid,
+          'post_excerpt'=>$toc->post_excerpt,
+          'post_parent'=>$thread_id,
+          'post_content'=>$toc->post_content
+     ];
+     $toc_id = init_toc($conf);
+     set_session_ticket('toc_id', $toc_id, true);
+
+     $coll = [];
+     $coll['thread'] = get_thread_by_id($thread_id);
+     $coll['toc'] = get_toc_by_thread_id($thread_id);
+     $coll['sections'] = get_sections_by_thread_id($thread_id);
+
+/*
+     $coll['panels'] = [];
+     $temp = clone $coll['toc'][0];
+     $temp->post_content = pagpick($temp->post_content);
+     foreach($temp->post_content['init_refs'] as $ref){
+          $coll['panels'][] = get_panel_by_ref($section_id, $ref)[0];
+     }
+*/
+     return $coll;
+}
+
+// guest kickoff
+add_action('init', 'init_survey_guest');
+function init_survey_guest(){
+     set_session_ticket('unique_guest', random_string(64));
+     if(1 != is_user_logged_in()){
+          $res = auth_guest_client();
+     }
+}
+add_action('admin_post_exec_get_initial_thread', 'exec_get_initial_thread');
+function exec_get_initial_thread(){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     $coll = init_guest_thread();
+     $message = esc_html(__('survey is loaded', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
 

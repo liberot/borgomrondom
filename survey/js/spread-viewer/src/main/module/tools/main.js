@@ -25,7 +25,6 @@ class Tools extends Controller {
           this.register(new Subscription('document::loaded',        this.initDocument));
           this.register(new Subscription('textinput::focused',      this.lockControlKeys));
           this.register(new Subscription('textinput::done',         this.unlockControlKeys));
-          this.register(new Subscription('mocksection::loaded',     this.bindFrame));
           this.register(new Subscription('image::loaded',           this.bindImageAsset));
           this.register(new Subscription('book::loaded',            this.bindBook));
           this.register(new Subscription('unitbtn::released',       this.bindUnit));

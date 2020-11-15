@@ -4,8 +4,27 @@ add_action('init', 'init_thread_utils');
 function init_thread_utils(){
      $res = register_post_type(
           'surveyprint_thread',  [
-               'label'                  =>'SurveyPrint thread',
-               'description'            =>'SurveyPrint thread',
+               'label'                  =>'SurveyPrint Thread',
+               'description'            =>'SurveyPrint Thread',
+               'public'                 => false,
+               'hierarchical'           => true,
+               'exclude_from_search'    => true,
+               'publicly_queryable'     => false,
+               'show_ui'                => false,
+               'show_in_menu'           => false,
+               'show_in_nav_menus'      => false,
+               'query_var'              => true,
+               'rewrite'                => false,
+               'capability_type'        => 'post',
+               'has_archive'            => false,
+               'taxonomies'             => array('category', 'post_tag'),
+               'show_in_rest'           => false
+          ]
+     );
+     $res = register_post_type(
+          'surveyprint_section',  [
+               'label'                  =>'SurveyPrint Section',
+               'description'            =>'SurveyPrint Section',
                'public'                 => false,
                'hierarchical'           => true,
                'exclude_from_search'    => true,
@@ -72,3 +91,19 @@ EOD;
      return $res;
 }
 
+function init_section($conf){
+     $res = wp_insert_post($conf);
+     return $res;
+}
+
+function get_sections_by_thread_id($thread_id){
+     $thread_id = esc_sql($thread_id);
+     $author_id = esc_sql(get_author_id());
+     $sql = <<<EOD
+          select * from wp_posts where post_type = 'surveyprint_section' and post_author = '{$author_id}' and post_parent = '{$thread_id}';
+EOD;
+     $sql = debug_sql($sql);
+     global $wpdb;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}

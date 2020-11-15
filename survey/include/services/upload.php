@@ -10,7 +10,7 @@ function exec_init_asset_by_panel_ref(){
      }
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
 
      $indx = trim_incoming_filename($_POST['indx']);
      $panel_id = trim_incoming_filename($_POST['panel_id']);
@@ -79,7 +79,7 @@ function exec_get_assets_by_panel_ref(){
      }
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
 
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
      $panel_id = trim_incoming_filename($_POST['panel_id']);

@@ -23,11 +23,14 @@ function exec_save_toc(){
      $author_id = get_author_id();
 
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
-     $thread_id = get_session_var('thread_id');
+     $thread_id = get_session_ticket('thread_id');
 
      $toc = walk_the_doc($_POST['toc']);
      $toc = pigpack($toc);
+
+// id updates toc
      $conf = [
+//        'ID'=>$toc_id
           'post_type'=>'surveyprint_toc',
           'post_author'=>$author_id,
           'post_content'=>$toc,

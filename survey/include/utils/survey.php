@@ -58,6 +58,7 @@ EOD;
      return $res;
 }
 
+
 function get_survey_by_id($survey_id){
      $survey_id = esc_sql($survey_id);
      $author_id = esc_sql(get_author_id());
@@ -85,7 +86,7 @@ function get_surveys_by_ref($ref){
 
     $ref = esc_sql($ref);
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_survey' and post_excerpt = '{$ref}' oder by ID;
+          select * from wp_posts where post_type = 'surveyprint_survey' and post_excerpt = '{$ref}' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
@@ -95,7 +96,18 @@ EOD;
 
 function get_question_by_id($id){
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_question' and ID = '{$id}';
+          select * from wp_posts where post_type = 'surveyprint_question' and ID = '{$id}' order by ID desc limit 1;
+EOD;
+     $sql = debug_sql($sql);
+     global $wpdb;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+function get_survey_by_title($title){
+     $title = esc_sql($title);
+     $sql = <<<EOD
+          select * from wp_posts where post_type = 'surveyprint_survey' and post_title = '{$title}' order by ID desc limit 1;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;

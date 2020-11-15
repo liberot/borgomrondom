@@ -58,3 +58,5 @@ function exec_save_question(){
      $message = esc_html(__('question is saved', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
+
+

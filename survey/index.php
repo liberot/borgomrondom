@@ -32,12 +32,11 @@ require_once('include/views/web.php');
 require_once('include/utils/utils.php');
 
 function on_plugin_activation(){
-     init_ref_table();
+     // init_test_page();
+     insert_guest_client();
      init_survey_page();
-     init_test_page();
 }
 
 function on_plugin_deactivation(){
 }
 
-// add_action('init', function(){ init_db_client(); });

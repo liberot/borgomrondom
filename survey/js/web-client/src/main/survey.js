@@ -6,43 +6,58 @@ class Survey extends Controller {
           this.model = new SurveyModel();
           jQuery('.survey-messages').html(this.fillTemplate(__srv__msg__001__tmpl, {msg: __survey.__('welcome')}));
           // controls
-          this.register(new Subscription('select::survey',     this.selectSurvey));
-          this.register(new Subscription('parse::assets',      this.parseAssets));
-          this.register(new Subscription('select::yesno',      this.bindYesNoInput));
-          this.register(new Subscription('confirm::ref',       this.bindMultipleInput));
-          this.register(new Subscription('confirm::image',     this.bindMultipleInput));
-          this.register(new Subscription('confirm::input',     this.bindTextInput));
-          // events 
-          this.register(new Subscription('surveys::loaded',    this.bindSurveys));
-          this.register(new Subscription('survey::loaded',     this.bindSurvey));
-          this.register(new Subscription('thread::next',       this.nextPanel));
-          this.register(new Subscription('thread::prev',       this.evalPrevPanel));
-          this.register(new Subscription('thread::loaded',     this.bindThread));
-          this.register(new Subscription('thread::inited',     this.bindThread));
-          this.register(new Subscription('assets::uploaded',   this.bindAssets));
-          this.register(new Subscription('assets::downloaded', this.bindAssets));
-          this.register(new Subscription('spreads::init',      this.initSpreads));
-          this.register(new Subscription('asset::scanned',     this.bindScan));
-          this.register(new Subscription('scans::done',        this.uploadAssets));
-          this.register(new Subscription('scans::done',        this.renderAssetCopies));
-          this.register(new Subscription('assets::bound',      this.renderAssetCopies));
-          this.register(new Subscription('survey::inited',     this.loadSurveys));
-          this.register(new Subscription('panel::loaded',      this.bindPanel));
-
+          this.register(new Subscription(        'parse::assets', this.parseAssets));
+          this.register(new Subscription(        'select::yesno', this.bindYesNoInput));
+          this.register(new Subscription(         'confirm::ref', this.bindMultipleInput));
+          this.register(new Subscription(       'confirm::image', this.bindMultipleInput));
+          this.register(new Subscription(       'confirm::input', this.bindTextInput));
+          this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
+          // events
+          this.register(new Subscription(         'thread::next', this.nextPanel));
+          this.register(new Subscription(         'thread::prev', this.evalPrevPanel));
+          this.register(new Subscription(       'thread::loaded', this.bindThread));
+          this.register(new Subscription(       'thread::inited', this.bindThread));
+          this.register(new Subscription(     'assets::uploaded', this.bindAssets));
+          this.register(new Subscription(   'assets::downloaded', this.bindAssets));
+          this.register(new Subscription(        'spreads::init', this.initSpreads));
+          this.register(new Subscription(       'asset::scanned', this.bindScan));
+          this.register(new Subscription(          'scans::done', this.uploadAssets));
+          this.register(new Subscription(          'scans::done', this.renderAssetCopies));
+          this.register(new Subscription(        'assets::bound', this.renderAssetCopies));
+          this.register(new Subscription(        'panel::loaded', this.bindPanel));
+          this.register(new Subscription(          'input::done', this.storeInput));
+          // ------
           this.extractDeeplink(window.location.hash.substr(1));
           this.navDeeplink(window.location.hash.substr(1));
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e);});
-
-          this.notify(new Message('survey::inited', this.model));
+          // ------
+          this.notify(new Message('download::fieldings', this.model));
      }
 
-     loadSurveys(){
-          this.clear();
-          this.notify(new Message('surveys::selected'));
+     storeInput(msg){
+          if(false == this.model.clientAuthed){
+
+               return;
+          }
+          this.notify(new Message('save::toc', this.model));
+          this.notify(new Message('save::panel', this.model));
      }
 
-     selectSurvey(msg){
-          this.clear();
+     bindFieldings(msg){
+          if(null == msg.model.e.coll.thread){
+               console.log('no thread');
+               return false;
+          }
+          if(null == msg.model.e.coll.toc){
+               console.log('no toc');
+               return false;
+          }
+          let thread = msg.model.e.coll.thread;
+          let panels = msg.model.e.coll.panels;
+          let sections = msg.model.e.coll.sections;
+          let toc = msg.model.e.coll.toc;
+          let m = { model: { e: { coll: { thread: thread, toc: toc, panels: panels, sections: sections }}}}
+          this.bindThread(m);
      }
 
      clear(){
@@ -131,71 +146,36 @@ class Survey extends Controller {
           if(lnk.match(/\/+$/)){
                chunk = chunk.replace(/^\//, '');
           }
-          if(null != this.model.survey){
-               chunk+= '/survey:'+this.model.survey.ID;
-               if(null != this.model.thread){
-                    chunk+= '/thread:'+this.model.thread.ID;
+          if(null != this.model.thread){
+               chunk+= '/survey:'+this.model.thread.ID;
+               if(null != this.model.section){
+                    chunk+= '/thread:'+this.model.section.ID;
                }
           }
           window.location.hash = chunk;
      }
 
-     drawThreads(){
-          let buf = '';
-          for(let idx in this.model.threads){
-               buf+= this.fillTemplate(
-                    __srv__msg__003__tmpl, {
-                         id: this.model.threads[idx].ID,
-                         date: this.model.threads[idx].post_date
-                    }
-               );
-          }
-          buf+= this.fillTemplate(__srv__msg__004__tmpl, { id: this.model.survey.ID, start: __survey.__('start') });
-          jQuery('.survey-thread').html(buf)
-     }
-
-     bindSurvey(msg){
-          if(null == msg.model.e.coll.survey[0]){
-               return null;
-          }
-          this.model.survey = msg.model.e.coll.survey[0];
-          this.model.survey.post_content = SurveyUtil.pagpick(this.model.survey.post_content);
-          this.model.threads = msg.model.e.coll.threads;
-          this.drawThreads();
-// link from the internet
-          this.model.rSurvey = null;
-          this.setLink();
-          if(null != this.model.navToThreadAction){
-              this.model.navToThreadAction();
-              this.model.navToThreadAction = null;
-          }
-     }
-
-     bindThreads(msg){
-          this.model.threads = msg.model.e.coll.threads;
-          let buf = '';
-          for(let idx in this.threads){
-               buf+= this.fillTemplate(
-                    __srv__msg__003__tmpl, {
-                    title: this.model.threads[idx].post_content,
-                    id: this.model.threads[idx].ID,
-                    date: this.model.threads[idx].post_date
-               }); 
-          }
-          jQuery('.survey-thread').html(buf);
-     }
-
      bindThread(msg){
+
           if(null == msg.model.e.coll.thread[0]){
                console.log('no thread');
                return false;
           }
+
           if(null == msg.model.e.coll.toc[0]){
                console.log('no toc');
                return false;
           }
+
+          if(null == msg.model.e.coll.sections){
+               console.log('no sections');
+               return false;
+          }
+
+          this.model.section = msg.model.e.coll.sections[0];
+
           this.model.thread = msg.model.e.coll.thread[0];
-          this.model.thread.post_content = SurveyUtil.pagpick(this.model.thread.post_content);
+
           this.model.toc = msg.model.e.coll.toc[0];
           this.model.toc.post_content = SurveyUtil.pagpick(this.model.toc.post_content);
           if(null == this.model.toc.post_content.walkytalky){
@@ -204,7 +184,9 @@ class Survey extends Controller {
           if(null == this.model.toc.post_content.history){
                this.model.toc.post_content.history = [];
           }
+
           this.model.threadLog.setColl(this.model.toc.post_content.coll);
+
           if(null == this.model.toc.post_content.initstep) { this.model.toc.post_content.initstep = 0; }
           if(null == this.model.toc.post_content.tocstep) { this.model.toc.post_content.tocstep = 0; }
           if(null == this.model.toc.post_content.navstep) { this.model.toc.post_content.navstep = 0; }
@@ -235,27 +217,11 @@ class Survey extends Controller {
 
           this.loadPanel(link);
 
-// deeplink
           this.setLink();
           if(null != this.model.navToPanelAction){
                this.model.navToPanelAction();
                this.model.navToPanelAction = null;
           }
-     }
-
-     bindSurveys(msg) {
-          this.model.surveys = msg.model.e.coll;
-          let buf = '';
-          for(let idx in this.model.surveys){
-               let survey = this.model.surveys[idx];
-                   survey.post_content = SurveyUtil.pagpick(survey.post_content);
-               buf+= this.fillTemplate(
-                    __srv__msg__002__tmpl, {
-                    title: survey.post_content.title,
-                    id: this.model.surveys[idx].ID
-               })
-          }
-          jQuery('.survey-list').html(buf);
      }
 
      bindTextInput(msg){
@@ -275,7 +241,6 @@ class Survey extends Controller {
           let choice = null;
           for(let idx in this.model.panel.post_content.properties.choices){
                choice = this.model.panel.post_content.properties.choices[idx]; 
-console.log(choice);
                if(ref == choice.ref){
                    val = choice.label;
                }
@@ -366,7 +331,7 @@ console.log(choice);
           }
           let model = {
                panelRef: ref,
-               threadId: this.model.thread.ID
+               sectionId: this.model.section.ID
           }
           this.notify(new Message('load::panel', model));
      }
@@ -384,7 +349,7 @@ console.log(choice);
           let ref = this;
 
           if(null == this.model.panel){
-               console.log('no panel ', 'survey:', this.model.survey.ID, 'thread:', this.model.thread.ID);
+               console.log('no panel ', this.model.thread.ID);
                return;
           }
 
@@ -528,16 +493,17 @@ console.log(choice);
           return formdata;
      }
 
-     evalAction(action){
-          // action.condition = new MockLogic().logic.condition;
+     evalCondition(condition){
+          // condition = new MockLogic().logic.condition;
           let res = null;
-              res = this.evalRule(action.condition);
-              res = this.evalCondition(action.condition);
-              res = action.condition.result;
+              res = this.evalRule(condition);
+              res = this.evalGroup(condition);
+              res = condition.result;
+console.log(condition);
           return res;
      }
 
-     evalCondition(condition){
+     evalGroup(condition){
           switch(condition.op){
                case 'is':
                case 'and':
@@ -564,7 +530,7 @@ console.log(choice);
           if(null != condition.vars){
                for(let idx in condition.vars){
                     if(null != condition.vars[idx].op){
-                         this.evalCondition(condition.vars[idx]);
+                         this.evalGroup(condition.vars[idx]);
                     }
                }
                return;
@@ -609,17 +575,19 @@ console.log(choice);
           let ref = this;
           let links = [];
           let target = this.model.panel.post_content.ref;
-console.log('panel: ', target);
+console.log(target);
           for(let idx in this.model.toc.post_content.rulez){
                let rule = this.model.toc.post_content.rulez[idx];
                if(target != rule.ref){ continue; }
-console.log('actions of panel: ', rule.ref, rule.actions);
-               rule.actions.forEach(function(condition){
-                    if(false != ref.evalAction(condition)){
-console.log('action to be executed:', condition);
-                         switch(condition.action){
+console.log(rule);
+               rule.actions.forEach(function(actionpack){
+console.log(actionpack);
+                    if(false != ref.evalCondition(actionpack.condition)){
+                         switch(actionpack.action){
                               case 'jump':
-                                   links.push(condition.details.to.value);
+console.log('link from logic:', actionpack.details.to.value);
+console.log(actionpack);
+                                   links.push(actionpack.details.to.value);
                                    break;
                          }
                     }
@@ -627,7 +595,6 @@ console.log('action to be executed:', condition);
           }
           let link = links[0];
           if(null != link){
-console.log('next link from the jump actions: ', link);
                this.corrToc(link);
                this.loadPanel(link);
                return true;
@@ -638,7 +605,10 @@ console.log('next link from the jump actions: ', link);
 
      nextPanel(){
           this.model.toc.post_content.initstep++;
-          if(this.model.toc.post_content.initstep >= this.model.toc.post_content.init_refs.length){ this.model.toc.post_content.initstep = this.model.toc.post_content.init_refs.length -1 }
+          if(this.model.toc.post_content.initstep 
+               >= this.model.toc.post_content.init_refs.length){ 
+                    this.model.toc.post_content.initstep = this.model.toc.post_content.init_refs.length -1 
+          }
           let ref = this.model.toc.post_content.init_refs[this.model.toc.post_content.initstep];
 console.log('next link from default: ', ref);
           this.loadPanel(ref);
@@ -655,7 +625,10 @@ console.log('prev link from default: ', ref);
      selectPanel(step){
           this.model.toc.post_content.initstep = parseInt(step);
           if(this.model.toc.post_content.initstep <= 0){ this.model.toc.post_content.initstep = 0 }
-          if(this.model.toc.post_content.initstep >= this.model.toc.init_refs.length.length){ this.model.toc.post_content.initstep = this.model.toc.init_refs.length -1 }
+          if(this.model.toc.post_content.initstep 
+               >= this.model.toc.init_refs.length.length){ 
+                   this.model.toc.post_content.initstep = this.model.toc.init_refs.length -1 
+          }
           let ref = this.model.toc.post_content.init_refs[this.model.toc.post_content.initstep];
           this.loadPanel(ref);
      }
@@ -826,7 +799,7 @@ let __picture_choice_tmpl__ = `
 `;
 
 let __srv__msg__001__tmpl = `
-<div>{$msg}</div>
+<div>{msg}</div>
 `;
 
 let __srv__msg__002__tmpl = `
@@ -835,10 +808,6 @@ let __srv__msg__002__tmpl = `
 
 let __srv__msg__003__tmpl = `
 <span class='thread-list'><a href='javascript:surveyQueue.route("select::thread", "{id}");'>{id} :: {date}</a></span>
-`;
-
-let __srv__msg__004__tmpl = `
-<span class='thread-list'><a href='javascript:surveyQueue.route("init::thread", "{id}");'>{start}</a></span>
 `;
 
 let __src__q__001__tmpl = `
@@ -852,6 +821,10 @@ let __src__img__011__tmpl = `
 let __ctrl__tmpl__102__ = `
 <a href='javascript:surveyQueue.route("spreads::init");'>{init}</a>
 `;
+
+let __srv__msg__004__tmpl = `
+<span class='thread-list'><a href='javascript:surveyQueue.route("init::thread", "{id}");'>{start}</a></span>
+`
 
 class ThreadLog extends Model {
      constructor(){
@@ -889,9 +862,10 @@ class SurveyModel extends Model {
      constructor(){
           super();
           this.threadLog = new ThreadLog();
+          this.clientAuthed = false;
           this.toc;
-          this.surveys;
-          this.survey;
+          this.sections;
+          this.section;
           this.panels;
           this.panel;
           this.threads;

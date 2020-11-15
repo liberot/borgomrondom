@@ -3,23 +3,29 @@ class SurveyNet extends Controller {
      constructor(queue){
           super(queue);
           // events
-          this.register(new Subscription('input::done', this.savePanel));
-          this.register(new Subscription('input::done', this.saveToc));
-          this.register(new Subscription('surveys::selected', this.loadSurveys));
+          this.register(new Subscription(        'save::panel', this.savePanel));
+          this.register(new Subscription(          'save::toc', this.saveToc));
           // controls 
-          this.register(new Subscription('select::survey', this.loadSurvey));
-          this.register(new Subscription('init::thread', this.initThread));
-          this.register(new Subscription('select::thread', this.loadThread));
-          this.register(new Subscription('download::assets', this.downloadAssets));
-          this.register(new Subscription('upload::asset', this.uploadAsset));
-          this.register(new Subscription('load::panel', this.loadPanel));
+          this.register(new Subscription(       'init::thread', this.initThread));
+          this.register(new Subscription('download::fieldings', this.downloadFieldings));
+          this.register(new Subscription(     'select::thread', this.loadThread));
+          this.register(new Subscription(   'download::assets', this.downloadAssets));
+          this.register(new Subscription(      'upload::asset', this.uploadAsset));
+          this.register(new Subscription(        'load::panel', this.loadPanel));
+     }
+
+     downloadFieldings(){
+          let ref = this;
+          let data = { 'action': 'exec_get_initial_thread' }
+          let cb = function(e){ ref.notify(new Message('fieldings::downloaded', { e })); }
+          this.postData(data, cb);
      }
 
      loadPanel(msg){
           let ref = this;
           let data = {
                'action': 'exec_get_panel_by_ref',
-               'thread_id': msg.model.threadId,
+               'section_id': msg.model.sectionId,
                'panel_ref': msg.model.panelRef
           }
           let cb = function(e){
@@ -58,37 +64,9 @@ class SurveyNet extends Controller {
 
      initThread(msg){
           let ref = this;
-          let data = {
-               'action': 'exec_init_thread',
-               'survey_id': msg.model.arguments[1]
-          }
-          let cb = function(e){
-               ref.notify(new Message('thread::inited', { e }));
-          }
+          let data = { 'action': 'exec_init_thread' }
+          let cb = function(e){ ref.notify(new Message('thread::inited', { e })); }
           this.postData(data, cb);
-     }
-
-     loadSurvey(msg){
-          let ref = this;
-          let data = {
-               'action': 'exec_get_survey_by_id',
-               'survey_id': msg.model.arguments[1]
-          }
-          let cb = function(e){
-               ref.notify(new Message('survey::loaded', { e }));
-          };
-          let res = this.postData(data, cb);
-     }
-
-     loadSurveys(msg){
-          let ref = this;
-          let data = {
-               'action': 'exec_get_surveys'
-          }
-          let cb = function(e){
-               ref.notify(new Message('surveys::loaded', { e }));
-          }
-          ref.postData(data, cb);
      }
 
      savePanel(msg){

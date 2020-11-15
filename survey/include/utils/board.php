@@ -55,13 +55,13 @@ EOD;
 }
 
 
-function get_panel_by_ref($thread_id, $ref){
+function get_panel_by_ref($section_id, $ref){
      $author_id = esc_sql(get_author_id());
-     $thread_id = esc_sql($thread_id);
+     $section_id = esc_sql($section_id);
      $ref = esc_sql($ref);
      global $wpdb;
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_panel' and post_author = '{$author_id}' and post_parent = '{$thread_id}' 
+          select * from wp_posts where post_type = 'surveyprint_panel' and post_author = '{$author_id}' and post_parent = '{$section_id}' 
           and post_excerpt = '{$ref}'
           order by ID desc
           limit 1
@@ -70,5 +70,6 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 }
+
 
 

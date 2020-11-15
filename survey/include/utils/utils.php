@@ -96,6 +96,13 @@ function trim_incoming_string($val){
      return $val;
 }
 
+function trim_incoming_answer($val){
+     $val = substr($val, 0, 128);
+     $val = sanitize_textarea_field($val);
+     $val = preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $val);
+     return $val;
+}
+
 function walk_the_doc($doc){
      $res = null;
      if(is_object($doc)){ $doc = get_object_vars($doc); }
@@ -133,32 +140,31 @@ function trim_for_print($string){
      return $res;
 }
 
-function insert_survey_client(){
-     $role = add_role(
-          'customer', __('Customer', 'survey')
-     );
+function insert_guest_client(){
+     $role_title = 'surveyprint_customer';
+     $role = add_role( $role_title, __('Customer', 'nosuch'));
      $client = wp_insert_user([
-          'user_email'=>'__deb__survey__email__',
-          'user_pass'=>'__deb__survey__password__',
-          'user_login'=>'__deb__survey__client__',
-          'user_nicename'=>'__deb__survey__client__',
-          'display_name'=>'__deb__survey__client__',
-          'nickname'=>'__deb__survey__nickname__',
-          'first_name'=>'__deb__survey__forename__',
-          'last_name'=>'__deb__survey__name__',
-          'description'=>'__deb__survey__description__',
+          'user_email'=>'surveyprint',
+          'user_pass'=>'surveyprint',
+          'user_login'=>'surveyprint',
+          'user_nicename'=>'surveyprint',
+          'display_name'=>'surveyprint',
+          'nickname'=>'surveyprint',
+          'first_name'=>'surveyprint',
+          'last_name'=>'surveyprint',
+          'description'=>'surveyprint',
           'rich_editing'=>'false',
           'use_ssl'=>'true',
-          'user_activation_key'=>'activation_key',
-          'role'=>'customer'
+          'user_activation_key'=>'surveyprint',
+          'role'=>$role_title
      ]);
      return $client;
 }
 
-function auth_survey_client(){
+function auth_guest_client(){
      $client = wp_signon([
-               'user_login'=>'__deb__survey__client__',
-               'user_password'=>'__deb__survey__password__',
+               'user_login'=>'surveyprint',
+               'user_password'=>'surveyprint',
                'remember'=>true
           ],
           true
@@ -214,12 +220,19 @@ function add_base_to_chunk($chunk){
      return $res;
 }
 
-function set_session_var($key, $value){
+function set_session_ticket($key, $value, $force=false){
      session_start();
-     $_SESSION[$key] = $value;
+     if(true == $force){
+          $_SESSION[$key] = $value;
+          return true;
+     }
+     if(false == is_null($_SESSION['$key'])){
+          $_SESSION[$key] = $value;
+     }
+     return true;
 }
 
-function get_session_var($key){
+function get_session_ticket($key){
      session_start();
      return $_SESSION[$key];
 }
