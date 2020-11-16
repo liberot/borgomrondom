@@ -1,8 +1,8 @@
 <?php defined('ABSPATH') || exit;
 
 class Role {
-     const GUEST = 'guest_surveyprint';
-     const CUSTOMER = 'customer_surveyprint';
+     const GUEST = 'surveyprint_guest';
+     const CUSTOMER = 'surveyprint_customer';
      const ADMIN = 'administrator';
 }
 
