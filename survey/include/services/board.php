@@ -75,7 +75,7 @@ function exec_init_panel(){
 
 add_action('admin_post_exec_get_panel_by_ref', 'exec_get_panel_by_ref');
 function exec_get_panel_by_ref(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::GUEST])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;

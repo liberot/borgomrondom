@@ -81,11 +81,6 @@ function filter_the_content($content) {
 add_shortcode('constructor_view', 'build_constructor_view');
 function build_constructor_view() {
 
-     if(true != is_user_logged_in()){
-          $message = esc_html(__('', 'nosuch'));
-          return '<p><a href="/wp-login.php">'.$message.'</p>';
-     }
-
      wp_register_script(     'viewer-config', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/config-client.js');
      wp_register_script(              'main', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/main.js');
      wp_register_script(      'viewer-tools', WP_PLUGIN_URL.'/nosuch/survey/js/spread-viewer/src/main/module/tools/main.js');

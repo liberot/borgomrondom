@@ -161,7 +161,8 @@ function insert_guest_client(){
 }
 
 function auth_guest_client(){
-     $client = wp_signon([
+     $client = wp_signon(
+          [
                'user_login'=>'surveyprint',
                'user_password'=>'surveyprint',
                'remember'=>true
