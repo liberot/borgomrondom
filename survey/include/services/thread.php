@@ -176,14 +176,15 @@ function init_survey_guest(){
 
 add_action('admin_post_exec_get_initial_thread', 'exec_get_initial_thread');
 function exec_get_initial_thread(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+
+// policy
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::GUEST])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
 
 // pump of a previosly inited guest survey
-
      $thread_id = get_session_ticket('thread_id');
      if(!is_null($thread_id)){
           $coll = [];
@@ -200,21 +201,6 @@ function exec_get_initial_thread(){
 
 
 // init of a guest thread
-     $coll = init_guest_thread();
-     if(false == $coll){ return false; }
-
-     $message = esc_html(__('thread is loaded', 'nosuch'));
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
-}
-
-function init_guest_thread(){
-
-     if(!policy_match([Role::CUSTOMER])){
-          $message = esc_html(__('policy match', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
      $surveyprint_uuguest = get_session_ticket('unique_guest');
@@ -247,7 +233,7 @@ function init_guest_thread(){
      $conf = [
           'post_type'=>'surveyprint_section',
           'post_author'=>$author_id,
-  'post_title'=>$surveyprint_uuguest,
+          'post_title'=>$surveyprint_uuguest,
           'post_excerpt'=>$survey->post_excerpt,
           'post_name'=>$surveyprint_uuid,
           'post_content'=>$surveyprint_uuid,

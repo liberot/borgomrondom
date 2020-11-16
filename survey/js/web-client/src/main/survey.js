@@ -193,7 +193,7 @@ class Survey extends Controller {
           this.model.toc.post_content.navstep = parseInt(this.model.toc.post_content.navstep);
 
           let link = this.model.toc.post_content.init_refs[0];
-          if(SpreadViewerConfig.LINEAR_HISTORY == SpreadViewerConfig.navigationHistory){
+          if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
                if(null != this.model.toc.post_content.history[this.model.toc.post_content.navstep -1]){
                      link = this.model.toc.post_content.history[this.model.toc.post_content.navstep -1];
                }
@@ -206,7 +206,7 @@ class Survey extends Controller {
           }
 
           this.model.panels = [];
-          if(SpreadViewerConfig.preloadPanels){
+          if(SurveyConfig.preloadPanels){
                for(let idx in msg.model.e.coll.panels){
                     this.model.panels[msg.model.e.coll.panels[idx].post_excerpt] = msg.model.e.coll.panels[idx];
                     this.model.panels[msg.model.e.coll.panels[idx].post_excerpt].post_content = SurveyUtil.pagpick(msg.model.e.coll.panels[idx].post_content);
@@ -312,7 +312,7 @@ class Survey extends Controller {
           if(null != target[this.model.toc.post_content.tocstep]){
                res = target[this.model.toc.post_content.tocstep];
           }
-          if(SpreadViewerConfig.LINEAR_HISTORY == SpreadViewerConfig.navigationHistory){
+          if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
                target = this.model.toc.post_content.history;
                if(null != target[this.model.toc.post_content.navstep]){
                     res = target[this.model.toc.post_content.navstep];
@@ -632,9 +632,8 @@ console.log('prev link from default: ', ref);
      }
 
      initSpreads(msg){
-          if(null != layoutQueue){
-               layoutQueue.route('init::book', { threadId: this.model.thread.ID });
-          }
+          if('undefined' == typeof(layoutQueue)){ return false; }
+          layoutQueue.route('init::book', { threadId: this.model.thread.ID });
      }
 
      parseAssets(msg){

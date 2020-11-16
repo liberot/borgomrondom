@@ -39,6 +39,7 @@ function exec_get_panels_by_thread_id(){
 add_action('admin_post_exec_init_panel', 'exec_init_panel');
 function exec_init_panel(){
 
+     // if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));

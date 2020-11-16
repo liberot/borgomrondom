@@ -16,7 +16,6 @@ function policy_match($policies){
      foreach($policies as $policy){
           if(current_user_can($policy)){
                $res = true;
-               return $res;
           }
      }
      return $res;
@@ -141,8 +140,8 @@ function trim_for_print($string){
 }
 
 function insert_guest_client(){
-     $role_title = 'surveyprint_customer';
-     $role = add_role( $role_title, __('Customer', 'nosuch'));
+     $role_title = Role::GUEST;
+     $role = add_role($role_title, 'SurveyPrint Guest');
      $client = wp_insert_user([
           'user_email'=>'surveyprint',
           'user_pass'=>'surveyprint',
