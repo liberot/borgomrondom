@@ -202,13 +202,26 @@ function fit_image_asset_to_slot($asset){
      $r = 1;
      $w = $width;
      $h = $height;
+
      $xoffset = 0;
      $yoffset = 0;
+
      $slot_width = floatval($asset['conf']['slotW']);
      $slot_height = floatval($asset['conf']['slotH']);
      $slot_x = floatval($asset['conf']['slotX']);
      $slot_y = floatval($asset['conf']['slotY']);
+
+// no slots without uploaded layouts
+// todo: plz upload the layouts.....
+     if(null == $slot_width){
+          $slot_width = '800';
+          $slot_width = '342';
+          $slot_x = '10';
+          $slot_y = '10';
+     }
+
      $scale_type = $asset['conf']['scaleType'];
+
      $max_scale_ratio = floatval($asset['conf']['maxScaleRatio']);
      
      if(is_null($max_scale_ratio)){ $max_scale_ratio = 1; }
@@ -235,6 +248,7 @@ function fit_image_asset_to_slot($asset){
                          $r = $slot_width /$width;
                          $w = $width *$r;
                          $h = $height *$r;
+
                     }
                     if($h >= $slot_height){
                          $r = $slot_height /$h;

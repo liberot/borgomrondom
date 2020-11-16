@@ -140,8 +140,9 @@ function trim_for_print($string){
 }
 
 function insert_guest_client(){
-     $role_title = Role::GUEST;
-     $role = add_role($role_title, 'SurveyPrint Guest');
+     // $role_title = Role::GUEST;
+     $role_title = Role::CUSTOMER;
+     $role = add_role($role_title, 'SurveyPrint Client');
      $client = wp_insert_user([
           'user_email'=>'surveyprint',
           'user_pass'=>'surveyprint',
@@ -161,6 +162,7 @@ function insert_guest_client(){
 }
 
 function auth_guest_client(){
+     // he who cannot save and does not exist makin trouble no need 
      $client = wp_signon(
           [
                'user_login'=>'surveyprint',
