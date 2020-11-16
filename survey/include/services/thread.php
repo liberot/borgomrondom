@@ -168,7 +168,10 @@ function exec_get_thread_by_id(){
 // --------------------------------------------------------------------------------
 add_action('init', 'init_survey_guest');
 function init_survey_guest(){
-     if(1 != is_user_logged_in()){
+// print_r(is_user_logged_in()); 
+// print_r(true == is_user_logged_in()); exit();
+
+     if(true != is_user_logged_in()){
           $res = auth_guest_client();
           set_session_ticket('unique_guest', random_string(64), true);
      }
@@ -294,5 +297,7 @@ function exec_get_initial_thread(){
           $coll['panels'][] = get_panel_by_ref($section_id, $ref)[0];
      }
 */
-     return $coll;
+     $message = esc_html(__('thread inited', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'coll'=>$coll));
+     return true;
 }
