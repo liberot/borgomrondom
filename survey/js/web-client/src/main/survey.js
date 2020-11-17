@@ -363,8 +363,8 @@ class Survey extends Controller {
           let ref = this;
 
           if(null == this.model.panel){
-               console.log('no panel ', this.model.thread.ID);
-               return;
+               console.log('no panel ');
+               return false;
           }
 
           this.model.maxImageAssets = 1;
@@ -380,7 +380,8 @@ class Survey extends Controller {
           let answer = this.model.panel.post_content.answer;
               answer = SurveyUtil.trimIncomingString(answer);
 
-          if('undefined' == typeof(val)){ answer = ''; }
+
+          if('undefined' == typeof(answer)){ answer = ''; }
 
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
