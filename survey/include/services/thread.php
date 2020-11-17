@@ -166,8 +166,10 @@ function exec_get_thread_by_id(){
 // --------------------------------------------------------------------------------
 add_action('init', 'init_survey_guest');
 function init_survey_guest(){
-     if(true != is_user_logged_in()){
+     if(is_null(get_session_ticket('unique_guest'))){
           set_session_ticket('unique_guest', random_string(128), true);
+     }
+     if(true != is_user_logged_in()){
           $res = auth_guest_client();
      }
 }
@@ -183,9 +185,10 @@ function exec_get_initial_thread(){
      }
 
 // pump of a previosly inited guest survey
-     $surveyprint_uuguest = get_session_ticket('unique_guest');
+     $unique_guest = get_session_ticket('unique_guest');
 
      $thread_id = get_session_ticket('thread_id');
+
      if(!is_null($thread_id)){
           $coll = [];
           $coll['thread'] = get_thread_by_id($thread_id);
@@ -195,15 +198,14 @@ function exec_get_initial_thread(){
 
      if(!is_null($coll['thread'][0])){
           $message = esc_html(__('cached thread is loaded', 'nosuch'));
-          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'ticket'=>$surveyprint_uuguest));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'ticket'=>$unique_guest));
           return true;
      }
-
 
 // init of a guest thread
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
-     $surveyprint_uuguest = get_session_ticket('unique_guest');
+     $unique_guest = get_session_ticket('unique_guest');
 
      // $survey = get_survey_by_title('__fielding_questions__')[0];
      $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
@@ -296,6 +298,6 @@ function exec_get_initial_thread(){
      }
 */
      $message = esc_html(__('thread inited', 'nosuch'));
-     echo json_encode(array('res'=>'success', 'message'=>'fielding questions inited', 'coll'=>$coll, 'ticket'=>$surveyprint_uuguest));
+     echo json_encode(array('res'=>'success', 'message'=>'fielding questions inited', 'coll'=>$coll, 'ticket'=>$unique_guest));
      return true;
 }

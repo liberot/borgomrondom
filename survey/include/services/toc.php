@@ -44,7 +44,7 @@ function exec_save_toc(){
      $toc->post_content = pagpick($toc->post_content);
      $toc->post_content['history'] = $history;
      $toc->post_content['booktoc'] = $booktoc;
-     $toc->post_content = pagpick($toc->post_content);
+     $toc->post_content = pigpack($toc->post_content);
 
 // id updates toc
      $conf = [
