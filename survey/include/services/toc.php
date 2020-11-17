@@ -25,15 +25,33 @@ function exec_save_toc(){
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
 
-     $toc = walk_the_doc($_POST['toc']);
-     $toc = pigpack($toc);
+     $section_id = trim_incoming_numeric($_POST['section_id']);
+     $section_id = get_session_ticket('section_id');
+
+     $panel_ref = trim_incoming_numeric($_POST['panel_ref']);
+     // $panel_ref = get_session_ticket('panel_ref');
+
+     $booktoc = walk_the_doc($_POST['booktoc']);
+     $history = walk_the_doc($_POST['history']);
+
+     $toc = get_toc_by_thread_id($thread_id)[0];
+     if(is_null($toc)){
+          $message = esc_html(__('no toc', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$coll));
+          return false;
+     }
+
+     $toc->post_content = pagpick($toc->post_content);
+     $toc->post_content['history'] = $history;
+     $toc->post_content['booktoc'] = $booktoc;
+     $toc->post_content = pagpick($toc->post_content);
 
 // id updates toc
      $conf = [
 //        'ID'=>$toc_id
           'post_type'=>'surveyprint_toc',
           'post_author'=>$author_id,
-          'post_content'=>$toc,
+          'post_content'=>$toc->post_content,
           'post_parent'=>$thread_id
      ];
      $toc_id = save_toc($conf);

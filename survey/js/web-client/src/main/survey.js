@@ -327,11 +327,8 @@ class Survey extends Controller {
                this.initPanel();
                return;
           }
-          let model = {
-               panelRef: ref,
-               sectionId: this.model.section.ID
-          }
-          this.notify(new Message('load::panel', model));
+          this.model.panelRef = ref;
+          this.notify(new Message('load::panel', this.model));
      }
 
      bindPanel(msg){

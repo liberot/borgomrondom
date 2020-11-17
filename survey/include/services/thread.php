@@ -184,6 +184,7 @@ function exec_get_initial_thread(){
 
 // pump of a previosly inited guest survey
      $surveyprint_uuguest = get_session_ticket('unique_guest');
+
      $thread_id = get_session_ticket('thread_id');
      if(!is_null($thread_id)){
           $coll = [];
@@ -204,7 +205,8 @@ function exec_get_initial_thread(){
      $surveyprint_uuid = psuuid();
      $surveyprint_uuguest = get_session_ticket('unique_guest');
 
-     $survey = get_survey_by_title('__fielding_questions__')[0];
+     // $survey = get_survey_by_title('__fielding_questions__')[0];
+     $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
 
      if(is_null($survey)){
           $message = esc_html(__('no survey', 'nosuch'));

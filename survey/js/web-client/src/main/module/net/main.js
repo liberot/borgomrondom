@@ -25,7 +25,8 @@ class SurveyNet extends Controller {
           let ref = this;
           let data = {
                'action': 'exec_get_panel_by_ref',
-               'section_id': msg.model.sectionId,
+               'thread_id': msg.model.thread.ID,
+               'section_id': msg.model.section.ID,
                'panel_ref': msg.model.panelRef
           }
           let cb = function(e){
@@ -72,6 +73,7 @@ class SurveyNet extends Controller {
           let ref = this;
           let data = {
                action: 'exec_init_panel',
+               thread_id: msg.model.thread.ID,
                section_id: msg.model.section.ID,
                panel_ref: msg.model.panel.post_content.ref,
                doc: msg.model.panel.post_content
@@ -86,9 +88,10 @@ class SurveyNet extends Controller {
           let ref = this;
           let data = {
                action: 'exec_save_toc',
-               thread_id: msg.model.thread.ID,
+               thread_id: msg.model.section.ID,
                toc_id: msg.model.toc.ID,
-               toc: msg.model.toc.post_content
+               booktoc: msg.model.toc.post_content.booktoc,
+               history: msg.model.toc.post_content.history
           }
           let cb = function(e){
                ref.notify(new Message('toc::saved', { e }));

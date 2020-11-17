@@ -127,6 +127,7 @@ function build_typeform_utils_view(){
           <div><input class='auth_token' type='text'></input></div>
           <div class='unit'>{$bucket_name}</div>
           <div><input class='bucket' type='text' value='N2BwhIXs'></input></div>
+          <div><input class='filename' type='text' value='typeform_viktor_chapter_1.json'></input></div>
           <div class='unit'>{$actions}</div>
           <div><a href='javascript:downloadTypeformSurvey();'>{$download_survey}</a></div>
           <div><a href='javascript:downloadTypeformSurveyResult();'>{$download_resultset}</a></div>

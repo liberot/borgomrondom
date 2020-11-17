@@ -41,7 +41,7 @@ function downloadTypeformSurvey(){
 function constructTypeformSurvey(){
       let data = {
            action: 'exec_construct_typeform_survey',
-           survey_file_name: 'typeform_survey.js'
+           survey_file_name: jQuery('.filename').val()
       };
       this.postCommand(data);
 }
