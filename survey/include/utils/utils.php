@@ -140,6 +140,15 @@ function trim_for_print($string){
 }
 
 function insert_guest_client(){
+// deletes guest client
+     $sql = <<<EOD
+          delete from wp_users where user_login = 'surveyprint'
+EOD;
+// sets up a guest client
+     $sql = debug_sql($sql);
+     global $wpdb;
+     $res = $wpdb->get_results($sql);
+// client is cutomer as for debug reasons
      // $role_title = Role::GUEST;
      $role_title = Role::CUSTOMER;
      $role = add_role($role_title, 'SurveyPrint Client');

@@ -80,12 +80,6 @@ EOD;
      $sql = debug_sql($sql);
 };
 
-
-
-
-
-
-
 function px_to_unit($ppi, $pxs, $unit){
      if(is_null($ppi)){ $ppi = 300; }
      if(is_null($pxs)){ $pxs = 0; }
@@ -143,11 +137,11 @@ function rgb2cmyk($rgb){
 }
 
 function hex2rgb($hex) {
-     $color = str_replace('#','',$hex);
+     $color = str_replace('#', '', $hex);
      $rgb = array(
-          'r'=>hexdec(substr($color,0,2)),
-          'g'=>hexdec(substr($color,2,2)),
-          'b'=>hexdec(substr($color,4,2)),
+          'r'=>hexdec(substr($color, 0, 2)),
+          'g'=>hexdec(substr($color, 2, 2)),
+          'b'=>hexdec(substr($color, 4, 2)),
      );
      return $rgb;
 }
@@ -206,24 +200,23 @@ function fit_image_asset_to_slot($asset){
      $xoffset = 0;
      $yoffset = 0;
 
+// seems there is no layout to fit into
+// ------------------------------------
+     $asset['conf']['unit'] = 'px';
+     if(null == $asset['conf']['slotW']){ $asset['conf']['slotW'] = $width; };
+     if(null == $asset['conf']['slotH']){ $asset['conf']['slotH'] = $height; };
+     if(null == $asset['conf']['slotX']){ $asset['conf']['slotX'] = 0; };
+     if(null == $asset['conf']['slotY']){ $asset['conf']['slotY'] = 0; };
+     if(null == $asset['conf']['scaleType']){ $asset['conf']['scaleType'] = 'no_scale'; };
+     if(null == $asset['conf']['maxScaleRatio']){ $asset['conf']['maxScaleRatio'] = 1; };
+// ------------------------------------
+
      $slot_width = floatval($asset['conf']['slotW']);
      $slot_height = floatval($asset['conf']['slotH']);
      $slot_x = floatval($asset['conf']['slotX']);
      $slot_y = floatval($asset['conf']['slotY']);
-
-// no slots without uploaded layouts
-// todo: plz upload the layouts.....
-     if(null == $slot_width){
-          $slot_width = '800';
-          $slot_width = '342';
-          $slot_x = '10';
-          $slot_y = '10';
-     }
-
      $scale_type = $asset['conf']['scaleType'];
-
      $max_scale_ratio = floatval($asset['conf']['maxScaleRatio']);
-     
      if(is_null($max_scale_ratio)){ $max_scale_ratio = 1; }
 
      switch($scale_type){
@@ -241,6 +234,7 @@ function fit_image_asset_to_slot($asset){
                $yoffset = ($slot_height -$h) /2;
                break;
 
+          case 'no_scale':
           default:
                switch($layout_code){
                case 'L':
@@ -285,7 +279,7 @@ function fit_image_asset_to_slot($asset){
      $asset['conf']['scale'] = $r;
      $asset['conf']['layoutCode'] = $layout_code; 
 
-     // print_r($asset['conf']);
+// print_r($asset['conf']);
 
      return $asset;
 }
