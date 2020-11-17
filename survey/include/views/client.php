@@ -48,10 +48,8 @@ function build_survey_view(){
      wp_enqueue_script('client_init');
 
      wp_register_style('client_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
-     wp_register_style('upload_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/upload.css');
 
      wp_enqueue_style('client_style');
-     wp_enqueue_style('upload_style');
 
      $res = <<<EOD
      <div class='survey'>

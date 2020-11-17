@@ -15,6 +15,7 @@ function exec_get_threads_of_client(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
+/**********
 add_action('admin_post_exec_init_thread', 'exec_init_thread');
 function exec_init_thread(){
 
@@ -63,14 +64,10 @@ function exec_init_thread(){
           return false;
      }
 
-
 // thread is going to be authd at some point 
      $message = esc_html(__('no such section', 'nosuch'));
      echo json_encode(array('res'=>'failed', 'message'=>$message, 'thread_id'=>$thread_id));
      return false;
-
-
-
 
      $questions = get_questions_by_survey_id($survey_id);
 
@@ -119,6 +116,8 @@ function exec_init_thread(){
      $message = esc_html(__('thread is inited', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
+*/
+
 
 /*****
 add_action('admin_post_exec_get_thread_by_id', 'exec_get_thread_by_id');
@@ -208,9 +207,9 @@ function exec_get_initial_thread(){
      $surveyprint_uuid = psuuid();
      $unique_guest = get_session_ticket('unique_guest');
 
-     $survey = get_survey_by_title('__fielding_questions__')[0];
+     // $survey = get_survey_by_title('__fielding_questions__')[0];
      // $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
-     // $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
+     $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
      // $survey = get_survey_by_title('Fieldtypes')[0];
 
      if(is_null($survey)){

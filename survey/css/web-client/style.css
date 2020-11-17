@@ -85,3 +85,53 @@ a:hover {
 }
 
 
+.opinion-row {
+     width: 100%;
+     display: flex;
+     flex-direction: row;
+     justify-conent: center;
+}
+
+.opinion-cell {
+     width: 100%;
+     background-color: #ffccdd;
+     text-align: center;
+     margin: 1px;
+}
+
+/** upload '**************************************/
+/*************************************************/
+/*************************************************/
+.layout-controls {
+}
+
+.drag {
+     background-color: pink;
+}
+
+.files {
+     visibility: hidden;
+     display: none;
+}
+
+.fake {
+     position: relative;
+     left: 0px;
+     top: 0px;
+     margin: 12px 0px 12px 0px;
+     width: 98%;
+     height: 35px;
+     padding: 5px;
+     border: 1px dotted #cedece;
+     font-size: 0.5em;
+}
+
+.uploaded-asset {
+     height: 51px; 
+}
+
+.survey-assets {
+     margin: 12px 0px 12px 0px;
+     width: 100%;
+}
+
