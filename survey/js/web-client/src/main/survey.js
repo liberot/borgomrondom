@@ -171,11 +171,13 @@ class Survey extends Controller {
           }
 
           this.model.section = msg.model.e.coll.sections[0];
+          this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
           this.model.thread = msg.model.e.coll.thread[0];
 
           this.model.toc = msg.model.e.coll.toc[0];
           this.model.toc.post_content = SurveyUtil.pagpick(this.model.toc.post_content);
+
           if(null == this.model.toc.post_content.booktoc){
                this.model.toc.post_content.booktoc = [];
           }

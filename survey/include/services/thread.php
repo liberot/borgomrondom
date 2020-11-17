@@ -171,6 +171,7 @@ function init_survey_guest(){
      }
      if(true != is_user_logged_in()){
           $res = auth_guest_client();
+          set_session_ticket('unique_guest', random_string(128), true);
      }
 }
 
@@ -184,7 +185,7 @@ function exec_get_initial_thread(){
           return false;
      }
 
-// pump of a previosly inited guest survey
+// pumps a previosly inited guest survey
      $unique_guest = get_session_ticket('unique_guest');
 
      $thread_id = get_session_ticket('thread_id');
@@ -202,7 +203,7 @@ function exec_get_initial_thread(){
           return true;
      }
 
-// init of a guest thread
+// inits a guest thread
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
      $unique_guest = get_session_ticket('unique_guest');
@@ -216,11 +217,12 @@ function exec_get_initial_thread(){
           return false;
      }
 
+// inserts a post of type thread 
      $conf = [
           'post_type'=>'surveyprint_thread',
           'post_author'=>$author_id,
-          'post_title'=>$surveyprint_uuguest,
-          'post_excerpt'=>$surveyprint_uuid,
+          'post_title'=>$surveyprint_uuid,
+          'post_excerpt'=>$unique_guest,
           'post_name'=>$surveyprint_uuid,
           'post_content'=>$surveyprint_uuid
      ];
@@ -230,16 +232,19 @@ function exec_get_initial_thread(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+// sets the session ticket thread id for the incoming
      set_session_ticket('thread_id', $thread_id, true);
 
+// inserts a post of type section
      $surveyprint_uuid = psuuid();
      $conf = [
           'post_type'=>'surveyprint_section',
           'post_author'=>$author_id,
-          'post_title'=>$surveyprint_uuguest,
+          'post_title'=>$unique_quest,
           'post_excerpt'=>$survey->post_excerpt,
           'post_name'=>$surveyprint_uuid,
-          'post_content'=>$surveyprint_uuid,
+          'post_content'=>$survey->post_content,
           'post_parent'=>$thread_id
      ];
      $section_id = init_section($conf);
@@ -250,6 +255,7 @@ function exec_get_initial_thread(){
      }
      set_session_ticket('section_id', $section_id, true);
 
+// inserts posts of type panel
      $questions = get_questions_by_survey_id($survey->ID);
      foreach($questions as $question){
           $surveyprint_uuid = psuuid();
@@ -265,6 +271,7 @@ function exec_get_initial_thread(){
           $panel_id = init_panel($conf);
      }
 
+// loads the toc 
      $toc = get_toc_by_survey_id($survey->ID)[0];
      if(is_null($toc)){
           $message = esc_html(__('no toc', 'nosuch'));
@@ -290,6 +297,7 @@ function exec_get_initial_thread(){
      $coll['sections'] = get_sections_by_thread_id($thread_id);
 
 /*
+// preloads the panels
      $coll['panels'] = [];
      $temp = clone $coll['toc'][0];
      $temp->post_content = pagpick($temp->post_content);

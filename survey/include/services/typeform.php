@@ -25,11 +25,13 @@ function exec_construct_typeform_survey(){
           return false;
      }
 
+// sets file name that is to be parsed
      $survey_file_name = trim_incoming_filename($_POST['survey_file_name']);
      if(is_null($survey_file_name)){
           $survey_file_name = 'typeform_survey.json';
      }
 
+// reads tpeform survey json
      $ds = DIRECTORY_SEPARATOR;
      $path = WP_PLUGIN_DIR.SURVeY.$ds.'asset'.$ds.$survey_file_name;
      $data = @file_get_contents($path);
@@ -39,6 +41,7 @@ function exec_construct_typeform_survey(){
           return false;
      }
 
+// parses document
      $doc = json_decode($data);
      if(is_null($doc)){
           $message = esc_html(__('no document: ', 'nosuch'));
@@ -47,6 +50,7 @@ function exec_construct_typeform_survey(){
      }
      $doc = walk_the_doc($doc);
 
+// inserts a post of type survey
      $survey_type = 'typeform'; 
      $survey_ref = $doc['id'];
      $survey_title = $doc['title'];
@@ -68,6 +72,8 @@ function exec_construct_typeform_survey(){
           return;
      }
 
+// insert posts of type question 
+     $survey_type = 'typeform'; 
      $refs = [];
      $ids = [];
      foreach($doc['fields'] as $field){
@@ -130,6 +136,8 @@ function exec_construct_typeform_survey(){
                     $ids[]= $question_id;
           }
      }
+
+// inserts a post of type toc 
      $post_content = [];
      $post_content['toc'] = [];
      $post_content['rulez'] = $doc['logic'];
@@ -144,11 +152,13 @@ function exec_construct_typeform_survey(){
           'post_content'=>pigpack($post_content)
      ];
      $toc_id = init_toc($conf);
+
      if(is_null($toc_id)){
           $message = esc_html(__('no toc write', 'nosuch'));
           echo json_encode([ 'res'=>'failed', 'message'=>$message ]);
           return;
      }
+
      $message = sprintf('survey added: %s: %s', $survey_id, $survey_title);
      echo json_encode(array('res'=>'success', 'message'=>$message, 'refs'=>$refs));
 }
