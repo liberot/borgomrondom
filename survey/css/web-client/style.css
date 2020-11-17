@@ -84,7 +84,6 @@ a:hover {
      background-color: red;
 }
 
-
 .opinion-row {
      width: 100%;
      display: flex;
@@ -97,6 +96,10 @@ a:hover {
      background-color: #ffccdd;
      text-align: center;
      margin: 1px;
+}
+
+.opinion-cell a {
+     text-decoration: none;
 }
 
 /** upload '**************************************/

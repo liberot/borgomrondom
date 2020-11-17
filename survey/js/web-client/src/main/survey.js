@@ -14,6 +14,7 @@ class Survey extends Controller {
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
           this.register(new Subscription(    'select::statement', this.bindSelectStatement));
           this.register(new Subscription(        'stoerte::back', this.evalPrevPanel));
+          this.register(new Subscription(         'set::opinion', this.bindOpinion));
           // events
           this.register(new Subscription(         'thread::next', this.nextPanel));
           this.register(new Subscription(         'thread::prev', this.evalPrevPanel));
@@ -44,6 +45,11 @@ class Survey extends Controller {
      }
 
      bindSelectStatement(){
+          this.evalNextPanel();
+     }
+
+     bindOpinion(msg){
+          console.log(msg);
           this.evalNextPanel();
      }
 
@@ -393,15 +399,12 @@ class Survey extends Controller {
           let target;
           switch(this.model.panel.post_content.type){
 
+               case 'phone_number':
                case 'short_text':
-                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
-                   buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { 
-                        msg: __survey.__('done'), 
-                        ref: this.model.panel.post_content.ref
-                   });
-                   break;
-
                case 'long_text':
+               case 'email':
+               case 'number':
+               case 'date':
                    buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
                    buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { 
                         msg: __survey.__('done'), 
@@ -469,14 +472,18 @@ class Survey extends Controller {
                case 'legal':
 
                case 'dropdown':
-
-               case 'number':
-
-               case 'date':
-
-               case 'rating':
+                   buf1st = this.fillTemplate(__question_text_tmpl__, { question: question });
+                   buf2nd = this.fillTemplate(__dropdown_row_tmpl__, {});
+                   for(let idx in this.model.panel.post_content.properties.choices){
+                          let label = this.model.panel.post_content.properties.choices[idx].label;
+                          let ref = this.model.panel.post_content.properties.choices[idx].ref;
+                          buf2nd+= this.fillTemplate(__dropdown_cell_tmpl__, { label: label, ref: ref }); 
+                   }
+                   buf2nd+= '</div>';
+                   break;
 
                case 'opinion_scale':
+               case 'rating':
                    buf1st = this.fillTemplate(__question_text_tmpl__, { question: question });
                    buf2nd = '<div class="opinion-row">';
                    for(let idx = 0; idx < 10; idx++){
@@ -485,21 +492,6 @@ class Survey extends Controller {
                    buf2nd+= '</div>';
                    break;
 
-               case 'phone_number':
-                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
-                   buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { 
-                        msg: __survey.__('done'), 
-                        ref: this.model.panel.post_content.ref
-                   });
-                   break;
-
-               case 'email':
-                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
-                   buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { 
-                        msg: __survey.__('done'), 
-                        ref: this.model.panel.post_content.ref
-                   });
-                   break;
 
                default:
                    buf1st = 'Unknown type: ' +this.model.panel.post_content.type;
@@ -889,7 +881,15 @@ let __ctrl_tmpl_102__ = `
 `;
 
 let __opinion_cell_tmpl__ = `
-<div class='opinion-cell'>{idx}</div>
+<div class='opinion-cell'><a href='javascript:surveyQueue.route("set::opinion", "{idx}");'>{idx}</a></div>
+`
+
+let __dropdown_row_tmpl__ = `
+<select class='dropdown-row' onchange='javascript:surveyQueue.routee("dropdown::row", this);'>
+`
+
+let __dropdown_cell_tmpl__ = `
+<option class='dropdown-cell' value='{ref}'>{label}</option>
 `
 
 class ThreadLog extends Model {
