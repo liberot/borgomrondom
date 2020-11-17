@@ -311,10 +311,10 @@ class Survey extends Controller {
      }
 
      pushToc(){
+          this.model.toc.post_content.tocstep = parseInt(this.model.toc.post_content.tocstep);
+          this.model.toc.post_content.initstep = parseInt(this.model.toc.post_content.initstep);
           this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep] = this.model.panel.post_content.ref;
           this.model.toc.post_content.history[this.model.toc.post_content.navstep] = this.model.panel.post_content.ref;
-          this.model.toc.post_content.tocstep = this.model.toc.post_content.tocstep;
-          this.model.toc.post_content.initstep = this.model.toc.post_content.initstep;
           this.model.toc.post_content.coll = this.model.threadLog.getColl();
           this.model.toc.post_content.tocstep++;
           this.model.toc.post_content.navstep++;
@@ -401,6 +401,14 @@ class Survey extends Controller {
                    });
                    break;
 
+               case 'long_text':
+                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
+                   buf2nd = this.fillTemplate(__ctrl__tmpl__003__, { 
+                        msg: __survey.__('done'), 
+                        ref: this.model.panel.post_content.ref
+                   });
+                   break;
+
                case 'file_upload':
                    buf1st = this.fillTemplate(__file_upload_tmpl__, { question: question });
                    buf3rd = this.fillTemplate(__ctrl__tmpl__003__, { msg: __survey.__('done') });
@@ -453,16 +461,39 @@ class Survey extends Controller {
                    break;
 
                case 'question_group':
+
                case 'website':
+
                case 'payment':
+
                case 'legal':
+
                case 'dropdown':
+
                case 'number':
+
                case 'date':
+
                case 'rating':
-               csse 'opinion_scale':
-               csse 'phone_number':
-                    break;
+
+               case 'opinion_scale':
+
+               case 'phone_number':
+                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
+                   buf2nd = this.fillTemplate(__ctrl__tmpl__003__, { 
+                        msg: __survey.__('done'), 
+                        ref: this.model.panel.post_content.ref
+                   });
+                   break;
+                   break;
+
+               case 'email':
+                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
+                   buf2nd = this.fillTemplate(__ctrl__tmpl__003__, { 
+                        msg: __survey.__('done'), 
+                        ref: this.model.panel.post_content.ref
+                   });
+                   break;
 
                default:
                    buf1st = 'Unknown type: ' +this.model.panel.post_content.type;
@@ -475,7 +506,6 @@ class Survey extends Controller {
           jQuery('.survey-controls4th').html(this.fillTemplate(__ctrl__tmpl__102__,{init:__survey.__('spreads')})); 
 
           this.setLink();
-
           this.pushToc(this.model.panel.post_content.ref);
      }
 
@@ -764,9 +794,9 @@ console.log(this.model.clientAuthed);
                if(true != this.model.panel.assetCopies[idx].upload){ continue; }
                let model = {
                     sectionId: this.model.section.ID,
-                    panelRef: this.model.panel.post_excerpt,
-                    image: this.model.panel.assetCopies[idx],
-                    panel: this.model.panel.post_content
+                    panel_ref: this.model.panel.post_content.ref,
+                    layout_code: this.model.panel.assetCopies[idx].layoutCode,
+                    base: this.model.panel.assetCopies[idx].post_content,
                }
                this.notify(new Message('upload::asset', model));
           }
@@ -778,6 +808,7 @@ console.log(this.model.clientAuthed);
           for(let idx in this.model.panel.assetCopies){
                let indx = this.model.panel.assetCopies[idx].indx;
                let d = this.model.panel.assetCopies[idx].post_content;
+               if(null == d){ continue; }
                    d = d.replace('data:image/png;base64,', '');
                    d = 'data:image/png;base64,' +d;
                buf+= this.fillTemplate(__src__img__011__tmpl, { indx: indx, data: d });

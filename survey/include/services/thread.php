@@ -64,7 +64,7 @@ function exec_init_thread(){
      }
 
 
-// thread is goint to be authd at some point 
+// thread is going to be authd at some point 
      $message = esc_html(__('no such section', 'nosuch'));
      echo json_encode(array('res'=>'failed', 'message'=>$message, 'thread_id'=>$thread_id));
      return false;
@@ -192,8 +192,8 @@ function exec_get_initial_thread(){
 
      if(!is_null($thread_id)){
           $coll = [];
-          $coll['thread'] = get_thread_by_id($thread_id);
           $coll['toc'] = get_toc_by_thread_id($thread_id);
+          $coll['thread'] = get_thread_by_id($thread_id);
           $coll['sections'] = get_sections_by_thread_id($thread_id);
      }
 
@@ -208,9 +208,10 @@ function exec_get_initial_thread(){
      $surveyprint_uuid = psuuid();
      $unique_guest = get_session_ticket('unique_guest');
 
-     // $survey = get_survey_by_title('__fielding_questions__')[0];
-     $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
-     $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
+     $survey = get_survey_by_title('__fielding_questions__')[0];
+     // $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
+     // $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
+     // $survey = get_survey_by_title('Fieldtypes')[0];
 
      if(is_null($survey)){
           $message = esc_html(__('no survey', 'nosuch'));
@@ -234,7 +235,7 @@ function exec_get_initial_thread(){
           return false;
      }
 
-// sets the session ticket thread id for the incoming
+// sets the session ticket thread id for incoming field validation
      set_session_ticket('thread_id', $thread_id, true);
 
 // inserts a post of type section

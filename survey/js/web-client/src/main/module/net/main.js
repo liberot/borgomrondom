@@ -40,9 +40,9 @@ class SurveyNet extends Controller {
           let data = {
                'action': 'exec_init_asset_by_panel_ref',
                'section_id': msg.model.sectionId,
-               'panel_ref': msg.model.panelRef,
-               'layout_code': msg.model.image.layoutCode,
-               'image': msg.model.image.post_content
+               'panel_ref': msg.model.panel_ref,
+               'layout_code': msg.model.layoutCode,
+               'base': msg.model.base
           }
           let cb = function(e){
                ref.notify(new Message('asset::uploaded', { e }));

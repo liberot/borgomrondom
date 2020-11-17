@@ -28,7 +28,7 @@ function exec_init_asset_by_panel_ref(){
           return false;
      }
 
-     $image = $_POST['image'];
+     $image = $_POST['base'];
      $image = remove_base_from_chunk($image);
 
      $temp = base64_decode($image, true);
