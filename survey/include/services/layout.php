@@ -72,18 +72,24 @@ function exec_get_layout_presets_by_group_and_rule(){
 
 add_action('admin_post_exec_import_layouts', 'exec_import_layouts');
 function exec_import_layouts(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+// reads layout svg fro the given rsloc
      $path = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'default-layouts'.DIRECTORY_SEPARATOR.'svg';
+
      if(!is_dir($path)){
           $message = esc_html(__('nothing to import', 'nosuch'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
      }
+
      $dh = @opendir($path);
+
      $files = [];
      $targets = [];
      while(false !== $file = @readdir($dh)){
@@ -94,9 +100,12 @@ function exec_import_layouts(){
           }
           $targets[] = $rsloc;
      }
+
+// parses svg documents into layout JSON collections
      $coll = [];
      $coll['ids'] = [];
      $coll['rules'] = [];
+
      foreach($targets as $svg_path){
           $res = init_layout_doc($svg_path);
           $doc = $res['doc'];
@@ -110,15 +119,19 @@ function exec_import_layouts(){
                'post_content'=>$doc,
                'tags_input'=>$tags_input
           ];
+
           $coll['ids'][]= init_layout($conf);
           $coll['rules'][]= $rule;
      }
+
      $message = esc_html(__('did import the layouts', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
 function init_layout_doc($svg_path){
 
+// the exported svg documents come up with some client units of 1132 
+// which is A4 kind of which is 2500px at 300ppi
      $assumed_ppi = 72;
      // $assumed_ppi = 113;
 
@@ -141,6 +154,7 @@ function init_layout_doc($svg_path){
      
      $doc = walk_the_doc($doc);
 
+// walkitalki result at 300ppi
      $doc['unit'] = 'px';
      $doc['ppi'] = 300;
      $doc['assets'] = [];
@@ -161,14 +175,17 @@ function init_layout_doc($svg_path){
      $yline = null;
      $string_nodes = [];
      $line_buf = '';
+
      foreach($svg_doc as $node){
 
           switch($node['tag']){
 
+// viewbox partly is the size of the spread
                case 'svg':
                     $view_box = $node['attributes']['viewBox'];
                     break;
 
+// clippath describes the width and the height also
                case 'clipPath':
                     $transform = $node['attributes']['transform'];
                     preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $transform, $mtc);
@@ -203,6 +220,7 @@ function init_layout_doc($svg_path){
                     }
                     break;
 
+// text is to be done: there is notices in the text fields as from now on
                case 'text':
                     $pos = $node['attributes']['transform'];
                     preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $pos, $mtc);
@@ -246,6 +264,7 @@ function init_layout_doc($svg_path){
                     $line_buf = sprintf('%s%s%s', $line_buf, $text, ' ');
                     break;
 
+// polys of the color '#ededed' are defined image asset slots
                case 'polygon':
                     $ptmp = $node['attributes']['points'];
                     $ptmp = explode(' ', $ptmp);
@@ -316,6 +335,7 @@ function init_layout_doc($svg_path){
                     $poly_nodes[]= $node;
                     break;
 
+// paths is circles and strokes mainly
                case 'path':
                     $css = $node['attributes']['class'];
                     if(null != $css){
@@ -364,14 +384,20 @@ print "\n";
           }
      }
 
+// printsize is custom beats me it is not A4 or such
      $doc['printSize']['idx'] = 'xX';
 
+// places the assets into the documents
      $doc['assets'] = array_merge($doc['assets'], extract_text_assets($string_nodes));
      $doc['assets'] = array_merge($doc['assets'], extract_poly_assets($poly_nodes));
      $doc['assets'] = array_merge($doc['assets'], extract_path_assets($path_nodes));
 
+// sets the *analyzed layout chiffre of the parsed spread as in L or LPP or such
+// characteristica of the image slots like 3xL 
      $doc['layout']['code'] = get_layout_code_of_spread($poly_nodes);
 
+// inserts image assets into the layout as for debug reasons
+// real image assets be placed into the document once the assets is uploaded
      $res = insert_image_assets($doc, $poly_nodes);
      $res = fit_image_assets_to_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
@@ -380,6 +406,7 @@ print "\n";
 
      return $res;
 }
+
 
 function fit_image_assets_to_slot($doc, $assets){
      $res = [];
@@ -433,18 +460,24 @@ function insert_image_assets($doc, $poly_nodes){
                $image_asset['conf']['opacity'] = '1';
                $image_asset['conf']['depth'] = intval(10000) +intval($idx);
 
-// diss i am not sure about..
-// assumed 200 is enough at 300 dunno
+// diss i am not sure about.. assumed 200dpi is enough at 300dpi dunno
                $image_asset['conf']['maxScaleRatio'] = '1';
-               switch($doc['ppi']){
-                    case 300: case '300':
+               switch(intval($doc['ppi'])){
+                    case 300: 
                          $image_asset['conf']['maxScaleRatio'] = '1.5';
                          break;
-                    case 600: case '600':
+                    case 600:
                          $image_asset['conf']['maxScaleRatio'] = '3.0';
                          break;
                }
+
+// image asset scales into the slot until the max scale ratio 
+// and cuts the image asset by definition
                $image_asset['conf']['scaleType'] = 'cut_into_slot';
+
+// image assets scales into the widht or into the height of the slot
+// without cutting the image asset
+// until the max scale ratio 
                // $image_asset['conf']['scaleType'] = 'no_scale';
 
                $res[]= $image_asset;
@@ -477,7 +510,7 @@ function extract_path_assets($path_nodes){
      return $res;
 }
 
-
+// todo text asset noticees
 function extract_text_assets($string_nodes){
 
      $res = [];
