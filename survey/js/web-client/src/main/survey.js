@@ -12,6 +12,7 @@ class Survey extends Controller {
           this.register(new Subscription(       'confirm::image', this.bindMultipleInput));
           this.register(new Subscription(       'confirm::input', this.bindTextInput));
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
+          this.register(new Subscription(    'select::statement', this.bindSelectStatement));
           // events
           this.register(new Subscription(         'thread::next', this.nextPanel));
           this.register(new Subscription(         'thread::prev', this.evalPrevPanel));
@@ -42,6 +43,10 @@ class Survey extends Controller {
           this.notify(new Message('save::panel', this.model));
      }
 
+     bindSelectStatement(){
+          this.evalNextPanel();
+     }
+
      bindFieldings(msg){
           if(null == msg.model.e.coll.thread){
                console.log('no thread');
@@ -62,7 +67,7 @@ class Survey extends Controller {
      clear(){
           this.model.thread = null;
           this.model.questions = null;
-          jQuery('.survey-questions').html('');
+          jQuery('.survey-questions1st').html('');
           jQuery('.survey-controls1st').html('');
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
@@ -354,7 +359,9 @@ class Survey extends Controller {
 
           this.model.maxImageAssets = 1;
 
-          let buf = '';
+          let buf1st = '';
+          let buf2nd = '';
+          let buf3rd = '';
 
           let question = this.model.panel.post_content.title;
               question = SurveyUtil.trimIncomingString(question);
@@ -375,35 +382,37 @@ class Survey extends Controller {
           switch(this.model.panel.post_content.type){
 
                case 'short_text':
-                   buf = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
-                   jQuery('.survey-controls2nd').html(this.fillTemplate(__ctrl__tmpl__003__, { 
+                   buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
+                   buf2nd = this.fillTemplate(__ctrl__tmpl__003__, { 
                         msg: __survey.__('done'), 
                         ref: this.model.panel.post_content.ref
-                   }));
+                   });
                    break;
 
                case 'file_upload':
-                   buf = this.fillTemplate(__file_upload_tmpl__, { question: question });
+                   buf1st = this.fillTemplate(__file_upload_tmpl__, { question: question });
+                   buf3rd = this.fillTemplate(__ctrl__tmpl__003__, { msg: __survey.__('done') });
                    if(null == this.model.panel.assetCopies){
                         this.model.panel.assetCopies = [];
                         this.notify(new Message('download::assets', this.model ));
                    }
                    this.renderAssetCopies();
                    this.renderFileupload();
-                   jQuery('.survey-controls3rd').html(this.fillTemplate(__ctrl__tmpl__003__, { msg: __survey.__('done') }));
                    break;
 
                case 'multiple_choice':
-                   buf = this.fillTemplate(__multiple_choice_tmpl__, { question: question });
+                   buf1st = this.fillTemplate(__multiple_choice_tmpl__, { question: question });
                    target = this.model.panel.post_content.properties.choices;
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
-                        buf+= this.fillTemplate(__choice_tmpl__, { choice: choice, ref: target[idx].ref } );
+                        buf2nd+= this.fillTemplate(__choice_tmpl__, { 
+                             choice: choice, ref: target[idx].ref 
+                        });
                    }
                    break;
 
                case 'picture_choice':
-                   buf = this.fillTemplate(__multiple_choice_tmpl__, { question: question, answer: answer });
+                   buf1st = this.fillTemplate(__multiple_choice_tmpl__, { question: question, answer: answer });
                    target = this.model.panel.post_content.properties.choices;
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
@@ -413,7 +422,7 @@ class Survey extends Controller {
                    break;
 
                case 'yes_no':
-                   buf = this.fillTemplate(__yes_no_tmpl__, { 
+                   buf1st = this.fillTemplate(__yes_no_tmpl__, { 
                         question: question, 
                         yes: __survey.__('yes', 'nosuch'), no: __survey.__('no', 'nosuch'),
                         ref: this.model.panel.post_content.ref
@@ -421,17 +430,26 @@ class Survey extends Controller {
                    break;
 
                case 'group':
-                   buf = this.fillTemplate(__group_tmpl__, { question: question });
-                   jQuery('.survey-controls2nd').html(this.fillTemplate(__ctrl__tmpl__003__, { msg: __survey.__('done') }));
+                   buf1sr = this.fillTemplate(__group_tmpl__, { question: question } );
+                   buf2nd = this.fillTemplate(__ctrl__tmpl__003__, { msg: __survey.__('done') } );
+                   break;
+
+               case 'statement':
+                   buf1st = this.fillTemplate(__statement_tmpl__, {
+                        question: this.model.panel.post_content.title,
+                        button: this.model.panel.post_content.properties.button_text,
+                        ref: this.model.panel.post_content.ref,
+                   })
                    break;
 
                default:
-                   buf = 'Unknown field type: ' +this.model.panel.post_content.type;
-                   break;
+                   buf1st = 'Unknown type: ' +this.model.panel.post_content.type;
           }
 
-          jQuery('.survey-questions').html(buf);
+          jQuery('.survey-questions1st').html(buf1st);
           jQuery('.survey-controls1st').html(__ctrl__tmpl__002__);
+          jQuery('.survey-controls2nd').html(buf2nd);
+          jQuery('.survey-controls3rd').html(buf3rd);
           jQuery('.survey-controls4th').html(this.fillTemplate(__ctrl__tmpl__102__,{init:__survey.__('spreads')})); 
 
           this.setLink();
@@ -773,6 +791,11 @@ let __multiple_choice_tmpl__ = `
 
 let __group_tmpl__ = `
 <div class='question-output'>{question}</div>
+`;
+
+let __statement_tmpl__ = `
+<div class='question-output'>{question}</div>
+<a href='javascript:surveyQueue.route("select::statement", "{ref}", "false");'>{button}</a>
 `;
 
 let __yes_no_tmpl__ = `
