@@ -282,10 +282,13 @@ class Survey extends Controller {
                    val = 'Could not find ref: ' +key;
                    val = '';
                }
+               question = question.replace(/_/g, '');
+               question = question.replace(/\*/g, '');
+               question = question.replace(/\*/g, '');
+               question = question.replace(/\n\r/g, '');
+               question = question.replace(/\n/g, '');
                question = question.replace(refmtch[idx], val);
           }
-          question = question.replace(/_/gi, '');
-          question = question.replace(/\*/gi, '');
           return question;
      }
 
@@ -377,6 +380,9 @@ class Survey extends Controller {
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
           jQuery('.survey-assets').html('');
+          jQuery('.fake').off();
+          jQuery('.files').off();
+          jQuery('.file-upload').html('');
 
           let target;
           switch(this.model.panel.post_content.type){
@@ -396,8 +402,8 @@ class Survey extends Controller {
                         this.model.panel.assetCopies = [];
                         this.notify(new Message('download::assets', this.model ));
                    }
-                   this.renderAssetCopies();
                    this.renderFileupload();
+                   this.renderAssetCopies();
                    break;
 
                case 'multiple_choice':
@@ -417,7 +423,7 @@ class Survey extends Controller {
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
                         let src = target[idx].attachment.href;
-                        buf+= this.fillTemplate(__picture_choice_tmpl__, { choice: choice, src: src, ref: target[idx].ref } );
+                        buf2nd+= this.fillTemplate(__picture_choice_tmpl__, { choice: choice, src: src, ref: target[idx].ref } );
                    }
                    break;
 
@@ -463,28 +469,29 @@ class Survey extends Controller {
                return;
           }
 
+          jQuery('.file-upload').html(__upload__tmpl__002__);
+
           let files = null;
           let slots = parseInt(this.model.panel.post_content.conf.image);
-          let buf = jQuery('.survey-controls2nd').html(__upload__tmpl__002__);
-          let form = document.querySelector('.fileupload');
+          let form = document.querySelector('.files');
           let fake = document.querySelector('.fake');
 
-          fake.addEventListener('drop',      function(e){ e.preventDefault(); e.stopPropagation(); });
+          fake.addEventListener(     'drop', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener('dragleave', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener('dragenter', function(e){ e.preventDefault(); e.stopPropagation(); });
-          fake.addEventListener('dragover',  function(e){ e.preventDefault(); e.stopPropagation(); });
-          fake.addEventListener('dragend',   function(e){ e.preventDefault(); e.stopPropagation(); });
+          fake.addEventListener( 'dragover', function(e){ e.preventDefault(); e.stopPropagation(); });
+          fake.addEventListener(  'dragend', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener('dragstart', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener('dragenter', function(e){ fake.classList.add('drag'); });
-          fake.addEventListener('dragover',  function(e){ fake.classList.add('drag'); });
-          fake.addEventListener('drag',      function(e){ e.preventDefault(); e.stopPropagation(); });
-          fake.addEventListener('drop',      function(e){ fake.classList.remove('drag'); });
-          fake.addEventListener('dragend',   function(e){ fake.classList.remove('drag'); });
+          fake.addEventListener( 'dragover', function(e){ fake.classList.add('drag'); });
+          fake.addEventListener(     'drag', function(e){ e.preventDefault(); e.stopPropagation(); });
+          fake.addEventListener(     'drop', function(e){ fake.classList.remove('drag'); });
+          fake.addEventListener(  'dragend', function(e){ fake.classList.remove('drag'); });
           fake.addEventListener('dragleave', function(e){ fake.classList.remove('drag'); });
-          fake.addEventListener('mouseup',   function(e){ form.click(); });
+          fake.addEventListener(  'mouseup', function(e){ form.click(); });
 
           fake.addEventListener('drop', function(e){ 
-               document.querySelector('.fileupload').files = e.dataTransfer.files;
+               document.querySelector('.files').files = e.dataTransfer.files;
                let data = ref.initImageUpload(e.dataTransfer.files);
                ref.notify(new Message('parse::assets', { form: data, panel: ref.model.panel }));
           });
@@ -659,11 +666,11 @@ console.log('prev link from default: ', ref);
           let ref = this;
           this.model.parseProc = [];
           this.model.panel.assetCopies = [];
-          let files = document.querySelector('.fileupload').files;
+          let files = document.querySelector('.files').files;
           let buf = '';
           for(let idx = 0; idx < files.length; idx++){
                if(idx >= this.model.maxImageAssets){ return; }
-               let file = document.querySelector('.fileupload').files[idx];
+               let file = document.querySelector('.files').files[idx];
                if(null == file){ continue; }
                let indx = 'image_'+idx;
                this.model.parseProc.push({ indx: indx, proc: idx, state: 0x00 });
@@ -765,7 +772,7 @@ console.log(this.model.clientAuthed);
 
 let __upload__tmpl__002__ = `
 <form>
-     <input type='file' class='fileupload' name='filename' multiple='multiple'></inpupt>
+     <input type='file' class='files' name='filename' multiple='multiple'></inpupt>
      <div class='fake'>Drop Files Here</div>
 </form>
 `;

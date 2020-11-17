@@ -60,6 +60,7 @@ function build_survey_view(){
           <div class='survey-thread'></div>
                <div class='survey-controls1st'></div>
                <div class='survey-questions1st'></div>
+               <div class='file-upload'></div>
                <div class='survey-controls2nd'></div>
                <div class='survey-controls3rd'></div>
                <div class='survey-controls4th'></div>
