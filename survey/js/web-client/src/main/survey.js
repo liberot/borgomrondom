@@ -36,7 +36,7 @@ class Survey extends Controller {
 
      storeInput(msg){
           if(false == this.model.clientAuthed){
-               // return;
+
           }
           this.notify(new Message('save::toc', this.model));
           this.notify(new Message('save::panel', this.model));
@@ -426,7 +426,7 @@ class Survey extends Controller {
                    break;
 
                default:
-                   buf = 'UNknown';
+                   buf = 'Unknown field type: ' +this.model.panel.post_content.type;
                    break;
           }
 

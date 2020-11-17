@@ -210,6 +210,7 @@ function exec_get_initial_thread(){
 
      // $survey = get_survey_by_title('__fielding_questions__')[0];
      $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
+     $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
 
      if(is_null($survey)){
           $message = esc_html(__('no survey', 'nosuch'));
