@@ -256,16 +256,18 @@ class Survey extends Controller {
      bindYesNoInput(msg){
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
-          let val = msg.model.arguments[2] == "true" ? true : false;
+          let val = msg.model.arguments[2] == 'true' ? 'true' : 'false';
           this.bindInput(panel, ref, val);
      }
 
      bindInput(panel, ref, val){
+          if('undefined' == typeof(val)){ val = ''; }
+          let answer = val.replace(/\s+$/g, val);
           let question = this.corrQuestion(this.model.panel.post_content.title);
           this.model.panel.post_content.question = SurveyUtil.trimIncomingString(question);
-          this.model.panel.post_content.answer = val;
+          this.model.panel.post_content.answer = answer;
           this.model.panel.post_content.answer = SurveyUtil.trimIncomingString(val);
-          this.model.threadLog.add(ref, val);
+          this.model.threadLog.add(ref, answer);
           this.notify(new Message('input::done', this.model));
           this.evalNextPanel();
      }
@@ -373,9 +375,7 @@ class Survey extends Controller {
           let answer = this.model.panel.post_content.answer;
               answer = SurveyUtil.trimIncomingString(answer);
 
-          if(null == answer || undefined == answer){
-              answer = '';
-          }
+          if('undefined' == typeof(val)){ answer = ''; }
 
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
