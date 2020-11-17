@@ -787,7 +787,7 @@ let __ctrl__tmpl__003__ = `
 `;
 
 let __ctrl__tmpl__002__ = `
-<a href='javascript:surveyQueue.route("thread::prev");'>prev</a>
+<!-- <a href='javascript:surveyQueue.route("thread::prev");'>prev</a> //-->
 <!-- <a href='javascript:surveyQueue.route("thread::next");'>next</a> //-->
 `;
 
