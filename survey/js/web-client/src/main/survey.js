@@ -279,6 +279,8 @@ class Survey extends Controller {
                }
                question = question.replace(refmtch[idx], val);
           }
+          question = question.replace(/_/gi, '');
+          question = question.replace(/\*/gi, '');
           return question;
      }
 
