@@ -13,6 +13,7 @@ class Survey extends Controller {
           this.register(new Subscription(       'confirm::input', this.bindTextInput));
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
           this.register(new Subscription(    'select::statement', this.bindSelectStatement));
+          this.register(new Subscription(        'stoerte::back', this.evalPrevPanel));
           // events
           this.register(new Subscription(         'thread::next', this.nextPanel));
           this.register(new Subscription(         'thread::prev', this.evalPrevPanel));
@@ -37,7 +38,6 @@ class Survey extends Controller {
 
      storeInput(msg){
           if(false == this.model.clientAuthed){
-
           }
           this.notify(new Message('save::toc', this.model));
           this.notify(new Message('save::panel', this.model));
@@ -143,18 +143,22 @@ class Survey extends Controller {
      }
 
      setLink(){
+
           let ref = this;
           let chunk = '';
           let lnk = window.location.href.substr(1);
+
           if(lnk.match(/\/+$/)){
                chunk = chunk.replace(/^\//, '');
           }
+
           if(null != this.model.thread){
                chunk+= '/thread:'+this.model.thread.ID;
                if(null != this.model.section){
                     chunk+= '/section:'+this.model.section.ID;
                }
           }
+
           window.location.hash = chunk;
      }
 
@@ -186,6 +190,7 @@ class Survey extends Controller {
           if(null == this.model.toc.post_content.booktoc){
                this.model.toc.post_content.booktoc = [];
           }
+
           if(null == this.model.toc.post_content.history){
                this.model.toc.post_content.history = [];
           }
@@ -508,10 +513,10 @@ class Survey extends Controller {
           for(let idx in files){
                if(idx >= 10){ continue; }
                if(idx >= this.model.maxImageAssets){ continue; }
-               formdata.append('action', 'exec_image_upload');
-               formdata.append('panelId', this.model.panel.ID);
-               formdata.append('thradId', this.model.thread.ID);
-               formdata.append('panelRef', this.model.thread.post_excerpt);
+               formdata.append(    'action', 'exec_image_upload');
+               formdata.append(   'panelId', this.model.panel.ID);
+               formdata.append(  'threadId', this.model.thread.ID);
+               formdata.append(  'panelRef', this.model.thread.post_excerpt);
                formdata.append('image_'+idx, files[idx]);
           }
           return formdata;

@@ -11,4 +11,6 @@ window.onpopstate = function(e){
     console.log(e);
     console.log(window.location.href);
     history.pushState(null, null, window.location.href);
+    if('undefined' == typeof(surveyQueue)){ return }
+    surveyQueue.route("stoerte::back");
 };
