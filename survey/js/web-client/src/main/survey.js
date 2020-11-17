@@ -32,7 +32,7 @@ class Survey extends Controller {
           // ------
           this.extractDeeplink(window.location.hash.substr(1));
           this.navDeeplink(window.location.hash.substr(1));
-          window.addEventListener('hashchange', function(e){ ref.bindHashChange(e);});
+          window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
           // ------
           this.notify(new Message('download::fieldings', this.model));
      }
@@ -102,16 +102,16 @@ class Survey extends Controller {
           }
           if(tmp.length >= 3){
                let id = this.getLinkVal('section', tmp[2]);
-               if(id != this.model.rThread){
-                   this.model.rThread = id;
-                   this.model.rThreadNav = true;
+               if(id != this.model.rSection){
+                   this.model.rSection = id;
+                   this.model.rSectionNav = true;
                }
           }
           if(tmp.length >= 2){
                let id = this.getLinkVal('thread', tmp[1]);
-               if(id != this.model.rSurvey){
-                   this.model.rSurvey = id;
-                   this.model.rSurveyNav = true;
+               if(id != this.model.rThread){
+                   this.model.rThread = id;
+                   this.model.rThreadNav = true;
                }
           }
      }
@@ -129,8 +129,8 @@ class Survey extends Controller {
 
      navDeeplink(lnk){
           let ref = this;
-          if(this.model.rSurveyNav){
-               if(this.model.rThreadNav){
+          if(this.model.rThreadNav){
+               if(this.model.rSectionNav){
                     if(this.model.rPanelNav){
                          this.model.navToPanelAction = function(){
                               ref.selectPanel(ref.model.rPanel);
@@ -138,13 +138,13 @@ class Survey extends Controller {
                          }
                     }
                     this.model.navToThreadAction = function(){
-                         let model = { 'arguments': [ '', ref.model.rThread ] }
+                         let model = { 'arguments': [ '', ref.model.rSection ] }
                          ref.notify(new Message('select::thread', model));
-                         ref.model.rThreadNav = false;
+                         ref.model.rSectionNav = false;
                     }
                }
-               let model = { 'arguments': [ '', this.model.rSurvey ] }
-               this.model.rSurveyNav = false;
+               let model = { 'arguments': [ '', this.model.rThread ] }
+               this.model.rThreadNav = false;
           }
      }
 
@@ -940,8 +940,8 @@ class SurveyModel extends Model {
           this.tocstep = 0;
           this.maxImageAssets;
 // deeplink -----------------------------
-          this.rSurvey;
           this.rThread;
+          this.rSection;
           this.rPanel;
           this.rQuestionId;
           this.navToThreadAction;
