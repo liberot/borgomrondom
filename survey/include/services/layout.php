@@ -372,8 +372,8 @@ print "\n";
 
      $doc['layout']['code'] = get_layout_code_of_spread($poly_nodes);
 
-     $res = insert_image_assets($poly_nodes);
-     $res = fit_image_assets_to_slot($res);
+     $res = insert_image_assets($doc, $poly_nodes);
+     $res = fit_image_assets_to_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = ['doc'=>$doc, 'svg_doc'=>$svg_doc];
@@ -381,10 +381,10 @@ print "\n";
      return $res;
 }
 
-function fit_image_assets_to_slot($assets){
+function fit_image_assets_to_slot($doc, $assets){
      $res = [];
      foreach($assets as $asset){
-          $res[]= fit_image_asset_to_slot($asset);
+          $res[]= fit_image_asset_to_slot($doc, $asset);
      }
      return $res;
 }
@@ -399,7 +399,7 @@ function get_layout_code_of_spread($nodes){
      return $res;
 }
 
-function insert_image_assets($poly_nodes){
+function insert_image_assets($doc, $poly_nodes){
 
      $res = [];
      $idx = 0;
@@ -433,12 +433,19 @@ function insert_image_assets($poly_nodes){
                $image_asset['conf']['opacity'] = '1';
                $image_asset['conf']['depth'] = intval(10000) +intval($idx);
 
-
-// todo
-// depends on ppi 
+// diss i am not sure about..
+// assumed 200 is enough at 300 dunno
+               $image_asset['conf']['maxScaleRatio'] = '1';
+               switch($doc['ppi']){
+                    case 300: case '300':
+                         $image_asset['conf']['maxScaleRatio'] = '1.5';
+                         break;
+                    case 600: case '600':
+                         $image_asset['conf']['maxScaleRatio'] = '3.0';
+                         break;
+               }
                $image_asset['conf']['scaleType'] = 'cut_into_slot';
-               $image_asset['conf']['maxScaleRatio'] = '2';
-// todo
+               // $image_asset['conf']['scaleType'] = 'no_scale';
 
                $res[]= $image_asset;
                $idx++;

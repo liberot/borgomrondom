@@ -155,7 +155,7 @@ function px_pump($px, $ppi_1st, $ppi_2nd){
      return $res;
 }
 
-function fit_image_asset_to_slot($asset){
+function fit_image_asset_to_slot($doc, $asset){
 
      // $asset['src'] = 'http://127.0.0.1:8083/wp-content/plugins/nosuch/survey/asset/test.300.png';
      // $asset['src'] = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.300.png';
