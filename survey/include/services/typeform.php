@@ -165,15 +165,17 @@ function exec_construct_typeform_survey(){
 
 add_action('admin_post_exec_download_typeform_survey', 'exec_download_typeform_survey');
 function exec_download_typeform_survey(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return;
      }
+
      $typeform_base = 'https://api.typeform.com/forms';
 
-     $bucket = trim_incoming_filename($_POST['bucket']);
      $auth_token = trim_incoming_string($_POST['auth_token']);
+     $bucket = trim_incoming_filename($_POST['bucket']);
      $type = trim_incoming_filename($_POST['type']);
 
      $loc = '';
@@ -185,14 +187,17 @@ function exec_download_typeform_survey(){
                $loc = $typeform_base.'/'.$bucket.'/responses';
                break;
      }
+
      $doc = fetch($loc, $auth_token);
      $doc = json_decode($doc);
+
      if(is_null($doc)){
           $message = esc_html(__('no document', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return;
      }
-     $path = plugin_dir_path(__DIR__).'asset'.DIRECTORY_SEPARATOR;
+
+     $path = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR;
      switch($type){
           case 'form':
                $path.= 'typeform_survey.json';
@@ -201,8 +206,10 @@ function exec_download_typeform_survey(){
                $path.= 'typeform_survey_result.json';
                break;
      }
+
      @file_put_contents($path, json_encode($doc));
      $message = is_null($doc->description) ? 'survey descriptor is written to: '.$path : $doc->description;
+
      echo json_encode(
           array(
                'res'=>'success', 

@@ -39,7 +39,7 @@ function fetch($url, $token){
      curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $auth));
      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
      curl_setopt($ch, CURLOPT_URL, $url);
-     curl_setopt($ch, POSTFIELDS, $post);
+     // curl_setopt($ch, POSTFIELDS, $post);
      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
      $res = curl_getinfo($ch, CURLINFO_HTTP_CODE);
      $res = curl_exec($ch);

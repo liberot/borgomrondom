@@ -417,9 +417,7 @@ class Survey extends Controller {
                    target = this.model.panel.post_content.properties.choices;
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
-                        buf2nd+= this.fillTemplate(__choice_tmpl__, { 
-                             choice: choice, ref: target[idx].ref 
-                        });
+                        buf2nd+= this.fillTemplate(__choice_tmpl__, { choice: choice, ref: target[idx].ref });
                    }
                    break;
 
@@ -453,6 +451,18 @@ class Survey extends Controller {
                         ref: this.model.panel.post_content.ref,
                    })
                    break;
+
+               case 'question_group':
+               case 'website':
+               case 'payment':
+               case 'legal':
+               case 'dropdown':
+               case 'number':
+               case 'date':
+               case 'rating':
+               csse 'opinion_scale':
+               csse 'phone_number':
+                    break;
 
                default:
                    buf1st = 'Unknown type: ' +this.model.panel.post_content.type;
