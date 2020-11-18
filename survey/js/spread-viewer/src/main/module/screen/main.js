@@ -53,11 +53,24 @@ class Screen extends Controller {
      }
 
      print(){
+
           let prints = [];
           this.model.currentScreen = this.model.printScreen;
           this.model.printFrame = false;
-          let width = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)));
-          let height = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)));
+
+          let width = Math.ceil(
+               parseFloat(
+                    LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)
+               )
+          );
+          let height = Math.ceil(
+               parseFloat(
+                    LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)
+               )
+          );
+
+console.log(width, height);
+
           this.model.currentScreen.viewbox(0, 0, width, height);
           // parts
 
@@ -77,18 +90,40 @@ class Screen extends Controller {
           */
 
           prints = [];
-          width = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width) *parseInt(this.model.doc.pageSize, this.model.doc.unit)));
+
+console.log(this.model.doc.pageSize);
+
+          width = Math.ceil(
+               parseFloat(
+                    LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)  
+                         *parseInt(this.model.doc.pageSize)
+               )
+          );
+          height = Math.ceil(
+               parseFloat(
+                    LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)
+               )
+          );
+
           this.model.currentScreen.viewbox(0, 0, width, height); 
           this.render();
           prints.push(jQuery('.printscreen').html());
+
           let model = {
                prints: prints,
                ppi: this.model.doc.ppi,
-               width: Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width) *parseInt(this.model.doc.pageSize), this.model.doc.unit)),
-               height: Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)))
+               width: width,
+               height: height 
           }
+  
           this.notify(new Message('prints::gathered', model));
-          width = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)));
+
+          width = Math.ceil(
+               parseFloat(
+                    LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)
+               )
+          );
+
           this.model.currentScreen.viewbox(0, 0, width, height); 
           this.model.printFrame = true;
           this.model.currentScreen = this.model.screen;

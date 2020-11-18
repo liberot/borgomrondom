@@ -372,76 +372,50 @@ function init_layout_doc($svg_path){
 // paths is circles and strokes mainly
                case 'path':
 
-                    $node['type'] = 'path';
-                    $node['unit'] = 'px';
-                    $node['d'] = $d;
-
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $node['style'] = $style;
-                         $d = $node['attributes']['d'];
-                         preg_match('/M(.{1,128}?)c/', $d, $move);
-                         preg_match('/([C])(.*?)[a-zA-Z]/', $d, $xcurves);
-                         preg_match('/([L])(.*?)[a-zA-Z]/', $d, $xlines);
-                         preg_match('/([c])(.*?)[a-zA-Z]/', $d, $curves);
-                         preg_match('/([l])(.*?)[a-zA-Z]/', $d, $lines);
-                         $node['d'] = $d;
+                    }
 
-/*
-@file_put_contents('/tmp/out', json_encode($move, JSON_PRETTY_PRINT), FILE_APPEND);
-@file_put_contents('/tmp/out', json_encode($curves, JSON_PRETTY_PRINT), FILE_APPEND);
-@file_put_contents('/tmp/out', json_encode($xcurves, JSON_PRETTY_PRINT), FILE_APPEND);
-@file_put_contents('/tmp/out', json_encode($lines, JSON_PRETTY_PRINT), FILE_APPEND);
-@file_put_contents('/tmp/out', json_encode($xlines, JSON_PRETTY_PRINT), FILE_APPEND);
-@file_put_contents('/tmp/out', json_encode($d, JSON_PRETTY_PRINT), FILE_APPEND);
-*/
+                    $node['type'] = 'path';
+                    $node['unit'] = 'px';
 
-/*
-M566.93-14.17v737
-M230.92,464.68A174.94,174.94,0,1,0,56,289.74,174.94,174.94,0,0,0,230.92,464.68Z
-M566.93-14.17v737
-M876.29,652a66.77,66.77,0,1,0-66.76-66.77A66.77,66.77,0,0,0,876.29,652Z
-M876.53,651.97c36.87,0,66.76-29.89,66.76-6
-print_r($d);
-print "\n";
-*/
-                         preg_match(  '/M(.{1,64}?)[v]/', $d, $vmc);
-                         preg_match('/M(.{1,64}?)(a|A)/', $d, $cmc);
-                         preg_match('/(a|A)(.{1,10}?),/', $d, $rmc);
-                         preg_match(  '/M(.{1,64}?)(c)/', $d, $kmc);
-                         preg_match(  '/(c)(.{1,10}?),/', $d, $xmc);
+                    preg_match(  '/M(.{1,64}?)[v]/', $d, $vmc);
+                    preg_match('/M(.{1,64}?)(a|A)/', $d, $cmc);
+                    preg_match('/(a|A)(.{1,10}?),/', $d, $rmc);
+                    preg_match(  '/M(.{1,64}?)(c)/', $d, $kmc);
+                    preg_match(  '/(c)(.{1,10}?),/', $d, $xmc);
 
 // @file_put_contents('/tmp/out', json_encode($kmc, JSON_PRETTY_PRINT), FILE_APPEND);
 // @file_put_contents('/tmp/out', json_encode($xmc, JSON_PRETTY_PRINT), FILE_APPEND);
 // @file_put_contents('/tmp/out', json_encode(  $d, JSON_PRETTY_PRINT), FILE_APPEND);
 
-                         if(2 <= count($cmc)){
-                              $node['type'] = 'circle';
-                              $temp = explode(',', $cmc[1]);
+                    if(2 <= count($cmc)){
+                         $node['type'] = 'circle';
+                         $temp = explode(',', $cmc[1]);
 
-                              $node['xpos'] = floatval($temp[0]);
-                              $node['ypos'] = floatval($temp[1]);
-                              $node['diam'] = floatval($rmc[2]);
+                         $node['xpos'] = floatval($temp[0]);
+                         $node['ypos'] = floatval($temp[1]);
+                         $node['diam'] = floatval($rmc[2]);
 
-                              if('px' == $doc['unit']){
-                                   $node['xpos'] = px_pump($node['xpos'], $assumed_ppi, $doc['ppi']);
-                                   $node['ypos'] = px_pump($node['ypos'], $assumed_ppi, $doc['ppi']);
-                                   $node['diam'] = px_pump($node['diam'], $assumed_ppi, $doc['ppi']);
-                              }
-                              else {
-                                   $node['xpos'] = px_to_unit($assumed_ppi, $node['xpos'], $doc['unit']);
-                                   $node['ypos'] = px_to_unit($assumed_ppi, $node['ypos'], $doc['unit']);
-                                   $node['diam'] = px_to_unit($assumed_ppi, $node['diam'], $doc['unit']);
-                              }
-
-                              $node['diam']*= 2;
-                              $node['ypos']-= $node['diam'] *1;
-                              $node['xpos']-= $node['diam'] /2;
+                         if('px' == $doc['unit']){
+                              $node['xpos'] = px_pump($node['xpos'], $assumed_ppi, $doc['ppi']);
+                              $node['ypos'] = px_pump($node['ypos'], $assumed_ppi, $doc['ppi']);
+                              $node['diam'] = px_pump($node['diam'], $assumed_ppi, $doc['ppi']);
                          }
+                         else {
+                              $node['xpos'] = px_to_unit($assumed_ppi, $node['xpos'], $doc['unit']);
+                              $node['ypos'] = px_to_unit($assumed_ppi, $node['ypos'], $doc['unit']);
+                              $node['diam'] = px_to_unit($assumed_ppi, $node['diam'], $doc['unit']);
+                         }
+
+                         $node['diam']*= 2;
+                         $node['ypos']-= $node['diam'] *1;
+                         $node['xpos']-= $node['diam'] /2;
                     }
-                    $path_nodes[]= $node;
-                    break;
+               $path_nodes[]= $node;
+               break;
           }
           $prev_node = $node['tag'];
      }
@@ -537,10 +511,10 @@ function insert_image_assets($doc, $poly_nodes){
                $image_asset['conf']['maxScaleRatio'] = '1';
                switch(intval($doc['ppi'])){
                     case 300: 
-                         $image_asset['conf']['maxScaleRatio'] = '1.5';
+                         $image_asset['conf']['maxScaleRatio'] = '1.3';
                          break;
                     case 600:
-                         $image_asset['conf']['maxScaleRatio'] = '3.0';
+                         $image_asset['conf']['maxScaleRatio'] = '2.0';
                          break;
                }
 
