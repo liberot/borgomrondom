@@ -139,6 +139,7 @@ class Screen extends Controller {
           this.model.currentScreen.clear();
           // for(let idx in this.model.doc.assets){
           for(let idx in this.model.layers){
+               if(null == this.model.doc.assets[this.model.layers[idx].i]){ continue; }
                let target = this.model.doc.assets[this.model.layers[idx].i];
                switch(target.type){
                     case 'circle':
@@ -152,6 +153,9 @@ class Screen extends Controller {
                          break;
                     case 'text':
                          this.renderText(target);
+                         break;
+                    case 'path':
+                         this.renderPath(target);
                          break;
                }
           }
@@ -203,6 +207,11 @@ class Screen extends Controller {
           let c = this.model.currentScreen.circle(diam);
               c.move(xpos, ypos);
               c.fill(colr);
+     }
+
+     renderPath(target){
+          console.log(target);
+          let c = this.model.currentScreen.path(target.d);
      }
 
      renderPoly(target){

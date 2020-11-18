@@ -123,12 +123,16 @@ function unit_to_px($ppi, $val, $unit){
 
 // https://www.rapidtables.com/convert/color/rgb-to-cmyk.html
 function rgb2cmyk($rgb){
+     // $rgb = ['r'=>'0', 'g'=>'0', 'b'=>'0'];
      $res = ['c'=>0, 'm'=>0, 'y'=>0, 'k'=>1];
      if(null == $rgb){ return $res; }
-     $res = [];
      $rrr = intval($rgb['r']) /255;
      $ggg = intval($rgb['g']) /255;
      $bbb = intval($rgb['b']) /255;
+     if(0 == $rrr && 0 == $ggg && 0 == $bbb){
+          return $res;
+     }
+     $res = [];
      $res['k'] = floatval(1 -max($rrr, $ggg, $bbb));
      $res['c'] = floatval((1 -$rrr -$res['k']) /(1 -$res['k']));
      $res['m'] = floatval((1 -$ggg -$res['k']) /(1 -$res['k']));

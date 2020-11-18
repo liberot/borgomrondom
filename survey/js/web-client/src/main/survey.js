@@ -8,8 +8,8 @@ class Survey extends Controller {
           // controls
           this.register(new Subscription(        'parse::assets', this.parseAssets));
           this.register(new Subscription(        'select::yesno', this.bindYesNoInput));
-          this.register(new Subscription(         'confirm::ref', this.bindMultipleInput));
-          this.register(new Subscription(       'confirm::image', this.bindMultipleInput));
+          this.register(new Subscription(         'confirm::ref', this.bindMultipleChoiceInput));
+          this.register(new Subscription(       'confirm::image', this.bindMultipleChoiceInput));
           this.register(new Subscription(       'confirm::input', this.bindTextInput));
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
           this.register(new Subscription(    'select::statement', this.bindSelectStatement));
@@ -231,13 +231,13 @@ class Survey extends Controller {
                }
           }
 
-          this.loadPanel(link);
-
-          this.setLink();
           if(null != this.model.navToPanelAction){
                this.model.navToPanelAction();
                this.model.navToPanelAction = null;
           }
+
+          this.loadPanel(link);
+          this.setLink();
      }
 
      bindTextInput(msg){
@@ -250,7 +250,7 @@ class Survey extends Controller {
      bindImageInput(msg){
      }
 
-     bindMultipleInput(msg){
+     bindMultipleChoiceInput(msg){
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = null;
@@ -386,7 +386,6 @@ class Survey extends Controller {
           let answer = this.model.panel.post_content.answer;
               answer = SurveyUtil.trimIncomingString(answer);
 
-
           if('undefined' == typeof(answer)){ answer = ''; }
 
           jQuery('.survey-controls2nd').html('');
@@ -451,7 +450,7 @@ class Survey extends Controller {
                    break;
 
                case 'group':
-                   buf1sr = this.fillTemplate(__group_tmpl__, { question: question } );
+                   buf1st = this.fillTemplate(__group_tmpl__, { question: question } );
                    buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { msg: __survey.__('done') } );
                    break;
 
@@ -464,17 +463,16 @@ class Survey extends Controller {
                    break;
 
                case 'question_group':
-
                case 'website':
-
                case 'payment':
-
                case 'legal':
+                    buf1st = 'No view: ' +this.model.panel.post_content.type;
+                    break;
 
                case 'dropdown':
-                   buf1st = this.fillTemplate(__question_text_tmpl__, { question: question });
-                   buf2nd = this.fillTemplate(__dropdown_row_tmpl__, {});
-                   for(let idx in this.model.panel.post_content.properties.choices){
+                    buf1st = this.fillTemplate(__question_text_tmpl__, { question: question });
+                    buf2nd = this.fillTemplate(__dropdown_row_tmpl__, {});
+                    for(let idx in this.model.panel.post_content.properties.choices){
                           let label = this.model.panel.post_content.properties.choices[idx].label;
                           let ref = this.model.panel.post_content.properties.choices[idx].ref;
                           buf2nd+= this.fillTemplate(__dropdown_cell_tmpl__, { label: label, ref: ref }); 

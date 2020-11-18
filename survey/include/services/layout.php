@@ -95,20 +95,28 @@ function exec_import_layouts(){
      while(false !== $file = @readdir($dh)){
           $rsloc = $path.DIRECTORY_SEPARATOR.$file;
           $files[] = $rsloc;
-          if('image/svg' != mime_content_type($rsloc)){
-               continue;
+          if(
+               'image/svg' == mime_content_type($rsloc) ||
+               'image/svg+xml' == mime_content_type($rsloc)
+
+          ){
+               $targets[] = $rsloc;
           }
-          $targets[] = $rsloc;
      }
 
 // parses svg documents into layout JSON collections
+
      $coll = [];
      $coll['ids'] = [];
      $coll['rules'] = [];
+     $coll['paths'] = [];
+     $coll['docs'] = [];
 
      foreach($targets as $svg_path){
           $res = init_layout_doc($svg_path);
           $doc = $res['doc'];
+          $coll['docs'][]= $doc;
+
           $rule = $doc['layout']['code'];
           $doc = pigpack($doc);
           $conf = [
@@ -122,6 +130,7 @@ function exec_import_layouts(){
 
           $coll['ids'][]= init_layout($conf);
           $coll['rules'][]= $rule;
+          $coll['paths'][]= $svg_path;
      }
 
      $message = esc_html(__('did import the layouts', 'nosuch'));
@@ -176,6 +185,9 @@ function init_layout_doc($svg_path){
      $string_nodes = [];
      $line_buf = '';
 
+     $prev_node = '';
+     $doc_clip_with_corr_parse = null;
+
      foreach($svg_doc as $node){
 
           switch($node['tag']){
@@ -183,6 +195,11 @@ function init_layout_doc($svg_path){
 // viewbox partly is the size of the spread
                case 'svg':
                     $view_box = $node['attributes']['viewBox'];
+                    if(false == is_null($view_box)){
+                         $temp = explode(' ', $view_box);
+                         $doc_width = floatval($temp[2]) /2;
+                         $doc_height = floatval($temp[3]);
+                    }
                     break;
 
 // clippath describes the width and the height also
@@ -204,20 +221,12 @@ function init_layout_doc($svg_path){
                     break;
 
                case 'rect':
-                    if(null == $doc_width){
+                    if(is_null($doc_clip_with_corr_parse)){
+                         $doc_clip_with_corr_parse = true;
                          $doc_width = floatval($node['attributes']['width']) /2;
                          $doc_height = floatval($node['attributes']['height']);
-                         if('px' == $doc['unit']){
-                              $doc_width = px_pump($doc_width, $assumed_ppi, $doc['ppi']);
-                              $doc_height = px_pump($doc_height, $assumed_ppi, $doc['ppi']);
-                         }
-                         else{
-                              $doc_width = intval(px_to_unit($assumed_ppi, $w, $doc['unit']));
-                              $doc_height = intval(px_to_unit($assumed_ppi, $h, $doc['unit']));
-                         }
-                         $doc['printSize']['width'] = $doc_width;
-                         $doc['printSize']['height'] = $doc_height;
                     }
+
                     break;
 
 // text is to be done: there is notices in the text fields as from now on
@@ -264,56 +273,81 @@ function init_layout_doc($svg_path){
                     $line_buf = sprintf('%s%s%s', $line_buf, $text, ' ');
                     break;
 
-// polys of the color '#ededed' are defined image asset slots
+// polys of color '#ededed' are defined image asset slots
+// polys of color '#dadada' are defined image asset slots
                case 'polygon':
                     $ptmp = $node['attributes']['points'];
+                    $ptmp = trim(str_replace(',', ' ', $node['attributes']['points']));
                     $ptmp = explode(' ', $ptmp);
+
+// xpositions of a rect
                     $xt = [];
-                    for($idx = 0; $idx < count($ptmp); $idx+= 2){
-                         $xt[]= $ptmp[$idx];
+                    for($idx = 0; $idx < count($ptmp); $idx+= 2){ 
+                         $xt[]= $ptmp[$idx]; 
                     }
-                    sort($xt); $xmin = $xt[0];
-                    rsort($xt); $xmax = $xt[0];
+
+// min und max x positions 
+                     sort($xt); $xmin = floatval($xt[0]);
+                    rsort($xt); $xmax = floatval($xt[0]);
+
+// ypositions of a rect
                     $yt = [];
-                    for($idx = 1; $idx < count($ptmp); $idx+= 2){
-                         $yt[]= $ptmp[$idx];
+                    for($idx = 1; $idx < count($ptmp); $idx+= 2){ 
+                         $yt[]= $ptmp[$idx]; 
                     }
-                    sort($yt); $ymin = $yt[0];
-                    rsort($yt); $ymax = $yt[0];
+
+// min und max of y positions 
+                     sort($yt); $ymin = floatval($yt[0]);
+                    rsort($yt); $ymax = floatval($yt[0]);
+
+// client units to defined units or px at current settings
                     $s = 2;
                     $xtmp = [];
                     foreach($ptmp as $p){
                          $q = floatval($p);
-                         if('px' == $doc['unit']){
-                              $q = px_pump($q, $assumed_ppi, $doc['ppi']);
-                         }
-                         else {
-                              $q = px_to_unit($assumed_ppi, $q, $doc['unit']);
-                         }
+                         if('px' == $doc['unit']){ $q = px_pump($q, $assumed_ppi, $doc['ppi']); }
+                         else { $q = px_to_unit($assumed_ppi, $q, $doc['unit']); }
                          $offset = $xoffset;
                          if(($s %2) != 0){ $offset = $yoffset; }
                          $q += $offset;
                          $xtmp[]= $q;
                          $s++;
                     }
+
                     $ptmp = implode(' ', $xtmp);
                     $node['attributes']['points'] = $ptmp;
 
+// evaluates the class af a polygon
                     $css = $node['attributes']['class'];
-                    $color = '#000';
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
-                         if('#ededed' == $color){
+
+// ededed and dadada is the image cut in
+                         $slot_colors = ['#ededed', '#dadada', '#EDEDED', '#DADADA'];
+
+                         $is_image_slot = false;
+                         foreach($slot_colors as $slot_color){
+                              if(0 == strcmp($color, $slot_color)){
+                                   $is_image_slot = true;
+                              }
+                         }
+
+// description of image slots
+                         if($is_image_slot){
                               $node['slot'] = true;
                               $node['xpos'] = floatval($xmin);
                               $node['ypos'] = floatval($ymin);
                               $node['width'] = $xmax -$xmin;
                               $node['height'] = $ymax -$ymin;
                               $node['layout_code'] = 'P';
+
                               if(floatval($node['width']) >= floatval($node['height'])){ 
                                    $node['layout_code'] = 'L';
                               }
+                             
+// @file_put_contents('/tmp/out', json_encode($node, JSON_PRETTY_PRINT), FILE_APPEND);
+
                               if('px' == $doc['unit']){
                                    $node['xpos'] = px_pump($node['xpos'], $assumed_ppi, $doc['ppi']);
                                    $node['ypos'] = px_pump($node['ypos'], $assumed_ppi, $doc['ppi']);
@@ -337,27 +371,56 @@ function init_layout_doc($svg_path){
 
 // paths is circles and strokes mainly
                case 'path':
+
+                    $node['type'] = 'path';
+                    $node['unit'] = 'px';
+                    $node['d'] = $d;
+
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $node['style'] = $style;
+
                          $d = $node['attributes']['d'];
-                         $node['debug'] = $d;
+
+                         preg_match('/M(.{1,128}?)c/', $d, $move);
+                         preg_match('/([c])(.*?)[a-zA-Z]/', $d, $curves);
+                         preg_match('/([C])(.*?)[a-zA-Z]/', $d, $xcurves);
+                         preg_match('/([l])(.*?)[a-zA-Z]/', $d, $lines);
+                         preg_match('/([L])(.*?)[a-zA-Z]/', $d, $xlines);
+
+/*
+@file_put_contents('/tmp/out', json_encode($move, JSON_PRETTY_PRINT), FILE_APPEND);
+@file_put_contents('/tmp/out', json_encode($curves, JSON_PRETTY_PRINT), FILE_APPEND);
+@file_put_contents('/tmp/out', json_encode($xcurves, JSON_PRETTY_PRINT), FILE_APPEND);
+@file_put_contents('/tmp/out', json_encode($lines, JSON_PRETTY_PRINT), FILE_APPEND);
+@file_put_contents('/tmp/out', json_encode($xlines, JSON_PRETTY_PRINT), FILE_APPEND);
+@file_put_contents('/tmp/out', json_encode($d, JSON_PRETTY_PRINT), FILE_APPEND);
+*/
+
+                         $node['d'] = $d;
 /*
 M566.93-14.17v737
 M230.92,464.68A174.94,174.94,0,1,0,56,289.74,174.94,174.94,0,0,0,230.92,464.68Z
 M566.93-14.17v737
 M876.29,652a66.77,66.77,0,1,0-66.76-66.77A66.77,66.77,0,0,0,876.29,652Z
+M876.53,651.97c36.87,0,66.76-29.89,66.76-6
 print_r($d);
 print "\n";
 */
-                         preg_match('/M(.{1,64}?)[v]/', $d, $vmc);
+                         preg_match(  '/M(.{1,64}?)[v]/', $d, $vmc);
                          preg_match('/M(.{1,64}?)(a|A)/', $d, $cmc);
                          preg_match('/(a|A)(.{1,10}?),/', $d, $rmc);
+                         preg_match(  '/M(.{1,64}?)(c)/', $d, $kmc);
+                         preg_match(  '/(c)(.{1,10}?),/', $d, $xmc);
+
+// @file_put_contents('/tmp/out', json_encode($kmc, JSON_PRETTY_PRINT), FILE_APPEND);
+// @file_put_contents('/tmp/out', json_encode($xmc, JSON_PRETTY_PRINT), FILE_APPEND);
+// @file_put_contents('/tmp/out', json_encode(  $d, JSON_PRETTY_PRINT), FILE_APPEND);
+
                          if(2 <= count($cmc)){
+                              $node['type'] = 'circle';
                               $temp = explode(',', $cmc[1]);
-                              $node['unit'] = 'px';
-                              $node['circle'] = true;
 
                               $node['xpos'] = floatval($temp[0]);
                               $node['ypos'] = floatval($temp[1]);
@@ -382,10 +445,21 @@ print "\n";
                     $path_nodes[]= $node;
                     break;
           }
+          $prev_node = $node['tag'];
      }
 
 // printsize is custom beats me it is not A4 or such
      $doc['printSize']['idx'] = 'xX';
+     if('px' == $doc['unit']){
+          $doc_width = px_pump($doc_width, $assumed_ppi, $doc['ppi']);
+          $doc_height = px_pump($doc_height, $assumed_ppi, $doc['ppi']);
+     }
+     else{
+          $doc_width = intval(px_to_unit($assumed_ppi, $w, $doc['unit']));
+          $doc_height = intval(px_to_unit($assumed_ppi, $h, $doc['unit']));
+     }
+     $doc['printSize']['width'] = $doc_width;
+     $doc['printSize']['height'] = $doc_height;
 
 // places the assets into the documents
      $doc['assets'] = array_merge($doc['assets'], extract_text_assets($string_nodes));
@@ -423,6 +497,7 @@ function get_layout_code_of_spread($nodes){
                $res = sprintf('%s%s', $res, $node['layout_code']);
           }
      }
+     if('' == $res){ $res = 'U'; }
      return $res;
 }
 
@@ -490,22 +565,35 @@ function insert_image_assets($doc, $poly_nodes){
 function extract_path_assets($path_nodes){
 
      $res = [];
+     $idx = 0;
      foreach($path_nodes as $node){
-          if(false != $node['circle']){
-               $circ_asset = [];
-               $circ_asset['type'] = 'circle';
-               $circ_asset['indx'] = sprintf('circle_%s', $idx);
-               $circ_asset['conf'] = [];
-               $circ_asset['conf']['unit'] = $node['unit'];
-               $circ_asset['conf']['xpos'] = $node['xpos']; 
-               $circ_asset['conf']['ypos'] = $node['ypos'];
-               $circ_asset['conf']['diam'] = $node['diam'];
-               $circ_asset['conf']['width'] = 0;
-               $circ_asset['conf']['height'] = 0;
-               $circ_asset['conf']['color'] = [];
-               $circ_asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($node['style']['fill']));
-               $res[] = $circ_asset;
+          switch($node['type']){
+               case 'circle':
+                    $asset = [];
+                    $asset['type'] = 'circle';
+                    $asset['indx'] = sprintf('circle_%s', $idx);
+                    $asset['conf'] = [];
+                    $asset['conf']['unit'] = $node['unit'];
+                    $asset['conf']['xpos'] = $node['xpos']; 
+                    $asset['conf']['ypos'] = $node['ypos'];
+                    $asset['conf']['diam'] = $node['diam'];
+                    $asset['conf']['width'] = 0;
+                    $asset['conf']['height'] = 0;
+                    $asset['conf']['color'] = [];
+                    $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($node['style']['fill']));
+                    $res[] = $asset;
+                    break;
+               case 'path':
+                    $asset = [];
+                    $asset['type'] = 'path';
+                    $asset['indx'] = sprintf('path_%s', $idx);
+                    $asset['conf'] = [];
+                    $asset['conf']['unit'] = $node['unit'];
+                    $asset['d'] = $node['d'];
+                    $res[] = $asset;
+                    break;
           }
+          $idx++;
      }
      return $res;
 }
@@ -593,19 +681,15 @@ function extract_poly_assets($poly_nodes){
 }
 
 function extract_stylesheets($svg_doc){
-     $res = null;
-     foreach($svg_doc as $node){
-          switch($node['tag']){
-               case 'style':
-                    $css_coll = explode('.cls', $node['value']);
-                    $temp = [];
-                    foreach($css_coll as $css){
-                         $temp[]= sprintf('cls%s', $css);
-                    }
-                    $res = $temp;
+     $res = [];
+     foreach($svg_doc as $node){ switch($node['tag']){
+          case 'style':
+               preg_match_all('/\.(.{1,10})\{(.{1,1024}?)\}/', $node['value'], $temp); ;
+               $res = $temp;
                break;
           }
      }
+     // @file_put_contents('/tmp/out', json_encode($res, JSON_PRETTY_PRINT), FILE_APPEND);
      return $res;
 }
 
@@ -627,21 +711,20 @@ function flatten_groups($svg_doc){
 
 function get_style_by_selector($coll, $css){
      $res = [];
-     foreach($coll as $style){
-          if(preg_match(sprintf('/^%s/', $css), $style)){
-               $temp = str_replace($css, '', $style);
-               $temp = str_replace('{', '', $temp);
-               $temp = str_replace('}', '', $temp);
-               $temp = str_replace('}', '', $temp);
-               $temp = explode(';', $temp);
-               foreach($temp as $line){
-                    $ary = explode(':', $line);
-                    if(null == $ary[0]){ continue; }
-                    $res[$ary[0]] = $ary[1];
-               }
-               return $res;
+     $css = explode(' ', $css);
+     foreach($css as $css){
+          $idx = array_search(sprintf('%s', $css), $coll[1]);
+          if(false == $idx){ continue; }
+          $statements = $coll[2][$idx];
+          $statements = explode(';', $statements);
+          foreach($statements as $statement){
+               $ary = explode(':', $statement);
+               if(null == $ary[0]){ continue;}
+               $res[$ary[0]] = $ary[1];
           }
      }
-     return null;
+// @file_put_contents('/tmp/out', json_encode($css, JSON_PRETTY_PRINT), FILE_APPEND);
+// @file_put_contents('/tmp/out', json_encode($res, JSON_PRETTY_PRINT), FILE_APPEND);
+     return $res;
 }
 
