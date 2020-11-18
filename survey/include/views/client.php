@@ -117,7 +117,9 @@ function build_constructor_view() {
           <div class='layout-messages'></div>
           <div class='layout-main'>
                <div class='layout-rows'>
-                    <div class='layout-buff'><div class='screen'></div></div>
+                    <div class='layout-buff'>
+                         <div class='screen'></div>
+                    </div>
                </div>
           </div>
      </div>

@@ -534,14 +534,14 @@ function build_spreads_view() {
           <div class='layout-edit'>
                <div class='layout-messages'></div>
                <div class='layout-main'>
-                    <div class='layout-rows'>
-                         <div class='layout-buff'><div class='screen'></div></div>
-                    </div>
                     <div class='layout-controls'>
                          <div class='layout-pages'></div>
                          <div class='layout-tools'></div>
                          <div class='layout-library'></div>
                          <div class='layout-actions'></div>
+                    </div>
+                    <div class='layout-rows'>
+                         <div class='layout-buff'><div class='screen'></div></div>
                     </div>
                </div>
           </div>
@@ -591,9 +591,6 @@ function build_layouts_view() {
           <div class='layout-edit'>
                <div class='layout-messages'></div>
                <div class='layout-main'>
-                    <div class='layout-rows'>
-                         <div class='layout-buff'><div class='screen'></div></div>
-                    </div>
                     <div class='layout-controls'>
                          <div class='layout-pages'></div>
                          <div class='layout-toolbar'></div>
@@ -601,6 +598,9 @@ function build_layouts_view() {
                          <div class='layout-tools'></div>
                          <div class='layout-library'></div>
                          <div class='layout-actions'></div>
+                    </div>
+                    <div class='layout-rows'>
+                         <div class='layout-buff'><div class='screen'></div></div>
                     </div>
                </div>
           </div>
