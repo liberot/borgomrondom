@@ -69,8 +69,6 @@ class Screen extends Controller {
                )
           );
 
-console.log(width, height);
-
           this.model.currentScreen.viewbox(0, 0, width, height);
           // parts
 
@@ -90,8 +88,6 @@ console.log(width, height);
           */
 
           prints = [];
-
-console.log(this.model.doc.pageSize);
 
           width = Math.ceil(
                parseFloat(
