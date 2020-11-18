@@ -93,13 +93,13 @@ class Tools extends Controller {
           }
           switch(msg.model.arguments[1]){
                case 'inch':
-                    this.changeUnit(this.model.selectedLibraryItem, 'inch');
+                    this.switchUnit(this.model.selectedLibraryItem, 'inch');
                     break;
                case 'mm':
-                    this.changeUnit(this.model.selectedLibraryItem, 'mm');
+                    this.switchUnit(this.model.selectedLibraryItem, 'mm');
                     break;
                case 'px':
-                    this.changeUnit(this.model.selectedLibraryItem, 'px');
+                    this.switchUnit(this.model.selectedLibraryItem, 'px');
                     break;
           }
           this.updateEditor();
@@ -215,7 +215,6 @@ class Tools extends Controller {
                     ref.model.selectedLibraryItem.conf.ypos = parseInt(ref.model.selectedLibraryItem.conf.ypos);
                }
 
-               // ref.changeUnit(ref.model.selectedLibraryItem, ref.model.mouseDownRec.unit);
                ref.model.mouseDownRec = null;
                ref.notify(new Message('mousedrag::released', ref.model.doc));
           });
@@ -227,7 +226,7 @@ class Tools extends Controller {
                if(null == ref.model.selectedLibraryItem){ return; }
 
                let unit = ref.model.selectedLibraryItem.conf.unit;
-               ref.changeUnit(ref.model.selectedLibraryItem, ref.model.doc.unit);
+               ref.switchUnit(ref.model.selectedLibraryItem, ref.model.doc.unit);
 
                ref.model.mouseDownRec = { 
                     x: parseFloat(arguments[0].clientX), 
@@ -533,7 +532,7 @@ console.log(this.model.spread);
           this.initDocument();
      }
 
-     changeUnit(asset, unit){
+     switchUnit(asset, unit){
           asset.conf.xpos = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.xpos, asset.conf.unit);
           asset.conf.ypos = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.ypos, asset.conf.unit);
           asset.conf.xpos = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.xpos, unit);
@@ -601,9 +600,25 @@ console.log(this.model.spread);
      }
 
      setPrintSize(msg){
+
           if(null == this.model.doc){
                return;
           }
+
+// fixdiss
+/*
+          let p = this.getPrintSize(msg.model.printSizeIndex);
+          let tempW = LayoutUtil.unitToPx(this.model.doc.ppi, p.width, 'mm');
+              tempW = LayoutUtil.pxToUnit(this.model.doc.ppi, tempW, this.model.doc.unit);
+          let tempH = LayoutUtil.unitToPx(this.model.doc.ppi, p.height, 'mm');
+              tempH = LayoutUtil.pxToUnit(this.model.doc.ppi, tempH, this.model.doc.unit);
+
+          p.width = tempW;
+          p.height = tempH;
+
+          this.model.doc.printSize = p;
+*/
+
           this.model.doc.printSize = this.getPrintSize(msg.model.printSizeIndex);
           this.notify(new Message('printsize::updated', this.model.doc));
      }
@@ -766,8 +781,8 @@ console.log(this.model.spread);
                     break;
           }
           this.selectLibraryItem(null);
-          jQuery('.select_ppi select').val(this.model.doc.ppi);
           this.notify(new Message('document::inited', this.model.doc));
+          jQuery('.select_ppi select').val(this.model.doc.ppi);
      }
 
      // toolbar is not inited by the document
@@ -1177,9 +1192,11 @@ let __tool__001__tmpl = `
 </div>
 </div>
 
+<!--
 <div class='row'>
      <div class='block select_size'></div>
 </div>
+-->
 
 <div class='row'>
 <div class='block select_pagesize'>

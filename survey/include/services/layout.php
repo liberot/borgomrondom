@@ -163,7 +163,7 @@ function init_layout_doc($svg_path){
      
      $doc = walk_the_doc($doc);
 
-// walkitalki result at 300ppi
+// assume result at 300ppi
      $doc['unit'] = 'px';
      $doc['ppi'] = 300;
      $doc['assets'] = [];
@@ -380,14 +380,13 @@ function init_layout_doc($svg_path){
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $node['style'] = $style;
-
                          $d = $node['attributes']['d'];
-
                          preg_match('/M(.{1,128}?)c/', $d, $move);
-                         preg_match('/([c])(.*?)[a-zA-Z]/', $d, $curves);
                          preg_match('/([C])(.*?)[a-zA-Z]/', $d, $xcurves);
-                         preg_match('/([l])(.*?)[a-zA-Z]/', $d, $lines);
                          preg_match('/([L])(.*?)[a-zA-Z]/', $d, $xlines);
+                         preg_match('/([c])(.*?)[a-zA-Z]/', $d, $curves);
+                         preg_match('/([l])(.*?)[a-zA-Z]/', $d, $lines);
+                         $node['d'] = $d;
 
 /*
 @file_put_contents('/tmp/out', json_encode($move, JSON_PRETTY_PRINT), FILE_APPEND);
@@ -398,7 +397,6 @@ function init_layout_doc($svg_path){
 @file_put_contents('/tmp/out', json_encode($d, JSON_PRETTY_PRINT), FILE_APPEND);
 */
 
-                         $node['d'] = $d;
 /*
 M566.93-14.17v737
 M230.92,464.68A174.94,174.94,0,1,0,56,289.74,174.94,174.94,0,0,0,230.92,464.68Z
@@ -441,7 +439,7 @@ print "\n";
                               $node['ypos']-= $node['diam'] *1;
                               $node['xpos']-= $node['diam'] /2;
                          }
-                    } 
+                    }
                     $path_nodes[]= $node;
                     break;
           }

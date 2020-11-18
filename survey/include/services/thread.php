@@ -207,9 +207,9 @@ function exec_get_initial_thread(){
      $surveyprint_uuid = psuuid();
      $unique_guest = get_session_ticket('unique_guest');
 
-     // $survey = get_survey_by_title('__fielding_questions__')[0];
+     $survey = get_survey_by_title('__fielding_questions__')[0];
      // $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
-     $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
+     // $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
      // $survey = get_survey_by_title('Fieldtypes')[0];
 
      if(is_null($survey)){

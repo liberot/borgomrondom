@@ -306,11 +306,13 @@ class Survey extends Controller {
      }
 
      corrToc(ref){
+          if(null == this.model.panel){ return false; }
           let pos = this.model.toc.post_content.booktoc.indexOf(ref);
           if(-1 != pos){ this.model.toc.post_content.tocstep = pos; }
      }
 
      corrStep(){
+          if(null == this.model.panel){ return false; }
           let ref = this.model.panel.post_content.ref;
           let pos = this.model.toc.post_content.init_refs.indexOf(ref);
           if(-1 != pos){ this.model.toc.post_content.initstep = pos; }
