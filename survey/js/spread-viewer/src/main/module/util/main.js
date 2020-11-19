@@ -71,17 +71,19 @@ LayoutUtil = {
                val = 0; 
           }
           val = parseFloat(val);
+          ppi = parseFloat(ppi);
           let px = 0;
           switch(unit){
                case 'px':
                     px = val;
                     break;
                case 'inch':
-                     px = (2480 /(210 /25.4) /300) *parseFloat(ppi) *val;
+                     // px = ppi *val;
+                     px = (2480 /(210 /25.4) /300) *ppi *val;
                     break;
                case 'mm':
                default:
-                    px = (2480 /210 /300) *parseFloat(ppi) *val;
+                    px = (2480 /210 /300) *ppi *val;
                     break;
           }
           return px; 
@@ -91,21 +93,24 @@ LayoutUtil = {
                val = 0.0; 
           }
           val = parseFloat(val);
+          ppi = parseFloat(ppi);
           let res = 0;
           switch(unit){
                case 'px':
                     res = val;
                     break;
                case 'inch':
-                    res = val /((2480 /(210 /25.4) /300) *parseFloat(ppi));
+                    // res = val *ppi;
+                    res = val /((2480 /(210 /25.4) /300) *ppi);
                     break;
                case 'mm':
                default:
-                    res = val /((2480 /210 /300) *parseFloat(ppi));
+                    res = val /((2480 /210 /300) *ppi);
                     break;
           }
           return res;
      },
+/*
      mmToPx(ppi, val){
           if(undefined == val){ 
                val = 0; 
@@ -113,6 +118,7 @@ LayoutUtil = {
           val = parseFloat(val);
           return 2480 /210 /300 *parseFloat(ppi) *val;
      },
+*/
      pigpack: function(doc){
           return btoa(doc);
      },

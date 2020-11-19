@@ -838,7 +838,7 @@ console.log(res)
                rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
           }
           // let doc = {...this.model.doc};
-          this.model.doc.printSize = { "idx": "5A", "width": "210", "height": "148" };
+          this.model.doc.printSize = { "idx": "xX", "width": "210", "height": "148" };
           this.model.doc.unit = 'mm';
           this.model.doc.ppi = '300';
           this.model.doc.assets = [];
@@ -1518,7 +1518,7 @@ class MockModel extends Model {
                "pageSize": "2",
                "unit": "mm",
                "ppi": "300",
-               "printSize": { "idx": "5A", "width": "210", "height": "148" },
+               "printSize": { "idx": "xX", "width": "210", "height": "148" },
                "layout": {
                     "frame": {
                          "x": "5",
