@@ -92,10 +92,10 @@ function px_to_unit($ppi, $pxs, $unit){
                $res = $pxs;
                break;
           case 'inch':
-               $res = $pxs /( (2540 /100 /300) *$ppi);
+               $res = $pxs /((2480 /(210 /25.4) /300) *$ppi);
                break;
           case 'mm':
-               $res = $pxs /( (2540 /210 /300) *$ppi);
+               $res = $pxs /((2480 /(210 /1 ) /300) *$ppi);
                break;
      }
      return $res;
@@ -112,10 +112,10 @@ function unit_to_px($ppi, $val, $unit){
               $px = $val;
               break;
           case 'inch':
-              $px = ( (2540 /100 /300) *$ppi) *val;
+              $px = ((2480 /(210 /25.4) /300) *$ppi) *val;
               break;
           case 'mm':
-              $px = ( (2480 /210 /300) *$ppi) *val;
+              $px = ((2480 /(210 /1) /300) *$ppi) *val;
               break;
      }
      return $px;

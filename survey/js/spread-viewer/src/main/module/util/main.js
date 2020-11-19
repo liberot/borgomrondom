@@ -24,7 +24,6 @@ LayoutUtil = {
                          }
                          r = r.join(',');
                          r = r.replace(/,\-/gi, '-');
-                         // r = r.replace(',-', '-');
                          buf+= command +r;
                          break;
                     case 'a': case 'A':
@@ -43,7 +42,6 @@ LayoutUtil = {
                        }
                        r = r.join(',');
                        r = r.replace(/,\-/gi, '-');
-                       // r = r.replace(',-', '-');
                        buf+= command +r;
                        break;
                   case 'l': case 'L':
@@ -79,7 +77,7 @@ LayoutUtil = {
                     px = val;
                     break;
                case 'inch':
-                    px = (2540 /100 /300) *parseFloat(ppi) *val;
+                     px = (2480 /(210 /25.4) /300) *parseFloat(ppi) *val;
                     break;
                case 'mm':
                default:
@@ -99,7 +97,7 @@ LayoutUtil = {
                     res = val;
                     break;
                case 'inch':
-                    res = val /((2540 /100 /300) *parseFloat(ppi));
+                    res = val /((2480 /(210 /25.4) /300) *parseFloat(ppi));
                     break;
                case 'mm':
                default:
