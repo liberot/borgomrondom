@@ -12,7 +12,9 @@ class Path {
 }
 
 class Layout {
-     const ASSUMED_SVG_UNIT = 96;
+     const ASSUMED_SVG_UNIT = 113;
+     const DESIRED_PPI = 300;
+     const IMAGE_MAX_SCALE_RATIO = 1.3;
      const IMAGE_SCALE_TYPE = 'cut_into_slot';
      const CUT_INTO_SLOT = 'cut_into_slot';
      const NO_SCALE = 'no_scale';

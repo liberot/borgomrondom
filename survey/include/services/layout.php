@@ -172,7 +172,7 @@ function parse_layout_doc($svg_path){
 
 // result at 300ppi
      $doc['unit'] = 'px';
-     $doc['ppi'] = 300;
+     $doc['ppi'] = Layout::DESIRED_PPI;
      $doc['assets'] = [];
 
 // the exported svg documents come up with some client units of 1132 
@@ -529,12 +529,13 @@ function insert_image_assets($doc, $polys){
 
 // diss i am not sure about.. assumed 200dpi is enough at 300dpi dunno
                $asset['conf']['maxScaleRatio'] = '1';
+               $r = intval($doc['ppi']) /300;
                switch(intval($doc['ppi'])){
                     case 300: 
-                         $asset['conf']['maxScaleRatio'] = '1.3';
+                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE_RATIO *$r;
                          break;
                     case 600:
-                         $asset['conf']['maxScaleRatio'] = '2.0';
+                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE_RATIO *$r;
                          break;
                }
 
