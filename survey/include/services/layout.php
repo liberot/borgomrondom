@@ -182,6 +182,8 @@ function init_layout_doc($svg_path){
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
 
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
+     $doc['layout']['code'] = get_layout_code_of_spread($res);
+
      $res = insert_image_assets($doc, $res);
      $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
@@ -189,7 +191,6 @@ function init_layout_doc($svg_path){
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
-     $doc['layout']['code'] = 'P';
 
      return $doc;
 }
@@ -434,7 +435,6 @@ function eval_doc_size($svg_doc, $doc){
 }
 
 /*
-     $doc['layout']['code'] = get_layout_code_of_spread($poly_nodes);
 
 */
 
