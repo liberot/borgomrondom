@@ -24,7 +24,7 @@ function exec_export_prints(){
      $width = trim_incoming_numeric($_POST['width']);
      $height = trim_incoming_numeric($_POST['height']);
      $type = 'png';
-//   $type = 'pdf';
+     $type = 'pdf';
 
 // fixdiss... no assets 
      // $svg = substr($_POST['svg'], 0, (1024 *1024));

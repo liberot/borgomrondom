@@ -170,7 +170,7 @@ function parse_layout_doc($svg_path){
      
      $doc = walk_the_doc($doc);
 
-// assume result at 300ppi
+// result at 300ppi
      $doc['unit'] = 'px';
      $doc['ppi'] = 300;
      $doc['assets'] = [];
@@ -178,6 +178,7 @@ function parse_layout_doc($svg_path){
 // the exported svg documents come up with some client units of 1132 
 // which is A4 kind of which is 2500px at 300ppi
      $doc['assumed_ppi_of_origin'] = 72;
+     $doc['assumed_ppi_of_origin'] = 113;
 
      $svg_doc = flatten_groups($svg_doc);
      $css_coll = extract_stylesheets($svg_doc);;
