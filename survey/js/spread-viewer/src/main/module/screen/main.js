@@ -241,7 +241,6 @@ class Screen extends Controller {
      }
 
      renderPath(target){
-          console.log(target);
           let c = this.model.currentScreen.path(target.d);
      }
 

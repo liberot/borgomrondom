@@ -624,7 +624,8 @@ console.log(this.model.spread);
      }
 
      getPrintSize(idx){
-          let res = { 'idx': 'A4', 'width': '210', 'height': '297' };
+          let res = this.printSizes.A4;
+console.log(res)
           if(null != this.model.printSizes[idx]){
                res = this.model.printSizes[idx];
           }
@@ -1418,8 +1419,6 @@ let __lib__001__tmpl = `
 </div>
 `;
 
-
-
 let __lib__007__tmpl = `
 <!--
 <div class='ctitle'></div>
@@ -1434,8 +1433,6 @@ let __lib__007__tmpl = `
 </div>
 //-->
 `;
-
-
 
 let __lib__009__tmpl = `
 <form>
@@ -1474,24 +1471,18 @@ class ToolsModel extends Model {
      }
 }
 
+// https://papersizes.io/a/a4
 class PrintSizes extends Model {
      constructor(){
           super();
           this.sizes = {
-               "A4": { "idx": "A4", "width": "210", "height": "297" },
-               "4A": { "idx": "4A", "width": "297", "height": "210" },
-               "A5": { "idx": "A5", "width": "148", "height": "210" },
-               "5A": { "idx": "5A", "width": "210", "height": "148" },
-               "A6": { "idx": "A6", "width": "105", "height": "140" },
-               "6A": { "idx": "6A", "width": "140", "height": "105" },
-               "A7": { "idx": "A7", "width":  "74", "height": "105" },
-               "7A": { "idx": "7A", "width": "105", "height": "148" },
-               "B5": { "idx": "B5", "width": "176", "height": "250" },
-               "5B": { "idx": "5B", "width": "250", "height": "176" },
-               "B6": { "idx": "B6", "width": "125", "height": "176" },
-               "6B": { "idx": "6B", "width": "176", "height": "250" },
-               "B7": { "idx": "B7", "width":  "88", "height": "125" },
-               "7B": { "idx": "7B", "width": "125", "height":  "88" },
+               "A4": {
+                    "inch": { "width": "8.3", "height": "11.7" },
+                    "mm": { "width": "210", "height": "297" },
+                    "px": {
+                         "ppi300": { "width": "2480", "height": "3508" }
+                    }
+               }
           }
      }
 }

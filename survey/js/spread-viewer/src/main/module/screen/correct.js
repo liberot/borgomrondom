@@ -86,7 +86,7 @@ class Correct extends Controller {
 
           this.notify(new Message('asset::corrected'));
 
-          console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
+          // console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
      }
 
      corrBlockWidth(target){
