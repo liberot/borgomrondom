@@ -70,6 +70,17 @@ function exec_get_layout_presets_by_group_and_rule(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
+
+/***********************************************************************
+ svg layout import
+ -----------------------------------------------------------------------
+ -----------------------------------------------------------------------
+ -----------------------------------------------------------------------
+ -----------------------------------------------------------------------
+ -----------------------------------------------------------------------
+ -----------------------------------------------------------------------
+ -----------------------------------------------------------------------
+*/
 add_action('admin_post_exec_import_layouts', 'exec_import_layouts');
 function exec_import_layouts(){
 
@@ -114,7 +125,7 @@ function exec_import_layouts(){
 
      foreach($targets as $svg_path){
 
-          $doc = init_layout_doc($svg_path);
+          $doc = parse_layout_doc($svg_path);
 
           $coll['docs'][]= $doc;
 
@@ -138,7 +149,7 @@ function exec_import_layouts(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
-function init_layout_doc($svg_path){
+function parse_layout_doc($svg_path){
 
      $ldd = @file_get_contents($svg_path);
      if(null == $ldd){ return false; }
@@ -177,6 +188,7 @@ function init_layout_doc($svg_path){
      $res = eval_doc_size($svg_doc, $doc);
      $doc['printSize']['width'] = $res['doc_width'];
      $doc['printSize']['height'] = $res['doc_height'];
+     $doc['origin'] = $svg_path;
 
 // todo
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
@@ -190,7 +202,6 @@ function init_layout_doc($svg_path){
 
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
-
 
      return $doc;
 }
@@ -230,6 +241,27 @@ function corr_path_d($d, $doc){
                     foreach($ary as $i){
                          if(null == $i){ continue; }
                          $r[]= corr_layout_pos($i, $doc);;
+                    }
+                    $rcc = implode(',', $r);
+                    $rcc = str_replace(',-', '-', $rcc);
+                    $buf.= sprintf('%s%s', $command, $rcc);
+                    break;
+               case 'a': case 'A':
+                    $r = [];
+                    $c = 0;
+                    foreach($ary as $i){
+                         if(null == $i){ continue; }
+                         switch($c){
+                             case 2:
+                             case 3:
+                             case 4:
+                                  $r[]= $i;
+                                  break;
+                             default:
+                                  $r[]= corr_layout_pos($i, $doc);;
+                                  break;
+                         }
+                         $c++;
                     }
                     $rcc = implode(',', $r);
                     $rcc = str_replace(',-', '-', $rcc);
@@ -290,6 +322,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $poly['conf']['unit'] = 'px';
                     $poly['conf']['color'] = [];
                     $poly['conf']['depth'] = '100';
+
 // points of the poly
                     $points = $node['attributes']['points'];
                     $points = trim(str_replace(',', ' ', $node['attributes']['points']));
@@ -297,28 +330,34 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     for($idx = 0; $idx < count($points); $idx++){
                          $points[$idx] = corr_layout_pos($points[$idx], $doc);
                     } 
+
 // xpositions of a rect
                     $xt = [];
                     for($idx = 0; $idx < count($points); $idx+= 2){ 
                          $xt[]= $points[$idx]; 
                     }
+
 // min und max x positions 
                      sort($xt); $xmin = floatval($xt[0]);
                     rsort($xt); $xmax = floatval($xt[0]);
+
 // ypositions of a rect
                     $yt = [];
                     for($idx = 1; $idx < count($points); $idx+= 2){ 
                          $yt[]= $points[$idx]; 
                     }
+
 // min und max of y positions 
                      sort($yt); $ymin = floatval($yt[0]);
                     rsort($yt); $ymax = floatval($yt[0]);
+
 // client units to defined units or px at current settings
                     $s = 2;
                     $xtmp = [];
                     foreach($points as $point){
                          $q = floatval($point);
                          $offset = $doc_x_xoffset;
+
 // x and y and x and y
                          if(($s %2) != 0){ $offset = $doc_y_offset; }
                          $q+= $offset;
@@ -329,17 +368,15 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $poly['conf']['points'] = $points;
 
                     $poly['slot'] = false;
+
 // evaluates the class af a polygon
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
-// print_r($css);
-// print_r($css_coll);
-// print_r($color);
-// print_r(rgb2cmyk(hex2rgb($color)));
 
                          $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+
 // ededed and dadada is the image cut in
                          $slot_colors = ['#ededed', '#dadada', '#EDEDED', '#DADADA'];
                          $is_image_slot = false;
@@ -348,6 +385,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                                    $is_image_slot = true;
                               }
                          }
+
 // description of image slots
                          if($is_image_slot){
                               $poly['slot'] = true;
@@ -492,6 +530,7 @@ function insert_image_assets($doc, $polys){
                $asset['conf']['slotY'] = $node['ypos'];
                $asset['conf']['opacity'] = '1';
                $asset['conf']['depth'] = intval(10000) +intval($idx);
+
 // diss i am not sure about.. assumed 200dpi is enough at 300dpi dunno
                $asset['conf']['maxScaleRatio'] = '1';
                switch(intval($doc['ppi'])){
@@ -502,9 +541,11 @@ function insert_image_assets($doc, $polys){
                          $asset['conf']['maxScaleRatio'] = '2.0';
                          break;
                }
+
 // image asset scales into the slot until the max scale ratio 
 // and cuts the image asset by definition
                $asset['conf']['scaleType'] = 'cut_into_slot';
+
 
 // image assets scales into the widht or into the height of the slot
 // without cutting the image asset
