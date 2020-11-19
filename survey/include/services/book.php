@@ -374,7 +374,7 @@ $layout_code = 'P';
           $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $max)[0];
           if(null != $uploaded_asset){
                $asset['src'] = add_base_to_chunk($uploaded_asset->post_content);
-               $asset = fit_image_asset_to_slot($doc, $asset);
+               $asset = fit_image_asset_into_slot($doc, $asset);
           }
           $asis[]= $asset;
      }
