@@ -168,9 +168,6 @@ function init_layout_doc($svg_path){
 // which is A4 kind of which is 2500px at 300ppi
      $doc['assumed_ppi_of_origin'] = 72;
 
-     $poly_nodes = [];
-     $path_nodes = [];
-
      $xoffset = null;
      $yoffset = null;
 
@@ -181,9 +178,12 @@ function init_layout_doc($svg_path){
      $doc['printSize']['width'] = $res['doc_width'];
      $doc['printSize']['height'] = $res['doc_height'];
 
+// todo
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
 
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
+     $res = insert_image_assets($doc, $res);
+     $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
@@ -433,38 +433,20 @@ function eval_doc_size($svg_doc, $doc){
      return $res;
 }
 
-
-
 /*
-
-// places the assets into the documents
-     $doc['assets'] = array_merge($doc['assets'], extract_text_assets($string_nodes));
-     $doc['assets'] = array_merge($doc['assets'], extract_poly_assets($poly_nodes));
-     $doc['assets'] = array_merge($doc['assets'], extract_path_assets($path_nodes));
-
-// sets the *analyzed layout chiffre of the parsed spread as in L or LPP or such
-// characteristica of the image slots like 3xL 
      $doc['layout']['code'] = get_layout_code_of_spread($poly_nodes);
-
-// inserts image assets into the layout as for debug reasons
-// real image assets be placed into the document once the assets is uploaded
-     $res = insert_image_assets($doc, $poly_nodes);
-     $res = fit_image_assets_to_slot($doc, $res);
-     $doc['assets'] = array_merge($doc['assets'], $res);
-
-     $res = ['doc'=>$doc, 'svg_doc'=>$svg_doc];
-
-     return $res;
-}
 
 */
 
-
-
-function fit_image_assets_to_slot($doc, $assets){
+function fit_image_assets_into_slot($doc, $assets){
      $res = [];
      foreach($assets as $asset){
-          $res[]= fit_image_asset_to_slot($doc, $asset);
+          if('image' == $asset['type']){
+               $res[]= fit_image_asset_into_slot($doc, $asset);
+          }
+          else {
+               $res[]= $asset;
+          }
      }
      return $res;
 }
@@ -480,7 +462,7 @@ function get_layout_code_of_spread($nodes){
      return $res;
 }
 
-function insert_image_assets($doc, $poly_nodes){
+function insert_image_assets($doc, $polys){
 
      $res = [];
      $idx = 0;
@@ -491,52 +473,47 @@ function insert_image_assets($doc, $poly_nodes){
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
 
-     foreach($poly_nodes as $node){
-
+     foreach($polys as $node){
           if(false != $node['slot']){
-
                $chunki = 'L' == $node['layout_code'] ? $landscape : $portrait;
-
-               $image_asset = [];
-               $image_asset['type'] = 'image'; 
-               $image_asset['indx'] = sprintf('image_%s', $idx);
-               $image_asset['src'] = $chunki;
-               $image_asset['conf'] = [];
-               $image_asset['conf']['unit'] = 'px';
-               $image_asset['conf']['xpos'] = $node['xpos'];
-               $image_asset['conf']['ypos'] = $node['ypos'];
-               $image_asset['conf']['width'] = $node['width'];
-               $image_asset['conf']['height'] = $node['height'];
-               $image_asset['conf']['slotW'] = $node['width'];
-               $image_asset['conf']['slotH'] = $node['height'];
-               $image_asset['conf']['slotX'] = $node['xpos'];
-               $image_asset['conf']['slotY'] = $node['ypos'];
-               $image_asset['conf']['opacity'] = '1';
-               $image_asset['conf']['depth'] = intval(10000) +intval($idx);
-
+               $asset = [];
+               $asset['type'] = 'image'; 
+               $asset['indx'] = sprintf('image_%s', $idx);
+               $asset['src'] = $chunki;
+               $asset['conf'] = [];
+               $asset['conf']['unit'] = 'px';
+               $asset['conf']['xpos'] = $node['xpos'];
+               $asset['conf']['ypos'] = $node['ypos'];
+               $asset['conf']['width'] = $node['width'];
+               $asset['conf']['height'] = $node['height'];
+               $asset['conf']['slotW'] = $node['width'];
+               $asset['conf']['slotH'] = $node['height'];
+               $asset['conf']['slotX'] = $node['xpos'];
+               $asset['conf']['slotY'] = $node['ypos'];
+               $asset['conf']['opacity'] = '1';
+               $asset['conf']['depth'] = intval(10000) +intval($idx);
 // diss i am not sure about.. assumed 200dpi is enough at 300dpi dunno
-               $image_asset['conf']['maxScaleRatio'] = '1';
+               $asset['conf']['maxScaleRatio'] = '1';
                switch(intval($doc['ppi'])){
                     case 300: 
-                         $image_asset['conf']['maxScaleRatio'] = '1.3';
+                         $asset['conf']['maxScaleRatio'] = '1.3';
                          break;
                     case 600:
-                         $image_asset['conf']['maxScaleRatio'] = '2.0';
+                         $asset['conf']['maxScaleRatio'] = '2.0';
                          break;
                }
-
 // image asset scales into the slot until the max scale ratio 
 // and cuts the image asset by definition
-               $image_asset['conf']['scaleType'] = 'cut_into_slot';
+               $asset['conf']['scaleType'] = 'cut_into_slot';
 
 // image assets scales into the widht or into the height of the slot
 // without cutting the image asset
 // until the max scale ratio 
-               // $image_asset['conf']['scaleType'] = 'no_scale';
-
-               $res[]= $image_asset;
+               // $asset['conf']['scaleType'] = 'no_scale';
+               $res[]= $asset;
                $idx++;
           }
+          $res[]= $node;
      }
      return $res;
 }
@@ -647,33 +624,6 @@ function extract_text_assets($string_nodes){
 */
 
 
-/*
-function extract_poly_assets($poly_nodes){
-     $res = [];
-     $idx = 0;
-     foreach($poly_nodes as $node){
-          $poly_asset = [];
-          $poly_asset['type'] = 'poly';
-          $poly_asset['indx'] = sprintf('poly_%s', $idx);
-          $poly_asset['conf'] = [];
-          $poly_asset['conf']['points'] = $node['attributes']['points'];
-          $poly_asset['conf']['unit'] = 'px';
-          $poly_asset['conf']['color'] = [];
-          $poly_asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($node['attributes']['color']));
-          $poly_asset['conf']['depth'] = '100';
-          if(false != $node['slot']){
-               $poly_asset['slot']['xpos'] = $node['xpos'];
-               $poly_asset['slot']['ypos'] = $node['ypos'];
-               $poly_asset['slot']['width'] = $node['width'];
-               $poly_asset['slot']['height'] = $node['height'];
-               $poly_asset['conf']['depth'] = '750';
-          }
-          $res[]= $poly_asset;
-          $idx++;
-     }
-     return $res;
-}
-*/
 
 
 
