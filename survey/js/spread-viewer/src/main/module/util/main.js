@@ -23,7 +23,8 @@ LayoutUtil = {
                               r.push(LayoutUtil.pxPump(parseFloat(ary[iidx]), ppi1st, ppi2nd));
                          }
                          r = r.join(',');
-                         r = r.replace(',-', '-');
+                         r = r.replace(/,\-/gi, '-');
+                         // r = r.replace(',-', '-');
                          buf+= command +r;
                          break;
                     case 'a': case 'A':
@@ -41,7 +42,8 @@ LayoutUtil = {
                               c++;
                        }
                        r = r.join(',');
-                       r = r.replace(',-', '-');
+                       r = r.replace(/,\-/gi, '-');
+                       // r = r.replace(',-', '-');
                        buf+= command +r;
                        break;
                   case 'l': case 'L':
