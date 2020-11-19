@@ -593,6 +593,9 @@ console.log(this.model.spread);
                              target.conf.slotH = parseFloat(LayoutUtil.pxPump(target.conf.slotH, this.model.doc.ppi, msg.model.ppiSize));
                              this.notify(new Message('asset::iloaded', { target: target } ));
                         }
+                        if('path' == target.type){
+                             target.d = LayoutUtil.corrPath(target.d, this.model.doc.ppi, msg.model.ppiSize);
+                        }
                }
           }
           this.model.doc.ppi = parseFloat(msg.model.ppiSize);

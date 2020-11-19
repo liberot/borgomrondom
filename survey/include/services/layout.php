@@ -179,15 +179,15 @@ function parse_layout_doc($svg_path){
 // which is A4 kind of which is 2500px at 300ppi
      $doc['assumed_ppi_of_origin'] = 72;
 
-     $xoffset = null;
-     $yoffset = null;
-
      $svg_doc = flatten_groups($svg_doc);
      $css_coll = extract_stylesheets($svg_doc);;
 
      $res = eval_doc_size($svg_doc, $doc);
+
      $doc['printSize']['width'] = $res['doc_width'];
      $doc['printSize']['height'] = $res['doc_height'];
+     $doc['doc_x_offset'] = $res['doc_x_offset'];
+     $doc['doc_y_offset'] = $res['doc_y_offset'];
      $doc['origin'] = $svg_path;
 
 // todo
@@ -210,11 +210,9 @@ function corr_layout_pos($val, $doc){
      $res = null;
      $val = floatval($val);
      switch($doc['unit']){
-
           case 'px':
                $res = px_pump($val, $doc['assumed_ppi_of_origin'], $doc['ppi']);
                break;
-
           default:
                $res = px_to_unit($doc['assumed_ppi_of_origin'], $val, $doc['ppi']);
                break;
@@ -356,10 +354,10 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $xtmp = [];
                     foreach($points as $point){
                          $q = floatval($point);
-                         $offset = $doc_x_xoffset;
-
-// x and y and x and y
-                         if(($s %2) != 0){ $offset = $doc_y_offset; }
+                         $offset = floatval($doc['doc_x_offset']);
+                         if(($s %2) != 0){ 
+                              $offset = floatval($doc['doc_y_offset']);
+                         }
                          $q+= $offset;
                          $xtmp[]= $q;
                          $s++;
@@ -389,8 +387,8 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
 // description of image slots
                          if($is_image_slot){
                               $poly['slot'] = true;
-                              $poly['xpos'] = floatval($xmin);
-                              $poly['ypos'] = floatval($ymin);
+                              $poly['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
+                              $poly['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
                               $poly['width'] = $xmax -$xmin;
                               $poly['height'] = $ymax -$ymin;
                               $poly['conf']['depth'] = 1000;
@@ -448,12 +446,10 @@ function eval_doc_size($svg_doc, $doc){
 // there is a mask sometimes that manips the viewbox
                case 'clipPath':
                     $transform = $node['attributes']['transform'];
-                    if(false == is_null($transfrom)){
+                    if(false == is_null($transform)){
                          preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $transform, $mtc);
-                         $res['doc_x_offset'] = floatval($mtc[1]);
-                         $res['doc_y_offset'] = floatval($mtc[2]);
-                         $res['doc_x_offset'] = corr_layout_pos($res['doc_x_offset'], $doc);
-                         $res['doc_y_offset'] = corr_layout_pos($res['doc_x_offset'], $doc);
+                         $res['doc_x_offset'] = corr_layout_pos(floatval($mtc[1]), $doc) *-1;
+                         $res['doc_y_offset'] = corr_layout_pos(floatval($mtc[2]), $doc) *-1;
                     }
                     break;
 

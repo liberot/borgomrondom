@@ -1,4 +1,61 @@
 LayoutUtil = {
+     corrPath: function(path, ppi1st, ppi2nd){
+          path+= 'x';
+          let temp = path.match(/([a-zA-Z])(.*?)(?=[a-zA-Z])/gi);
+          let buf = '';
+          for(let idx in temp){
+               let command = temp[idx].substring(0, 1);
+               let chunk = temp[idx].substring(1, temp[idx].length);
+                   chunk = chunk.replace(/\-/gi, ',-');
+               let ary = chunk.split(',');
+               let r = [];
+               let x; let y;
+               switch(command){
+                    case 'M': case 'm':
+                         x = LayoutUtil.pxPump(parseFloat(ary[0]), ppi1st, ppi2nd);
+                         y = LayoutUtil.pxPump(parseFloat(ary[1]), ppi1st, ppi2nd);
+                         buf+= command +x+','+y;
+                         break;
+                     case 'c': case 'C': case 's': case 'S':
+                         r = [];
+                         for(let iidx in ary){
+                              if(null == ary[iidx]){ continue; }
+                              r.push(LayoutUtil.pxPump(parseFloat(ary[iidx]), ppi1st, ppi2nd));
+                         }
+                         r = r.join(',');
+                         r = r.replace(',-', '-');
+                         buf+= command +r;
+                         break;
+                    case 'a': case 'A':
+                         r = [];
+                         c = 0;
+                         for(let iidx in ary){
+                              switch(c){
+                                   case 2: case 3: case 4:
+                                        r.push(ary[iidx]);
+                                        break;
+                                   default:
+                                        r.push(LayoutUtil.pxPump(ary[iidx], ppi1st, ppi2nd));
+                                        break;
+                              }
+                              c++;
+                       }
+                       r = r.join(',');
+                       r = r.replace(',-', '-');
+                       buf+= command +r;
+                       break;
+                  case 'l': case 'L':
+                       x = LayoutUtil.pxPump(parseFloat(ary[0]), ppi1st, ppi2nd);
+                       y = LayoutUtil.pxPump(parseFloat(ary[1]), ppi1st, ppi2nd);
+                       buf+= command +x+','+y;
+                       break;
+                  case 'z': case 'Z':
+                       buf+= command;
+                       break;
+             }
+        }
+        return buf;
+     },
      pxPump: function(px, ppi1st, ppi2nd){
           ppi1st = null == ppi1st ? 0 : ppi1st;
           ppi2nd = null == ppi2nd ? 0 : ppi2nd;
