@@ -227,7 +227,7 @@ function fit_image_asset_into_slot($doc, $asset){
 
      switch($scale_type){
 
-          case 'cut_into_slot':
+          case Layout::CUT_INTO_SLOT:
                $xr = $slot_width /$width;
                $yr = $slot_height /$height;
                $r = $xr >= $yr ? $xr : $yr;
@@ -240,7 +240,7 @@ function fit_image_asset_into_slot($doc, $asset){
                $yoffset = ($slot_height -$h) /2;
                break;
 
-          case 'no_scale':
+          case Layout::NO_SCALE:
           default:
                switch($layout_code){
                case 'L':

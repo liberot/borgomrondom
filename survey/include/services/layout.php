@@ -177,8 +177,7 @@ function parse_layout_doc($svg_path){
 
 // the exported svg documents come up with some client units of 1132 
 // which is A4 kind of which is 2500px at 300ppi
-     $doc['assumed_ppi_of_origin'] = 72;
-     $doc['assumed_ppi_of_origin'] = 113;
+     $doc['assumed_ppi_of_origin'] = Layout::ASSUMED_SVG_UNIT;
 
      $svg_doc = flatten_groups($svg_doc);
      $css_coll = extract_stylesheets($svg_doc);;
@@ -541,7 +540,7 @@ function insert_image_assets($doc, $polys){
 
 // image asset scales into the slot until the max scale ratio 
 // and cuts the image asset by definition
-               $asset['conf']['scaleType'] = 'cut_into_slot';
+               $asset['conf']['scaleType'] = Layout::IMAGE_SCALE_TYPE;
 
 
 // image assets scales into the widht or into the height of the slot

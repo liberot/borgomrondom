@@ -11,4 +11,10 @@ class Path {
      const GHOSTSCRIPT = '/opt/local/bin/gs';
 }
 
+class Layout {
+     const ASSUMED_SVG_UNIT = 96;
+     const IMAGE_SCALE_TYPE = 'cut_into_slot';
+     const CUT_INTO_SLOT = 'cut_into_slot';
+     const NO_SCALE = 'no_scale';
+}
 
