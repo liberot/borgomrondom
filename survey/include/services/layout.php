@@ -113,8 +113,9 @@ function exec_import_layouts(){
      $coll['docs'] = [];
 
      foreach($targets as $svg_path){
-          $res = init_layout_doc($svg_path);
-          $doc = $res['doc'];
+
+          $doc = init_layout_doc($svg_path);
+
           $coll['docs'][]= $doc;
 
           $rule = $doc['layout']['code'];
@@ -138,11 +139,6 @@ function exec_import_layouts(){
 }
 
 function init_layout_doc($svg_path){
-
-// the exported svg documents come up with some client units of 1132 
-// which is A4 kind of which is 2500px at 300ppi
-     $assumed_ppi = 72;
-     // $assumed_ppi = 113;
 
      $ldd = @file_get_contents($svg_path);
      if(null == $ldd){ return false; }
@@ -168,6 +164,10 @@ function init_layout_doc($svg_path){
      $doc['ppi'] = 300;
      $doc['assets'] = [];
 
+// the exported svg documents come up with some client units of 1132 
+// which is A4 kind of which is 2500px at 300ppi
+     $doc['assumed_ppi_of_origin'] = 72;
+
      $poly_nodes = [];
      $path_nodes = [];
 
@@ -177,261 +177,243 @@ function init_layout_doc($svg_path){
      $svg_doc = flatten_groups($svg_doc);
      $css_coll = extract_stylesheets($svg_doc);;
 
-     $doc_width = null;
-     $doc_height = null;
-     $string_nodes = [];
+     $res = eval_doc_size($svg_doc, $doc);
+     $doc['printSize']['width'] = $res['doc_width'];
+     $doc['printSize']['height'] = $res['doc_height'];
 
-     $yline = null;
-     $string_nodes = [];
-     $line_buf = '';
+     $res = eval_text_fields($svg_doc, $css_coll, $doc);
+     $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
 
-     $prev_node = '';
-     $doc_clip_with_corr_parse = null;
+     $res = eval_path_fields($svg_doc, $css_coll, $doc);
 
+     $doc['assets'] = array_merge($doc['assets'], $res);
+
+     $doc['layout']['code'] = 'P';
+
+     return $doc;
+}
+
+function corr_layout_pos($val, $doc){
+     $res = null;
+     $val = floatval($val);
+     switch($doc['unit']){
+
+          case 'px':
+               $res = px_pump($val, $doc['assumed_ppi_of_origin'], $doc['ppi']);
+               break;
+
+          default:
+               $res = px_to_unit($doc['assumed_ppi_of_origin'], $val, $doc['ppi']);
+               break;
+     }
+     return $res;
+}
+
+function parse_path_d($d, $doc){
+     $d = sprintf('%sx', $d);
+     preg_match_all('/([a-zA-Z])(.*?)(?=[a-zA-Z])/', $d, $temp);
+     $buf = '';
+     for($idx = 0; $idx < count($temp[1]); $idx++){
+          $command = $temp[1][$idx];
+          $chunk = str_replace('-', ',-', $temp[2][$idx]);
+          $ary = explode(',', $chunk);
+          switch($command){
+               case 'm': case 'M':
+                    $x = corr_layout_pos($ary[0], $doc);
+                    $y = corr_layout_pos($ary[1], $doc);
+                    $buf.= sprintf('%s%s,%s', $command, $x, $y);
+                    break;
+               case 'c': case 'C':
+                    $r = [];
+                    foreach($ary as $i){
+                         if(null == $i){ continue; }
+                         $r[]= corr_layout_pos($i, $doc);;
+                    }
+                    $rcc = implode(',', $r);
+                    $rcc = str_replace('-', '-', $rcc);
+                    $buf.= sprintf('%s%s', $command, $rcc);
+                    break;
+               case 'l': case 'L':
+                    $x = corr_layout_pos($ary[0], $doc);
+                    $y = corr_layout_pos($ary[1], $doc);
+                    $buf.= sprintf('%s%s,%sz', $command, $x, $y);
+                    break;
+          }
+     }
+     return $buf;
+}
+
+function eval_path_fields($svg_doc, $css_coll, $doc){
+     $res = [];
+     $idx = 0;
      foreach($svg_doc as $node){
-
+          $path = [];
           switch($node['tag']){
-
-// viewbox partly is the size of the spread
-               case 'svg':
-                    $view_box = $node['attributes']['viewBox'];
-                    if(false == is_null($view_box)){
-                         $temp = explode(' ', $view_box);
-                         $doc_width = floatval($temp[2]) /2;
-                         $doc_height = floatval($temp[3]);
-                    }
-                    break;
-
-// clippath describes the width and the height also
-               case 'clipPath':
-                    $transform = $node['attributes']['transform'];
-                    preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $transform, $mtc);
-                    if(null == $xoffset){
-                         $xoffset = floatval($mtc[1]);
-                         $yoffset = floatval($mtc[2]);
-                         if('px' == $doc['unit']){
-                              $xoffset = px_pump($xoffset, $assumed_ppi, $doc['ppi']) *-1;
-                              $yoffset = px_pump($yoffset, $assumed_ppi, $doc['ppi']) *-1;
-                         }
-                         else {
-                              $xoffset = px_to_unit($assumed_ppi, $xoffset, $doc['unit']) *-1;
-                              $yoffset = px_to_unit($assumed_ppi, $yoffset, $doc['unit']) *-1;
-                         }
-                    }
-                    break;
-
-               case 'rect':
-                    if(is_null($doc_clip_with_corr_parse)){
-                         $doc_clip_with_corr_parse = true;
-                         $doc_width = floatval($node['attributes']['width']) /2;
-                         $doc_height = floatval($node['attributes']['height']);
-                    }
-
-                    break;
-
-// text is to be done: there is notices in the text fields as from now on
-               case 'text':
-                    $pos = $node['attributes']['transform'];
-                    preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $pos, $mtc);
-                    $xpos = floatval($mtc[1]);
-                    $ypos = floatval($mtc[2]);
-                    $text = $node['value'];
-                    $font_size = 18;
-                    $font_family = 'American Typewriter';
-                    $font_fill = '#000000';
-                    $font_weight = 300;
+               case 'path':
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
-                         $font_size = str_replace('px', '', $style['font-size']);
-                         $font_family = $style['font-family'];
-                         $font_fill = $style['fill'];
-                         $font_weight = $style['font-weight'];
+                         $path['style'] = $style;
                     }
-                    if(null == $yline){ 
-                         $yline = $ypos; 
-                         $line_xpos = $xpos;
-                         $line_ypos = $ypos;
-                         $line_buf = '';
-                    }
-                    if($yline < $ypos){
-                         $n = [];
-                         $n['text'] = $line_buf;
-                         $n['xpos'] = px_pump($xpos, $assumed_ppi, $doc['ppi']) +$xoffset;
-                         $n['ypos'] = px_pump($ypos, $assumed_ppi, $doc['ppi']) +$yoffset;
-                         $n['font_size'] = px_pump($font_size, $assumed_ppi, $doc['ppi']);
-                         $n['font_family'] = $font_family;
-                         $n['font_fill'] = $font_fill;
-                         $n['font_weight'] = $font_weight;
-                         $string_nodes[]= $n;
-
-                         $yline = $ypos;
-                         $line_buf = '';
-                         $line_xpos = $xpos;
-                         $line_ypos = $ypos;
-                    }
-                    $line_buf = sprintf('%s%s%s', $line_buf, $text, ' ');
+                    $d = parse_path_d($node['attributes']['d'], $doc);
+                    $asset = [];
+                    $asset['type'] = 'path';
+                    $asset['conf'] = [];
+                    $asset['conf']['unit'] = $doc['unit'];
+                    $asset['indx'] = sprintf('path_%s', $idx);
+                    $asset['d'] = $d;
+                    $res[]= $asset;
+                    $idx++;
                     break;
+          }
+      }
+      return $res;
+}
 
-// polys of color '#ededed' are defined image asset slots
-// polys of color '#dadada' are defined image asset slots
+function eval_polygon_fields($svg_doc, $css_coll, $doc){
+     $res = [];
+     foreach($svg_doc as $node){
+          $poly = [];
+          switch($node['tag']){
                case 'polygon':
-                    $ptmp = $node['attributes']['points'];
-                    $ptmp = trim(str_replace(',', ' ', $node['attributes']['points']));
-                    $ptmp = explode(' ', $ptmp);
-
+                    $points = $node['attributes']['points'];
+                    $points = trim(str_replace(',', ' ', $node['attributes']['points']));
+                    $points = explode(' ', $points);
 // xpositions of a rect
                     $xt = [];
-                    for($idx = 0; $idx < count($ptmp); $idx+= 2){ 
-                         $xt[]= $ptmp[$idx]; 
+                    for($idx = 0; $idx < count($points); $idx+= 2){ 
+                         $points[$idx] = corr_layout_pos($points[$idx], $doc);
+                         $xt[]= $points[$idx]; 
                     }
-
 // min und max x positions 
                      sort($xt); $xmin = floatval($xt[0]);
                     rsort($xt); $xmax = floatval($xt[0]);
-
 // ypositions of a rect
                     $yt = [];
-                    for($idx = 1; $idx < count($ptmp); $idx+= 2){ 
-                         $yt[]= $ptmp[$idx]; 
+                    for($idx = 1; $idx < count($points); $idx+= 2){ 
+                         $points[$idx] = corr_layout_pos($points[$idx], $doc);
+                         $yt[]= $points[$idx]; 
                     }
-
 // min und max of y positions 
                      sort($yt); $ymin = floatval($yt[0]);
                     rsort($yt); $ymax = floatval($yt[0]);
-
 // client units to defined units or px at current settings
                     $s = 2;
                     $xtmp = [];
-                    foreach($ptmp as $p){
-                         $q = floatval($p);
-                         if('px' == $doc['unit']){ $q = px_pump($q, $assumed_ppi, $doc['ppi']); }
-                         else { $q = px_to_unit($assumed_ppi, $q, $doc['unit']); }
-                         $offset = $xoffset;
-                         if(($s %2) != 0){ $offset = $yoffset; }
-                         $q += $offset;
+                    foreach($points as $point){
+                         $q = floatval($point);
+                         $offset = $doc_x_xoffset;
+// x and y and x and y
+                         if(($s %2) != 0){ $offset = $doc_y_offset; }
+                         $q+= $offset;
                          $xtmp[]= $q;
                          $s++;
                     }
-
-                    $ptmp = implode(' ', $xtmp);
-                    $node['attributes']['points'] = $ptmp;
-
+                    $points = implode(' ', $xtmp);
+                    $poly['points'] = $points;
+                    $poly['slot'] = false;
 // evaluates the class af a polygon
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
-
+                         $poly['color'] = $color;
 // ededed and dadada is the image cut in
                          $slot_colors = ['#ededed', '#dadada', '#EDEDED', '#DADADA'];
-
                          $is_image_slot = false;
                          foreach($slot_colors as $slot_color){
                               if(0 == strcmp($color, $slot_color)){
                                    $is_image_slot = true;
                               }
                          }
-
 // description of image slots
                          if($is_image_slot){
-                              $node['slot'] = true;
-                              $node['xpos'] = floatval($xmin);
-                              $node['ypos'] = floatval($ymin);
-                              $node['width'] = $xmax -$xmin;
-                              $node['height'] = $ymax -$ymin;
-                              $node['layout_code'] = 'P';
-
-                              if(floatval($node['width']) >= floatval($node['height'])){ 
-                                   $node['layout_code'] = 'L';
+                              $poly['slot'] = true;
+                              $poly['xpos'] = floatval($xmin);
+                              $poly['ypos'] = floatval($ymin);
+                              $poly['width'] = $xmax -$xmin;
+                              $poly['height'] = $ymax -$ymin;
+                              $poly['layout_code'] = 'P';
+                              if(floatval($poly['width']) >= floatval($poly['height'])){ 
+                                   $poly['layout_code'] = 'L';
                               }
-                             
-// @file_put_contents('/tmp/out', json_encode($node, JSON_PRETTY_PRINT), FILE_APPEND);
-
-                              if('px' == $doc['unit']){
-                                   $node['xpos'] = px_pump($node['xpos'], $assumed_ppi, $doc['ppi']);
-                                   $node['ypos'] = px_pump($node['ypos'], $assumed_ppi, $doc['ppi']);
-                                   $node['width'] = px_pump($node['width'], $assumed_ppi, $doc['ppi']);
-                                   $node['height'] = px_pump($node['height'], $assumed_ppi, $doc['ppi']);
-                              }
-                              else {
-                                   $node['xpos'] = px_to_unit($assumed_ppi, $node['xpos'], $doc['unit']);
-                                   $node['ypos'] = px_to_unit($assumed_ppi, $node['ypos'], $doc['unit']);
-                                   $node['width'] = px_to_unit($assumed_ppi, $node['width'], $doc['unit']);
-                                   $node['height'] = px_to_unit($assumed_ppi, $node['height'], $doc['unit']);
-                              }
-                              $node['xpos']+= $xoffset;
-                              $node['ypos']+= $yoffset;
-                              $node['depth']+= 750;
+                              $poly['depth'] = 100;
                          }
                     }
-                    $node['attributes']['color'] = $color;
-                    $poly_nodes[]= $node;
+                    $res[]= $poly;
+                    break;
+          }
+     }
+     return $res;
+}
+
+function eval_text_fields($svg_doc, $css_coll, $doc){
+
+     $res = [];
+     foreach($svg_doc as $node){
+          switch($node['tag']){
+               case 'text':
+                    $res[]= $node['value'];
+                    break;
+          }
+     }
+
+     return $res;
+}
+
+function eval_doc_size($svg_doc, $doc){
+
+     $res['doc_width'] = 0;
+     $res['doc_height'] = 0;
+     $res['doc_x_offset'] = 0;
+     $res['doc_y_offset'] = 0;
+
+     foreach($svg_doc as $node){
+
+          switch($node['tag']){
+
+// doc size is typed in the view box attribute
+               case 'svg':
+                    $view_box = $node['attributes']['viewBox'];
+                    if(false == is_null($view_box)){
+                         $temp = explode(' ', $view_box);
+                         $res['doc_width'] = floatval($temp[2]) /2;
+                         $res['doc_height'] = floatval($temp[3]);
+                         $res['doc_width'] = corr_layout_pos($res['doc_width'], $doc);
+                         $res['doc_height'] = corr_layout_pos($res['doc_height'], $doc);
+                    }
                     break;
 
-// paths is circles and strokes mainly
-               case 'path':
-
-                    $css = $node['attributes']['class'];
-                    if(null != $css){
-                         $style = get_style_by_selector($css_coll, $css);
-                         $node['style'] = $style;
+// there is a mask sometimes that manips the viewbox
+               case 'clipPath':
+                    $transform = $node['attributes']['transform'];
+                    if(false == is_null($transfrom)){
+                         preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $transform, $mtc);
+                         $res['doc_x_offset'] = floatval($mtc[1]);
+                         $res['doc_y_offset'] = floatval($mtc[2]);
+                         $res['doc_x_offset'] = corr_layout_pos($res['doc_x_offset'], $doc);
+                         $res['doc_y_offset'] = corr_layout_pos($res['doc_x_offset'], $doc);
                     }
+                    break;
 
-                    $node['type'] = 'path';
-                    $node['unit'] = 'px';
-
-                    preg_match(  '/M(.{1,64}?)[v]/', $d, $vmc);
-                    preg_match('/M(.{1,64}?)(a|A)/', $d, $cmc);
-                    preg_match('/(a|A)(.{1,10}?),/', $d, $rmc);
-                    preg_match(  '/M(.{1,64}?)(c)/', $d, $kmc);
-                    preg_match(  '/(c)(.{1,10}?),/', $d, $xmc);
-
-// @file_put_contents('/tmp/out', json_encode($kmc, JSON_PRETTY_PRINT), FILE_APPEND);
-// @file_put_contents('/tmp/out', json_encode($xmc, JSON_PRETTY_PRINT), FILE_APPEND);
-// @file_put_contents('/tmp/out', json_encode(  $d, JSON_PRETTY_PRINT), FILE_APPEND);
-
-                    if(2 <= count($cmc)){
-                         $node['type'] = 'circle';
-                         $temp = explode(',', $cmc[1]);
-
-                         $node['xpos'] = floatval($temp[0]);
-                         $node['ypos'] = floatval($temp[1]);
-                         $node['diam'] = floatval($rmc[2]);
-
-                         if('px' == $doc['unit']){
-                              $node['xpos'] = px_pump($node['xpos'], $assumed_ppi, $doc['ppi']);
-                              $node['ypos'] = px_pump($node['ypos'], $assumed_ppi, $doc['ppi']);
-                              $node['diam'] = px_pump($node['diam'], $assumed_ppi, $doc['ppi']);
-                         }
-                         else {
-                              $node['xpos'] = px_to_unit($assumed_ppi, $node['xpos'], $doc['unit']);
-                              $node['ypos'] = px_to_unit($assumed_ppi, $node['ypos'], $doc['unit']);
-                              $node['diam'] = px_to_unit($assumed_ppi, $node['diam'], $doc['unit']);
-                         }
-
-                         $node['diam']*= 2;
-                         $node['ypos']-= $node['diam'] *1;
-                         $node['xpos']-= $node['diam'] /2;
+// the rect within the clipmask defines the document size 
+               case 'rect':
+                    if(false == is_null(floatval($node['attributes']['width']) /2)){
+                         $res['doc_width'] = floatval($node['attributes']['width']) /2;
+                         $res['doc_height'] = floatval($node['attributes']['height']);
+                         $res['doc_width'] = corr_layout_pos($res['doc_width'], $doc);
+                         $res['doc_height'] = corr_layout_pos($res['doc_height'], $doc);
                     }
-               $path_nodes[]= $node;
-               break;
+                    break;
           }
-          $prev_node = $node['tag'];
      }
 
-// printsize is custom beats me it is not A4 or such
-     $doc['printSize']['idx'] = 'xX';
-     if('px' == $doc['unit']){
-          $doc_width = px_pump($doc_width, $assumed_ppi, $doc['ppi']);
-          $doc_height = px_pump($doc_height, $assumed_ppi, $doc['ppi']);
-     }
-     else{
-          $doc_width = intval(px_to_unit($assumed_ppi, $w, $doc['unit']));
-          $doc_height = intval(px_to_unit($assumed_ppi, $h, $doc['unit']));
-     }
-     $doc['printSize']['width'] = $doc_width;
-     $doc['printSize']['height'] = $doc_height;
+     return $res;
+}
+
+
+
+/*
 
 // places the assets into the documents
      $doc['assets'] = array_merge($doc['assets'], extract_text_assets($string_nodes));
@@ -452,6 +434,9 @@ function init_layout_doc($svg_path){
 
      return $res;
 }
+
+*/
+
 
 
 function fit_image_assets_to_slot($doc, $assets){
@@ -534,43 +519,55 @@ function insert_image_assets($doc, $poly_nodes){
      return $res;
 }
 
-function extract_path_assets($path_nodes){
-
+function extract_stylesheets($svg_doc){
      $res = [];
-     $idx = 0;
-     foreach($path_nodes as $node){
-          switch($node['type']){
-               case 'circle':
-                    $asset = [];
-                    $asset['type'] = 'circle';
-                    $asset['indx'] = sprintf('circle_%s', $idx);
-                    $asset['conf'] = [];
-                    $asset['conf']['unit'] = $node['unit'];
-                    $asset['conf']['xpos'] = $node['xpos']; 
-                    $asset['conf']['ypos'] = $node['ypos'];
-                    $asset['conf']['diam'] = $node['diam'];
-                    $asset['conf']['width'] = 0;
-                    $asset['conf']['height'] = 0;
-                    $asset['conf']['color'] = [];
-                    $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($node['style']['fill']));
-                    $res[] = $asset;
-                    break;
-               case 'path':
-                    $asset = [];
-                    $asset['type'] = 'path';
-                    $asset['indx'] = sprintf('path_%s', $idx);
-                    $asset['conf'] = [];
-                    $asset['conf']['unit'] = $node['unit'];
-                    $asset['d'] = $node['d'];
-                    $res[] = $asset;
+     foreach($svg_doc as $node){ switch($node['tag']){
+          case 'style':
+               preg_match_all('/\.(.{1,10})\{(.{1,1024}?)\}/', $node['value'], $temp); ;
+               $res = $temp;
+               break;
+          }
+     }
+     // @file_put_contents('/tmp/out', json_encode($res, JSON_PRETTY_PRINT), FILE_APPEND);
+     return $res;
+}
+
+function flatten_groups($svg_doc){
+     $res = $svg_doc;
+     $grouped_nodes = [];
+     foreach($svg_doc as $node){
+          switch($node['tag']){
+               case 'g':
+               if(null == $node['type']){
+                    $grouped_nodes[] = $node;
+               }
                     break;
           }
-          $idx++;
+     }
+     $res = array_merge($res, $grouped_nodes);
+     return $res;
+}
+
+function get_style_by_selector($coll, $css){
+     $res = [];
+     $css = explode(' ', $css);
+     foreach($css as $css){
+          $idx = array_search(sprintf('%s', $css), $coll[1]);
+          if(false == $idx){ continue; }
+          $statements = $coll[2][$idx];
+          $statements = explode(';', $statements);
+          foreach($statements as $statement){
+               $ary = explode(':', $statement);
+               if(null == $ary[0]){ continue;}
+               $res[$ary[0]] = $ary[1];
+          }
      }
      return $res;
 }
 
+
 // todo text asset noticees
+/*
 function extract_text_assets($string_nodes){
 
      $res = [];
@@ -625,7 +622,10 @@ function extract_text_assets($string_nodes){
      $res[]= $string_asset;
      return $res;
 }
+*/
 
+
+/*
 function extract_poly_assets($poly_nodes){
      $res = [];
      $idx = 0;
@@ -651,52 +651,7 @@ function extract_poly_assets($poly_nodes){
      }
      return $res;
 }
+*/
 
-function extract_stylesheets($svg_doc){
-     $res = [];
-     foreach($svg_doc as $node){ switch($node['tag']){
-          case 'style':
-               preg_match_all('/\.(.{1,10})\{(.{1,1024}?)\}/', $node['value'], $temp); ;
-               $res = $temp;
-               break;
-          }
-     }
-     // @file_put_contents('/tmp/out', json_encode($res, JSON_PRETTY_PRINT), FILE_APPEND);
-     return $res;
-}
 
-function flatten_groups($svg_doc){
-     $res = $svg_doc;
-     $grouped_nodes = [];
-     foreach($svg_doc as $node){
-          switch($node['tag']){
-               case 'g':
-               if(null == $node['type']){
-                    $grouped_nodes[] = $node;
-               }
-                    break;
-          }
-     }
-     $res = array_merge($res, $grouped_nodes);
-     return $res;
-}
-
-function get_style_by_selector($coll, $css){
-     $res = [];
-     $css = explode(' ', $css);
-     foreach($css as $css){
-          $idx = array_search(sprintf('%s', $css), $coll[1]);
-          if(false == $idx){ continue; }
-          $statements = $coll[2][$idx];
-          $statements = explode(';', $statements);
-          foreach($statements as $statement){
-               $ary = explode(':', $statement);
-               if(null == $ary[0]){ continue;}
-               $res[$ary[0]] = $ary[1];
-          }
-     }
-// @file_put_contents('/tmp/out', json_encode($css, JSON_PRETTY_PRINT), FILE_APPEND);
-// @file_put_contents('/tmp/out', json_encode($res, JSON_PRETTY_PRINT), FILE_APPEND);
-     return $res;
-}
 
