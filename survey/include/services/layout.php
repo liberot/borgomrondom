@@ -182,7 +182,10 @@ function init_layout_doc($svg_path){
      $doc['printSize']['height'] = $res['doc_height'];
 
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
+
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
+     $doc['assets'] = array_merge($doc['assets'], $res);
+
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
@@ -207,7 +210,7 @@ function corr_layout_pos($val, $doc){
      return $res;
 }
 
-function parse_path_d($d, $doc){
+function corr_path_d($d, $doc){
      $d = sprintf('%sx', $d);
      preg_match_all('/([a-zA-Z])(.*?)(?=[a-zA-Z])/', $d, $temp);
      $buf = '';
@@ -248,19 +251,20 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
      $res = [];
      $idx = 0;
      foreach($svg_doc as $node){
-          $path = [];
+          $asset = [];
+          $asset['type'] = 'path';
+          $asset['conf'] = [];
+          $asset['conf']['unit'] = $doc['unit'];
+          $asset['conf']['depth'] = '3000';
           switch($node['tag']){
                case 'path':
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
-                         $path['style'] = $style;
+                         $color = $style['fill'];
+                         $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
                     }
-                    $d = parse_path_d($node['attributes']['d'], $doc);
-                    $asset = [];
-                    $asset['type'] = 'path';
-                    $asset['conf'] = [];
-                    $asset['conf']['unit'] = $doc['unit'];
+                    $d = corr_path_d($node['attributes']['d'], $doc);
                     $asset['indx'] = sprintf('path_%s', $idx);
                     $asset['d'] = $d;
                     $res[]= $asset;
@@ -273,17 +277,28 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
 
 function eval_polygon_fields($svg_doc, $css_coll, $doc){
      $res = [];
+     $idx = 0;
      foreach($svg_doc as $node){
-          $poly = [];
           switch($node['tag']){
                case 'polygon':
+
+                    $poly = [];
+                    $poly['type'] = 'poly';
+                    $poly['indx'] = sprintf('poly_%s', $idx);
+                    $poly['conf'] = [];
+                    $poly['conf']['unit'] = 'px';
+                    $poly['conf']['color'] = [];
+                    $poly['conf']['depth'] = '100';
+// points of the poly
                     $points = $node['attributes']['points'];
                     $points = trim(str_replace(',', ' ', $node['attributes']['points']));
                     $points = explode(' ', $points);
+                    for($idx = 0; $idx < count($points); $idx++){
+                         $points[$idx] = corr_layout_pos($points[$idx], $doc);
+                    } 
 // xpositions of a rect
                     $xt = [];
                     for($idx = 0; $idx < count($points); $idx+= 2){ 
-                         $points[$idx] = corr_layout_pos($points[$idx], $doc);
                          $xt[]= $points[$idx]; 
                     }
 // min und max x positions 
@@ -292,7 +307,6 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
 // ypositions of a rect
                     $yt = [];
                     for($idx = 1; $idx < count($points); $idx+= 2){ 
-                         $points[$idx] = corr_layout_pos($points[$idx], $doc);
                          $yt[]= $points[$idx]; 
                     }
 // min und max of y positions 
@@ -311,14 +325,20 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                          $s++;
                     }
                     $points = implode(' ', $xtmp);
-                    $poly['points'] = $points;
+                    $poly['conf']['points'] = $points;
+
                     $poly['slot'] = false;
 // evaluates the class af a polygon
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
-                         $poly['color'] = $color;
+// print_r($css);
+// print_r($css_coll);
+// print_r($color);
+// print_r(rgb2cmyk(hex2rgb($color)));
+
+                         $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
 // ededed and dadada is the image cut in
                          $slot_colors = ['#ededed', '#dadada', '#EDEDED', '#DADADA'];
                          $is_image_slot = false;
@@ -334,14 +354,15 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                               $poly['ypos'] = floatval($ymin);
                               $poly['width'] = $xmax -$xmin;
                               $poly['height'] = $ymax -$ymin;
+                              $poly['conf']['depth'] = 1000;
                               $poly['layout_code'] = 'P';
                               if(floatval($poly['width']) >= floatval($poly['height'])){ 
                                    $poly['layout_code'] = 'L';
                               }
-                              $poly['depth'] = 100;
                          }
                     }
                     $res[]= $poly;
+                    $idx++;
                     break;
           }
      }
@@ -552,9 +573,9 @@ function flatten_groups($svg_doc){
 function get_style_by_selector($coll, $css){
      $res = [];
      $css = explode(' ', $css);
-     foreach($css as $css){
-          $idx = array_search(sprintf('%s', $css), $coll[1]);
-          if(false == $idx){ continue; }
+     foreach($css as $style){
+          $idx = array_search($style, $coll[1]);
+          if(false === $idx){ continue; }
           $statements = $coll[2][$idx];
           $statements = explode(';', $statements);
           foreach($statements as $statement){

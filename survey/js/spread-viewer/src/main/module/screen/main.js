@@ -241,7 +241,10 @@ class Screen extends Controller {
      }
 
      renderPath(target){
-          let c = this.model.currentScreen.path(target.d);
+          let colr = this.fetchColor(target);
+console.log(colr);
+          let p = this.model.currentScreen.path(target.d);
+              p.fill(colr);
      }
 
      renderPoly(target){
