@@ -183,9 +183,7 @@ function init_layout_doc($svg_path){
 
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
-
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
-
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $doc['layout']['code'] = 'P';
@@ -223,20 +221,23 @@ function parse_path_d($d, $doc){
                     $y = corr_layout_pos($ary[1], $doc);
                     $buf.= sprintf('%s%s,%s', $command, $x, $y);
                     break;
-               case 'c': case 'C':
+               case 'c': case 'C': case 's': case 'S':
                     $r = [];
                     foreach($ary as $i){
                          if(null == $i){ continue; }
                          $r[]= corr_layout_pos($i, $doc);;
                     }
                     $rcc = implode(',', $r);
-                    $rcc = str_replace('-', '-', $rcc);
+                    $rcc = str_replace(',-', '-', $rcc);
                     $buf.= sprintf('%s%s', $command, $rcc);
                     break;
                case 'l': case 'L':
                     $x = corr_layout_pos($ary[0], $doc);
                     $y = corr_layout_pos($ary[1], $doc);
-                    $buf.= sprintf('%s%s,%sz', $command, $x, $y);
+                    $buf.= sprintf('%s%s,%s', $command, $x, $y);
+                    break;
+               case 'z': case 'Z':
+                    $buf.= sprintf('%s', $command);
                     break;
           }
      }
