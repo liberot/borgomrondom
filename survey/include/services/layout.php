@@ -501,7 +501,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['width'] = $width;
           $asset['conf']['height'] = $height;
           $asset['conf']['opacity'] = '1';
-          $asset['conf']['depth'] = '3900';
+          $asset['conf']['depth'] = '25000';
 
           $asset['conf']['color'] = [];
           $asset['conf']['color']['cmyk'] = $color;
