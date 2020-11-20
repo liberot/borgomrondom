@@ -20,3 +20,7 @@ class Layout {
      const NO_SCALE = 'no_scale';
 }
 
+class Server {
+     const PRE_GENERATE_SECTION_PANELS = false;
+}
+

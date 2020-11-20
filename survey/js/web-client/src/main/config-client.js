@@ -6,9 +6,12 @@ SurveyConfig = {
      navigationHistory: 0x00,
      preloadPanels: false
 }
-history.pushState(null, null, location.href);
+
 window.onpopstate = function(e){
-    history.pushState(null, null, window.location.href);
-    if('undefined' == typeof(surveyQueue)){ return }
-    surveyQueue.route("stoerte::back");
+     history.pushState(null, null, window.location.href);
+     if('undefined' == typeof(surveyQueue)){ 
+          return false; 
+     }
+     surveyQueue.route("nav::back");
 };
+

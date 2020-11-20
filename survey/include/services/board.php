@@ -69,13 +69,16 @@ function exec_init_panel(){
      ];
      $panel_id = init_panel($conf);
 
+     $coll = get_panel_by_id($panel_id);
+
      $message = esc_html(__('panel saved', 'nosuch'));
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$panel_id));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
 add_action('admin_post_exec_get_panel_by_ref', 'exec_get_panel_by_ref');
 function exec_get_panel_by_ref(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::GUEST])){
+
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -83,8 +86,71 @@ function exec_get_panel_by_ref(){
 
      $section_id = trim_incoming_filename($_POST['section_id']);
      $section_id = get_session_ticket('section_id');
+     if(is_null($section_id)){
+          $message = esc_html(__('section corrupt', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
 
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
+     if(is_null($panel_ref)){
+          $message = esc_html(__('ref corrupt', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     
+     set_session_ticket('panel_ref', $panel_ref, true);
+
+// sets up a panel
+     if(false == Server::PRE_GENERATE_SECTION_PANELS){
+
+          $coll = get_panel_by_ref($section_id, $panel_ref);
+          if(!is_null($coll[0])){
+               $message = esc_html(__('cached panel is loaded', 'nosuch'));
+               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+               return true;
+          }
+
+          $section = get_section_by_id($section_id)[0];
+          if(is_null($section)){
+               $message = esc_html(__('section corrupt', 'nosuch'));
+               echo json_encode(array('res'=>'failed', 'message'=>$message));
+               return false;
+          }
+
+          $section->post_content = pagpick($section->post_content);
+          $title = $section->post_content['title'];
+
+          $survey = get_survey_by_title($title)[0];
+          if(is_null($survey)){
+               $message = esc_html(__('survey corrupt', 'nosuch'));
+               echo json_encode(array('res'=>'failed', 'message'=>$message));
+               return false;
+          }
+
+          $question = get_question_by_ref($survey->ID, $panel_ref)[0];
+          if(is_null($question)){
+               $message = esc_html(__('question corrupt', 'nosuch'));
+               echo json_encode(array('res'=>'failed', 'message'=>$message));
+               return false;
+          }
+
+          $surveyprint_uuid = psuuid();
+          $auhor_id = get_author_id();
+          $conf = [
+               'post_type'=>'surveyprint_panel',
+               'post_author'=>$author_id,
+               'post_title'=>$question->post_title,
+               'post_excerpt'=>$question->post_excerpt,
+               'post_name'=>$surveyprint_uuid,
+               'post_content'=>$question->post_content,
+               'post_parent'=>$section_id
+          ];
+
+          $panel_id = init_panel($conf);
+     }
+
+// loads the panel
      $coll = get_panel_by_ref($section_id, $panel_ref);
 
      $message = esc_html(__('panel is loaded', 'nosuch'));

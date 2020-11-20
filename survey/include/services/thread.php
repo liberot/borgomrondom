@@ -154,31 +154,11 @@ function exec_get_thread_by_id(){
 }
 */
 
-
-
-// --------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------
-// public fielding questions that is going to be private at the 13th step... 
-// --------------------------------------------------------------------------------
-add_action('init', 'init_survey_guest');
-function init_survey_guest(){
-     if(is_null(get_session_ticket('unique_guest'))){
-          set_session_ticket('unique_guest', random_string(128), true);
-     }
-     if(true != is_user_logged_in()){
-          $res = auth_guest_client();
-          set_session_ticket('unique_guest', random_string(128), true);
-     }
-}
-
 add_action('admin_post_exec_get_initial_thread', 'exec_get_initial_thread');
 function exec_get_initial_thread(){
 
 // policy
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::GUEST])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -186,7 +166,6 @@ function exec_get_initial_thread(){
 
 // pumps a previosly inited guest survey
      $unique_guest = get_session_ticket('unique_guest');
-
      $thread_id = get_session_ticket('thread_id');
 
      if(!is_null($thread_id)){
@@ -202,7 +181,7 @@ function exec_get_initial_thread(){
           return true;
      }
 
-// inits a guest thread
+// inits a customer thread
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
      $unique_guest = get_session_ticket('unique_guest');
@@ -213,7 +192,7 @@ function exec_get_initial_thread(){
      // $survey = get_survey_by_title('Fieldtypes')[0];
 
      if(is_null($survey)){
-          $message = esc_html(__('no survey', 'nosuch'));
+          $message = esc_html(__('no initial survey', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'survey'=>$survey));
           return false;
      }
@@ -223,13 +202,14 @@ function exec_get_initial_thread(){
           'post_type'=>'surveyprint_thread',
           'post_author'=>$author_id,
           'post_title'=>$surveyprint_uuid,
-          'post_excerpt'=>$unique_guest,
+          'post_excerpt'=>$surveyprint_uuid,
           'post_name'=>$surveyprint_uuid,
           'post_content'=>$surveyprint_uuid
      ];
+
      $thread_id = init_thread($conf);
-     if(is_null($thread_id)){
-          $message = esc_html(__('no thread', 'nosuch'));
+     if(0 == $thread_id){
+          $message = esc_html(__('could not init a thread', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -256,20 +236,21 @@ function exec_get_initial_thread(){
      }
      set_session_ticket('section_id', $section_id, true);
 
-// inserts posts of type panel
-     $questions = get_questions_by_survey_id($survey->ID);
-     foreach($questions as $question){
-          $surveyprint_uuid = psuuid();
-          $conf = [
-               'post_type'=>'surveyprint_panel',
-               'post_author'=>$author_id,
-               'post_title'=>$question->post_title,
-               'post_excerpt'=>$question->post_excerpt,
-               'post_name'=>$surveyprint_uuid,
-               'post_content'=>$question->post_content,
-               'post_parent'=>$section_id
-          ];
-          $panel_id = init_panel($conf);
+     if(Server::PRE_GENERATE_SECTION_PANELS) {
+          $questions = get_questions_by_survey_id($survey->ID);
+          foreach($questions as $question){
+               $surveyprint_uuid = psuuid();
+               $conf = [
+                    'post_type'=>'surveyprint_panel',
+                    'pos t_author'=>$author_id,
+                    'post_title'=>$question->post_title,
+                    'post_excerpt'=>$question->post_excerpt,
+                    'post_name'=>$surveyprint_uuid,
+                    'post_content'=>$question->post_content,
+                    'post_parent'=>$section_id
+              ];
+              $panel_id = init_panel($conf);
+          }
      }
 
 // loads the toc 
@@ -285,7 +266,7 @@ function exec_get_initial_thread(){
           'post_type'=>'surveyprint_toc',
           'post_title'=>$toc->post_title,
           'post_name'=>$surveyprint_uuid,
-          'post_excerpt'=>$toc->post_excerpt,
+          'post_excerpt'=>$surveyprint_uuid,
           'post_parent'=>$thread_id,
           'post_content'=>$toc->post_content
      ];

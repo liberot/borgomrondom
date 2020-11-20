@@ -3,16 +3,16 @@ class Net extends Controller {
      constructor(queue){
           super(queue);
           // controls (wirks) (from the queue)
-          this.register(new Subscription('init::book', this.initBook));
-          this.register(new Subscription('save::layout', this.saveLayout));
-          this.register(new Subscription('load::layoutgroup', this.loadLayoutGroup));
-          this.register(new Subscription('load::layoutpresets', this.loadLayoutPresets));
-          this.register(new Subscription('import::layouts', this.importLayouts));
+          this.register(new Subscription(            'init::book', this.initBook));
+          this.register(new Subscription(          'save::layout', this.saveLayout));
+          this.register(new Subscription(     'load::layoutgroup', this.loadLayoutGroup));
+          this.register(new Subscription(   'load::layoutpresets', this.loadLayoutPresets));
+          this.register(new Subscription(       'import::layouts', this.importLayouts));
           // events
-          this.register(new Subscription('prints::gathered', this.exportPrint));
-          this.register(new Subscription('delmockbtn::released', this.deleteMockData));
+          this.register(new Subscription(      'prints::gathered', this.exportPrint));
+          this.register(new Subscription(  'delmockbtn::released', this.deleteMockData));
           this.register(new Subscription('writemockbtn::released', this.writeMockSurvey));
-          this.register(new Subscription('image::selected', this.uploadImage));
+          this.register(new Subscription(       'image::selected', this.uploadImage));
      }
 
      importLayouts(msg){

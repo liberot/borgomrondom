@@ -255,3 +255,15 @@ function debug_sql($sql){
      return $sql;
 }
 
+// add_action('init', 'init_survey_guest');
+function init_survey_guest(){
+     if(is_null(get_session_ticket('unique_guest'))){
+          set_session_ticket('unique_guest', random_string(128), true);
+     }
+     if(true != is_user_logged_in()){
+          $res = auth_guest_client();
+          set_session_ticket('unique_guest', random_string(128), true);
+     }
+}
+
+

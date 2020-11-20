@@ -13,7 +13,7 @@ class Survey extends Controller {
           this.register(new Subscription(       'confirm::input', this.bindTextInput));
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
           this.register(new Subscription(    'select::statement', this.bindSelectStatement));
-          this.register(new Subscription(        'stoerte::back', this.evalPrevPanel));
+          this.register(new Subscription(            'nav::back', this.evalPrevPanel));
           this.register(new Subscription(         'set::opinion', this.bindOpinion));
           // events
           this.register(new Subscription(         'thread::next', this.nextPanel));
@@ -29,6 +29,7 @@ class Survey extends Controller {
           this.register(new Subscription(        'assets::bound', this.renderAssetCopies));
           this.register(new Subscription(        'panel::loaded', this.bindPanel));
           this.register(new Subscription(          'input::done', this.storeInput));
+          this.register(new Subscription(         'panel::saved', this.bindSavedPanel));
           // ------
           this.extractDeeplink(window.location.hash.substr(1));
           this.navDeeplink(window.location.hash.substr(1));
@@ -37,11 +38,14 @@ class Survey extends Controller {
           this.notify(new Message('download::fieldings', this.model));
      }
 
+     bindSavedPanel(msg){
+          this.evalNextPanel();
+     }
+ 
      storeInput(msg){
-          if(false == this.model.clientAuthed){
-          }
-          this.notify(new Message('save::toc', this.model));
+          if(false == this.model.clientAuthed){}
           this.notify(new Message('save::panel', this.model));
+          this.notify(new Message('save::toc', this.model));
      }
 
      bindSelectStatement(){
@@ -280,7 +284,6 @@ class Survey extends Controller {
           this.model.panel.post_content.answer = SurveyUtil.trimIncomingString(val);
           this.model.threadLog.add(ref, answer);
           this.notify(new Message('input::done', this.model));
-          this.evalNextPanel();
      }
 
      corrQuestion(question){
@@ -349,11 +352,13 @@ class Survey extends Controller {
      }
 
      loadPanel(ref){
+
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
                this.initPanel();
                return;
           }
+
           this.model.panelRef = ref;
           this.notify(new Message('load::panel', this.model));
      }
