@@ -6,30 +6,41 @@ LayoutUtil = {
           for(let idx in temp){
                let command = temp[idx].substring(0, 1);
                let chunk = temp[idx].substring(1, temp[idx].length);
+                   chunk = chunk.replace(/\,-/gi, '-');
                    chunk = chunk.replace(/\-/gi, ',-');
                let ary = chunk.split(',');
                let r = [];
                let x; let y;
                switch(command){
                     case 'M': case 'm':
+                         ary[0] = ary[0].trim();
+                         ary[1] = ary[1].trim();
                          x = LayoutUtil.pxPump(parseFloat(ary[0]), ppi1st, ppi2nd);
                          y = LayoutUtil.pxPump(parseFloat(ary[1]), ppi1st, ppi2nd);
                          buf+= command +x+','+y;
                          break;
-                     case 'c': case 'C': case 's': case 'S':
+                    case 'c': case 'C': case 's': case 'S':
                          r = [];
                          for(let iidx in ary){
                               if(null == ary[iidx]){ continue; }
+                              ary[iidx] = ary[iidx].trim();
+                              ary[iidx] = parseFloat(ary[iidx]);
+                              if(isNaN(ary[iidx])){ continue; }
                               r.push(LayoutUtil.pxPump(parseFloat(ary[iidx]), ppi1st, ppi2nd));
                          }
                          r = r.join(',');
-                         r = r.replace(/,-/gi, '-');
+                         // r = r.replace(/,-/gi, '-');
                          buf+= command +r;
                          break;
                     case 'a': case 'A':
                          r = [];
                          c = 0;
                          for(let iidx in ary){
+                         ary[iidx] = ary[iidx].trim();
+                              if(null == ary[iidx]){ continue; }
+                              ary[iidx] = ary[iidx].trim();
+                              ary[iidx] = parseFloat(ary[iidx]);
+                              if(isNaN(ary[iidx])){ continue; }
                               switch(c){
                                    case 2: case 3: case 4:
                                         r.push(ary[iidx]);
@@ -39,22 +50,22 @@ LayoutUtil = {
                                         break;
                               }
                               c++;
-                       }
-                       r = r.join(',');
-                       r = r.replace(/,-/gi, '-');
-                       buf+= command +r;
-                       break;
-                  case 'l': case 'L':
-                       x = LayoutUtil.pxPump(parseFloat(ary[0]), ppi1st, ppi2nd);
-                       y = LayoutUtil.pxPump(parseFloat(ary[1]), ppi1st, ppi2nd);
-                       buf+= command +x+','+y;
-                       break;
-                  case 'z': case 'Z':
-                       buf+= command;
-                       break;
-             }
-        }
-        return buf;
+                         }
+                         r = r.join(',');
+                         // r = r.replace(/,-/gi, '-');
+                         buf+= command +r;
+                         break;
+                    case 'l': case 'L':
+                          x = LayoutUtil.pxPump(parseFloat(ary[0]), ppi1st, ppi2nd);
+                          y = LayoutUtil.pxPump(parseFloat(ary[1]), ppi1st, ppi2nd);
+                          buf+= command +x+','+y;
+                          break;
+                    case 'z': case 'Z':
+                          buf+= command;
+                          break;
+               }
+          }
+          return buf;
      },
      pxPump: function(px, ppi1st, ppi2nd){
           ppi1st = null == ppi1st ? 0 : ppi1st;

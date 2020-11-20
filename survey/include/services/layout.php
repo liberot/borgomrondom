@@ -226,7 +226,8 @@ function corr_path_d($d, $doc){
      $buf = '';
      for($idx = 0; $idx < count($temp[1]); $idx++){
           $command = $temp[1][$idx];
-          $chunk = str_replace('-', ',-', $temp[2][$idx]);
+          $chunk = str_replace(',-', '-', $temp[2][$idx]);
+          $chunk = str_replace('-', ',-', $chunk);
           $ary = explode(',', $chunk);
           switch($command){
                case 'm': case 'M':
@@ -241,7 +242,7 @@ function corr_path_d($d, $doc){
                          $r[]= corr_layout_pos($i, $doc);;
                     }
                     $rcc = implode(',', $r);
-                    $rcc = str_replace(',-', '-', $rcc);
+                    // $rcc = str_replace(',-', '-', $rcc);
                     $buf.= sprintf('%s%s', $command, $rcc);
                     break;
                case 'a': case 'A':
@@ -262,7 +263,7 @@ function corr_path_d($d, $doc){
                          $c++;
                     }
                     $rcc = implode(',', $r);
-                    $rcc = str_replace(',-', '-', $rcc);
+                    // $rcc = str_replace(',-', '-', $rcc);
                     $buf.= sprintf('%s%s', $command, $rcc);
                     break;
                case 'l': case 'L':
