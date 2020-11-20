@@ -45,11 +45,13 @@ function exec_init_layout(){
 
 add_action('admin_post_exec_get_layouts_by_group', 'exec_get_layouts_by_group');
 function exec_get_layouts_by_group(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      $group = trim_incoming_filename($_POST['group']);
      $coll = get_layouts_by_group($group);
      $message = esc_html(__('layouts loaded', 'nosuch'));
@@ -58,11 +60,13 @@ function exec_get_layouts_by_group(){
 
 add_action('admin_post_exec_get_layout_presets_by_group_and_rule', 'exec_get_layout_presets_by_group_and_rule');
 function exec_get_layout_presets_by_group_and_rule(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      $group = trim_incoming_filename($_POST['group']);
      $rule = trim_incoming_filename($_POST['rule']);
      $coll = get_layout_presets_by_group_and_rule($group, $rule);
@@ -192,6 +196,7 @@ function parse_layout_doc($svg_path){
 
 // todo
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
+     $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
      $doc['layout']['code'] = get_layout_code_of_spread($res);
@@ -409,13 +414,98 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
 
 function eval_text_fields($svg_doc, $css_coll, $doc){
 
-     $res = [];
+     $xes = [];
+     $buf = '';
      foreach($svg_doc as $node){
           switch($node['tag']){
                case 'text':
-                    $res[]= $node['value'];
+                    $buf.= sprintf('%s ', $node['value']);
+                    preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $buf, $mtch);
+                    if(!is_null($mtch[0])){
+                         $temp = [];
+                         $temp['pos'] = $buf;
+                         $temp['style'] = 'no style';
+                         $cls = $node['attributes']['class'];
+                         if(!is_null($cls)){
+                              $style = get_style_by_selector($css_coll, $cls);
+                              $temp['style'] = $style;
+                         }
+                         $buf = '';
+                         $xes[]= $temp;
+                    }
                     break;
           }
+     }
+
+     $tary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
+     $txts = [];
+     for($idx = 0; $idx < 13; $idx++){
+          $row = random_int(0, count($tary) -1);
+          $txts[$idx] = $tary[$row];
+     }
+
+     $indx = 0;
+     $res = [];
+     foreach($xes as $field){
+          $temp = $field['pos'];
+          preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $temp, $mtch);
+
+          $xpos = $mtch[1];
+          $xpos = preg_replace('/\s+/i', '', $xpos);
+          $xpos = floatval($xpos);
+          $xpos = corr_layout_pos($xpos, $doc);
+
+          $ypos = $mtch[3];
+          $ypos = preg_replace('/\s+/i', '', $ypos);
+          $ypos = floatval($ypos);
+          $ypos = corr_layout_pos($ypos, $doc);
+
+          $width = $mtch[4];
+          $width = preg_replace('/\s+/i', '', $width);
+          $width = floatval($width);
+          $width = corr_layout_pos($width, $doc);
+
+          $height = $mtch[6];
+          $height = preg_replace('/\s+/i', '', $height);
+          $height = floatval($height);
+          $height = corr_layout_pos($height, $doc);
+
+          $font_size = trim($field['style']['font-size']);
+          $font_size = preg_replace('/[^\d]/i', '', $font_size);
+          $font_size = floatval($font_size);
+          $font_size = corr_layout_pos($font_size, $doc);
+
+          $font_family = preg_replace('/\s+/i', '', $field['style']['font-family']);
+
+          $color = rgb2cmyk(hex2rgb($field['style']['fill']));
+
+          $asset = [];
+          $asset['type'] = 'text';
+          $asset['indx'] = sprintf('text_%s', $indx);
+          $asset['text'] = $txts;
+
+          $asset['conf'] = [];
+
+          $asset['conf']['font'] = [];
+          $asset['conf']['font']['family'] = $font_family;
+          $asset['conf']['font']['size'] = $font_size;
+          $asset['conf']['font']['lineHeight'] = $font_size;
+          $asset['conf']['font']['align'] = 'center';
+          $asset['conf']['font']['space'] = '0.85';
+
+          $asset['conf']['unit'] = 'px';
+          $asset['conf']['xpos'] = $xpos;
+          $asset['conf']['ypos'] = $ypos;
+          $asset['conf']['width'] = $width;
+          $asset['conf']['height'] = $height;
+          $asset['conf']['opacity'] = '1';
+          $asset['conf']['depth'] = '3900';
+
+          $asset['conf']['color'] = [];
+          $asset['conf']['color']['cmyk'] = $color;
+
+          $indx++;
+          $res[]= $asset;
      }
 
      return $res;
@@ -602,67 +692,5 @@ function get_style_by_selector($coll, $css){
      }
      return $res;
 }
-
-
-// todo text asset noticees
-/*
-function extract_text_assets($string_nodes){
-
-     $res = [];
-     $xes = [];
-     $yes = [];
-     $txt = [];
-
-     $font_family = $string_nodes[0]['font_family'];
-     $font_weight = $string_nodes[0]['font_weight'];
-     $font_size = $string_nodes[0]['font_size'];
-     $font_fill = $string_nodes[0]['font_fill'];
-     $font_space = '0';
-
-     foreach($string_nodes as $node){
-          $xes[]= $node['xpos'];
-          $yes[]= $node['ypos'];
-          $txt[]= $node['text'];
-     }
-
-     sort($xes);
-     sort($yes);
-     $xpos = $xes[0];
-     $ypos = $yes[0];
-
-     $string_asset = [];
-     $string_asset['type'] = 'text';
-     $string_asset['text'] = $txt;
-     $string_asset['indx'] = random_string();
-
-     $string_asset['conf'] = [];
-
-     $string_asset['conf']['xpos'] = $xpos;
-     $string_asset['conf']['ypos'] = $ypos;
-
-     $string_asset['conf']['font'] = [];
-     $string_asset['conf']['font']['space'] = $font_space;
-     $string_asset['conf']['font']['size'] = $font_size;
-     $string_asset['conf']['font']['weight'] = $font_weight;
-     $string_asset['conf']['font']['lineHeight'] = $font_size;
-     $string_asset['conf']['font']['family'] = $font_family;
-
-     $string_asset['conf']['color'] = [];
-     $string_asset['conf']['color']['cmyk'] = [];
-
-     $string_asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($font_fill));
-     $string_asset['conf']['opacity'] = '1';
-     $string_asset['conf']['width'] = '2500';
-     $string_asset['conf']['height'] = '2500';
-     $string_asset['conf']['depth'] = '25000';
-     $string_asset['conf']['unit'] = 'px';
-
-     $res[]= $string_asset;
-     return $res;
-}
-*/
-
-
-
 
 

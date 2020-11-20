@@ -357,13 +357,14 @@ class Screen extends Controller {
 
      fetchColor(target){
           let colr = '#000';
+          if(null != target.conf.color){
           if(null != target.conf.color['cmyk']){
                target.conf.color['cmyk'].c = parseFloat(target.conf.color['cmyk'].c);
                target.conf.color['cmyk'].m = parseFloat(target.conf.color['cmyk'].m);
                target.conf.color['cmyk'].y = parseFloat(target.conf.color['cmyk'].y);
                target.conf.color['cmyk'].k = parseFloat(target.conf.color['cmyk'].k);
                colr = new SVG.Color(target.conf.color['cmyk']);
-          }
+          }}
           return colr;
      }
 
