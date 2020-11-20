@@ -438,15 +438,17 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
      }
 
      $tary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
-     $txts = [];
-     for($idx = 0; $idx < 13; $idx++){
-          $row = random_int(0, count($tary) -1);
-          $txts[$idx] = $tary[$row];
-     }
 
      $indx = 0;
      $res = [];
      foreach($xes as $field){
+
+          $txts = [];
+          for($idx = 0; $idx < 13; $idx++){
+               $row = random_int(0, count($tary) -1);
+               $txts[$idx] = $tary[$row];
+          }
+
           $temp = $field['pos'];
           preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $temp, $mtch);
 
@@ -490,7 +492,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font']['family'] = $font_family;
           $asset['conf']['font']['size'] = $font_size;
           $asset['conf']['font']['lineHeight'] = $font_size;
-          $asset['conf']['font']['align'] = 'center';
+          $asset['conf']['font']['align'] = 'block';
           $asset['conf']['font']['space'] = '0.85';
 
           $asset['conf']['unit'] = 'px';
