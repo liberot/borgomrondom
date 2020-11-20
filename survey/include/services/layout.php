@@ -443,12 +443,6 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
      $res = [];
      foreach($xes as $field){
 
-          $txts = [];
-          for($idx = 0; $idx < 13; $idx++){
-               $row = random_int(0, count($tary) -1);
-               $txts[$idx] = $tary[$row];
-          }
-
           $temp = $field['pos'];
           preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $temp, $mtch);
 
@@ -476,10 +470,17 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $font_size = preg_replace('/[^\d]/i', '', $font_size);
           $font_size = floatval($font_size);
           $font_size = corr_layout_pos($font_size, $doc);
-
+          
           $font_family = preg_replace('/\s+/i', '', $field['style']['font-family']);
 
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
+
+          $txts = [];
+          $lines = intval($height /( $font_size *1.35 ));
+          for($idx = 0; $idx < $lines; $idx++){
+               $row = random_int(0, count($tary) -1);
+               $txts[$idx] = $tary[$row];
+          }
 
           $asset = [];
           $asset['type'] = 'text';
