@@ -1,6 +1,14 @@
 /** theme ****************************************/
 /*************************************************/
 /*************************************************/
+.site-content article {
+     border-bottom: none !important;
+}
+
+#wpadminbar{
+     visibility: hidden;
+     display: none;
+}
 #secondary,
 #masthead,
 #colophon,

@@ -35,6 +35,14 @@ class Survey extends Controller {
           this.navDeeplink(window.location.hash.substr(1));
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
           // ------
+          window.onpopstate = function(e){
+               history.pushState(null, null, window.location.href);
+               if('undefined' == typeof(surveyQueue)){ 
+                     return false; 
+               }
+               surveyQueue.route('nav::back');
+          };
+          // ------
           this.notify(new Message('download::fieldings', this.model));
      }
 
@@ -506,7 +514,7 @@ class Survey extends Controller {
           jQuery('.survey-controls1st').html(__ctrl_tmpl_002__);
           jQuery('.survey-controls2nd').html(buf2nd);
           jQuery('.survey-controls3rd').html(buf3rd);
-          jQuery('.survey-controls4th').html(this.fillTemplate(__ctrl_tmpl_102__,{init:__survey.__('spreads')})); 
+          // jQuery('.survey-controls4th').html(this.fillTemplate(__ctrl_tmpl_102__,{init:__survey.__('spreads')})); 
 
           this.setLink();
           this.pushToc(this.model.panel.post_content.ref);

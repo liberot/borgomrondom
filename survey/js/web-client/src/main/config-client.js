@@ -7,11 +7,3 @@ SurveyConfig = {
      preloadPanels: false
 }
 
-window.onpopstate = function(e){
-     history.pushState(null, null, window.location.href);
-     if('undefined' == typeof(surveyQueue)){ 
-          return false; 
-     }
-     surveyQueue.route("nav::back");
-};
-
