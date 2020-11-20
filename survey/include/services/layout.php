@@ -491,9 +491,9 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font'] = [];
           $asset['conf']['font']['family'] = $font_family;
           $asset['conf']['font']['size'] = $font_size;
-          $asset['conf']['font']['lineHeight'] = $font_size;
+          $asset['conf']['font']['lineHeight'] = floatval($font_size) *1.35;
           $asset['conf']['font']['align'] = 'block';
-          $asset['conf']['font']['space'] = '0.85';
+          $asset['conf']['font']['space'] = '0.975';
 
           $asset['conf']['unit'] = 'px';
           $asset['conf']['xpos'] = $xpos;
