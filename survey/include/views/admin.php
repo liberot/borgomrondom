@@ -242,7 +242,7 @@ function build_thread_entries_view(){
      $sections = get_sections_by_thread_id($thread_id, $client_id);
      if(is_null($sections)){ return false; }
 
-     $headline = esc_html(__('Book Builder Threads from Book TOC', 'nosuch'));
+     $headline = esc_html(__('Book Builder Thread Fields from Book TOC', 'nosuch'));
      $id = esc_html(__('ID', 'nosuch'));
      $ref = esc_html(__('Reference', 'nosuch'));
      $title = esc_html(__('Title', 'nosuch'));
