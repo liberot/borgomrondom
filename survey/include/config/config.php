@@ -22,7 +22,7 @@ class Layout {
 
 class Server {
      const PRE_GENERATE_SECTION_PANELS = false;
-     const UPDATE_ON_PERSIST = true;
+     const UPDATE_ON_PERSIST = false;
 }
 
 

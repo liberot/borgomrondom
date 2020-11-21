@@ -48,16 +48,43 @@ function exec_init_panel(){
      $author_id = get_current_user_id();
 
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
-     // $panel_ref = get_session_ticket('panel_ref');
+     $panel_ref = get_session_ticket('panel_ref');
 
-     $thread_id = $_POST['thread_id'];
-     $section_id = get_session_ticket('thread_id');
+     if(is_null($panel_ref)){
+          $message = esc_html(__('panel corrupt', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $thread_id = trim_incoming_filename($_POST['thread_id']);
+     $thread_id = get_session_ticket('thread_id');
+     if(is_null($thread_id)){
+          $message = esc_html(__('thread corrupt', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
 
      $section_id = $_POST['section_id'];
      $section_id = get_session_ticket('section_id');
+     if(is_null($section_id)){
+          $message = esc_html(__('section corrupt', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
 
-     $doc = $_POST['doc'];
-     $doc = pigpack($_POST['doc']);
+// todo diss bad post the answer plz
+     $idoc = $_POST['doc'];
+     $idoc = walk_the_doc($idoc);;
+
+     $panel = get_panel_by_ref($section_id, $panel_ref)[0];
+     if(is_null($panel)){
+          $message = esc_html(__('no such panel', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$panel_ref));
+          return false;
+     }
+     $doc = pagpick($panel->post_content);
+     $doc['answer'] = $idoc['answer'];
+     $doc = pigpack($doc);
 
      $conf = [
           'post_author'=>$author_id,
