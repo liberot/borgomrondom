@@ -76,6 +76,7 @@ class SurveyNet extends Controller {
                thread_id: msg.model.thread.ID,
                section_id: msg.model.section.ID,
                panel_ref: msg.model.panel.post_content.ref,
+               question: msg.model.panel.post_content.question,
                answer: msg.model.panel.post_content.answer
           }
           let cb = function(e){

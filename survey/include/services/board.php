@@ -72,6 +72,9 @@ function exec_init_panel(){
           return false;
      }
 
+     $question = trim_incoming_string($_POST['question']);
+     $question = trim_for_print($question);
+
      $answer = trim_incoming_string($_POST['answer']);
      $answer = trim_for_print($answer);
 
@@ -83,6 +86,7 @@ function exec_init_panel(){
      }
 
      $doc = pagpick($panel->post_content);
+     $doc['question'] = $question;
      $doc['answer'] = $answer;
      $doc = pigpack($doc);
 
