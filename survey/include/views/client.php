@@ -50,6 +50,11 @@ function build_survey_view(){
 
      wp_enqueue_style('client_style');
 
+     if(!is_user_logged_in()){
+          echo '<a href="/wp-login.php">todo: view needs an auth</a>';
+          return true;
+     }
+
      $res = <<<EOD
      <div class='survey'>
           <div class='survey-messages'></div>

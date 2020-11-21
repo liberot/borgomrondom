@@ -45,9 +45,9 @@ register_activation_hook(__FILE__, 'on_plugin_activation');
 register_deactivation_hook(__FILE__, 'on_plugin_deactivation');
 
 function set_dev_env(){
-     // add_action('init', 'init_survey_page');
-     // add_action('init', 'insert_survey_client');
-     // add_action('init', 'auth_survey_client');
+     // init_survey_page();
+     // insert_guest_client();
+     auth_guest_client(); 
 }
 
 function set_test_env(){
@@ -61,18 +61,7 @@ function set_test_env(){
      }
 }
 
-
-// todo: do not log in but redirect to the login
-// redirect to profile builder at given cause
-add_action('init', 'init_quest_account');
-function init_quest_account(){
-     set_session_ticket('unique_guest', random_string(64));
-     auth_guest_client(); 
-}
-
-// add_action('init', 'function(){ wp_destroy_all_sessions(); exit(); });
-
-
-
+// add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
+add_action('init', function(){ set_dev_env(); });
 
 

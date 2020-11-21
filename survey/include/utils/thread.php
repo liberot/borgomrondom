@@ -50,18 +50,10 @@ function init_thread($conf){
 
 function get_threads_of_client(){
      $author_id = esc_sql(get_author_id());
-     $res = query_posts([
-          'post_type'=>'surveyprint_thread',
-          'post_author'=>$author_id
-     ]);
-     return $res;
-}
-
-function get_threads_by_survey_id($survey_id){
-     $author_id = esc_sql(get_author_id());
-     $survey_id = esc_sql($survey_id);
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_thread' and post_author = '{$author_id}' and post_parent = '{$survey_id}' order by ID desc;
+          select * from wp_posts
+               where post_type = 'surveyprint_thread'
+               and post_author = '{$author_id}'
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;

@@ -16,7 +16,7 @@ class SurveyNet extends Controller {
 
      downloadFieldings(){
           let ref = this;
-          let data = { 'action': 'exec_get_initial_thread' }
+          let data = { 'action': 'exec_init_thread' }
           let cb = function(e){ ref.notify(new Message('fieldings::downloaded', { e })); }
           this.postData(data, cb);
      }

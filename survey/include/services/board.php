@@ -39,7 +39,6 @@ function exec_get_panels_by_thread_id(){
 add_action('admin_post_exec_init_panel', 'exec_init_panel');
 function exec_init_panel(){
 
-     // if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -47,7 +46,9 @@ function exec_init_panel(){
      }
 
      $author_id = get_current_user_id();
+
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
+     // $panel_ref = get_session_ticket('panel_ref');
 
      $thread_id = $_POST['thread_id'];
      $section_id = get_session_ticket('thread_id');
@@ -58,15 +59,24 @@ function exec_init_panel(){
      $doc = $_POST['doc'];
      $doc = pigpack($_POST['doc']);
 
-// id updates the existing panel
      $conf = [
-//        'ID'=>$panel_id,
           'post_author'=>$author_id,
           'post_type'=>'surveyprint_panel',
           'post_parent'=>$section_id,
           'post_excerpt'=>$panel_ref,
           'post_content'=>$doc
      ];
+
+     if(Server::UPDATE_ON_PERSIST){
+          $panel = get_panel_by_ref($section_id, $panel_ref)[0];
+          if(is_null($panel)){
+               $message = esc_html(__('no such panel', 'nosuch'));
+               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$panel_ref));
+               return false;
+          }
+          $conf['ID'] = $panel->ID;
+     }
+
      $panel_id = init_panel($conf);
 
      $coll = get_panel_by_id($panel_id);

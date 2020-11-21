@@ -15,8 +15,8 @@ function exec_get_threads_of_client(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
-add_action('admin_post_exec_get_initial_thread', 'exec_get_initial_thread');
-function exec_get_initial_thread(){
+add_action('admin_post_exec_init_thread', 'exec_init_thread');
+function exec_init_thread(){
 
 // policy
      if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
@@ -25,14 +25,16 @@ function exec_get_initial_thread(){
           return false;
      }
 
-// pumps a previosly inited guest survey
+// loads a previosly inited guest survey
+// obollette since there is no guest client not authed
+/*
      $unique_guest = get_session_ticket('unique_guest');
      $thread_id = get_session_ticket('thread_id');
 
      if(!is_null($thread_id)){
           $coll = [];
-          $coll['toc'] = get_toc_by_thread_id($thread_id);
           $coll['thread'] = get_thread_by_id($thread_id);
+          $coll['toc'] = get_toc_by_thread_id($thread_id);
           $coll['sections'] = get_sections_by_thread_id($thread_id);
      }
 
@@ -40,6 +42,23 @@ function exec_get_initial_thread(){
           $message = esc_html(__('cached thread is loaded', 'nosuch'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'ticket'=>$unique_guest));
           return true;
+     }
+*/
+
+// todo
+// client might own on or more threads
+     $threads = get_threads_of_client();
+     if(!is_null($threads)){
+          $coll['thread'] = $threads;
+          $coll['toc'] = get_toc_by_thread_id($coll['thread'][0]->ID);
+          $coll['sections'] = get_sections_by_thread_id($coll['thread'][0]->ID);
+          if(!is_null($coll['thread'])){
+               set_session_ticket('thread_id', $coll['thread'][0]->ID, true);
+               set_session_ticket('section_id', $coll['sections'][0]->ID, true);
+               $message = esc_html(__('stored thread is loaded', 'nosuch'));
+               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'ticket'=>$unique_guest));
+               return true;
+          }
      }
 
 // inits a customer thread

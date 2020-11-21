@@ -171,7 +171,8 @@ EOD;
 }
 
 function auth_guest_client(){
-     // he who cannot save and does not exist makin trouble no need 
+     // he who cannot save and does not exist makin trouble no need as for debug
+     set_session_ticket('unique_guest', random_string(64));
      $client = wp_signon(
           [
                'user_login'=>'surveyprint',
@@ -232,6 +233,7 @@ function add_base_to_chunk($chunk){
      return $res;
 }
 
+// todo some wp session meta
 function set_session_ticket($key, $value, $force=false){
      session_start();
      if(true == $force){

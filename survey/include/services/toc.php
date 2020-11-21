@@ -15,6 +15,7 @@ function exec_get_toc_by_id(){
 
 add_action('admin_post_exec_save_toc', 'exec_save_toc');
 function exec_save_toc(){
+
      if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -46,14 +47,17 @@ function exec_save_toc(){
      $toc->post_content['booktoc'] = $booktoc;
      $toc->post_content = pigpack($toc->post_content);
 
-// id updates toc
      $conf = [
-//        'ID'=>$toc_id
           'post_type'=>'surveyprint_toc',
           'post_author'=>$author_id,
           'post_content'=>$toc->post_content,
           'post_parent'=>$thread_id
      ];
+
+     if(Server::UPDATE_ON_PERSIST){
+          $conf['ID'] = $toc->ID;
+     }
+
      $toc_id = save_toc($conf);
 
      $coll = [];
