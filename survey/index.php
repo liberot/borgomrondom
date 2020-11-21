@@ -1,5 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
+
 define ('NOSUCH_VERSION', '003.yancsee');
 define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'nosuch', DIRECTORY_SEPARATOR, 'survey'));
 
@@ -39,4 +40,40 @@ function on_plugin_activation(){
 
 function on_plugin_deactivation(){
 }
+
+register_activation_hook(__FILE__, 'on_plugin_activation');
+register_deactivation_hook(__FILE__, 'on_plugin_deactivation');
+
+function set_dev_env(){
+     // add_action('init', 'init_survey_page');
+     // add_action('init', 'insert_survey_client');
+     // add_action('init', 'auth_survey_client');
+}
+
+function set_test_env(){
+     require_once('survey/test/typeform.php');
+     require_once('survey/test/survey.php');
+     require_once('survey/test/session.php');
+     require_once('survey/test/book.php');
+     add_action('init', '__suspend__run__');
+     function __suspend__run__(){
+          exit();
+     }
+}
+
+
+// todo: do not log in but redirect to the login
+add_action('init', 'init_quest_account');
+function init_quest_account(){
+     set_session_ticket('unique_guest', random_string(64));
+     if(!is_null($_REQUEST['page_id'])){
+          auth_guest_client(); 
+     }
+}
+
+// add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
+
+
+
+
 

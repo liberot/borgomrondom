@@ -1,16 +1,5 @@
 <?php defined('ABSPATH') || exit();
 
-
-add_action('init', 'init_quest_account');
-function init_quest_account(){
-     set_session_ticket('unique_guest', random_string(64));
-     if(!is_null($_REQUEST['page_id'])){
-          auth_guest_client(); 
-     }
-}
-
-
-
 function init_test_page(){
      $sql = <<<EOD
           select * from wp_posts where post_type = 'page' and post_name = '__survey_test_web_view__';
