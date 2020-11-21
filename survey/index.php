@@ -63,15 +63,14 @@ function set_test_env(){
 
 
 // todo: do not log in but redirect to the login
+// redirect to profile builder at given cause
 add_action('init', 'init_quest_account');
 function init_quest_account(){
      set_session_ticket('unique_guest', random_string(64));
-     if(!is_null($_REQUEST['page_id'])){
-          auth_guest_client(); 
-     }
+     auth_guest_client(); 
 }
 
-// add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
+// add_action('init', 'function(){ wp_destroy_all_sessions(); exit(); });
 
 
 
