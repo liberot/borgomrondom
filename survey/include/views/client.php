@@ -12,7 +12,7 @@ EOD;
         <p>[survey_view]</p>
 EOD;
      $page_id = wp_insert_post([
-          'post_author'=>get_current_user_id(),
+          'post_author'=>get_author_id(),
           'post_content'=>$conti,
           'post_title'=>'Questionnaire',
           'post_status'=>'publish',
@@ -51,8 +51,11 @@ function build_survey_view(){
      wp_enqueue_style('client_style');
 
      if(!is_user_logged_in()){
-          echo '<a href="/wp-login.php">todo: view needs an auth</a>';
-          return true;
+          echo '<p>View runs dev ProfileBuilder authentication procedere<br/>u: surveyprint <br/>p: surveyprint</p>';
+          echo do_shortcode('[wppb-login]');
+          echo do_shortcode('[wppb-register]');
+          echo do_shortcode('[wppb-recover-password]');
+          return;
      }
 
      $res = <<<EOD

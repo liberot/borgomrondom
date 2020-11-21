@@ -47,7 +47,7 @@ register_deactivation_hook(__FILE__, 'on_plugin_deactivation');
 function set_dev_env(){
      // init_survey_page();
      // insert_guest_client();
-     auth_guest_client(); 
+     // auth_guest_client(); 
 }
 
 function set_test_env(){
