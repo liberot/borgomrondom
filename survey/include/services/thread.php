@@ -48,7 +48,7 @@ function exec_init_thread(){
 // todo
 // client might own on or more threads
      $threads = get_threads_of_client();
-     if(!is_null($threads)){
+     if(!is_null($threads[0])){
           $coll['thread'] = $threads;
           $coll['toc'] = get_toc_by_thread_id($coll['thread'][0]->ID);
           $coll['sections'] = get_sections_by_thread_id($coll['thread'][0]->ID);

@@ -61,9 +61,12 @@ EOD;
      return $res;
 }
 
-function get_thread_by_id($thread_id){
-     $author_id = esc_sql(get_author_id());
+function get_thread_by_id($thread_id, $client_id=null){
      $thread_id = esc_sql($thread_id);
+     $author_id = esc_sql(get_author_id());
+     if(!is_null($client_id)){
+          $author_id = esc_sql($client_id);
+     }
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_thread' and post_author = '{$author_id}' and ID = '{$thread_id}';
 EOD;
@@ -88,9 +91,10 @@ function init_section($conf){
      return $res;
 }
 
-function get_sections_by_thread_id($thread_id){
+function get_sections_by_thread_id($thread_id, $client_id=null){
      $thread_id = esc_sql($thread_id);
      $author_id = esc_sql(get_author_id());
+     if(!is_null($client_id)){ $author_id = esc_sql($client_id); };
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_section' and post_author = '{$author_id}' and post_parent = '{$thread_id}';
 EOD;

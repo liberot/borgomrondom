@@ -55,10 +55,11 @@ EOD;
 }
 
 
-function get_panel_by_ref($section_id, $ref){
-     $author_id = esc_sql(get_author_id());
+function get_panel_by_ref($section_id, $ref, $client_id=null){
      $section_id = esc_sql($section_id);
      $ref = esc_sql($ref);
+     $author_id = esc_sql(get_author_id());
+     if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
      global $wpdb;
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_panel' and post_author = '{$author_id}' and post_parent = '{$section_id}' 

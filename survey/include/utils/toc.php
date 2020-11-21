@@ -68,9 +68,10 @@ function save_toc($conf){
      return $res;
 }
 
-function get_toc_by_thread_id($thread_id){
+function get_toc_by_thread_id($thread_id, $client_id=null){
      $thread_id = esc_sql($thread_id);
      $author_id = esc_sql(get_author_id());
+     if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_toc'

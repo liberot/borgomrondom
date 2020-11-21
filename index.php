@@ -15,3 +15,12 @@ defined('ABSPATH') || exit;
 require_once('survey/index.php');
 
 
+register_activation_hook(__FILE__, 'on_plugin_activation');
+register_deactivation_hook(__FILE__, 'on_plugin_deactivation');
+function on_plugin_activation(){
+     insert_guest_client();
+     init_survey_page();
+}
+function on_plugin_deactivation(){
+}
+

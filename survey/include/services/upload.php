@@ -64,6 +64,13 @@ function exec_init_asset_by_panel_ref(){
           'post_content'=>$image
      ];
 
+     if(Server::UPDATE_ON_PERSIST){
+          $asset = get_assets_by_panel_ref($section_id, $panel_ref, 1)[0];
+          if(!is_null($asset)){
+               $conf['ID'] = $asset->ID;
+          }
+     }
+
      $res = init_asset($conf);
 
      $max = 1;

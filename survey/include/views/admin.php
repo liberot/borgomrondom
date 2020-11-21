@@ -1,6 +1,4 @@
-<?php defined('ABSPATH') || exit;
-
-DEFINE('SERVICE_BASE', '/wp-admin/admin.php');
+<?php // defined('ABSPATH') || exit;
 
 // plugin menu insert
 add_action('admin_menu', 'setup_admin_menu');
@@ -191,7 +189,7 @@ EOD;
      $coll = get_threads();
      if(!is_null($coll[0])){
           foreach($coll as $thread){
-               $href = sprintf('%s?page=threads&edit=entries&thread_id=%s', SERVICE_BASE, $thread->ID);
+               $href = sprintf('%s?page=threads&edit=entries&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
                $d = date_create($thread->post_date);
                $d = date_format($d, 'd-m-Y H:i:s');
                echo '<tr>';
@@ -229,20 +227,24 @@ function build_thread_entries_view(){
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
      wp_enqueue_style('admin_style');
 
-     $thread_id = $_REQUEST['thread_id'];
-     $thread = get_thread_by_id($thread_id)[0];
+     $thread_id = trim_incoming_numeric($_REQUEST['thread_id']);
+     $client_id = trim_incoming_numeric($_REQUEST['client_id']);
+
+     $thread = get_thread_by_id($thread_id, $client_id)[0];
+
      if(is_null($thread)){ return false; }
      $thread->post_content = pagpick($thread->post_content);
 
-     $toc = get_toc_by_thread_id($thread_id)[0];
+     $toc = get_toc_by_thread_id($thread_id, $client_id)[0];
      if(is_null($toc)){ return false; }
      $toc->post_content = pagpick($toc->post_content);
 
-     $sections = get_sections_by_thread_id($thread_id);
+     $sections = get_sections_by_thread_id($thread_id, $client_id);
      if(is_null($sections)){ return false; }
 
-     $headline = esc_html(__('Threads', 'nosuch'));
+     $headline = esc_html(__('Book Builder Threads from Book TOC', 'nosuch'));
      $id = esc_html(__('ID', 'nosuch'));
+     $ref = esc_html(__('Reference', 'nosuch'));
      $title = esc_html(__('Title', 'nosuch'));
      $excerpt = esc_html(__('Type', 'nosuch'));
      $date = esc_html(__('Date of Init', 'nosuch'));
@@ -276,25 +278,26 @@ EOD;
 
      $style = 'column-primary';
 
-// fixdiss
      $section_id = $sections[0]->ID;
 
      if(is_null($toc->post_content['booktoc'])){
           $toc->post_content['booktoc'] = [];
      }
 
-     foreach($toc->post_content['booktoc'] as $ref){
-          $panel = get_panel_by_ref($section_id, $ref)[0];
+     foreach($toc->post_content['booktoc'] as $panel_ref){
+
+          $panel = get_panel_by_ref($section_id, $panel_ref, $client_id)[0];
           if(is_null($panel)){ continue; }
           $panel->post_content = pagpick($panel->post_content);
-          $assets = get_assets_by_panel_ref($thread_id, $panel->post_excerpt);
+
+          $assets = get_assets_by_panel_ref($section_id, $panel->post_excerpt, 10, $client_id);
+
           $buf = '';
           foreach($assets as $asset){
                $buf.= sprintf('<img width="75px" src="%s">', add_base_to_chunk($asset->post_content));
           }
-          // $href = sprintf('%s?page=threads&edit=entries&thread_id=%s', SERVICE_BASE, $thread->ID);
-          $href = '#';;
-          $d = date_create($survey->post_date);
+          $href = '#';
+          $d = date_create($panel->post_date);
           $d = date_format($d, 'd-m-Y H:i:s');
           echo '<tr>';
                echo sprintf('<td class="%s">%s</td>', $style, esc_html($panel->ID));

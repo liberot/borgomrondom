@@ -32,18 +32,6 @@ require_once('include/views/client.php');
 require_once('include/views/web.php');
 require_once('include/utils/utils.php');
 
-function on_plugin_activation(){
-     // init_test_page();
-     insert_guest_client();
-     init_survey_page();
-}
-
-function on_plugin_deactivation(){
-}
-
-register_activation_hook(__FILE__, 'on_plugin_activation');
-register_deactivation_hook(__FILE__, 'on_plugin_deactivation');
-
 function set_dev_env(){
      // init_survey_page();
      // insert_guest_client();
@@ -62,6 +50,6 @@ function set_test_env(){
 }
 
 // add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
-add_action('init', function(){ set_dev_env(); });
+// add_action('init', function(){ set_dev_env(); });
 
 

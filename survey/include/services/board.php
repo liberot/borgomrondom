@@ -45,7 +45,7 @@ function exec_init_panel(){
           return false;
      }
 
-     $author_id = get_current_user_id();
+     $author_id = get_author_id();
 
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
      $panel_ref = get_session_ticket('panel_ref');

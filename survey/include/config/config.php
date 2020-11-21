@@ -9,10 +9,11 @@ class Role {
 class Path {
      const INKSCAPE = '/Applications/Inkscape.app/Contents/MacOS/inkscape';
      const GHOSTSCRIPT = '/opt/local/bin/gs';
+     const SERVICE_BASE = '/wp-admin/admin.php';
 }
 
 class Layout {
-     const ASSUMED_SVG_UNIT = 113;
+     const ASSUMED_SVG_UNIT = 72;
      const DESIRED_PPI = 300;
      const IMAGE_MAX_SCALE_RATIO = 1.3;
      const IMAGE_SCALE_TYPE = 'cut_into_slot';
