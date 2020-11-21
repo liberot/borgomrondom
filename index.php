@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Plugin Name: Survey Print
+ * Plugin Name: Book Builder
  * Plugin URI: http://127.0.0.1:8083
- * Description: Survey Print
+ * Description: Book Builder Plugin as for to build Print Spreads from generic Quesionnaire Resultsets
  * Version: 0.0.0.0.1
- * Author: Survey Print
+ * Author: Book Builder
  *
  * @package nosuch_survey
  */

@@ -217,7 +217,8 @@ function select_meta($coll){
 }
 
 function get_author_id(){
-     return get_current_user_id();
+     $res = get_current_user_id();
+     return $res;
 }
 
 function remove_base_from_chunk($chunk){

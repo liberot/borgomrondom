@@ -32,7 +32,12 @@ function get_toc_by_book_id($book_id){
      $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($book_id);
      $sql = <<<EOD
-     select * from wp_posts where post_type = 'surveyprint_toc' and post_author = '{$author_id}' and post_parent = '{$book_id}' order by ID desc limit 1;
+     select * from wp_posts 
+          where post_type = 'surveyprint_toc'
+               and post_author = '{$author_id}'
+               and post_parent = '{$book_id}'
+               order by ID 
+               desc limit 1;
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
@@ -41,11 +46,16 @@ EOD;
 }
 
 function get_toc_by_id($toc_id){
-     $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($toc_id);
+     $author_id = esc_sql(get_author_id());
      $sql = <<<EOD
 
-     select * from wp_posts where post_type = 'surveyprint_toc' and post_author = '{$author_id}' and ID = '{$toc_id}' order by ID desc limit 1;
+     select * from wp_posts 
+          where post_type = 'surveyprint_toc' 
+               and post_author = '{$author_id}' 
+               and ID = '{$toc_id}' 
+               order by ID 
+               desc limit 1;
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
@@ -60,8 +70,14 @@ function save_toc($conf){
 
 function get_toc_by_thread_id($thread_id){
      $thread_id = esc_sql($thread_id);
+     $author_id = esc_sql(get_author_id());
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_toc' and post_parent = '{$thread_id}' order by ID desc limit 1;
+          select * from wp_posts 
+               where post_type = 'surveyprint_toc'
+               and post_author = '{$author_id}'
+               and post_parent = '{$thread_id}'
+               order by ID 
+               desc limit 1;
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
@@ -71,7 +87,11 @@ EOD;
 
 function get_toc_by_survey_id($survey_id){
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_toc' and post_parent = '{$survey_id}' order by ID desc limit 1;
+          select * from wp_posts 
+               where post_type = 'surveyprint_toc' 
+               and post_parent = '{$survey_id}' 
+               order by ID 
+               desc limit 1;
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);

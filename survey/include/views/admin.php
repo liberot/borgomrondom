@@ -7,7 +7,7 @@ add_action('admin_menu', 'setup_admin_menu');
 function setup_admin_menu() {
 
      $page_title = 'surveyprint';
-     $menu_title = esc_html(__('SurveyPrint', 'nosuch'));
+     $menu_title = esc_html(__('Book Builder', 'nosuch'));
      $menu_slug = 'surveyprint_admin_utils';
      $capability = 'administrator';
      $function = '';
@@ -16,42 +16,42 @@ function setup_admin_menu() {
      add_menu_page($page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position); 
 
      $parent_slug = 'surveyprint_admin_utils';
+     $menu_title = esc_html(__('Plugin Utilities', 'survey'));
      $page_title = 'utils';
      $menu_slug = 'surveyprint_utils';
      $capability = 'administrator';
-     $menu_title = esc_html(__('SurveyPrint Utilities', 'survey'));
      $function = 'build_surveyprint_utils_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
+     $menu_title = esc_html(__('Typeform Utilities', 'survey'));
      $page_title = 'utils';
      $menu_slug = 'typeform_utils';
      $capability = 'administrator';
-     $menu_title = esc_html(__('Typeform Utilities', 'survey'));
      $function = 'build_typeform_utils_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
+     $menu_title = esc_html(__('Stored Questionnaire', 'survey'));
      $page_title = 'questionnaire';
      $menu_slug = 'questionnaire';
      $capability = 'administrator';
-     $menu_title = esc_html(__('Stored Questionnaire', 'survey'));
      $function = 'build_questionnaire_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
+     $menu_title = esc_html(__('Client Threads', 'survey'));
      $page_title = 'threads';
      $menu_slug = 'threads';
      $capability = 'administrator';
-     $menu_title = esc_html(__('Threads', 'survey'));
      $function = 'build_thread_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 /*
      $parent_slug = 'surveyprint_admin_utils';
+     $menu_title = esc_html(__('Spread Manager', 'survey'));
      $page_title = 'spreads';
      $menu_slug = 'spreads';
      $capability = 'administrator';
-     $menu_title = esc_html(__('Spread Manager', 'survey'));
      $function = 'build_spreads_view';
      add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 */
@@ -70,12 +70,13 @@ function setup_admin_menu() {
 add_shortcode('surveyprint_utils_view', 'build_surveyprint_utils_view');
 function build_surveyprint_utils_view(){
 
-     wp_register_script('service_i18n',    WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
-     wp_register_script('service',         WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_register_script('service_i18n', WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
+     wp_register_script(     'service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
 
-     $headline = esc_html(__('SurveyPrint Utilities', 'nosuch'));
+     $headline = esc_html(__('Book Builder Plugin Utilities', 'nosuch'));
      $welcome = esc_html(__('Welcome', 'nosuch'));
      echo <<<EOD
           <div class='wrap'>
@@ -105,7 +106,7 @@ function build_typeform_utils_view(){
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
 
-     $headline = esc_html(__('Typeform Survey Utilities', 'nosuch'));
+     $headline = esc_html(__('Book Builder Typeform Utilities', 'nosuch'));
      $welcome = esc_html(__('Welcome', 'nosuch'));
      echo <<<EOD
           <div class='wrap'>
@@ -159,7 +160,7 @@ function build_thread_list_view(){
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
      wp_enqueue_style('admin_style');
 
-     $headline = esc_html(__('Threads', 'nosuch'));
+     $headline = esc_html(__('Book Builder Client Threads', 'nosuch'));
      $id = esc_html(__('ID', 'nosuch'));
      $title = esc_html(__('Title', 'nosuch'));
      $excerpt = esc_html(__('Type', 'nosuch'));
@@ -229,11 +230,16 @@ function build_thread_entries_view(){
      wp_enqueue_style('admin_style');
 
      $thread_id = $_REQUEST['thread_id'];
-     $coll = get_toc_by_thread_id($thread_id)[0];
-     if(is_null($coll)){
-          return false;
-     }
-     $coll->post_content = pagpick($coll->post_content);
+     $thread = get_thread_by_id($thread_id)[0];
+     if(is_null($thread)){ return false; }
+     $thread->post_content = pagpick($thread->post_content);
+
+     $toc = get_toc_by_thread_id($thread_id)[0];
+     if(is_null($toc)){ return false; }
+     $toc->post_content = pagpick($toc->post_content);
+
+     $sections = get_sections_by_thread_id($thread_id);
+     if(is_null($sections)){ return false; }
 
      $headline = esc_html(__('Threads', 'nosuch'));
      $id = esc_html(__('ID', 'nosuch'));
@@ -269,9 +275,17 @@ function build_thread_entries_view(){
 EOD;
 
      $style = 'column-primary';
-     if(null == $coll->post_content['booktoc']){ $coll->post_content['booktoc'] = []; }
-     foreach($coll->post_content['booktoc'] as $ref){
-          $panel = get_panel_by_ref($thread_id, $ref)[0];
+
+// fixdiss
+     $section_id = $sections[0]->ID;
+
+     if(is_null($toc->post_content['booktoc'])){
+          $toc->post_content['booktoc'] = [];
+     }
+
+     foreach($toc->post_content['booktoc'] as $ref){
+          $panel = get_panel_by_ref($section_id, $ref)[0];
+          if(is_null($panel)){ continue; }
           $panel->post_content = pagpick($panel->post_content);
           $assets = get_assets_by_panel_ref($thread_id, $panel->post_excerpt);
           $buf = '';
@@ -334,7 +348,7 @@ function build_question_view(){
      $id = esc_html(__('ID', 'nosuch'));
      $title = esc_html(__('Question', 'nosuch'));
      $max_assets = esc_html(__('Num of Max Assets', 'nosuch'));
-     $headline = esc_html(__('Questionnaire', 'nosuch'));
+     $headline = esc_html(__('Book Builder Stored Questionnaire', 'nosuch'));
      $welcome = esc_html(__('Welcome', 'nosuch'));
      $layout_group = esc_html(__('Layout Group', 'nosuch'));
      $date = esc_html(__('Date of Init', 'nosuch'));
