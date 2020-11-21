@@ -72,9 +72,8 @@ function exec_init_panel(){
           return false;
      }
 
-// todo diss bad post the answer plz
-     $idoc = $_POST['doc'];
-     $idoc = walk_the_doc($idoc);;
+     $answer = trim_incoming_string($_POST['answer']);
+     $answer = trim_for_print($answer);
 
      $panel = get_panel_by_ref($section_id, $panel_ref)[0];
      if(is_null($panel)){
@@ -82,8 +81,9 @@ function exec_init_panel(){
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$panel_ref));
           return false;
      }
+
      $doc = pagpick($panel->post_content);
-     $doc['answer'] = $idoc['answer'];
+     $doc['answer'] = $answer;
      $doc = pigpack($doc);
 
      $conf = [
