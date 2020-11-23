@@ -54,7 +54,6 @@ EOD;
      return $res;
 }
 
-
 function get_panel_by_ref($section_id, $ref, $client_id=null){
      $section_id = esc_sql($section_id);
      $ref = esc_sql($ref);
@@ -71,6 +70,4 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 }
-
-
 

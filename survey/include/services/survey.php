@@ -2,7 +2,7 @@
 
 add_action('admin_post_exec_get_surveys', 'exec_get_surveys');
 function exec_get_surveys(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -13,7 +13,7 @@ function exec_get_surveys(){
 
 add_action('admin_post_exec_get_survey_by_id', 'exec_get_survey_by_id');
 function exec_get_survey_by_id(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -28,7 +28,7 @@ function exec_get_survey_by_id(){
 
 add_action('admin_post_exec_save_question', 'exec_save_question');
 function exec_save_question(){
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;

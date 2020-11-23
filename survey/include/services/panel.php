@@ -3,7 +3,7 @@
 add_action('admin_post_exec_get_panels_of_client', 'exec_get_panels_of_client');
 function exec_get_panels_of_client(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -22,7 +22,7 @@ function exec_get_panels_of_client(){
 add_action('admin_post_exec_get_panels_by_thread_id', 'exec_get_panels_by_thread_id');
 function exec_get_panels_by_thread_id(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -39,7 +39,7 @@ function exec_get_panels_by_thread_id(){
 add_action('admin_post_exec_init_panel', 'exec_init_panel');
 function exec_init_panel(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -110,7 +110,8 @@ function exec_init_panel(){
 
      $panel_id = init_panel($conf);
 
-     $coll = get_panel_by_id($panel_id);
+     // $coll = get_panel_by_ref($section_id, panel_id);
+     $coll = [];
 
      $message = esc_html(__('panel saved', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
@@ -119,7 +120,7 @@ function exec_init_panel(){
 add_action('admin_post_exec_get_panel_by_ref', 'exec_get_panel_by_ref');
 function exec_get_panel_by_ref(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;

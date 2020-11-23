@@ -3,7 +3,7 @@
 add_action('admin_post_exec_init_asset_by_panel_ref', 'exec_init_asset_by_panel_ref');
 function exec_init_asset_by_panel_ref(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -83,7 +83,7 @@ function exec_init_asset_by_panel_ref(){
 add_action('admin_post_exec_get_assets_by_panel_ref', 'exec_get_assets_by_panel_ref');
 function exec_get_assets_by_panel_ref(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;

@@ -3,6 +3,7 @@
 class Role {
      const GUEST = 'surveyprint_guest';
      const CUSTOMER = 'surveyprint_customer';
+     const SUBSCRIBER = 'subscriber';
      const ADMIN = 'administrator';
 }
 

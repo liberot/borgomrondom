@@ -3,7 +3,7 @@
 add_action('admin_post_exec_get_threads_of_client', 'exec_get_threads_of_client');
 function exec_get_threads_of_client(){
 
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -19,7 +19,7 @@ add_action('admin_post_exec_init_thread', 'exec_init_thread');
 function exec_init_thread(){
 
 // policy
-     if(!policy_match([Role::ADMIN, Role::CUSTOMER])){
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
