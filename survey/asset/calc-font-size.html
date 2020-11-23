@@ -19,13 +19,14 @@ let temp1st = null;
 let temp2nd = null;
 for(let idx = 0; idx < fonts.length; idx++){
 // haha der war gut
-     temp1st = document.createElement('div');
+     temp1st = document.createElement('span');
      temp1st.style.fontFamily = 'American Typewriter';
      temp1st.style.fontSize = '13px';
-     temp2nd = document.createTextNode(fonts.charAt(idx));
+     temp2nd = document.createTextNode(fonts.charAt(idx)+'xyz');
      temp1st.appendChild(temp2nd);
      document.body.appendChild(temp1st);
      size = window.getComputedStyle(temp1st).fontSize;
+     size = window.getComputedStyle(temp1st).width;
      console.log(size);
 }
 

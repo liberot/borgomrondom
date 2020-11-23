@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
 
-define ('NOSUCH_VERSION', '003.yancsee');
+define ('NOSUCH_VERSION', '003.yancsee.zummieecow');
 define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'nosuch', DIRECTORY_SEPARATOR, 'survey'));
 
 require_once('include/config/config.php');

@@ -473,20 +473,35 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
           $txts = [];
-          $max_spans = intval($height /(floatval($font_size) *floatval($line)));
+          $max_spans = intval(floatval($height) /(floatval($font_size) *floatval($line)));
 
+/*
+print "\n";
+print "height:";
+print_r($height);
+print "\n";
+print "font_size:";
+print_r($font_size);
+print "\n";
+print_r($max_spans);
+print "\n";
+*/
           $idx = 0;
           $line_break_sum = 0;
-          while($idx <= $max_spans){
+          $line_breaks = 0;
+          while(intval($idx +$line_breaks) <= $max_spans){
+print_r($idx);
+print ":";
+print_r($line_breaks);
+print "\n"; 
                $row = random_int(0, count($tary) -1);
                $len = strlen($tary[$row]);
                $span_width = floatval($len) *floatval($font_size);
-               $idx++;
                $txts[$idx] = $tary[$row];
+               $idx++;
                while(intval($span_width) >= intval($width)){
                     $span_width = intval($span_width) -intval($width);
-                    $txts[$idx] = $tary[$row];
-                    $idx++;
+                    $line_breaks++;
                }
           }
 
@@ -501,8 +516,8 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font']['family'] = $font_family;
           $asset['conf']['font']['size'] = $font_size;
           $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval($line);
-          $asset['conf']['font']['align'] = 'left';
-          $asset['conf']['font']['space'] = '0.975';
+          $asset['conf']['font']['align'] = 'block';
+          $asset['conf']['font']['space'] = '1';
 
           $asset['conf']['unit'] = 'px';
           $asset['conf']['xpos'] = $xpos;
