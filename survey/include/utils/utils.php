@@ -105,7 +105,7 @@ function trim_incoming_answer($val){
 function walk_the_doc($doc){
      $res = null;
      if(is_object($doc)){ $doc = get_object_vars($doc); }
-     if(false == is_array($doc)){ return false; }
+     if(false == is_array($doc)){ return res; }
      $res = trim_doc_node($doc);
      return $res;
 }

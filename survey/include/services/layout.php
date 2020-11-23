@@ -8,16 +8,6 @@ function exec_init_layout(){
           return false;
      }
 
-// fixdiss tag issus
-/*
-     $tags_input = $_POST['tags'];
-     $term_id = wp_insert_term('term', 'post_tag', [
-          'description'=>'description',
-          'slug'=>'slug',
-          'parent'=>0
-     ]);
-*/
-
      $rule = trim_incoming_filename($_POST['rule']);
      $group = trim_incoming_filename($_POST['group']);
 
@@ -314,14 +304,14 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
 
 function eval_polygon_fields($svg_doc, $css_coll, $doc){
      $res = [];
-     $idx = 0;
+     $indx = intval(0);
      foreach($svg_doc as $node){
           switch($node['tag']){
                case 'polygon':
 
                     $poly = [];
                     $poly['type'] = 'poly';
-                    $poly['indx'] = sprintf('poly_%s', $idx);
+                    $poly['indx'] = sprintf('poly_%s', intval($indx));
                     $poly['conf'] = [];
                     $poly['conf']['unit'] = 'px';
                     $poly['conf']['color'] = [];
@@ -405,7 +395,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                          }
                     }
                     $res[]= $poly;
-                    $idx++;
+                    $indx++;
                     break;
           }
      }
@@ -441,6 +431,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
 
      $indx = 0;
      $res = [];
+     $line = 1.125;
      foreach($xes as $field){
 
           $temp = $field['pos'];
@@ -470,13 +461,18 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $font_size = preg_replace('/[^\d]/i', '', $font_size);
           $font_size = floatval($font_size);
           $font_size = corr_layout_pos($font_size, $doc);
+          if(0 >= $font_size){ $font_size = 1; }
           
           $font_family = preg_replace('/\s+/i', '', $field['style']['font-family']);
-
+          $font_family = preg_replace('/\'/i', '', $field['style']['font-family']);
+          $font_family = preg_replace('/\"/i', '', $field['style']['font-family']);
+          $font_family = preg_replace('/"/i', '', $field['style']['font-family']);
+          $font_family = preg_replace("/'/i", '', $field['style']['font-family']);
+          $font_family = match_font_family($font_family);
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
           $txts = [];
-          $lines = intval($height /( $font_size *1.35 ));
+          $lines = intval($height /(floatval($font_size) *floatval($line)));
           for($idx = 0; $idx < $lines; $idx++){
                $row = random_int(0, count($tary) -1);
                $txts[$idx] = $tary[$row];
@@ -492,8 +488,8 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font'] = [];
           $asset['conf']['font']['family'] = $font_family;
           $asset['conf']['font']['size'] = $font_size;
-          $asset['conf']['font']['lineHeight'] = floatval($font_size) *1.35;
-          $asset['conf']['font']['align'] = 'block';
+          $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval($line);
+          $asset['conf']['font']['align'] = 'left';
           $asset['conf']['font']['space'] = '0.975';
 
           $asset['conf']['unit'] = 'px';

@@ -99,7 +99,6 @@ function exec_export_separations(){
           'output_tiff'=>$output_tiff
      ];
 
-
      $message = esc_html(__('seps written', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 };

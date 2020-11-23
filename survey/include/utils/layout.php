@@ -80,6 +80,17 @@ EOD;
      $sql = debug_sql($sql);
 };
 
+function get_layout_by_rule($rule){
+     $rule = esc_sql($rule);
+     $sql = <<<EOD
+          select * from wp_posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
+EOD;
+     global $wpdb;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
 function px_to_unit($ppi, $pxs, $unit){
      if(is_null($ppi)){ $ppi = 300; }
      if(is_null($pxs)){ $pxs = 0; }
@@ -285,8 +296,24 @@ function fit_image_asset_into_slot($doc, $asset){
      $asset['conf']['scale'] = $r;
      $asset['conf']['layoutCode'] = $layout_code; 
 
-// print_r($asset['conf']);
-
      return $asset;
 }
 
+function match_font_family($font_family){
+     $res = $font_family;
+     $font_family_map = [
+          [ 'tokens'=>['American', 'Typewriter'], 'res'=>'American Typewriter' ]
+     ];
+     foreach($font_family_map as $map){
+          $m = 0;
+          foreach($map['tokens'] as $token){
+               if(-1 != strpos($font_family, $token)){
+                    $m++;
+               }
+          }
+          if($m >= count($map['tokens'])){
+               $res = $map['res'];
+          }
+     }
+     return $res;
+}
