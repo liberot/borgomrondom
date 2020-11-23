@@ -9,7 +9,7 @@ class Tools extends Controller {
           this.register(new Subscription(      'fontbtn::released', this.bindFontSetting));
           this.register(new Subscription(     'textinput::updated', this.bindTextInput));
           this.register(new Subscription(    'assetinput::updated', this.bindAssetInput));
-          this.register(new Subscription(        'asset::selected', this.setupEditor));
+          this.register(new Subscription(          'select::asset', this.setupEditor));
           this.register(new Subscription(         'font::selected', this.bindFontSelection));
           this.register(new Subscription(       'ppibtn::released', this.setPpi))
           this.register(new Subscription(    'printsize::selected', this.setPrintSize))
@@ -132,10 +132,8 @@ class Tools extends Controller {
           let idx = parseInt(parseInt(key) -1);
           if(null != this.model.doc.assets[idx]){
                let indx = this.model.doc.assets[idx].indx;
-               let model = {
-                    arguments: [ 'asset::selected', indx ]
-               }
-               this.notify(new Message('asset::selected', model ));
+               let model = { arguments: [ 'select::asset', indx ]};
+               this.notify(new Message('select::asset', model ));
           };
      }
 
@@ -205,7 +203,7 @@ class Tools extends Controller {
           jQuery(document).off('mousemove');
 
           jQuery(document).mouseup(function(){
-               
+
                if(null == ref.model.mouseDownRec){ return; }
 
                if(SpreadViewerConfig.quantize){
@@ -220,12 +218,8 @@ class Tools extends Controller {
           });
 
           jQuery('.screen').mousedown(function(e){
-
-               ref.model.selectedLibraryItem = ref.selectLibraryItemByMouse(arguments[0].clientX, arguments[0].clientY);
-
+               // ref.model.selectedLibraryItem = ref.selectLibraryItemByMouse(arguments[0].clientX, arguments[0].clientY);
                if(null == ref.model.selectedLibraryItem){ return; }
-
-               let unit = ref.model.selectedLibraryItem.conf.unit;
                ref.switchUnit(ref.model.selectedLibraryItem, ref.model.doc.unit);
 
                ref.model.mouseDownRec = { 
@@ -238,7 +232,7 @@ class Tools extends Controller {
                     height: parseFloat(ref.model.selectedLibraryItem.conf.height),
                     sw: jQuery('.screen').width(),
                     sh: jQuery('.screen').height(),
-                    unit: unit
+                    unit: ref.model.selectedLibraryItem.conf.unit
                };
           });
 
@@ -518,17 +512,13 @@ console.log(this.model.spread);
 
      bindLoadedLayoutPresets(msg){
           this.model.loadedLayoutPresets = msg.model;
-          if(null == this.model.loadedLayoutPresets){
+          if(null == this.model.loadedLayoutPresets){ return false; }
+          if(null == this.model.loadedLayoutPresets[0]){
+               this.model.doc = new MockModel().model;
+               this.initDocument();
                return false;
           }
-          for(let idx in this.model.loadedLayoutPresets){
-               this.model.loadedLayoutPresets[idx].post_content = LayoutUtil.pagpick(this.model.loadedLayoutPresets[idx].post_content);
-          }
-          if(null == this.model.loadedLayoutPresets[0]){
-                this.buildLayoutPreset();
-                return true;
-          }
-          this.model.doc = this.model.loadedLayoutPresets[0].post_content;
+          this.model.doc = LayoutUtil.pagpick(this.model.loadedLayoutPresets[0].post_content);
           this.initDocument();
      }
 
@@ -942,17 +932,25 @@ console.log(res)
      }
 
      setupEditor(msg){
+
           let ref = this;
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           let model;
+
           switch(this.model.doc.assets[idx].type){
+
                case 'text':
+
                     let text = '';
+                    let temp = '';
                     for(let lnx in this.model.doc.assets[idx].text){
-                         text+= this.model.doc.assets[idx].text[lnx];
-                         text+= "\n";
+                         temp = this.model.doc.assets[idx].text[lnx];
+                         temp = temp.replace("\n", '');
+                         text+= temp;
                     }
+
                     model = {
+
                          'indx':    this.model.doc.assets[idx].indx,
                          'text':    text,
                          'xpos':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.xpos),
@@ -965,6 +963,7 @@ console.log(res)
                          'opacity': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.opacity),
                          'color':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color)
                     }
+
                     if(null != this.model.doc.assets[idx].conf.color['cmyk']){
                          model.c =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].c);
                          model.m =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].m);
@@ -1310,7 +1309,7 @@ let __lib__004__tmpl = `
 
 
 let __lib__002__tmpl = `
-<a href='javascript:layoutQueue.route("asset::selected", "{title}")'>{title}</a>
+<a href='javascript:layoutQueue.route("select::asset", "{title}")'>{title}</a>
 `;
 
 
@@ -1531,7 +1530,7 @@ class MockModel extends Model {
                          "indx": "question",
                          "type": "text",
                          "text": [
-                              "The Question"
+                              "Default Question"
                          ],
                          "selected": "false",
                          "conf": {
@@ -1559,7 +1558,7 @@ class MockModel extends Model {
                          "indx": "answer",
                          "type": "text",
                          "text": [
-                              "The Answer"
+                              "Default Answer"
                          ],
                          "selected": "false",
                          "conf": {
@@ -1575,7 +1574,7 @@ class MockModel extends Model {
                               "color": { 
                                    "cmyk": { "c": "1", "m": "0.35", "y": "0.1", "k": "0" }
                               },
-                              "xpos": "230",
+                              "xpos": "25",
                               "ypos": "70",
                               "width": "170",
                               "height": "300",
