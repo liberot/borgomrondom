@@ -299,7 +299,8 @@ function fit_image_asset_into_slot($doc, $asset){
      return $asset;
 }
 
-function match_font_family($font_family){
+function match_font_family($style){
+     $font_family = $style['font-family'];
      $font_family = preg_replace('/\s+/i', '', $font_family);
      $font_family = preg_replace( '/\'/i', '', $font_family);
      $font_family = preg_replace( '/\"/i', '', $font_family);
@@ -320,5 +321,20 @@ function match_font_family($font_family){
                $res = $map['res'];
           }
      }
+     return $res;
+}
+
+function match_font_weight($style){
+     $font_family = $style['font-family'];
+     $font_family = preg_replace('/\s+/i', '', $font_family);
+     $font_family = preg_replace( '/\'/i', '', $font_family);
+     $font_family = preg_replace( '/\"/i', '', $font_family);
+     $font_family = preg_replace(  '/"/i', '', $font_family);
+     $font_family = preg_replace(  "/'/i", '', $font_family);
+     $font_weight = $style['font-weight'];
+     if(-1 != strpos($font_family, 'Light')){
+          $font_weight = 200;
+     }
+     $res = $font_weight;
      return $res;
 }

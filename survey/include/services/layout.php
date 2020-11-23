@@ -469,14 +469,10 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $font_size = corr_layout_pos($font_size, $doc);
           if(0 >= $font_size){ $font_size = 1; }
          
-/* 
-          $font_family = preg_replace('/\s+/i', '', $field['style']['font-family']);
-          $font_family = preg_replace('/\'/i', '', $field['style']['font-family']);
-          $font_family = preg_replace('/\"/i', '', $field['style']['font-family']);
-          $font_family = preg_replace('/"/i', '', $field['style']['font-family']);
-          $font_family = preg_replace("/'/i", '', $field['style']['font-family']);
-*/
-          $font_family = match_font_family($font_family);
+          $font_family = match_font_family($field['style']);
+
+          $font_weight = match_font_weight($field['style']);
+
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
           $txts = [];
@@ -514,9 +510,9 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font']['family'] = $font_family;
           $asset['conf']['font']['size'] = $font_size;
           $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval($line);
-          $asset['conf']['font']['align'] = 'block';
+          $asset['conf']['font']['align'] = 'right';
           $asset['conf']['font']['space'] = '1';
-          $asset['conf']['font']['weight'] = '300';
+          $asset['conf']['font']['weight'] = $font_weight;
 
           $asset['conf']['unit'] = 'px';
           $asset['conf']['xpos'] = $xpos;
