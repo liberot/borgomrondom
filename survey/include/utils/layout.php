@@ -300,6 +300,11 @@ function fit_image_asset_into_slot($doc, $asset){
 }
 
 function match_font_family($font_family){
+     $font_family = preg_replace('/\s+/i', '', $font_family);
+     $font_family = preg_replace( '/\'/i', '', $font_family);
+     $font_family = preg_replace( '/\"/i', '', $font_family);
+     $font_family = preg_replace(  '/"/i', '', $font_family);
+     $font_family = preg_replace(  "/'/i", '', $font_family);
      $res = $font_family;
      $font_family_map = [
           [ 'tokens'=>['American', 'Typewriter'], 'res'=>'American Typewriter' ]

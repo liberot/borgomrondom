@@ -429,6 +429,11 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
      }
 
      $random_span_ary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
+     $tmp = [];
+     foreach($random_span_ary as $row){
+          $tmp[]= trim_for_print($row);
+     }
+     $random_span_ary = $tmp;
 
      $indx = 0;
      $res = [];
@@ -463,12 +468,14 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $font_size = floatval($font_size);
           $font_size = corr_layout_pos($font_size, $doc);
           if(0 >= $font_size){ $font_size = 1; }
-          
+         
+/* 
           $font_family = preg_replace('/\s+/i', '', $field['style']['font-family']);
           $font_family = preg_replace('/\'/i', '', $field['style']['font-family']);
           $font_family = preg_replace('/\"/i', '', $field['style']['font-family']);
           $font_family = preg_replace('/"/i', '', $field['style']['font-family']);
           $font_family = preg_replace("/'/i", '', $field['style']['font-family']);
+*/
           $font_family = match_font_family($font_family);
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
@@ -509,6 +516,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval($line);
           $asset['conf']['font']['align'] = 'block';
           $asset['conf']['font']['space'] = '1';
+          $asset['conf']['font']['weight'] = '300';
 
           $asset['conf']['unit'] = 'px';
           $asset['conf']['xpos'] = $xpos;

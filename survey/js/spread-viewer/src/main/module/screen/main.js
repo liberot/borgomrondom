@@ -394,11 +394,11 @@ class Screen extends Controller {
           let width = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.width, target.conf.unit);
           let height = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.height, target.conf.unit);
           let align = target.conf.font.align;
-/*
-          let rect = this.model.currentScreen.rect(width, height).move(x, y);
-          let text = this.model.currentScreen.text('');
-              text.clipWith(rect);
-*/
+
+          let xx = x;
+          let yy = y;
+
+          let buf = '';
           for(var iidx in target.spans){
                switch(align){
                     case 'left':
@@ -424,10 +424,11 @@ class Screen extends Controller {
                     }
                }
 
-               let rect = this.model.currentScreen.rect(width, height).move(x, y);
-               let text = this.model.currentScreen.text('');
+               let rect = this.model.currentScreen.rect(width, height).move(xx, yy);
+               let text = this.model.currentScreen.text(target.spans[iidx].text).font(font).attr(attr).fill(colr);
                    text.tspan(target.spans[iidx].text).font(font).attr(attr).fill(colr);
                    text.clipWith(rect);
+
                this.stepY();
           }
      }
