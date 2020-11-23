@@ -479,21 +479,20 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $line_break_sum = 0;
           while($idx <= $possible_spans){
                $row = random_int(0, count($tary) -1);
-               $txts[$idx] = $tary[$row];
-               $idx++;
-               $len = strlen($row);
+               $len = strlen($tary[$row]);
                $span_width = floatval($len) *floatval($font_size);
-               $line_breaks = 0;
-               while(intval($span_width) >= 0){
+               $line_breaks = 1;
+               while(intval($span_width) >= intval($width)){
                     $span_width = intval($span_width) -intval($width);
                     $line_breaks++;
                }
                $idx+= $line_breaks;
                $line_break_sum +=$line_breaks;
+               $txts[$idx] = $tary[$row];
           }
 
           if($line_break_sum > $possible_spans){
-               $asset = ['mist'] = true;
+               $asset['mist'] = true;
           }
 
           $asset = [];
