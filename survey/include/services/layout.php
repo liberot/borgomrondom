@@ -473,26 +473,24 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
           $txts = [];
-          $possible_spans = intval($height /(floatval($font_size) *floatval($line)));
+          $max_spans = intval($height /(floatval($font_size) *floatval($line)));
+
+print 'max spans:';
+print_r($max_spans);
+
           $idx = 0;
-          $line_breaks = 0;
           $line_break_sum = 0;
-          while($idx <= $possible_spans){
+          while($idx <= $max_spans){
                $row = random_int(0, count($tary) -1);
                $len = strlen($tary[$row]);
                $span_width = floatval($len) *floatval($font_size);
-               $line_breaks = 1;
+               $idx++;
+               $txts[$idx] = $tary[$row];
                while(intval($span_width) >= intval($width)){
                     $span_width = intval($span_width) -intval($width);
-                    $line_breaks++;
+                    $txts[$idx] = $tary[$row];
+                    $idx++;
                }
-               $idx+= $line_breaks;
-               $line_break_sum +=$line_breaks;
-               $txts[$idx] = $tary[$row];
-          }
-
-          if($line_break_sum > $possible_spans){
-               $asset['mist'] = true;
           }
 
           $asset = [];
