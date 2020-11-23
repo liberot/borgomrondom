@@ -1550,7 +1550,7 @@ class MockModel extends Model {
                               "xpos": "20",
                               "ypos": "35",
                               "width": "170",
-                              "height": "0",
+                              "height": "300",
                               "opacity": "1.0",
                               "depth": "10"
                          }
@@ -1578,7 +1578,7 @@ class MockModel extends Model {
                               "xpos": "230",
                               "ypos": "70",
                               "width": "170",
-                              "height": "0",
+                              "height": "300",
                               "opacity": "1.0",
                               "depth": "20"
                          }, 

@@ -428,7 +428,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           }
      }
 
-     $tary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
+     $random_span_ary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
 
      $indx = 0;
      $res = [];
@@ -474,36 +474,27 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
 
           $txts = [];
           $max_spans = intval(floatval($height) /(floatval($font_size) *floatval($line)));
+          for($idx = 0; $idx <= $max_spans; $idx++){
+               $row = random_int(0, count($random_span_ary) -1);
+               $txts[$idx] = $random_span_ary[$row];
+          }
 
 /*
-print "\n";
-print "height:";
-print_r($height);
-print "\n";
-print "font_size:";
-print_r($font_size);
-print "\n";
-print_r($max_spans);
-print "\n";
-*/
           $idx = 0;
           $line_break_sum = 0;
           $line_breaks = 0;
           while(intval($idx +$line_breaks) <= $max_spans){
-print_r($idx);
-print ":";
-print_r($line_breaks);
-print "\n"; 
-               $row = random_int(0, count($tary) -1);
-               $len = strlen($tary[$row]);
+               $row = random_int(0, count($random_span_ary) -1);
+               $len = strlen($random_span_ary[$row]);
                $span_width = floatval($len) *floatval($font_size);
-               $txts[$idx] = $tary[$row];
+               $txts[$idx] = $random_span_ary[$row];
                $idx++;
                while(intval($span_width) >= intval($width)){
                     $span_width = intval($span_width) -intval($width);
                     $line_breaks++;
                }
           }
+*/
 
           $asset = [];
           $asset['type'] = 'text';

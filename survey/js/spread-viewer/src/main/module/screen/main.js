@@ -314,10 +314,10 @@ class Screen extends Controller {
           let slotY = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotY, target.conf.unit);
           let slotW = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotW, target.conf.unit);
           let slotH = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotH, target.conf.unit);
-          let rect = this.model.currentScreen.rect(slotW, slotH)
-              rect.move(slotX, slotY);
 
-           img.clipWith(rect);
+          let rect = this.model.currentScreen.rect(slotW, slotH).move(slotX, slotY);
+
+          img.clipWith(rect);
 
           // img.on('mouseover', function(e){ console.log(e); })
      }
@@ -369,13 +369,18 @@ class Screen extends Controller {
      }
 
      renderText(target){
+
           this.setPenStepY(LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.size, target.conf.unit));
+
           if(null != target.conf.font.lineHeight){
                this.setPenStepY(LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.lineHeight, target.conf.unit));
           }
+
           this.resetPenY();
           this.stepY();
+
           let colr = this.fetchColor(target);
+
           let font = {
                'family': target.conf.font.family,
                'letter-spacing': LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.space, target.conf.unit),
@@ -383,12 +388,17 @@ class Screen extends Controller {
                'weight': parseFloat(target.conf.font.weight),
                'opacity': parseFloat(target.conf.opacity)
           }
-
           let xoffset = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
           let x = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
           let y = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.ypos, target.conf.unit);
+          let width = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.width, target.conf.unit);
+          let height = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.height, target.conf.unit);
           let align = target.conf.font.align;
-
+/*
+          let rect = this.model.currentScreen.rect(width, height).move(x, y);
+          let text = this.model.currentScreen.text('');
+              text.clipWith(rect);
+*/
           for(var iidx in target.spans){
                switch(align){
                     case 'left':
@@ -413,9 +423,11 @@ class Screen extends Controller {
                          'textLength': parseFloat(target.spans[iidx].conf.maxLength)
                     }
                }
-               let text = this.model.currentScreen.text(target.spans[iidx].text).font(font).attr(attr);
-                   text.tspan(target.spans[iidx].text).font(font).attr(attr).fill(colr);
 
+               let rect = this.model.currentScreen.rect(width, height).move(x, y);
+               let text = this.model.currentScreen.text('');
+                   text.tspan(target.spans[iidx].text).font(font).attr(attr).fill(colr);
+                   text.clipWith(rect);
                this.stepY();
           }
      }
