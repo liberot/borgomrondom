@@ -283,7 +283,7 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
           $asset['type'] = 'path';
           $asset['conf'] = [];
           $asset['conf']['unit'] = $doc['unit'];
-          $asset['conf']['depth'] = '3000';
+          $asset['conf']['depth'] = '2000';
           switch($node['tag']){
                case 'path':
                     $css = $node['attributes']['class'];
@@ -316,7 +316,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $poly['conf'] = [];
                     $poly['conf']['unit'] = 'px';
                     $poly['conf']['color'] = [];
-                    $poly['conf']['depth'] = '100';
+                    $poly['conf']['depth'] = '1000';
 
 // points of the poly
                     $points = $node['attributes']['points'];
@@ -372,7 +372,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
 
                          $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
 
-// ededed and dadada is the image cut in
+// #ededed and #dadada is the image cut in
                          $slot_colors = ['#ededed', '#dadada', '#EDEDED', '#DADADA'];
                          $is_image_slot = false;
                          foreach($slot_colors as $slot_color){
@@ -388,7 +388,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                               $poly['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
                               $poly['width'] = $xmax -$xmin;
                               $poly['height'] = $ymax -$ymin;
-                              $poly['conf']['depth'] = 1000;
+                              $poly['conf']['depth'] = '3000';
                               $poly['layout_code'] = 'P';
                               if(floatval($poly['width']) >= floatval($poly['height'])){ 
                                    $poly['layout_code'] = 'L';
@@ -437,7 +437,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
 
      $indx = 0;
      $res = [];
-     $line = 1.125;
+     $line = 1.35;
      foreach($xes as $field){
 
           $temp = $field['pos'];
@@ -520,7 +520,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['width'] = $width;
           $asset['conf']['height'] = $height;
           $asset['conf']['opacity'] = '1';
-          $asset['conf']['depth'] = '25000';
+          $asset['conf']['depth'] = '5000';
 
           $asset['conf']['color'] = [];
           $asset['conf']['color']['cmyk'] = $color;
@@ -637,7 +637,7 @@ function insert_image_assets($doc, $polys){
                $asset['conf']['slotX'] = $node['xpos'];
                $asset['conf']['slotY'] = $node['ypos'];
                $asset['conf']['opacity'] = '1';
-               $asset['conf']['depth'] = intval(10000) +intval($idx);
+               $asset['conf']['depth'] = '7500';
 
 // diss i am not sure about.. assumed 200dpi is enough at 300dpi dunno
                $asset['conf']['maxScaleRatio'] = '1';
