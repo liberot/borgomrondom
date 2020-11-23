@@ -2,6 +2,7 @@
 
 add_action('admin_post_exec_init_layout', 'exec_init_layout');
 function exec_init_layout(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -472,10 +473,27 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
           $txts = [];
-          $lines = intval($height /(floatval($font_size) *floatval($line)));
-          for($idx = 0; $idx < $lines; $idx++){
+          $possible_spans = intval($height /(floatval($font_size) *floatval($line)));
+          $idx = 0;
+          $line_breaks = 0;
+          $line_break_sum = 0;
+          while($idx <= $possible_spans){
                $row = random_int(0, count($tary) -1);
                $txts[$idx] = $tary[$row];
+               $idx++;
+               $len = strlen($row);
+               $span_width = floatval($len) *floatval($font_size);
+               $line_breaks = 0;
+               while(intval($span_width) >= 0){
+                    $span_width = intval($span_width) -intval($width);
+                    $line_breaks++;
+               }
+               $idx+= $line_breaks;
+               $line_break_sum +=$line_breaks;
+          }
+
+          if($line_break_sum > $possible_spans){
+               $asset = ['mist'] = true;
           }
 
           $asset = [];
