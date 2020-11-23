@@ -475,9 +475,6 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $txts = [];
           $max_spans = intval($height /(floatval($font_size) *floatval($line)));
 
-print 'max spans:';
-print_r($max_spans);
-
           $idx = 0;
           $line_break_sum = 0;
           while($idx <= $max_spans){
