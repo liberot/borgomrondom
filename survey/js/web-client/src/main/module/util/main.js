@@ -9,9 +9,10 @@ let SurveyUtil = {
           if(null == target){ return target; }
           if('boolean' == typeof(target)){ return target; }
           target = target.substring(0, SurveyConfig.maxInputLength);
-          target = target.replace(/\"/gm, '“');;
-          target = target.replace(/\'/gm, '’');;
-          target = target.replace(/\\/gm, '');;
+          target = target.replace(  /\"/gm, '“');
+          target = target.replace(  /\'/gm, '’');
+          target = target.replace(  /\\/gm, '');
+          target = target.replace(/\s+$/gm, '');
           return target;
      },
 

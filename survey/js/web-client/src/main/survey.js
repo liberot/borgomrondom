@@ -30,6 +30,7 @@ class Survey extends Controller {
           this.register(new Subscription(        'panel::loaded', this.bindPanel));
           this.register(new Subscription(          'input::done', this.storeInput));
           this.register(new Subscription(         'panel::saved', this.bindSavedPanel));
+          this.register(new Subscription(       'input::corrupt', this.showValidationError));
           // ------
           this.extractDeeplink(window.location.hash.substr(1));
           this.navDeeplink(window.location.hash.substr(1));
@@ -45,6 +46,11 @@ class Survey extends Controller {
           };
           // ------
           this.notify(new Message('download::fieldings', this.model));
+     }
+
+     showValidationError(msg){
+         console.log(msg);
+         alert(__survey.__('invalid', 'nosuch'));
      }
 
      bindSavedPanel(msg){
@@ -253,10 +259,39 @@ class Survey extends Controller {
           this.setLink();
      }
 
+     checkIfRequired(validation){
+          let res = false;
+          let rVals = ['true', '1', true, 1 ];
+          for(let idx in rVals){
+               if(rVals[idx] == validation.required){
+                    res = true;
+               }
+          }
+          return res;
+     }
+
      bindTextInput(msg){
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = jQuery('.answer-input input').val();
+          let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
+          switch(required){
+
+                case true:
+                     if(3 >= val.length){
+                          this.notify(new Message('input::corrupt', this.model));
+                          return false;
+                     }
+                     break;
+
+                case false:
+// false will not validate
+                     if(3 >= val.length){
+                          this.notify(new Message('input::corrupt', this.model));
+                          return false;
+                     }
+                     break;
+          }
           this.bindInput(panel, ref, val);
      }
 
@@ -286,11 +321,11 @@ class Survey extends Controller {
 
      bindInput(panel, ref, val){
           if('undefined' == typeof(val)){ val = ''; }
-          let answer = val.replace(/\s+$/g, val);
+          let answer = SurveyUtil.trimIncomingString(val);
           let question = this.corrQuestion(this.model.panel.post_content.title);
-          this.model.panel.post_content.question = SurveyUtil.trimIncomingString(question);
+              question = SurveyUtil.trimIncomingString(question);
+          this.model.panel.post_content.question = question;
           this.model.panel.post_content.answer = answer;
-          this.model.panel.post_content.answer = SurveyUtil.trimIncomingString(val);
           this.model.threadLog.add(ref, answer);
           this.notify(new Message('input::done', this.model));
      }
@@ -415,11 +450,11 @@ class Survey extends Controller {
           switch(this.model.panel.post_content.type){
 
                case 'phone_number':
-               case 'short_text':
                case 'long_text':
                case 'email':
                case 'number':
                case 'date':
+               case 'short_text':
                    buf1st = this.fillTemplate(__short_text_tmpl__, { question: question, answer: answer });
                    buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { 
                         msg: __survey.__('done'), 
