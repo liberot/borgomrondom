@@ -165,9 +165,9 @@ function parse_layout_doc($svg_path){
      
      $doc = walk_the_doc($doc);
 
-// result at 300ppi
-     $doc['unit'] = 'px';
+// desired ppi at configurable 300 ppi
      $doc['ppi'] = Layout::DESIRED_PPI;
+     $doc['unit'] = 'px';
      $doc['assets'] = [];
 
 // the exported svg documents come up with some client units of 1132 
@@ -185,19 +185,20 @@ function parse_layout_doc($svg_path){
      $doc['doc_y_offset'] = $res['doc_y_offset'];
      $doc['origin'] = $svg_path;
 
-// todo
      $res = eval_text_fields($svg_doc, $css_coll, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
+// polygon fields in grey is the image slots
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
      $doc['layout']['code'] = get_layout_code_of_spread($res);
 
-     $res = insert_image_assets($doc, $res);
-     $res = fit_image_assets_into_slot($doc, $res);
+     // $res = insert_image_assets($doc, $res);
+     // $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
+
 
      return $doc;
 }
@@ -510,7 +511,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['font']['family'] = $font_family;
           $asset['conf']['font']['size'] = $font_size;
           $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval($line);
-          $asset['conf']['font']['align'] = 'right';
+          $asset['conf']['font']['align'] = 'left';
           $asset['conf']['font']['space'] = '1';
           $asset['conf']['font']['weight'] = $font_weight;
 
