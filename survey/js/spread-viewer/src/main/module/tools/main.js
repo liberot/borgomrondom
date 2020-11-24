@@ -761,7 +761,6 @@ console.log(res)
      }
 
      initDocument(){
-console.log(this.model.doc);
           switch(SpreadViewerConfig.mode){
                case SpreadViewerConfig.WEB_CLIENT:
                     this.setupNavigation();

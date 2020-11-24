@@ -190,12 +190,19 @@ function parse_layout_doc($svg_path){
 
 // polygon fields in grey is the image slots
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
+
+// layout code is to be determined such as LPP 
+// landscape horizont horizont
      $doc['layout']['code'] = get_layout_code_of_spread($res);
 
+// insert of mock image assets
      $res = insert_image_assets($doc, $res);
+
+// scale and fit of the image assets as is defined in the config 
      $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
+// path fields as hearts and such
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
@@ -227,11 +234,15 @@ function corr_path_d($d, $doc){
           $chunk = str_replace('-', ',-', $chunk);
           $ary = explode(',', $chunk);
           switch($command){
+
+// m as in move
                case 'm': case 'M':
                     $x = corr_layout_pos($ary[0], $doc);
                     $y = corr_layout_pos($ary[1], $doc);
                     $buf.= sprintf('%s%s,%s', $command, $x, $y);
                     break;
+
+// circle and spline or such 
                case 'c': case 'C': case 's': case 'S':
                     $r = [];
                     foreach($ary as $i){
@@ -242,6 +253,8 @@ function corr_path_d($d, $doc){
                     // $rcc = str_replace(',-', '-', $rcc);
                     $buf.= sprintf('%s%s', $command, $rcc);
                     break;
+
+// arc i think
                case 'a': case 'A':
                     $r = [];
                     $c = 0;
@@ -263,11 +276,14 @@ function corr_path_d($d, $doc){
                     // $rcc = str_replace(',-', '-', $rcc);
                     $buf.= sprintf('%s%s', $command, $rcc);
                     break;
+// line i think
                case 'l': case 'L':
                     $x = corr_layout_pos($ary[0], $doc);
                     $y = corr_layout_pos($ary[1], $doc);
                     $buf.= sprintf('%s%s,%s', $command, $x, $y);
                     break;
+
+// close of the path
                case 'z': case 'Z':
                     $buf.= sprintf('%s', $command);
                     break;
@@ -411,7 +427,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
      $buf = '';
      $d = 0;
 
-// adds up text fields until width and height is found
+// adds up text fields until the note of width and height is found
      foreach($svg_doc as $node){
           switch($node['tag']){
                case 'text':
@@ -488,24 +504,6 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           }
 
           $depth = intval($field['depth']);
-
-
-/*
-          $idx = 0;
-          $line_break_sum = 0;
-          $line_breaks = 0;
-          while(intval($idx +$line_breaks) <= $max_spans){
-               $row = random_int(0, count($random_span_ary) -1);
-               $len = strlen($random_span_ary[$row]);
-               $span_width = floatval($len) *floatval($font_size);
-               $txts[$idx] = $random_span_ary[$row];
-               $idx++;
-               while(intval($span_width) >= intval($width)){
-                    $span_width = intval($span_width) -intval($width);
-                    $line_breaks++;
-               }
-          }
-*/
 
           $asset = [];
           $asset['type'] = 'text';
@@ -588,10 +586,6 @@ function eval_doc_size($svg_doc, $doc){
      return $res;
 }
 
-/*
-
-*/
-
 function fit_image_assets_into_slot($doc, $assets){
      $res = [];
      foreach($assets as $asset){
@@ -646,17 +640,20 @@ function insert_image_assets($doc, $polys){
                $asset['conf']['slotY'] = $node['ypos'];
                $asset['conf']['opacity'] = '1';
                $asset['conf']['depth'] = intval($node['conf']['depth']) +1;
-
                $asset['conf']['maxScaleRatio'] = '1';
+// fixdiss
                $r = intval($doc['ppi']) /300;
                switch(intval($doc['ppi'])){
+
                     case 300: 
-                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE_RATIO *$r;
+                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *1;
                          break;
+
                     case 600:
-                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE_RATIO *$r;
+                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *2;
                          break;
                }
+
 
 // image asset scales into the slot until the max scale ratio 
 // and cuts the image asset by definition

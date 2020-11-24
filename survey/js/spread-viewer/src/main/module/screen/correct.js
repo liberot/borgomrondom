@@ -31,6 +31,9 @@ class Correct extends Controller {
           let h = height;
           let r = 1;
 
+
+console.log(target.conf.scaleType);
+
           switch(target.conf.scaleType){
           case 'cut_into_slot':
                let xr = slotW /width;
