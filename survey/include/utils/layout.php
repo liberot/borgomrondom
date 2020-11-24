@@ -40,7 +40,7 @@ EOD;
      return $res;
 }
 
-function get_layout_presets_by_group_and_rule($group, $rule){
+function get_layout_by_group_and_rule($group, $rule){
      // $res = get_posts(array('tag' => array($tags)));
      $sql = <<<EOD
           select * from wp_posts 

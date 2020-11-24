@@ -49,8 +49,8 @@ function exec_get_layouts_by_group(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
-add_action('admin_post_exec_get_layout_presets_by_group_and_rule', 'exec_get_layout_presets_by_group_and_rule');
-function exec_get_layout_presets_by_group_and_rule(){
+add_action('admin_post_exec_get_layout_by_group_and_rule', 'exec_get_layout_by_group_and_rule');
+function exec_get_layout_by_group_and_rule(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
@@ -60,7 +60,7 @@ function exec_get_layout_presets_by_group_and_rule(){
 
      $group = trim_incoming_filename($_POST['group']);
      $rule = trim_incoming_filename($_POST['rule']);
-     $coll = get_layout_presets_by_group_and_rule($group, $rule);
+     $coll = get_layout_by_group_and_rule($group, $rule);
      $message = esc_html(__('layouts loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
@@ -192,8 +192,8 @@ function parse_layout_doc($svg_path){
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
      $doc['layout']['code'] = get_layout_code_of_spread($res);
 
-     // $res = insert_image_assets($doc, $res);
-     // $res = fit_image_assets_into_slot($doc, $res);
+     $res = insert_image_assets($doc, $res);
+     $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = eval_path_fields($svg_doc, $css_coll, $doc);

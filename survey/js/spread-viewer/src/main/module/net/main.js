@@ -6,7 +6,7 @@ class Net extends Controller {
           this.register(new Subscription(            'init::book', this.initBook));
           this.register(new Subscription(          'save::layout', this.saveLayout));
           this.register(new Subscription(     'load::layoutgroup', this.loadLayoutGroup));
-          this.register(new Subscription(   'load::layoutpresets', this.loadLayoutPresets));
+          this.register(new Subscription(   'load::layoutpresets', this.loadLayouts));
           this.register(new Subscription(       'import::layouts', this.importLayouts));
           // events
           this.register(new Subscription(      'prints::gathered', this.exportPrint));
@@ -26,10 +26,10 @@ class Net extends Controller {
           this.postData(data, cb);
      }
 
-     loadLayoutPresets(msg){
+     loadLayouts(msg){
           let ref = this;
           let data = {
-               action: 'exec_get_layout_presets_by_group_and_rule',
+               action: 'exec_get_layout_by_group_and_rule',
                group: msg.model.group,
                rule: msg.model.rule 
           }
