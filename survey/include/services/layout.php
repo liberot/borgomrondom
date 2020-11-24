@@ -278,28 +278,28 @@ function corr_path_d($d, $doc){
 
 function eval_path_fields($svg_doc, $css_coll, $doc){
      $res = [];
-     $idx = 0;
+     $d = 0;
      foreach($svg_doc as $node){
-          $asset = [];
-          $asset['type'] = 'path';
-          $asset['conf'] = [];
-          $asset['conf']['unit'] = $doc['unit'];
-          $asset['conf']['depth'] = '2000';
           switch($node['tag']){
                case 'path':
+                    $asset = [];
+                    $asset['type'] = 'path';
+                    $asset['conf'] = [];
+                    $asset['conf']['unit'] = $doc['unit'];
+                    $asset['conf']['depth'] = $d;
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
                          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
                     }
-                    $d = corr_path_d($node['attributes']['d'], $doc);
+                    $asset['d'] = corr_path_d($node['attributes']['d'], $doc);
                     $asset['indx'] = sprintf('path_%s', $idx);
-                    $asset['d'] = $d;
                     $res[]= $asset;
                     $idx++;
                     break;
           }
+          $d += Layout::Y_STEP;
       }
       return $res;
 }
@@ -307,6 +307,7 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
 function eval_polygon_fields($svg_doc, $css_coll, $doc){
      $res = [];
      $indx = intval(0);
+     $d = 0;
      foreach($svg_doc as $node){
           switch($node['tag']){
                case 'polygon':
@@ -317,7 +318,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $poly['conf'] = [];
                     $poly['conf']['unit'] = 'px';
                     $poly['conf']['color'] = [];
-                    $poly['conf']['depth'] = '1000';
+                    $poly['conf']['depth'] = $d;
 
 // points of the poly
                     $points = $node['attributes']['points'];
@@ -389,7 +390,7 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                               $poly['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
                               $poly['width'] = $xmax -$xmin;
                               $poly['height'] = $ymax -$ymin;
-                              $poly['conf']['depth'] = '3000';
+                              $poly['conf']['depth'] = intval($d +1);
                               $poly['layout_code'] = 'P';
                               if(floatval($poly['width']) >= floatval($poly['height'])){ 
                                    $poly['layout_code'] = 'L';
@@ -400,14 +401,18 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $indx++;
                     break;
           }
+          $d += Layout::Y_STEP;
      }
      return $res;
 }
 
 function eval_text_fields($svg_doc, $css_coll, $doc){
 
-     $xes = [];
+     $text_fields = [];
      $buf = '';
+     $d = 0;
+
+// adds up text fields until width and height is found
      foreach($svg_doc as $node){
           switch($node['tag']){
                case 'text':
@@ -416,6 +421,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
                     if(!is_null($mtch[0])){
                          $temp = [];
                          $temp['pos'] = $buf;
+                         $temp['depth'] = $d;
                          $temp['style'] = 'no style';
                          $cls = $node['attributes']['class'];
                          if(!is_null($cls)){
@@ -423,10 +429,11 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
                               $temp['style'] = $style;
                          }
                          $buf = '';
-                         $xes[]= $temp;
+                         $text_fields[]= $temp;
                     }
                     break;
           }
+          $d += Layout::Y_STEP;
      }
 
      $random_span_ary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
@@ -439,7 +446,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
      $indx = 0;
      $res = [];
      $line = 1.35;
-     foreach($xes as $field){
+     foreach($text_fields as $field){
 
           $temp = $field['pos'];
           preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $temp, $mtch);
@@ -471,9 +478,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           if(0 >= $font_size){ $font_size = 1; }
          
           $font_family = match_font_family($field['style']);
-
           $font_weight = match_font_weight($field['style']);
-
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
 
           $txts = [];
@@ -482,6 +487,9 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
                $row = random_int(0, count($random_span_ary) -1);
                $txts[$idx] = $random_span_ary[$row];
           }
+
+          $depth = intval($field['depth']);
+
 
 /*
           $idx = 0;
@@ -521,7 +529,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $asset['conf']['width'] = $width;
           $asset['conf']['height'] = $height;
           $asset['conf']['opacity'] = '1';
-          $asset['conf']['depth'] = '5000';
+          $asset['conf']['depth'] = $depth;
 
           $asset['conf']['color'] = [];
           $asset['conf']['color']['cmyk'] = $color;

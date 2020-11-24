@@ -22,6 +22,8 @@ class Layout {
      const NO_SCALE = 0x02;
      const CUT_INTO_SLOT = 0x01;
      const IMAGE_SCALE_TYPE = Layout::CUT_INTO_SLOT;
+// --------------------------------------------------------
+     const Y_STEP = 101;
 }
 
 class Server {
