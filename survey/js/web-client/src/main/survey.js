@@ -11,6 +11,7 @@ class Survey extends Controller {
           this.register(new Subscription(         'confirm::ref', this.bindMultipleChoiceInput));
           this.register(new Subscription(       'confirm::image', this.bindMultipleChoiceInput));
           this.register(new Subscription(       'confirm::input', this.bindTextInput));
+          this.register(new Subscription(      'confirm::upload', this.bindUploadInput));
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
           this.register(new Subscription(    'select::statement', this.bindSelectStatement));
           this.register(new Subscription(            'nav::back', this.evalPrevPanel));
@@ -270,20 +271,33 @@ class Survey extends Controller {
           return res;
      }
 
+     bindUploadInput(msg){
+          let panel = this.model.panel.post_content.ref;
+          let ref = msg.model.arguments[1];
+          let val = jQuery('.answer-input input').val();
+          let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
+          switch(required){
+               case true:
+               case false:
+                    this.notify(new Message('input::corrupt', this.model));
+                    return false;
+                    break;
+          }
+          this.bindInput(panel, ref, val);
+     }
+
      bindTextInput(msg){
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = jQuery('.answer-input input').val();
           let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
           switch(required){
-
                 case true:
                      if(3 >= val.length){
                           this.notify(new Message('input::corrupt', this.model));
                           return false;
                      }
                      break;
-
                 case false:
 // false will not validate
                      if(3 >= val.length){
@@ -417,6 +431,7 @@ class Survey extends Controller {
      }
 
      initPanel(){
+
           let ref = this;
 
           if(null == this.model.panel){
@@ -464,7 +479,10 @@ class Survey extends Controller {
 
                case 'file_upload':
                    buf1st = this.fillTemplate(__question_text_tmpl__, { question: question });
-                   buf3rd = this.fillTemplate(__ctrl_tmpl_003__, { msg: __survey.__('done') });
+                   buf3rd = this.fillTemplate(__ctrl_tmpl_upload__, { 
+                        ref: this.model.panel.post_content.ref, 
+                        msg: __survey.__('done') 
+                   });
                    if(null == this.model.panel.assetCopies){
                         this.model.panel.assetCopies = [];
                         this.notify(new Message('download::assets', this.model ));
@@ -873,6 +891,10 @@ let __upload_tmpl_002__ = `
 
 let __ctrl_tmpl_003__ = `
 <a href='javascript:surveyQueue.route("confirm::input", "{ref}");'>{msg}</a>
+`;
+
+let __ctrl_tmpl_upload__ = `
+<a href='javascript:surveyQueue.route("confirm::upload", "{ref}");'>{msg}</a>
 `;
 
 let __ctrl_tmpl_002__ = `
