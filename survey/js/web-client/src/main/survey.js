@@ -12,6 +12,7 @@ class Survey extends Controller {
           this.register(new Subscription(       'confirm::image', this.bindMultipleChoiceInput));
           this.register(new Subscription(       'confirm::input', this.bindTextInput));
           this.register(new Subscription(      'confirm::upload', this.bindUploadInput));
+          this.register(new Subscription(       'confirm::group', this.bindGroupInput));
           this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
           this.register(new Subscription(    'select::statement', this.bindSelectStatement));
           this.register(new Subscription(            'nav::back', this.evalPrevPanel));
@@ -271,16 +272,22 @@ class Survey extends Controller {
           return res;
      }
 
+     bindGroupInput(msg){
+          this.evalNextPanel();
+     }
+
      bindUploadInput(msg){
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
-          let val = jQuery('.answer-input input').val();
+          let val = 'asset::uploaded';
           let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
           switch(required){
                case true:
                case false:
-                    this.notify(new Message('input::corrupt', this.model));
-                    return false;
+                    if(1 > this.model.panel.assetCopies.length){
+                         this.notify(new Message('input::corrupt', this.model));
+                         return false;
+                    }
                     break;
           }
           this.bindInput(panel, ref, val);
@@ -411,6 +418,8 @@ class Survey extends Controller {
 
      loadPanel(ref){
 
+          this.corrToc(ref);
+
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
                this.initPanel();
@@ -479,16 +488,16 @@ class Survey extends Controller {
 
                case 'file_upload':
                    buf1st = this.fillTemplate(__question_text_tmpl__, { question: question });
-                   buf3rd = this.fillTemplate(__ctrl_tmpl_upload__, { 
+                   buf2nd = this.fillTemplate(__ctrl_tmpl_upload__, { 
                         ref: this.model.panel.post_content.ref, 
                         msg: __survey.__('done') 
                    });
+                   this.renderFileupload();
+                   this.renderAssetCopies();
                    if(null == this.model.panel.assetCopies){
                         this.model.panel.assetCopies = [];
                         this.notify(new Message('download::assets', this.model ));
                    }
-                   this.renderFileupload();
-                   this.renderAssetCopies();
                    break;
 
                case 'multiple_choice':
@@ -519,8 +528,14 @@ class Survey extends Controller {
                    break;
 
                case 'group':
-                   buf1st = this.fillTemplate(__group_tmpl__, { question: question } );
-                   buf2nd = this.fillTemplate(__ctrl_tmpl_003__, { msg: __survey.__('done') } );
+                   buf1st = this.fillTemplate(__group_tmpl__, { 
+                        question: question,
+                        description: this.model.panel.post_content.properties.description
+                   });
+                   buf2nd = this.fillTemplate(__ctrl_tmpl_group__, { 
+                        ref: this.model.panel.post_content.ref, 
+                        msg: __survey.__('done') 
+                   });
                    break;
 
                case 'statement':
@@ -593,9 +608,9 @@ class Survey extends Controller {
           fake.addEventListener( 'dragover', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener(  'dragend', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener('dragstart', function(e){ e.preventDefault(); e.stopPropagation(); });
+          fake.addEventListener(     'drag', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener('dragenter', function(e){ fake.classList.add('drag'); });
           fake.addEventListener( 'dragover', function(e){ fake.classList.add('drag'); });
-          fake.addEventListener(     'drag', function(e){ e.preventDefault(); e.stopPropagation(); });
           fake.addEventListener(     'drop', function(e){ fake.classList.remove('drag'); });
           fake.addEventListener(  'dragend', function(e){ fake.classList.remove('drag'); });
           fake.addEventListener('dragleave', function(e){ fake.classList.remove('drag'); });
@@ -608,8 +623,8 @@ class Survey extends Controller {
           });
 
           form.addEventListener('change', function(e){
-              let data = ref.initImageUpload(form.files); 
-              ref.notify(new Message('parse::assets', { form: data, panel: ref.model.panel }));
+               let data = ref.initImageUpload(form.files); 
+               ref.notify(new Message('parse::assets', { form: data, panel: ref.model.panel }));
           });
      }
 
@@ -698,11 +713,9 @@ console.log(condition);
           let link = this.pullToc();
           console.log('prev link from toc: ', link);
           if(null != link){
-               this.corrToc(link);
                this.loadPanel(link);
                return true;
           }
-          this.corrStep();
           this.prevPanel();
      }
 
@@ -730,15 +743,14 @@ console.log(actionpack);
           }
           let link = links[0];
           if(null != link){
-               this.corrToc(link);
                this.loadPanel(link);
                return true;
           }
-          this.corrStep();
           this.nextPanel();
      }
 
      nextPanel(){
+          this.corrStep();
           this.model.toc.post_content.initstep++;
           if(this.model.toc.post_content.initstep 
                >= this.model.toc.post_content.init_refs.length){ 
@@ -750,6 +762,7 @@ console.log('next link from default: ', ref);
      }
 
      prevPanel(){
+          this.corrStep();
           this.model.toc.post_content.initstep--;
           if(this.model.toc.post_content.initstep <= 0){ this.model.toc.post_content.initstep = 0 }
           let ref = this.model.toc.post_content.init_refs[this.model.toc.post_content.initstep];
@@ -792,7 +805,7 @@ console.log('prev link from default: ', ref);
                    r.onerror = function(e){
                         console.log(e);
                    }; 
-               r.readAsDataURL(file);
+                   r.readAsDataURL(file);
           }
      }
 
@@ -897,6 +910,10 @@ let __ctrl_tmpl_upload__ = `
 <a href='javascript:surveyQueue.route("confirm::upload", "{ref}");'>{msg}</a>
 `;
 
+let __ctrl_tmpl_group__ = `
+<a href='javascript:surveyQueue.route("confirm::group", "{ref}");'>{msg}</a>
+`;
+
 let __ctrl_tmpl_002__ = `
 <!-- <a href='javascript:surveyQueue.route("thread::prev");'>prev</a> //-->
 <!-- <a href='javascript:surveyQueue.route("thread::next");'>next</a> //-->
@@ -914,6 +931,7 @@ let __question_text_tmpl__ = `
 
 let __group_tmpl__ = `
 <div class='question-output'>{question}</div>
+<div class='question-output'>{description}</div>
 `;
 
 let __statement_tmpl__ = `

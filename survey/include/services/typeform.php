@@ -75,53 +75,35 @@ function exec_construct_typeform_survey(){
 // insert posts of type question 
      $survey_type = 'typeform'; 
      $refs = [];
-     $ids = [];
      foreach($doc['fields'] as $field){
           switch($field['type']){
                case 'group':
                     $conf = [];
-                    $conf['layout_group'] = 'default';
-                    $conf['max_asset'] = '0';
-                    if('file_upload' == $field['type']){ $conf['max_asset'] = '1'; }
-                    $field['conf'] = $conf;
-                    $surveyprint_uuid = psuuid();
-                    $conf = [ 
-                         'post_type'=>'surveyprint_question',
-                         'post_title'=>$field['title'],
-                         'post_excerpt'=>$field['ref'],
-                         'post_name'=>$surveyprint_uuid,
-                         'post_parent'=>$survey_id,
-                         'post_content'=>pigpack($field)
-                    ];
-                    $question_id = wp_insert_post($conf);
-                    $refs[]= $field['ref'];
-                    $ids[]= $question_id;
-                    foreach($field['properties']['fields'] as $gield){
-                         $conf = [];
-                         $conf['layout_group'] = 'default';
-                         $conf['max_asset'] = '0';
-                         if('file_upload' == $gield['type']){ $conf['max_asset'] = '1'; }
-                         $gield['conf'] = $conf;
+                    $field['conf'] = [];
+                    $field['conf']['layout_group'] = 'default';
+                    $field['conf']['max_asset'] = '0';
+                    foreach($field['properties']['fields'] as $group_field){
+                         $group_field['conf'] = [];
+                         $group_field['conf']['group'] = $field;
+                         $group_field['conf']['layout_group'] = 'default';
+                         $group_field['conf']['max_asset'] = '1';
                          $surveyprint_uuid = psuuid();
                          $conf = [ 
                               'post_type'=>'surveyprint_question',
-                              'post_title'=>$gield['title'],
-                              'post_excerpt'=>$gield['ref'],
+                              'post_title'=>$group_field['title'],
+                              'post_excerpt'=>$group_field['ref'],
                               'post_name'=>$surveyprint_uuid,
                               'post_parent'=>$survey_id,
-                              'post_content'=>pigpack($gield)
+                              'post_content'=>pigpack($group_field)
                          ];
                          $question_id = wp_insert_post($conf);
-                         $refs[]= $gield['ref'];
-                         $ids[]= $question_id;
+                         $refs[]= $group_field['ref'];
                     }
                     break;
                default:
-                    $conf = [];
-                    $conf['layout_group'] = 'default';
-                    $conf['max_asset'] = '0';
-                    if('file_upload' == $field['type']){ $conf['max_asset'] = '1'; }
-                    $field['conf'] = $conf;
+                    $field['conf'] = [];
+                    $field['conf']['max_asset'] = '1';
+                    $field['conf']['layout_group'] = 'default';
                     $surveyprint_uuid = psuuid();
                     $conf = [ 
                          'post_type'=>'surveyprint_question',
@@ -133,23 +115,22 @@ function exec_construct_typeform_survey(){
                     ];
                     $question_id = wp_insert_post($conf);
                     $refs[]= $field['ref'];
-                    $ids[]= $question_id;
           }
      }
 
-// inserts a post of type toc 
+// inserts a post of type toc
      $post_content = [];
      $post_content['toc'] = [];
      $post_content['rulez'] = $doc['logic'];
      $post_content['init_refs'] = $refs;
-     $post_content['init_ids'] = $ids;
+     $post_content = pigpack($post_content);
      $conf = [
           'post_type'=>'surveyprint_toc',
           'post_title'=>$survey_title,
           'post_name'=>$survey_type,
           'post_excerpt'=>$survey_ref,
           'post_parent'=>$survey_id,
-          'post_content'=>pigpack($post_content)
+          'post_content'=>$post_content
      ];
      $toc_id = init_toc($conf);
 
@@ -220,8 +201,6 @@ function exec_download_typeform_survey(){
      );
 };
 
-// todo: surveys is a post with taxonomy
-// diss for debug resons is...
 add_action('admin_post_exec_get_typeform_surveys', 'exec_get_typeform_surveys');
 function exec_get_typeform_surveys(){
      if(!policy_match([Role::ADMIN])){

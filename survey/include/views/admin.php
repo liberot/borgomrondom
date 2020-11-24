@@ -485,7 +485,7 @@ EOD;
      $coll = get_surveys();
      if(!is_null($coll[0])){
           foreach($coll as $survey){
-               $href = sprintf('%s?page=questionnaire&edit=questions&survey_id=%s', SERVICE_BASE, $survey->ID);
+               $href = sprintf('%s?page=questionnaire&edit=questions&survey_id=%s', Path::SERVICE_BASE, $survey->ID);
                $d = date_create($survey->post_date);
                $d = date_format($d, 'd-m-Y H:i:s');
                echo '<tr>';
