@@ -937,6 +937,9 @@ console.log(res)
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           let model;
 
+          jQuery('.textedit').html('');
+          jQuery('.assetedit').html('');
+
           switch(this.model.doc.assets[idx].type){
 
                case 'text':
@@ -950,34 +953,33 @@ console.log(res)
                     }
 
                     model = {
-
-                         'indx':    this.model.doc.assets[idx].indx,
-                         'text':    text,
-                         'xpos':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.xpos),
-                         'ypos':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.ypos),
-                         'width':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.width),
-                         'height':  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.height),
-                         'size':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.size),
-                         'space':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.space),
-                         'line':    LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.lineHeight),
+                            'indx': this.model.doc.assets[idx].indx,
+                            'text': text,
+                            'xpos': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.xpos),
+                            'ypos': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.ypos),
+                           'width': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.width),
+                          'height': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.height),
+                            'size': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.size),
+                           'space': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.space),
+                            'line': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.font.lineHeight),
                          'opacity': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.opacity),
-                         'color':   LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color)
+                           'color': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color)
                     }
 
                     if(null != this.model.doc.assets[idx].conf.color['cmyk']){
-                         model.c =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].c);
-                         model.m =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].m);
-                         model.y =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].y);
-                         model.k =  LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].k);
+                         model.c = LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].c);
+                         model.m = LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].m);
+                         model.y = LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].y);
+                         model.k = LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.color['cmyk'].k);
                     }
 
-                    jQuery('.assetedit').html('');
                     jQuery('.textedit').html(this.fillTemplate(__lib__001__tmpl, model));
                     let tmp = '<select>';
                     for(let idx in this.model.fonts){
                          tmp += '<option value="'+this.model.fonts[idx].family+'">'+this.model.fonts[idx].family+'</option>';
                     }
                     tmp+= '</select>';
+
                     jQuery('.select_font select').off();
                     jQuery('.select_font').html(tmp);
                     jQuery('.select_font select').change(function(){
@@ -987,20 +989,20 @@ console.log(res)
                          };
                          ref.notify(new Message('font::selected', model));
                     });     
+
                     jQuery('.select_font select').val(this.model.doc.assets[idx].conf.font.family);
                     jQuery('.select_unit select').val(this.model.doc.assets[idx].conf.unit);
+
                     break;
+
                case 'image':
+
                     let scale = this.model.doc.assets[idx].conf.scale;
-                    if(null == scale){
-                         scale = 1;
-                    }
-                    if(0.5 > scale){
-                         scale = 0.5;
-                    }
-                    if(2 < scale){
-                         scale = 2;
-                    }
+
+                    // if(null == scale){ scale = 1.0; }
+                    // if(0.5 > scale){ scale = 0.5; }
+                    // if(2.0 < scale){ scale = 2.0; }
+
                     model = {
                              'indx': this.model.doc.assets[idx].indx,
                               'src': this.model.doc.assets[idx].src,
@@ -1011,11 +1013,26 @@ console.log(res)
                           'opacity': LayoutUtil.formatSettingFloat(this.model.doc.assets[idx].conf.opacity),
                             'scale': LayoutUtil.formatSettingFloat(scale)
                     }
-                    jQuery('.textedit').html('');
+
                     jQuery('.assetedit').html(this.fillTemplate(__lib__004__tmpl, model));
                     jQuery('.select_unit select').val(this.model.doc.assets[idx].conf.unit);
+
                     break;
+
+               default:
+
+                    console.log('>>', this.model.doc.assets[idx]);
+
+                    model = {
+                          'indx': this.model.doc.assets[idx].indx,
+                         'depth': this.model.doc.assets[idx].conf.depth,
+                    }
+                    jQuery('.assetedit').html(this.fillTemplate(__lib__depth__tmpl, model));
+
+                    break;
+
           }
+
           this.selectLibraryItem(this.model.doc.assets[idx])
      }
 
@@ -1242,7 +1259,16 @@ let __lib__003__tmpl = `
 
 `;
 
-
+let __lib__depth__tmpl = `
+<div class='label'>depth:</div>
+<div class='row'>
+     <div class='block select_unit'>
+          <input class='xpos' type='number' step='1' value='{depth}'
+               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'depth', this.value);"
+          ></input>
+     </div>
+</div>
+`;
 
 let __lib__004__tmpl = `
 <div class='imgpanel'>

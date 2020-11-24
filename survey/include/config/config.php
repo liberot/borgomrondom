@@ -16,10 +16,12 @@ class Path {
 class Layout {
      const ASSUMED_SVG_UNIT = 72;
      const DESIRED_PPI = 300;
-     const IMAGE_MAX_SCALE_RATIO = 1.0;
-     const IMAGE_SCALE_TYPE = 'cut_into_slot';
-     const CUT_INTO_SLOT = 'cut_into_slot';
-     const NO_SCALE = 'no_scale';
+// --------------------------------------------------------
+     const IMAGE_MAX_SCALE_RATIO = 1.25;
+// --------------------------------------------------------
+     const NO_SCALE = 0x02;
+     const CUT_INTO_SLOT = 0x01;
+     const IMAGE_SCALE_TYPE = Layout::CUT_INTO_SLOT;
 }
 
 class Server {
