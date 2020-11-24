@@ -192,8 +192,8 @@ function parse_layout_doc($svg_path){
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
      $doc['layout']['code'] = get_layout_code_of_spread($res);
 
-     // $res = insert_image_assets($doc, $res);
-     // $res = fit_image_assets_into_slot($doc, $res);
+     $res = insert_image_assets($doc, $res);
+     $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
@@ -390,7 +390,6 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                               $poly['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
                               $poly['width'] = $xmax -$xmin;
                               $poly['height'] = $ymax -$ymin;
-                              $poly['conf']['depth'] = intval($d +1);
                               $poly['layout_code'] = 'P';
                               if(floatval($poly['width']) >= floatval($poly['height'])){ 
                                    $poly['layout_code'] = 'L';
@@ -623,18 +622,18 @@ function insert_image_assets($doc, $polys){
      $idx = 0;
 
      $landscape = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.900.base');
-     $portrait = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.p.base');
+      $portrait = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.p.base');
 
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
 
      foreach($polys as $node){
           if(false != $node['slot']){
-               $chunki = 'L' == $node['layout_code'] ? $landscape : $portrait;
+               $chunk = 'L' == $node['layout_code'] ? $landscape : $portrait;
                $asset = [];
                $asset['type'] = 'image'; 
                $asset['indx'] = sprintf('image_%s', $idx);
-               $asset['src'] = $chunki;
+               $asset['src'] = $chunk;
                $asset['conf'] = [];
                $asset['conf']['unit'] = 'px';
                $asset['conf']['xpos'] = $node['xpos'];
@@ -646,9 +645,8 @@ function insert_image_assets($doc, $polys){
                $asset['conf']['slotX'] = $node['xpos'];
                $asset['conf']['slotY'] = $node['ypos'];
                $asset['conf']['opacity'] = '1';
-               $asset['conf']['depth'] = '7500';
+               $asset['conf']['depth'] = intval($node['conf']['depth']) +1;
 
-// diss i am not sure about.. assumed 200dpi is enough at 300dpi dunno
                $asset['conf']['maxScaleRatio'] = '1';
                $r = intval($doc['ppi']) /300;
                switch(intval($doc['ppi'])){
