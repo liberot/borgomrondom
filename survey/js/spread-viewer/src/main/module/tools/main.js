@@ -1021,14 +1021,40 @@ console.log(res)
 
                default:
 
-                    console.log('>>', this.model.doc.assets[idx]);
-
+/**** grausam
                     model = {
                           'indx': this.model.doc.assets[idx].indx,
                          'depth': this.model.doc.assets[idx].conf.depth,
                     }
                     jQuery('.assetedit').html(this.fillTemplate(__lib__depth__tmpl, model));
-
+                    let points = this.model.doc.assets[idx].conf.points;
+                        points = points.split(' ');
+                    let xs = [];
+                    let ys = [];
+                    let pp = [];
+                    let oe = 0;
+                    for(let idx in points){
+                         oe = idx & 1;
+                         switch(oe){
+                              case 0:
+                                   xs.push(parseFloat(points[idx]));
+                                   break;
+                              case 1:
+                                   ys.push(parseFloat(points[idx]));
+                                   break;
+                         }
+                    }
+                    xs.sort(function(a, b){ return a >= b; });
+                    ys.sort(function(a, b){ return a >= b; });
+                    let xmin = xs[0] *-1;
+                    let ymin = ys[0] *-1;
+                    let xmax = xs[xs.length -1];
+                    let ymax = ys[ys.length -1];
+                    points = points.join(' ');
+                    this.model.toolsvg = SVG().addTo('.toolsvg');
+                    this.model.toolsvg.viewbox(xmin, xmin, xmax, ymax); 
+                    this.model.toolsvg.polygon(points).fill('#000').stroke({width:1}).transform({translateX: xmin, translateY: ymin});
+*/
                     break;
 
           }
@@ -1188,7 +1214,6 @@ let __tool__bar__tmpl = `
      </select>
 </div>
 </div>
-
 `
 
 
@@ -1256,10 +1281,14 @@ let __lib__003__tmpl = `
 <div class='textedit'></div>
 <div class='assetedit'></div>
 <div class='file'></div>
-
 `;
 
+
+
 let __lib__depth__tmpl = `
+<div class='imgpanel'>
+     <div class='toolsvg'></div>
+</div>
 <div class='label'>depth:</div>
 <div class='row'>
      <div class='block select_unit'>
@@ -1269,6 +1298,8 @@ let __lib__depth__tmpl = `
      </div>
 </div>
 `;
+
+
 
 let __lib__004__tmpl = `
 <div class='imgpanel'>
@@ -1329,7 +1360,6 @@ let __lib__004__tmpl = `
           ></input>
      </div>
 </div>
-
 `;
 
 
@@ -1447,17 +1477,19 @@ let __lib__001__tmpl = `
 </div>
 `;
 
+
+
 let __lib__007__tmpl = `
 <!--
 <div class='ctitle'></div>
 <div>
-          <span><a href='javascript:layoutQueue.route("addimagebtn::released");'>add image asset</a></span>
-          <span><a href='javascript:layoutQueue.route("addtextbtn::released");'>add text asset</a></span>
+     <span><a href='javascript:layoutQueue.route("addimagebtn::released");'>add image asset</a></span>
+     <span><a href='javascript:layoutQueue.route("addtextbtn::released");'>add text asset</a></span>
 </div>
 <div>
-          <span><a href='javascript:layoutQueue.route("savebtn::released");'>save</a></span>
-          <span>export be batched process: </span>
-          <span><a href='javascript:layoutQueue.route("exportbtn::released", "{indx}", "svg");'>export print formats</a></span>
+     <span><a href='javascript:layoutQueue.route("savebtn::released");'>save</a></span>
+     <span>export be batched process: </span>
+     <span><a href='javascript:layoutQueue.route("exportbtn::released", "{indx}", "svg");'>export print formats</a></span>
 </div>
 //-->
 `;
@@ -1467,6 +1499,8 @@ let __lib__009__tmpl = `
      <input type='file' class='fileupload' name='filename' multiple='multiple'></inpupt>
 </form>
 `;
+
+
 
 class ToolsModel extends Model {
      constructor(){

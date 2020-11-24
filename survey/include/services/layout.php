@@ -192,8 +192,8 @@ function parse_layout_doc($svg_path){
      $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
      $doc['layout']['code'] = get_layout_code_of_spread($res);
 
-     $res = insert_image_assets($doc, $res);
-     $res = fit_image_assets_into_slot($doc, $res);
+     // $res = insert_image_assets($doc, $res);
+     // $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      $res = eval_path_fields($svg_doc, $css_coll, $doc);
