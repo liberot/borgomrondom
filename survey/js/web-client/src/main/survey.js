@@ -583,7 +583,7 @@ class Survey extends Controller {
           jQuery('.survey-controls1st').html(__ctrl_tmpl_002__);
           jQuery('.survey-controls2nd').html(buf2nd);
           jQuery('.survey-controls3rd').html(buf3rd);
-          // jQuery('.survey-controls4th').html(this.fillTemplate(__ctrl_tmpl_102__,{init:__survey.__('spreads')})); 
+          jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
 
           this.setLink();
           this.pushToc(this.model.panel.post_content.ref);
@@ -965,7 +965,7 @@ let __src_img_011_tmpl__ = `
 <img class='uploaded-asset {indx}' src='{data}'></img>
 `;
 
-let __ctrl_tmpl_102__ = `
+let __ctlr_tmpl_init_spreads__ = `
 <a href='javascript:surveyQueue.route("spreads::init");'>{init}</a>
 `;
 
