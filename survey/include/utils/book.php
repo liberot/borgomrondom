@@ -171,17 +171,21 @@ function add_cover($chapter_id, $title){
      $author_id = esc_sql(get_author_id());
      $uuid = psuuid();
 
-     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-cover.json';
+     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
+
      $doc = @file_get_contents($path);
      $doc = json_decode($doc);
+     $doc = walk_the_doc($doc);
 
-     $doc->uuid = $uuid;
-     $doc->panelId = 'cover'; 
+     $doc['uuid'] = $uuid;
+     $doc['panelId'] = 'cover'; 
 
-     $conf = new stdClass();
-     $conf->max_assets = '0';
-     $conf->layout_group = 'cover';
-     $doc->conf = $conf;
+     $doc['conf'] = [];
+     $doc['conf']['max_assets'] = '0';
+     $doc['conf']['layout_group'] = 'cover';
+
+     $doc['assets'][0]['text'] = ['Example Cover of a Book'];
+     $doc['assets'][1]['text'] = [];
 
      $conf = [
           'post_type'=>'surveyprint_spread',
@@ -192,6 +196,7 @@ function add_cover($chapter_id, $title){
           'post_excerpt'=>'cover',
           'post_content'=>pigpack($doc)
      ];
+
      $spread_id = init_spread($conf);
      return $spread_id;
 }
@@ -203,16 +208,22 @@ function add_inside_cover($chapter_id, $title){
      $author_id = esc_sql(get_author_id());
      $uuid = psuuid();
 
-     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-cover-inside.json';
+     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
      $doc = @file_get_contents($path);
      $doc = json_decode($doc);
-     $uuid = psuuid();
-     $doc->uuid = $uuid;
+     $doc = walk_the_doc($doc);
 
-     $doc->conf = [];
-     $doc->conf['max_assets'] = '0';
-     $doc->conf['layout_group'] = 'inside_cover';
-     $doc->conf['layout_code'] = '';
+     $uuid = psuuid();
+
+     $doc['uuid'] = $uuid;
+     $doc['panelId'] = 'cover'; 
+
+     $doc['conf'] = [];
+     $doc['conf']['max_assets'] = '0';
+     $doc['conf']['layout_group'] = 'inside_cover';
+
+     $doc['assets'][0]['text'] = ['Example Inside-Cover of a Book'];
+     $doc['assets'][1]['text'] = [];
 
      $conf = [
           'post_type'=>'surveyprint_spread',
@@ -234,19 +245,22 @@ function add_intro($chapter_id, $title){
      $author_id = esc_sql(get_author_id());
      $uuid = psuuid();
 
-     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-intro.json';
+     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
      $doc = @file_get_contents($path);
      $doc = json_decode($doc);
+     $doc = walk_the_doc($doc);
 
      $uuid = psuuid();
-     $doc->uuid = $uuid;
-     $doc->panelId = 'intro_page';
 
-     $conf = new stdClass();
-     $conf->max_assets = '0';
-     $conf->layout_group = 'intro_page';
-     $conf->layout_code = '';
-     $doc->conf = $conf;
+     $doc['uuid'] = $uuid;
+     $doc['panelId'] = 'intro_page'; 
+
+     $doc['conf'] = [];
+     $doc['conf']['max_assets'] = '0';
+     $doc['conf']['layout_group'] = 'intro_page';
+
+     $doc['assets'][0]['text'] = ['Intro Page of a Book'];
+     $doc['assets'][1]['text'] = [];
 
      $conf = [
           'post_type'=>'surveyprint_spread',
@@ -257,6 +271,7 @@ function add_intro($chapter_id, $title){
           'post_excerpt'=>'intro',
           'post_content'=>pigpack($doc)
      ];
+
      $spread_id = init_spread($conf);
      return $spread_id;
 }
