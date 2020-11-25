@@ -31,6 +31,17 @@ function remove_survey_page(){
 add_shortcode('survey_view', 'build_survey_view');
 function build_survey_view(){
 
+     wp_register_style('client_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
+     wp_enqueue_style('client_style');
+
+     if(!is_user_logged_in()){
+          echo '<p>View runs dev ProfileBuilder authentication procedere<br/>u: surveyprint <br/>p: surveyprint</p>';
+          echo do_shortcode('[wppb-login]');
+          echo do_shortcode('[wppb-register]');
+          echo do_shortcode('[wppb-recover-password]');
+          return;
+     }
+
      wp_register_script(     'config', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/config-client.js');
      wp_register_script(       'main', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/main.js');
      wp_register_script(     'client', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/survey.js');
@@ -46,18 +57,6 @@ function build_survey_view(){
      wp_enqueue_script('net');
      wp_enqueue_script('client_util');
      wp_enqueue_script('client_init');
-
-     wp_register_style('client_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
-
-     wp_enqueue_style('client_style');
-
-     if(!is_user_logged_in()){
-          echo '<p>View runs dev ProfileBuilder authentication procedere<br/>u: surveyprint <br/>p: surveyprint</p>';
-          echo do_shortcode('[wppb-login]');
-          echo do_shortcode('[wppb-register]');
-          echo do_shortcode('[wppb-recover-password]');
-          return;
-     }
 
      $res = <<<EOD
      <div class='survey'>

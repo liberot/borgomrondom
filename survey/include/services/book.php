@@ -86,14 +86,14 @@ function exec_init_book_by_thread_id(){
 
      $thread_toc = get_toc_by_thread_id($thread_id)[0];
      if(is_null($thread_toc)){
-          $message = esc_html(__('no toc', 'nosuch'));
+          $message = esc_html(__('no toc in db', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
      $thread_toc->post_content = pagpick($thread_toc->post_content);
 
      if(null == $thread_toc->post_content['booktoc']){
-          $message = esc_html(__('no toc records', 'nosuch'));
+          $message = esc_html(__('no booktoc records', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }

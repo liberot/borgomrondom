@@ -30,10 +30,7 @@ function exec_save_toc(){
      $section_id = get_session_ticket('section_id');
 
      $panel_ref = trim_incoming_numeric($_POST['panel_ref']);
-     // $panel_ref = get_session_ticket('panel_ref');
-
-     $booktoc = walk_the_doc($_POST['booktoc']);
-     $history = walk_the_doc($_POST['history']);
+     $panel_ref = get_session_ticket('panel_ref');
 
      $toc = get_toc_by_thread_id($thread_id)[0];
      if(is_null($toc)){
@@ -41,6 +38,11 @@ function exec_save_toc(){
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$coll));
           return false;
      }
+
+// todo trim arrays
+     $history = $_POST['history'];
+     $booktoc = $_POST['booktoc'];
+// 
 
      $toc->post_content = pagpick($toc->post_content);
      $toc->post_content['history'] = $history;

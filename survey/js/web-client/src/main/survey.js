@@ -44,6 +44,7 @@ class Survey extends Controller {
                if('undefined' == typeof(surveyQueue)){ 
                      return false; 
                }
+// fixdiss
                surveyQueue.route('nav::back');
           };
           // ------
@@ -387,13 +388,14 @@ class Survey extends Controller {
      }
 
      pushToc(){
+console.log(this.model.toc.post_content);
           this.model.toc.post_content.tocstep = parseInt(this.model.toc.post_content.tocstep);
           this.model.toc.post_content.initstep = parseInt(this.model.toc.post_content.initstep);
           this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep] = this.model.panel.post_content.ref;
           this.model.toc.post_content.history[this.model.toc.post_content.navstep] = this.model.panel.post_content.ref;
-          this.model.toc.post_content.coll = this.model.threadLog.getColl();
           this.model.toc.post_content.tocstep++;
           this.model.toc.post_content.navstep++;
+          this.model.toc.post_content.coll = this.model.threadLog.getColl();
      }
 
      pullToc(){
