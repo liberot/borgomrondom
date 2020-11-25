@@ -39,12 +39,14 @@ function exec_save_toc(){
           return false;
      }
 
-// todo trim arrays
-     $history = $_POST['history'];
-     $booktoc = $_POST['booktoc'];
-// 
-
      $toc->post_content = pagpick($toc->post_content);
+
+     $history = trim_incoming_toc($_POST['history']);
+     // $res = validate_incoming_toc($history, $toc->post_content['history']);
+
+     $booktoc = trim_incoming_toc($_POST['booktoc']);
+     // $res = validate_incoming_toc($booktoc, $toc->post_content['booktoc']);
+
      $toc->post_content['history'] = $history;
      $toc->post_content['booktoc'] = $booktoc;
      $toc->post_content = pigpack($toc->post_content);

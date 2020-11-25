@@ -192,7 +192,7 @@ print PHP_EOL;
      }
 
      $panel->post_content['question'] = $panel->post_content['title'];
-     $panel->post_content['answer'] = trim_incoming_answer($_POST['answer']);
+     $panel->post_content['answer'] = trim_for_print($_POST['answer']);
      $panel = pigpack($panel);
      $conf = [
           'post_author'=>$author_id,

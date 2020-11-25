@@ -95,11 +95,28 @@ function trim_incoming_string($val){
      return $val;
 }
 
-function trim_incoming_answer($val){
-     $val = substr($val, 0, 128);
-     $val = sanitize_textarea_field($val);
-     $val = preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $val);
-     return $val;
+function trim_incoming_toc($toc){
+     $res = null;
+     if(false == is_array($toc)){ return $res; }
+     $res = [];
+     foreach($toc as $ref){
+          $temp = preg_replace('/[^A-Za-z0-9-]/', '', $ref);
+          $temp = substr($temp, 0, 36);
+          $res[]= $temp;
+     }
+     return $res;
+}
+
+function validate_incoming_toc($toc, $ref_toc){
+     $res = false;
+     $i = 1;
+     foreach($toc as $ref){
+          if(in_array($ref, $ref_toc)){
+               $i++;
+          }
+     }
+     if($i >= count($toc)){ $res = true; }
+     return $res;
 }
 
 function walk_the_doc($doc){
