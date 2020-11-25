@@ -291,6 +291,16 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
 
 // https://www.php.net/manual/en/function.imageloadfont.php
 // https://www.php.net/manual/en/function.imagettftext.php
+// https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6fmtx.html
+// https://www.php.net/manual/en/imagick.queryfontmetrics.php
+// https://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html
+// https://github.com/RazrFalcon/ttf-parser
+// https://github.com/Pomax/PHP-Font-Parser
+// https://github.com/qdsang/ttf2svg
+// https://stackoverflow.com/questions/4190667/how-to-get-width-of-a-truetype-font-character-in-1200ths-of-an-inch-with-python
+// https://stackoverflow.com/questions/2480183/get-width-of-a-single-character-from-ttf-font-in-php
+// https://www.php.net/imagettfbbox
+
 
 // panel might have a group as 'cover' with three panels
 // groups is going to gather differnt spreads in a semantic way
