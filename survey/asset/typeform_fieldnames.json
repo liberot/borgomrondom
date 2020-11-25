@@ -1,0 +1,158 @@
+{
+    "id": "Ou60c9hu",
+    "type": "form",
+    "title": "Fieldtypes",
+    "workspace": {
+        "href": "https:\/\/api.typeform.com\/workspaces\/Uge4kd"
+    },
+    "theme": {
+        "href": "https:\/\/api.typeform.com\/themes\/KyFC79"
+    },
+    "settings": {
+        "language": "en",
+        "progress_bar": "proportion",
+        "meta": {
+            "allow_indexing": true
+        },
+        "is_public": true,
+        "is_trial": false,
+        "show_progress_bar": true,
+        "show_typeform_branding": true,
+        "are_uploads_public": false,
+        "show_time_to_complete": true
+    },
+    "thankyou_screens": [
+        {
+            "id": "DefaultTyScreen",
+            "ref": "default_tys",
+            "title": "Thanks for completing this typeform\nNow *create your own* \u2014 it's free, easy, & beautiful",
+            "properties": {
+                "show_button": true,
+                "share_icons": false,
+                "button_mode": "redirect",
+                "button_text": "Create a *typeform*",
+                "redirect_url": "https:\/\/admin.typeform.com\/powered-by?utm_campaign=Ou60c9hu&utm_source=typeform.com&utm_medium=typeform&utm_content=typeform-thankyoubutton&utm_term=EN"
+            },
+            "attachment": {
+                "type": "image",
+                "href": "https:\/\/images.typeform.com\/images\/2dpnUBBkz2VN"
+            }
+        }
+    ],
+    "fields": [
+        {
+            "id": "xM25Dw0Aul6y",
+            "title": "Phone Number",
+            "ref": "801c62a0-63fa-490e-8087-90ee04dbccb5",
+            "properties": {
+                "default_country_code": "us"
+            },
+            "validations": {
+                "required": false
+            },
+            "type": "phone_number"
+        },
+        {
+            "id": "4kLbjbt6T5g5",
+            "title": "Long Text",
+            "ref": "a42724ba-d82b-40b9-a7e4-e7a540153bb5",
+            "properties": {},
+            "validations": {
+                "required": false
+            },
+            "type": "long_text"
+        },
+        {
+            "id": "G9Z6AoIk4gqx",
+            "title": "Email",
+            "ref": "ad96c7c5-f225-459e-ab80-ed2cf350e81e",
+            "properties": {},
+            "validations": {
+                "required": false
+            },
+            "type": "email"
+        },
+        {
+            "id": "xWPNVvZkOyQX",
+            "title": "Opinion Scale",
+            "ref": "1363f634-4146-4421-979a-7d3d5a12c0f7",
+            "properties": {
+                "start_at_one": false,
+                "steps": 11
+            },
+            "validations": {
+                "required": false
+            },
+            "type": "opinion_scale"
+        },
+        {
+            "id": "imDiPLu5xPLJ",
+            "title": "Ratting",
+            "ref": "b885e388-b183-437c-9d0e-22be9b243003",
+            "properties": {
+                "shape": "star",
+                "steps": 3
+            },
+            "validations": {
+                "required": false
+            },
+            "type": "rating"
+        },
+        {
+            "id": "DNUu2FiqBTFp",
+            "title": "Date",
+            "ref": "69edffda-d8f4-428b-b9a1-5a0cd1c5e0af",
+            "properties": {
+                "separator": "\/",
+                "structure": "MMDDYYYY"
+            },
+            "validations": {
+                "required": false
+            },
+            "type": "date"
+        },
+        {
+            "id": "16thjHV0dC7R",
+            "title": "Number",
+            "ref": "5c7e35f0-f8c7-49c7-889d-3b725a22a11b",
+            "properties": {},
+            "validations": {
+                "required": false
+            },
+            "type": "number"
+        },
+        {
+            "id": "GlVdmfXYDByD",
+            "title": "Dropdown",
+            "ref": "4aa47931-9fc4-40d1-b263-579a4f45103a",
+            "properties": {
+                "randomize": false,
+                "alphabetical_order": false,
+                "choices": [
+                    {
+                        "id": "lj48xQFqahyf",
+                        "ref": "01EQBHYC7B2PMD5Z343FDECQB1",
+                        "label": "choice 1"
+                    }
+                ]
+            },
+            "validations": {
+                "required": false
+            },
+            "type": "dropdown"
+        },
+        {
+            "id": "WhN7dzT4g8rL",
+            "title": "Legal",
+            "ref": "b4bcb6f7-858e-4433-823d-91eebf9ea6cf",
+            "properties": {},
+            "validations": {
+                "required": false
+            },
+            "type": "legal"
+        }
+    ],
+    "_links": {
+        "display": "https:\/\/vberzsin.typeform.com\/to\/Ou60c9hu"
+    }
+}
