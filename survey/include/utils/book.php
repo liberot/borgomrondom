@@ -289,6 +289,8 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
 
      $author_id = get_author_id();
 
+https://www.php.net/manual/en/function.imageloadfont.php
+
 // panel might have a group as 'cover' with three panels
 // groups is going to gather differnt spreads in a semantic way
 // as the uploaded images of three sisters and such
