@@ -15,18 +15,17 @@ function exec_init_asset_by_panel_ref(){
      $section_id = trim_incoming_filename($_POST['section_id']);
      $section_id = get_session_ticket('section_id');
 
-     $indx = trim_incoming_filename($_POST['indx']);
-
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
+     $panel_ref = get_session_ticket('panel_ref');
 
-     $layout_code = trim_incoming_filename($_POST['layout_code']);
-
+     /*
      $panel = get_panel_by_ref($section_id, $panel_ref)[0];
      if(is_null($panel)){
           $message = esc_html(__('no panel', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     */
 
      $image = $_POST['base'];
      $image = remove_base_from_chunk($image);
@@ -54,6 +53,20 @@ function exec_init_asset_by_panel_ref(){
           return false;
      }
 
+     $layout_code = 'P';
+     $layout_code = trim_incoming_filename($_POST['layout_code']);
+
+     if(Server::EVAL_UPLOADED_ASSET_SIZE){
+          $chunk = add_base_to_chunk($image);
+          $size = getimagesize('data://'.$chunk);
+          if(null != $size){
+               if(intval($size[0]) >= intval($size[1])){
+                    $layout_code = 'L';
+               }
+          }
+     }
+
+     $indx = trim_incoming_filename($_POST['indx']);
      $conf = [
           'post_type'=>'surveyprint_asset',
           'post_author'=>get_author_id(),

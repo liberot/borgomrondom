@@ -309,13 +309,12 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
      if(null == $panel){ return false; }
      $panel->post_content = pagpick($panel->post_content);
 
-     $layout_code = $panel->post_content['conf']['layout_code'];
+// a panel might or not be tagged by a layout preference
      $layout_group = $panel->post_content['conf']['layout_group'];
-
      $layout_group = is_null($layout_group) ? 'default' : $layout_group;
 
 // todo: debug: layout_code is
-     $layout_code = 'P';
+     $layout_code = 'U';
 
 // loads layout document
      $doc = get_layout_by_group_and_rule($layout_group, $layout_code)[0];
@@ -336,7 +335,7 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
      $uuid = psuuid();
      $doc['uuid'] = $uuid;
 
-// answer as in a textfield
+// answer
      $text = trim_for_print($panel->post_content['answer']);
 
      $doc['assets'][0]['text'] = [$text];
@@ -356,6 +355,11 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
           $asset['conf']['ow'] = '';
           $asset['conf']['oh'] = '';
           $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $maxx)[0];
+
+print('>>');
+print_r($uploaded_asset);
+print "\n";
+
           if(null != $uploaded_asset){
                $asset['src'] = add_base_to_chunk($uploaded_asset->post_content);
                $asset = fit_image_asset_into_slot($doc, $asset);
