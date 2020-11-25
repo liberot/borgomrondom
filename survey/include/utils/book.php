@@ -355,11 +355,6 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
           $asset['conf']['ow'] = '';
           $asset['conf']['oh'] = '';
           $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $maxx)[0];
-
-print('>>');
-print_r($uploaded_asset);
-print "\n";
-
           if(null != $uploaded_asset){
                $asset['src'] = add_base_to_chunk($uploaded_asset->post_content);
                $asset = fit_image_asset_into_slot($doc, $asset);
