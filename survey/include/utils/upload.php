@@ -41,10 +41,12 @@ function get_asset_by_id($asset_id){
 }
 
 function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=null){
+
      $section_id = esc_sql($section_id);
      $panel_ref = esc_sql($panel_ref);
-     $author_id = esc_sql(get_author_id());
      $limit = esc_sql($limit);
+     $author_id = esc_sql(get_author_id());
+
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
      global $wpdb;
      $sql = <<<EOD

@@ -371,9 +371,10 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
           $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $maxx)[0];
 
           if(null != $uploaded_asset){
-               $asset['src'] = eval_asset_src($uploaded_asset->post_content);
+               $asset['src'] = eval_asset_src($uploaded_asset);
                $asset = fit_image_asset_into_slot($doc, $asset);
           }
+
           $asis[]= $asset;
      }
      $doc['assets'] = $asis;
@@ -397,13 +398,15 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
      return $res;
 }
 
-function eval_asset_src($post){
+function eval_asset_src($asset){
      $res = '';
-     if(filter_var($post, FILTER_VALIDATE_URL)){
-          $res = $post;
+// resource locator is a URL 
+     if(filter_var($asset->post_content, FILTER_VALIDATE_URL)){
+          $res = $asset->post_content;
      }
+// resource locator is a base 64 chunk 
      else {
-          $res = add_base_to_chunk($post);
+          $res = add_base_to_chunk($asset->post_content);
      }
      return $res;
 }

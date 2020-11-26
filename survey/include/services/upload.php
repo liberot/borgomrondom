@@ -159,6 +159,7 @@ function exec_get_assets_by_panel_ref(){
 
      $max = 1;
      $res = get_assets_by_panel_ref($section_id, $panel_ref, $max);
+
      $message = esc_html(__('assets loaded', 'nosuch'));
      echo json_encode(['res'=>'success', 'message'=>$message, 'coll'=>$res, 'panel_id'=>$panel_id]);
 };

@@ -449,9 +449,6 @@ class Tools extends Controller {
 
           this.model.spread = this.evalSpread(this.model.spidx);
 
-
-console.log(this.model.spread);
-
           if(null == this.model.spread){ return; }
           this.model.doc = this.model.spread.post_content;
           for(let idx in this.model.doc.assets){

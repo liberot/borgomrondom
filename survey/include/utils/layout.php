@@ -185,19 +185,22 @@ function fit_image_asset_into_slot($doc, $asset){
      $ilav = base64_encode($vali);
      $size = null;
 
+// asset is base64 chunk 
      if($temp == $ilav){
           $temp = add_base_to_chunk($temp);
           $size = getimagesize('data://'.$temp);
      }
      else {
+// asset is file resource
           if(@file_exists($asset['src'])){
                $temp = @file_get_contents($asset['src']);
           }
+// asset is url resource
           else if(false != parse_url($asset['src'])){
                $temp = dload($asset['src']);
           }
           $temp = add_base_to_chunk(base64_encode($temp));
-          $asset['src'] = $temp;
+          // $asset['src'] = $temp;
           $size = getimagesize('data://'.$temp);
      }
 
