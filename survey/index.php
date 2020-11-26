@@ -44,9 +44,7 @@ function set_test_env(){
      require_once('survey/test/session.php');
      require_once('survey/test/book.php');
      add_action('init', '__suspend__run__');
-     function __suspend__run__(){
-          exit();
-     }
+     function __suspend__run__(){ exit(); }
 }
 
 // add_action('init', function(){ wp_destroy_all_sessions(); exit(); });

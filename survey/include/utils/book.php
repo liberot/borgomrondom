@@ -399,6 +399,7 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
 }
 
 function eval_asset_src($asset){
+
      $res = '';
 // resource locator is a URL 
      if(filter_var($asset->post_content, FILTER_VALIDATE_URL)){

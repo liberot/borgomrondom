@@ -40,7 +40,7 @@ class Proc {
      const PRE_GENERATE_SECTION_PANELS = false;
      const           UPDATE_ON_PERSIST = true;
      const    EVAL_UPLOADED_ASSET_SIZE = true;
-     const           MEDIA_UPLOAD_PROC = 'file_upload';
+     const           MEDIA_UPLOAD_PROC = 'base64_upload';
      const               BASE64_UPLOAD = 'base64_upload';
      const                 FILE_UPLOAD = 'file_upload';
 }

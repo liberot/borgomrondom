@@ -181,6 +181,7 @@ function fit_image_asset_into_slot($doc, $asset){
      $temp = remove_base_from_chunk($temp);
      $temp = preg_replace('/\s+/', '', $temp);
 
+// whether or not chunk is of type base64 
      $vali = base64_decode($temp, true);
      $ilav = base64_encode($vali);
      $size = null;
@@ -200,7 +201,6 @@ function fit_image_asset_into_slot($doc, $asset){
                $temp = dload($asset['src']);
           }
           $temp = add_base_to_chunk(base64_encode($temp));
-          // $asset['src'] = $temp;
           $size = getimagesize('data://'.$temp);
      }
 
