@@ -316,7 +316,6 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
 // https://stackoverflow.com/questions/2480183/get-width-of-a-single-character-from-ttf-font-in-php
 // https://www.php.net/imagettfbbox
 
-
 // panel might have a group as 'cover' with three panels
 // groups is going to gather differnt spreads in a semantic way
 // as the uploaded images of three sisters and such
@@ -370,8 +369,12 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
           $asset['conf']['ow'] = '';
           $asset['conf']['oh'] = '';
           $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $maxx)[0];
+
+print('>>>>>');
+print_r($uploaded_assets);
+
           if(null != $uploaded_asset){
-               $asset['src'] = add_base_to_chunk($uploaded_asset->post_content);
+               $asset['src'] = eval_asset_src($uploaded_asset->post_content);
                $asset = fit_image_asset_into_slot($doc, $asset);
           }
           $asis[]= $asset;
@@ -397,4 +400,15 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
      return $res;
 }
 
-
+function eval_asset_src($post){
+print ">>";
+print_r($post);
+     $res = '';
+     if(filter_var($post, FILTER_VALIDATE_URL)){
+          $res = $post;
+     }
+     else {
+          $res = add_base_to_chunk($post);
+     }
+     return $res;
+}

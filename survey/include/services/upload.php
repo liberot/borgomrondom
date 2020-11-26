@@ -75,15 +75,14 @@ function exec_init_asset_by_panel_ref(){
                ];
                if(Proc::UPDATE_ON_PERSIST){
                     $asset = get_assets_by_panel_ref($section_id, $panel_ref, 1)[0];
-                    if(!is_null($asset)){
-                         $conf['ID'] = $asset->ID;
-                    }
+                    if(!is_null($asset)){ $conf['ID'] = $asset->ID; }
                }
                $res = init_asset($conf);
                break;
 
           case Proc::FILE_UPLOAD:
 
+// upload as for the media gallery
                $upload_directory = Path::get_upload_path();
                @mkdir($upload_directory);
                $upload_directory = sprintf('%s/%s', $upload_directory, get_author_id());
@@ -96,7 +95,6 @@ function exec_init_asset_by_panel_ref(){
                file_put_contents($upload_path, $image);
 
                // @chmod($upload_directory, 0644);
-
                $attachment = array(
                     'post_author'=>get_author_id(),
                     'post_title'=>$asset_name,
@@ -106,7 +104,32 @@ function exec_init_asset_by_panel_ref(){
                     'post_mime_type'=>'image/png',
                     'post_content'=>psuuid()
                );
+
                $attach_id = wp_insert_attachment($attachment, $upload_path, $section_id);
+
+// upload as for surveyprint
+               $rsloc = Path::get_upload_url();
+               $rsloc = sprintf('%s/%s', $rsloc, get_author_id());
+               $rsloc = sprintf('%s/%s', $rsloc, $thread_id);
+               $rsloc = sprintf('%s/%s', $rsloc, $asset_name);
+
+               $conf = [
+                    'post_type'=>'surveyprint_asset',
+                    'post_author'=>get_author_id(),
+                    'post_title'=>$indx,
+                    'post_excerpt'=>$panel_ref,
+                    'post_name'=>$layout_code,
+                    'post_parent'=>$section_id,
+                    'post_content'=>$rsloc
+               ];
+
+               if(Proc::UPDATE_ON_PERSIST){
+                    $asset = get_assets_by_panel_ref($section_id, $panel_ref, 1)[0];
+                    if(!is_null($asset)){ $conf['ID'] = $asset->ID; }
+               }
+
+               $res = init_asset($conf);
+
                break;
      }
 

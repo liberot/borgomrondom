@@ -16,6 +16,10 @@ class Path {
      static public final function get_upload_path(){
           return sprintf('%s%s', wp_upload_dir()['basedir'], '/book_builder');
      }
+
+     static public final function get_upload_url(){
+          return sprintf('%s%s', wp_upload_dir()['baseurl'], '/book_builder');
+     }
 }
 
 class Layout {

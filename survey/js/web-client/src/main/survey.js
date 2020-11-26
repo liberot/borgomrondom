@@ -882,16 +882,25 @@ console.log(this.model.clientAuthed);
           }
      }
 
+     evalRsLoc(rsloc){
+          let mtch = rsloc.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+          if(null == mtch){
+               rsloc = rsloc.replace('data:image/png;base64,', '');
+               rsloc = 'data:image/png;base64,' +rsloc;
+
+          } 
+          return rsloc;
+     }
+
      renderAssetCopies(){
           if(null == this.model.panel.assetCopies){ return; }
           let buf = '';
           for(let idx in this.model.panel.assetCopies){
                let indx = this.model.panel.assetCopies[idx].indx;
-               let d = this.model.panel.assetCopies[idx].post_content;
-               if(null == d){ continue; }
-                   d = d.replace('data:image/png;base64,', '');
-                   d = 'data:image/png;base64,' +d;
-               buf+= this.fillTemplate(__src_img_011_tmpl__, { indx: indx, data: d });
+               let rsloc = this.model.panel.assetCopies[idx].post_content;
+               if(null == rsloc){ continue; }
+                   rsloc = this.evalRsLoc(rsloc);
+               buf+= this.fillTemplate(__src_img_011_tmpl__, { indx: indx, data: rsloc });
           }
           jQuery('.survey-assets').html(buf);
      }

@@ -225,15 +225,6 @@ function psuuid(){
      return $res;
 }
 
-function select_meta($coll){ 
-     if(!is_null($coll)){
-          foreach($coll as $item){
-               $item->meta_input = get_post_meta($item->ID);
-          }
-     }
-     return $coll;
-}
-
 function get_author_id(){
      $res = get_current_user_id();
      return $res;
