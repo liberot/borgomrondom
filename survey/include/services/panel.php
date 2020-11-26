@@ -98,7 +98,7 @@ function exec_init_panel(){
           'post_content'=>$doc
      ];
 
-     if(Server::UPDATE_ON_PERSIST){
+     if(Proc::UPDATE_ON_PERSIST){
           $panel = get_panel_by_ref($section_id, $panel_ref)[0];
           if(is_null($panel)){
                $message = esc_html(__('no such panel', 'nosuch'));
@@ -144,7 +144,7 @@ function exec_get_panel_by_ref(){
      set_session_ticket('panel_ref', $panel_ref, true);
 
 // sets up a panel
-     if(false == Server::PRE_GENERATE_SECTION_PANELS){
+     if(false == Proc::PRE_GENERATE_SECTION_PANELS){
 
           $coll = get_panel_by_ref($section_id, $panel_ref);
           if(!is_null($coll[0])){

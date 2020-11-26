@@ -58,7 +58,7 @@ function exec_save_toc(){
           'post_parent'=>$thread_id
      ];
 
-     if(Server::UPDATE_ON_PERSIST){
+     if(Proc::UPDATE_ON_PERSIST){
           $conf['ID'] = $toc->ID;
      }
 

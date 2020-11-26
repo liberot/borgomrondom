@@ -116,7 +116,7 @@ function exec_init_thread(){
      }
      set_session_ticket('section_id', $section_id, true);
 
-     if(Server::PRE_GENERATE_SECTION_PANELS) {
+     if(Proc::PRE_GENERATE_SECTION_PANELS) {
           $questions = get_questions_by_survey_id($survey->ID);
           foreach($questions as $question){
                $surveyprint_uuid = psuuid();
@@ -159,7 +159,7 @@ function exec_init_thread(){
      $coll['sections'] = get_sections_by_thread_id($thread_id);
 
 // preloads the panels
-     if(Server::PRE_GENERATE_SECTION_PANELS) {
+     if(Proc::PRE_GENERATE_SECTION_PANELS) {
           $coll['panels'] = [];
           $temp = clone $coll['toc'][0];
           $temp->post_content = pagpick($temp->post_content);

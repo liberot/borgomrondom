@@ -11,6 +11,11 @@ class Path {
      const         INKSCAPE = '/Applications/Inkscape.app/Contents/MacOS/inkscape';
      const      GHOSTSCRIPT = '/opt/local/bin/gs';
      const     SERVICE_BASE = '/wp-admin/admin.php';
+     const UPLOAD_DIRECTORY = '/wp-content/uploads/book_builder';
+
+     static public final function get_upload_path(){
+          return sprintf('%s%s', wp_upload_dir()['basedir'], '/book_builder');
+     }
 }
 
 class Layout {
@@ -26,10 +31,13 @@ class Layout {
      const Y_STEP = 101;
 }
 
-class Server {
+class Proc {
      const PRE_GENERATE_SECTION_PANELS = false;
      const           UPDATE_ON_PERSIST = true;
      const    EVAL_UPLOADED_ASSET_SIZE = true;
+     const           MEDIA_UPLOAD_PROC = 'file_upload';
+     const               BASE64_UPLOAD = 'base64_upload';
+     const                 FILE_UPLOAD = 'file_upload';
 }
 
 
