@@ -370,9 +370,6 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
           $asset['conf']['oh'] = '';
           $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $maxx)[0];
 
-print('>>>>>');
-print_r($uploaded_assets);
-
           if(null != $uploaded_asset){
                $asset['src'] = eval_asset_src($uploaded_asset->post_content);
                $asset = fit_image_asset_into_slot($doc, $asset);
@@ -401,8 +398,6 @@ print_r($uploaded_assets);
 }
 
 function eval_asset_src($post){
-print ">>";
-print_r($post);
      $res = '';
      if(filter_var($post, FILTER_VALIDATE_URL)){
           $res = $post;
