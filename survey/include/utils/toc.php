@@ -100,6 +100,11 @@ EOD;
      return $res;
 }
 
+
+
+
+
+
 // add_action('init', 'test_insert_into_toc');
 function test_insert_into_toc(){
      $toc = [];
@@ -112,6 +117,8 @@ function test_insert_into_toc(){
      $toc = insert_into_toc($toc, 'a100', 'd310');
      $toc = insert_into_toc($toc, 'a100', 'd510');
      print_r($toc);
+     $refs = flatten_toc_refs($toc, []);
+     print_r($refs);
      exit();
 }
 
@@ -130,17 +137,28 @@ function insert_into_toc($toc, $link, $ref){
      return $toc;
 }
 
-function insert_into_branch($toc, $link, $ref){
-     for($idx = 0; $idx < count($toc); $idx++){
-          if($link == $toc[$idx]['title']){
-               $toc[$idx]['group'][] = [
+function insert_into_branch($branch, $link, $ref){
+     for($idx = 0; $idx < count($branch); $idx++){
+          if($link == $branch[$idx]['title']){
+               $branch[$idx]['group'][] = [
                     'title'=>$ref,
                     'group'=>[]
                ];
           }
-          else if(!empty($toc[$idx]['group'])){
-               $toc[$idx]['group'] = insert_into_branch($toc[$idx]['group'], $link, $ref);
+          else if(!empty($branch[$idx]['group'])){
+               $branch[$idx]['group'] = insert_into_branch($branch[$idx]['group'], $link, $ref);
           }
      }
-     return $toc;
+     return $branch;
+}
+
+function flatten_toc_refs($toc, $refs){
+     foreach($toc as $node){
+          $refs[] = $node['title'];
+          if(!empty($node['group'])){
+               $refs = flatten_toc_refs($node['group'], $refs);
+               continue;
+          }
+     }
+     return $refs;
 }
