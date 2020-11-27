@@ -33,12 +33,12 @@ class Layout {
      const               CUT_INTO_SLOT = 'cut_into_slot';
      const            IMAGE_SCALE_TYPE = 'cut_into_slot';
 // --------------------------------------------------------
-     const Y_STEP = 101;
+     const                      Y_STEP = 101;
 }
 
 class Proc {
      const PRE_GENERATE_SECTION_PANELS = false;
-     const           UPDATE_ON_PERSIST = true;
+     const           UPDATE_ON_PERSIST = false;
      const    EVAL_UPLOADED_ASSET_SIZE = true;
      const           MEDIA_UPLOAD_PROC = 'base64_upload';
      const               BASE64_UPLOAD = 'base64_upload';

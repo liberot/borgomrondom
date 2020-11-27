@@ -55,7 +55,7 @@ function exec_construct_typeform_survey(){
      $survey_ref = $doc['id'];
      $survey_title = $doc['title'];
 
-     $uuid = psuuid();
+     $surveyprint_uuid = psuuid();
      $survey_id = wp_insert_post([
           'post_type'=>'surveyprint_survey',
           'post_title'=>$survey_title,
@@ -73,20 +73,40 @@ function exec_construct_typeform_survey(){
      }
 
 // insert posts of type question 
+
      $survey_type = 'typeform'; 
      $refs = [];
+
      foreach($doc['fields'] as $field){
+
           switch($field['type']){
+
                case 'group':
+// groups gather layout information
                     $conf = [];
                     $field['conf'] = [];
                     $field['conf']['layout_group'] = 'default';
                     $field['conf']['max_asset'] = '0';
+
+                    $surveyprint_uuid = psuuid();
+                    $conf = [ 
+                         'post_type'=>'surveyprint_question',
+                         'post_title'=>$field['title'],
+                         'post_excerpt'=>$field['ref'],
+                         'post_name'=>$surveyprint_uuid,
+                         'post_parent'=>$survey_id,
+                         'post_content'=>pigpack($field)
+                    ];
+                    $question_id = wp_insert_post($conf);
+
                     foreach($field['properties']['fields'] as $group_field){
+// fields within the group
                          $group_field['conf'] = [];
-                         $group_field['conf']['group'] = $field;
                          $group_field['conf']['layout_group'] = 'default';
+                         $group_field['conf']['is_group_field'] = true;
+                         $group_field['conf']['parent'] = $field['ref'];
                          $group_field['conf']['max_asset'] = '1';
+
                          $surveyprint_uuid = psuuid();
                          $conf = [ 
                               'post_type'=>'surveyprint_question',
@@ -96,14 +116,19 @@ function exec_construct_typeform_survey(){
                               'post_parent'=>$survey_id,
                               'post_content'=>pigpack($group_field)
                          ];
+
                          $question_id = wp_insert_post($conf);
                          $refs[]= $group_field['ref'];
                     }
                     break;
+
                default:
+// default field
+
                     $field['conf'] = [];
                     $field['conf']['max_asset'] = '1';
                     $field['conf']['layout_group'] = 'default';
+
                     $surveyprint_uuid = psuuid();
                     $conf = [ 
                          'post_type'=>'surveyprint_question',

@@ -342,8 +342,12 @@ function build_questionnaire_view(){
 add_shortcode('question_view', 'build_question_view');
 function build_question_view(){
 
+     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
+     wp_enqueue_style('admin_style');
+
      wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
      wp_register_script('service_i18n',    WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
+
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');
 
@@ -355,12 +359,15 @@ function build_question_view(){
      $welcome = esc_html(__('Welcome', 'nosuch'));
      $layout_group = esc_html(__('Layout Group', 'nosuch'));
      $date = esc_html(__('Date of Init', 'nosuch'));
+
      echo <<<EOD
+
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
                <div class='page-title-action messages'><span>{$welcome}</span></div>
                <hr class='wp-header-end'>
           <table class="wp-list-table widefat striped table-view-list posts">
+
           <thead>
                <tr>
                     <th>{$id}</th>
@@ -395,15 +402,24 @@ EOD;
 
      $survey_id = $_REQUEST['survey_id'];
      $coll = get_questions_by_survey_id($survey_id);
+
      foreach($coll as $question){
+          $question->post_content = pagpick($question->post_content);
+
+          $css = '';
+          if('group' == $question->post_content['type']){
+               $css = 'grouped-field';
+          }
+
           $d = date_create($question->post_date);
           $d = date_format($d, 'd.m.Y H:i:s');
+
           echo '<tr>';
           echo sprintf('<td>%s</td>', esc_html($question->ID));
           echo sprintf('<td>%s</td>', esc_html($d));
-          echo sprintf('<td>%s</td>', esc_html($question->post_title));
-          echo sprintf('<td><select class="layout-group-select lsel-%s" question_id="%s">%s</select></td>', $question->ID, $question->ID, $layout_options);
-          echo sprintf('<td><select class="max-asset-select msel-%s" question_id="%s">%s</select></td>', $question->ID, $question->ID, $asset_options);
+          echo sprintf('<td class="%s">%s</td>', $css, esc_html($question->post_content['title']));
+          echo sprintf('<td>%s</td>', '');
+          echo sprintf('<td>%s</td>', '');
           echo '</tr>';
      }
 
@@ -459,7 +475,7 @@ function build_questionnaire_list_view(){
      $title = esc_html(__('Title', 'nosuch'));
      $date = esc_html(__('Date of Init', 'nosuch'));
      $action = esc_html(__('Action', 'nosuch'));
-     $edit = esc_html(__('Questions', 'nosuch'));
+     $edit = esc_html(__('Edit Fields', 'nosuch'));
 
      $headline = esc_html(__('Questionnaire', 'nosuch'));
      $welcome = esc_html(__('Welcome', 'nosuch'));
