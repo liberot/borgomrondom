@@ -130,12 +130,10 @@ function walk_the_doc($doc){
 function trim_doc_node($node){
      if(is_array($node)){
           foreach($node as $key=>$value){
-               if(is_array($value)){
-                    $node[$key] = trim_doc_node($value);
-                    continue;
-               }
                if(is_object($value)){
                     $value = get_object_vars($value);
+               }
+               if(is_array($value)){
                     $node[$key] = trim_doc_node($value);
                     continue;
                }

@@ -99,3 +99,48 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 }
+
+// add_action('init', 'test_insert_into_toc');
+function test_insert_into_toc(){
+     $toc = [];
+     $toc = insert_into_toc($toc, 'root', 'a100');
+     $toc = insert_into_toc($toc, 'root', 'a111');
+     $toc = insert_into_toc($toc, 'a111', 'a109');
+     $toc = insert_into_toc($toc, 'a111', 'a110');
+     $toc = insert_into_toc($toc, 'a111', 'a310');
+     $toc = insert_into_toc($toc, 'a310', 'b310');
+     $toc = insert_into_toc($toc, 'a100', 'd310');
+     $toc = insert_into_toc($toc, 'a100', 'd510');
+     print_r($toc);
+     exit();
+}
+
+function insert_into_toc($toc, $link, $ref){
+     switch($link){
+          case 'root':
+               $toc[] = [ 
+                    'title'=>$ref, 
+                    'group'=>[] 
+               ];
+               break;
+          default:
+               $toc = insert_into_branch($toc, $link, $ref);
+               break;
+     }
+     return $toc;
+}
+
+function insert_into_branch($toc, $link, $ref){
+     for($idx = 0; $idx < count($toc); $idx++){
+          if($link == $toc[$idx]['title']){
+               $toc[$idx]['group'][] = [
+                    'title'=>$ref,
+                    'group'=>[]
+               ];
+          }
+          else if(!empty($toc[$idx]['group'])){
+               $toc[$idx]['group'] = insert_into_branch($toc[$idx]['group'], $link, $ref);
+          }
+     }
+     return $toc;
+}
