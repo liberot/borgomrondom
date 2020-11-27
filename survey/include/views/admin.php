@@ -406,9 +406,15 @@ EOD;
      foreach($coll as $question){
           $question->post_content = pagpick($question->post_content);
 
-          $css = '';
+          $group_style = '';
           if('group' == $question->post_content['type']){
-               $css = 'grouped-field';
+               $group_style = 'grouped-field';
+          }
+
+          $node_style = '';
+          
+          if(!is_null($question->post_content['conf']['parent'])){
+               $node_style = 'node-field';
           }
 
           $d = date_create($question->post_date);
@@ -417,7 +423,7 @@ EOD;
           echo '<tr>';
           echo sprintf('<td>%s</td>', esc_html($question->ID));
           echo sprintf('<td>%s</td>', esc_html($d));
-          echo sprintf('<td class="%s">%s</td>', $css, esc_html($question->post_content['title']));
+          echo sprintf('<td class="%s %s">%s</td>', $group_style, $node_style, esc_html($question->post_content['title']));
           echo sprintf('<td>%s</td>', '');
           echo sprintf('<td>%s</td>', '');
           echo '</tr>';

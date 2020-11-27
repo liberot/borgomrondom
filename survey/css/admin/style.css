@@ -7,3 +7,8 @@
      color: green !important;
      font-weight: bold;
 }
+
+.node-field {
+     font-style: italic !important; 
+     padding-left: 23px !important;
+}
