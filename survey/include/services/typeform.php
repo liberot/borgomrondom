@@ -78,7 +78,7 @@ function exec_construct_typeform_survey(){
 
      $post_content = [];
      $post_content['rulez'] = $doc['logic'];
-     $post_content['nodez'] = $nodez;
+     $post_content['master'] = $nodez;
      $post_content = pigpack($post_content);
      $conf = [
           'post_type'=>'surveyprint_toc',
