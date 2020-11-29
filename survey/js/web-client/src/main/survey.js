@@ -222,15 +222,21 @@ class Survey extends Controller {
 
           this.model.threadLog.setColl(target.coll);
 
-          if(null == target.position) { target.position = 0; }
+// current position in the panel refs collection
+          if(null == target.refposition) { target.refposition = 0; }
+          target.refposition = parseInt(target.refposition);
+
+// current postion of the book toc as for insert
           if(null == target.tocstep) { target.tocstep = 0; }
-          if(null == target.navstep) { target.navstep = 0; }
-
           target.tocstep = parseInt(target.tocstep);
-          target.position = parseInt(target.position);
-          target.navstep = parseInt(target.navstep);
 
+// current postion of the history ref as for to step back
+          if(null == target.historystep) { target.historystep = 0; }
+          target.historystep = parseInt(target.historystep);
+
+// ref of the current panel 
           let ref = target.refs[0];
+
 
           this.model.panels = [];
 
@@ -241,13 +247,16 @@ class Survey extends Controller {
                }
           }
 
+// deeplink
           if(null != this.model.navToPanelAction){
                this.model.navToPanelAction();
                this.model.navToPanelAction = null;
           }
 
+// load of the current panel by its reference
           this.loadPanel(ref);
 
+// link hash
           this.setLink();
      }
 
@@ -363,54 +372,49 @@ class Survey extends Controller {
           return question;
      }
 
-     corrToc(ref){
-          if(null == this.model.panel){ return false; }
+     corrBookToc(){
+          if(null == this.model.panel){ 
+               return false; 
+          }
+          let ref = this.model.panel.post_content.ref;
           let pos = this.model.toc.post_content.booktoc.indexOf(ref);
-          if(-1 != pos){ this.model.toc.post_content.tocstep = pos; }
+          if(-1 != pos){ 
+               this.model.toc.post_content.tocstep = pos; 
+          }
      }
 
-     pushToc(){
+// adds an entry to the book table of contents
+     pushBookToc(){
+          if(null == this.model.panel){ 
+               return false; 
+          }
+          let ref = this.model.panel.post_content.ref;
           let target = this.model.toc.post_content;
-console.log(target);
               target.tocstep = parseInt(target.tocstep);
-              target.position = parseInt(target.position);
-              target.booktoc[target.tocstep] = this.model.panel.post_content.ref;
-              target.history[target.navstep] = this.model.panel.post_content.ref;
-              target.tocstep++;
-              target.navstep++;
-              target.coll = this.model.threadLog.getColl();
+              if(-1 == target.booktoc.indexOf(ref)){
+                   target.tocstep++;
+                   target.booktoc[target.tocstep] = ref;
+              }
      }
 
-     pullToc(){
+// removes an entry from the book table of contents
+     pullBookToc(){
           let target = this.model.toc.post_content;
               target.tocstep--;
-              target.tocstep--;
-              target.navstep--;
-              target.navstep--;
               if(target.tocstep <= 0){ target.tocstep = 0; }
               let res = null;
               if(null != target.booktoc[target.tocstep]){
                    res = target.booktoc[target.tocstep];
               }
-              if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
-                   if(null != target.history[target.navstep]){
-                        res = target.history[target.navstep];
-                   }
-              }
-              return res;
      }
 
      loadPanel(ref){
-
-          this.corrToc(ref);
-
+          this.model.requestedPanelRef = ref;
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
                this.initPanel();
                return;
           }
-
-          this.model.panelRef = ref;
           this.notify(new Message('load::panel', this.model));
      }
 
@@ -420,6 +424,7 @@ console.log(target);
           }
           this.model.panel = msg.model.e.coll[0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
+          this.corrBookToc();
           this.initPanel();
      }
 
@@ -570,7 +575,7 @@ console.log(target);
           jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
 
           this.setLink();
-          this.pushToc(this.model.panel.post_content.ref);
+          this.pushBookToc();
      }
 
      renderFileupload(){
@@ -694,7 +699,7 @@ console.log(condition);
      }
 
      evalPrevPanel(){
-          let link = this.pullToc();
+          let link = this.pullBookToc();
           console.log('prev link from toc: ', link);
           if(null != link){
                this.loadPanel(link);
@@ -709,7 +714,7 @@ console.log(condition);
           let target = this.model.panel.post_content;
 console.log(target);
           for(let idx in target.rulez){
-               let rule = taqrget.rulez[idx];
+               let rule = target.rulez[idx];
                if(target.ref != rule.ref){ continue; }
 console.log(rule);
                rule.actions.forEach(function(actionpack){
@@ -736,9 +741,9 @@ console.log(actionpack);
      nextPanel(){
           let ref = null;
           let target = this.model.toc.post_content;
-              target.position++;
-              if(target.position >= target.refs.length){ target.position = target.refs.length -1; }
-              ref = target.refs[target.position];
+              target.refposition++;
+              if(target.refposition >= target.refs.length){ target.refposition = target.refs.length -1; }
+              ref = target.refs[target.refposition];
 console.log('next link from default: ', ref);
               this.loadPanel(ref);
      }
@@ -746,21 +751,21 @@ console.log('next link from default: ', ref);
      prevPanel(){
           let ref = null;
           let target = this.model.toc.post_content;
-              target.position--;
-              if(target.position <= 0){ taqrget.position = 0 }
-              ref = target.refs[target.position];
+              target.refposition--;
+              if(target.refposition <= 0){ target.refposition = 0 }
+              ref = target.refs[target.refposition];
               this.loadPanel(ref);
      }
 
      selectPanel(step){
           let ref = null;
           let target = this.model.toc.post_content;
-              target.position = parseInt(step);
-              if(target.position <= 0){ target.initstep = 0 }
-              if(target.position >= target.refs.length){
-                   target.position = target.refs.length -1
+              target.refposition = parseInt(step);
+              if(target.refposition <= 0){ target.initstep = 0 }
+              if(target.refposition >= target.refs.length){
+                   target.refposition = target.refs.length -1
               }
-              ref = target.refs[target.position];
+              ref = target.refs[target.refposition];
               this.loadPanel(ref);
      }
 

@@ -40,7 +40,7 @@ function exec_init_thread(){
 
      if(!is_null($coll['thread'][0])){
           $message = esc_html(__('cached thread is loaded', 'nosuch'));
-          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'ticket'=>$unique_guest));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
      }
 */
@@ -56,7 +56,7 @@ function exec_init_thread(){
                set_session_ticket('thread_id', $coll['thread'][0]->ID, true);
                set_session_ticket('section_id', $coll['sections'][0]->ID, true);
                $message = esc_html(__('stored thread is loaded', 'nosuch'));
-               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'ticket'=>$unique_guest));
+               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
                return true;
           }
      }
@@ -169,6 +169,6 @@ function exec_init_thread(){
      }
 
      $message = esc_html(__('thread inited', 'nosuch'));
-     echo json_encode(array('res'=>'success', 'message'=>'fielding questions inited', 'coll'=>$coll, 'ticket'=>$unique_guest));
+     echo json_encode(array('res'=>'success', 'message'=>'fielding questions inited', 'coll'=>$coll));
      return true;
 }

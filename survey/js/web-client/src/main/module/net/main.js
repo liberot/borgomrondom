@@ -22,12 +22,13 @@ class SurveyNet extends Controller {
      }
 
      loadPanel(msg){
+console.log(msg);
           let ref = this;
           let data = {
                'action': 'exec_get_panel_by_ref',
                'thread_id': msg.model.thread.ID,
                'section_id': msg.model.section.ID,
-               'panel_ref': msg.model.panelRef
+               'panel_ref': msg.model.requestedPanelRef
           }
           let cb = function(e){
                ref.notify(new Message('panel::loaded', { e }));
