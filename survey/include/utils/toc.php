@@ -155,13 +155,14 @@ function insert_into_branch($branch, $link, $ref){
      return $branch;
 }
 
-function flatten_toc_refs($toc, $refs){
+function flatten_toc_refs($toc, $res=null){
+     if(null == $res){ $res = []; }
+     if(null == $toc){ return $res; }
      foreach($toc as $node){
-          $refs[] = $node['title'];
+          $res[] = $node['title'];
           if(!empty($node['group'])){
-               $refs = flatten_toc_refs($node['group'], $refs);
-               continue;
+               $res = flatten_toc_refs($node['group'], $res);
           }
      }
-     return $refs;
+     return $res;
 }

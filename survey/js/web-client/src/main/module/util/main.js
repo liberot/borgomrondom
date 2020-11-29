@@ -27,7 +27,16 @@ let SurveyUtil = {
           let res = jQuery.parseJSON(tmp);
           if(null == res){ return pack; }
           return res;
+     },
+
+     flattenTocRefs: function(toc, res){
+          if(null == res){ res = []; }
+          for(let idx = 0; idx < toc.length; idx++){
+               res.push(toc[idx].title);
+               if(0 >= toc[idx].group.length){
+                    res = this.flattenTocRefs(toc[idx].group, res);
+               }
+          }
+          return res;
      }
 }
-
-

@@ -215,37 +215,38 @@ class Survey extends Controller {
           this.model.toc = msg.model.e.coll.toc[0];
           this.model.toc.post_content = SurveyUtil.pagpick(this.model.toc.post_content);
 
-          if(null == this.model.toc.post_content.booktoc){
-               this.model.toc.post_content.booktoc = [];
-          }
+          let target = this.model.toc.post_content;
 
-          if(null == this.model.toc.post_content.history){
-               this.model.toc.post_content.history = [];
-          }
+          if(null == target.booktoc){ target.booktoc = []; }
 
-          this.model.threadLog.setColl(this.model.toc.post_content.coll);
+          if(null == target.history){ target.history = []; }
 
-          if(null == this.model.toc.post_content.initstep) { this.model.toc.post_content.initstep = 0; }
-          if(null == this.model.toc.post_content.tocstep) { this.model.toc.post_content.tocstep = 0; }
-          if(null == this.model.toc.post_content.navstep) { this.model.toc.post_content.navstep = 0; }
-          this.model.toc.post_content.tocstep = parseInt(this.model.toc.post_content.tocstep);
-          this.model.toc.post_content.initstep = parseInt(this.model.toc.post_content.initstep);
-          this.model.toc.post_content.navstep = parseInt(this.model.toc.post_content.navstep);
+          this.model.threadLog.setColl(target.coll);
 
-          let link = this.model.toc.post_content.init_refs[0];
+          if(null == target.position) { target.position = 0; }
+          if(null == target.tocstep) { target.tocstep = 0; }
+          if(null == target.navstep) { target.navstep = 0; }
+
+          target.tocstep = parseInt(target.tocstep);
+          target.position = parseInt(target.position);
+          target.navstep = parseInt(target.navstep);
+
+console.log(target.refs);
+          let link = target.refs[0];
+
           if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
-               if(null != this.model.toc.post_content.history[this.model.toc.post_content.navstep -1]){
-                     link = this.model.toc.post_content.history[this.model.toc.post_content.navstep -1];
+               if(null != target.history[target.navstep -1]){
+                   link = target.history[target.navstep -1];
                }
           }
           else {
-               target = this.model.toc.post_content.booktoc;
-               if(null != this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep -1]){
-                    link = this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep -1];
+               if(null != target.booktoc[target.tocstep -1]){
+                   link = target.booktoc[target.tocstep -1];
                }
           }
 
           this.model.panels = [];
+
           if(SurveyConfig.preloadPanels){
                for(let idx in msg.model.e.coll.panels){
                     this.model.panels[msg.model.e.coll.panels[idx].post_excerpt] = msg.model.e.coll.panels[idx];
@@ -380,42 +381,35 @@ class Survey extends Controller {
           if(-1 != pos){ this.model.toc.post_content.tocstep = pos; }
      }
 
-     corrStep(){
-          if(null == this.model.panel){ return false; }
-          let ref = this.model.panel.post_content.ref;
-          let pos = this.model.toc.post_content.init_refs.indexOf(ref);
-          if(-1 != pos){ this.model.toc.post_content.initstep = pos; }
-     }
-
      pushToc(){
-console.log(this.model.toc.post_content);
-          this.model.toc.post_content.tocstep = parseInt(this.model.toc.post_content.tocstep);
-          this.model.toc.post_content.initstep = parseInt(this.model.toc.post_content.initstep);
-          this.model.toc.post_content.booktoc[this.model.toc.post_content.tocstep] = this.model.panel.post_content.ref;
-          this.model.toc.post_content.history[this.model.toc.post_content.navstep] = this.model.panel.post_content.ref;
-          this.model.toc.post_content.tocstep++;
-          this.model.toc.post_content.navstep++;
-          this.model.toc.post_content.coll = this.model.threadLog.getColl();
+          let target = this.model.toc.post_content;
+console.log(target);
+              target.tocstep = parseInt(target.tocstep);
+              target.position = parseInt(target.position);
+              target.booktoc[target.tocstep] = this.model.panel.post_content.ref;
+              target.history[target.navstep] = this.model.panel.post_content.ref;
+              target.tocstep++;
+              target.navstep++;
+              target.coll = this.model.threadLog.getColl();
      }
 
      pullToc(){
-          this.model.toc.post_content.tocstep--;
-          this.model.toc.post_content.tocstep--;
-          this.model.toc.post_content.navstep--;
-          this.model.toc.post_content.navstep--;
-          if(this.model.toc.post_content.tocstep <= 0){ this.model.toc.post_content.tocstep = 0; }
-          let target = this.model.toc.post_content.booktoc;
-          let res = null;
-          if(null != target[this.model.toc.post_content.tocstep]){
-               res = target[this.model.toc.post_content.tocstep];
-          }
-          if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
-               target = this.model.toc.post_content.history;
-               if(null != target[this.model.toc.post_content.navstep]){
-                    res = target[this.model.toc.post_content.navstep];
-               }
-          }
-          return res;
+          let target = this.model.toc.post_content;
+              target.tocstep--;
+              target.tocstep--;
+              target.navstep--;
+              target.navstep--;
+              if(target.tocstep <= 0){ target.tocstep = 0; }
+              let res = null;
+              if(null != target.booktoc[target.tocstep]){
+                   res = target.booktoc[target.tocstep];
+              }
+              if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
+                   if(null != target.history[target.navstep]){
+                        res = target.history[target.navstep];
+                   }
+              }
+              return res;
      }
 
      loadPanel(ref){
@@ -752,35 +746,45 @@ console.log(actionpack);
      }
 
      nextPanel(){
-          this.corrStep();
-          this.model.toc.post_content.initstep++;
-          if(this.model.toc.post_content.initstep 
-               >= this.model.toc.post_content.init_refs.length){ 
-                    this.model.toc.post_content.initstep = this.model.toc.post_content.init_refs.length -1 
+console.log('nextPanel: ', arguments);
+          let target = this.model.toc.post_content.master;
+
+/*
+          this.model.toc.post_content.position++;
+          if(this.model.toc.post_content.position 
+               >= this.model.toc.post_content.master.length){ 
+                    this.model.toc.post_content.position = this.model.toc.post_content.master.length -1 
           }
-          let ref = this.model.toc.post_content.init_refs[this.model.toc.post_content.initstep];
+          let ref = this.model.toc.post_content.master[this.model.toc.post_content.position];
 console.log('next link from default: ', ref);
           this.loadPanel(ref);
+*/
      }
 
      prevPanel(){
+console.log('prevPanel: ', arguments);
+/*
           this.corrStep();
-          this.model.toc.post_content.initstep--;
-          if(this.model.toc.post_content.initstep <= 0){ this.model.toc.post_content.initstep = 0 }
-          let ref = this.model.toc.post_content.init_refs[this.model.toc.post_content.initstep];
+          this.model.toc.post_content.position--;
+          if(this.model.toc.post_content.position <= 0){ this.model.toc.post_content.initstep = 0 }
+          let ref = this.model.toc.post_content.master[this.model.toc.post_content.position];
 console.log('prev link from default: ', ref);
           this.loadPanel(ref);
+*/
      }
 
      selectPanel(step){
-          this.model.toc.post_content.initstep = parseInt(step);
-          if(this.model.toc.post_content.initstep <= 0){ this.model.toc.post_content.initstep = 0 }
-          if(this.model.toc.post_content.initstep 
-               >= this.model.toc.init_refs.length.length){ 
-                   this.model.toc.post_content.initstep = this.model.toc.init_refs.length -1 
+console.log('selectPanel: ', arguments);
+/*
+          this.model.toc.post_content.position = parseInt(step);
+          if(this.model.toc.post_content.position <= 0){ this.model.toc.post_content.initstep = 0 }
+          if(this.model.toc.post_content.position
+               >= this.model.toc.master.length.length){
+                   this.model.toc.post_content.position = this.model.toc.master.length -1
           }
-          let ref = this.model.toc.post_content.init_refs[this.model.toc.post_content.initstep];
+          let ref = this.model.toc.post_content.master[this.model.toc.post_content.position];
           this.loadPanel(ref);
+*/
      }
 
      initSpreads(msg){
