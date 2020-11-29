@@ -73,81 +73,12 @@ function exec_construct_typeform_survey(){
      }
 
 // insert posts of type question 
-
      $survey_type = 'typeform'; 
-     $refs = [];
+     $nodez = parse_nodes($doc['fields'], $survey_id);
 
-     foreach($doc['fields'] as $field){
-
-          switch($field['type']){
-
-               case 'group':
-// groups gather layout information
-                    $conf = [];
-                    $field['conf'] = [];
-                    $field['conf']['layout_group'] = 'default';
-                    $field['conf']['max_asset'] = '0';
-
-                    $surveyprint_uuid = psuuid();
-                    $conf = [ 
-                         'post_type'=>'surveyprint_question',
-                         'post_title'=>$field['title'],
-                         'post_excerpt'=>$field['ref'],
-                         'post_name'=>$surveyprint_uuid,
-                         'post_parent'=>$survey_id,
-                         'post_content'=>pigpack($field)
-                    ];
-                    $question_id = wp_insert_post($conf);
-
-                    foreach($field['properties']['fields'] as $group_field){
-// fields within the group
-                         $group_field['conf'] = [];
-                         $group_field['conf']['layout_group'] = 'default';
-                         $group_field['conf']['is_group_field'] = true;
-                         $group_field['conf']['parent'] = $field['ref'];
-                         $group_field['conf']['max_asset'] = '1';
-
-                         $surveyprint_uuid = psuuid();
-                         $conf = [ 
-                              'post_type'=>'surveyprint_question',
-                              'post_title'=>$group_field['title'],
-                              'post_excerpt'=>$group_field['ref'],
-                              'post_name'=>$surveyprint_uuid,
-                              'post_parent'=>$survey_id,
-                              'post_content'=>pigpack($group_field)
-                         ];
-
-                         $question_id = wp_insert_post($conf);
-                         $refs[]= $group_field['ref'];
-                    }
-                    break;
-
-               default:
-// default field
-
-                    $field['conf'] = [];
-                    $field['conf']['max_asset'] = '1';
-                    $field['conf']['layout_group'] = 'default';
-
-                    $surveyprint_uuid = psuuid();
-                    $conf = [ 
-                         'post_type'=>'surveyprint_question',
-                         'post_title'=>$field['title'],
-                         'post_excerpt'=>$field['ref'],
-                         'post_name'=>$surveyprint_uuid,
-                         'post_parent'=>$survey_id,
-                         'post_content'=>pigpack($field)
-                    ];
-                    $question_id = wp_insert_post($conf);
-                    $refs[]= $field['ref'];
-          }
-     }
-
-// inserts a post of type toc
      $post_content = [];
-     $post_content['toc'] = [];
      $post_content['rulez'] = $doc['logic'];
-     $post_content['init_refs'] = $refs;
+     $post_content['nodez'] = $nodez;
      $post_content = pigpack($post_content);
      $conf = [
           'post_type'=>'surveyprint_toc',
@@ -166,7 +97,39 @@ function exec_construct_typeform_survey(){
      }
 
      $message = sprintf('survey added: %s: %s', $survey_id, $survey_title);
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'refs'=>$refs));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'nodez'=>$nodez));
+}
+
+function parse_nodes($nodes, $survey_id, $link=null, $res=null){
+
+     if(is_null($res)){ $res = []; }
+     if(is_null($link)){ $link = 'root'; }
+     if(is_null($nodes)){ return $res; }
+
+     foreach($nodes as $node){
+
+          $res = insert_into_toc($res, $link, $node['ref']);
+
+          $node['conf'] = [];
+          $node['conf']['max_asset'] = '1';
+          $node['conf']['layout_group'] = 'default';
+          $surveyprint_uuid = psuuid();
+          $conf = [ 
+               'post_type'=>'surveyprint_question',
+               'post_title'=>$node['title'],
+               'post_excerpt'=>$node['ref'],
+               'post_name'=>$surveyprint_uuid,
+               'post_parent'=>$survey_id,
+               'post_content'=>pigpack($node)
+          ];
+          $question_id = wp_insert_post($conf);
+          if(!is_null($node['properties']['fields'])){
+               $res = parse_nodes($node['properties']['fields'], $survey_id, $node['ref'], $res);
+               continue;
+          }
+     }
+
+     return $res;
 }
 
 add_action('admin_post_exec_download_typeform_survey', 'exec_download_typeform_survey');

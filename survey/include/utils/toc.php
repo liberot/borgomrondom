@@ -102,9 +102,6 @@ EOD;
 
 
 
-
-
-
 // add_action('init', 'test_insert_into_toc');
 function test_insert_into_toc(){
      $toc = [];
@@ -116,6 +113,12 @@ function test_insert_into_toc(){
      $toc = insert_into_toc($toc, 'a310', 'b310');
      $toc = insert_into_toc($toc, 'a100', 'd310');
      $toc = insert_into_toc($toc, 'a100', 'd510');
+     $toc = insert_into_toc($toc, 'a100', 'x510');
+     $toc = insert_into_toc($toc, 'x510', 'y510');
+     $toc = insert_into_toc($toc, 'y510', 'z510');
+     $toc = insert_into_toc($toc, 'y510', 'u510');
+     $toc = insert_into_toc($toc, 'y510', 'u410');
+     $toc = insert_into_toc($toc, 'y510', 'u310');
      print_r($toc);
      $refs = flatten_toc_refs($toc, []);
      print_r($refs);
