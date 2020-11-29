@@ -6,6 +6,7 @@ define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'nosuch', DIRECTORY_S
 
 require_once('include/config/config.php');
 
+require_once('include/utils/log.php');
 require_once('include/utils/db.php');
 require_once('include/utils/utils.php');
 require_once('include/utils/book.php');
@@ -50,4 +51,5 @@ function set_test_env(){
 // add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
 // add_action('init', function(){ set_dev_env(); });
 
+add_action('init', function(){ init_log('test', ['the1st'=>'xXx', 'the2nd'=>'yYY']); } );
 
