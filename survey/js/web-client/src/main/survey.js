@@ -402,7 +402,7 @@ console.log(target);
 
      loadPanel(ref){
 
-          // this.corrToc(ref);
+          this.corrToc(ref);
 
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
