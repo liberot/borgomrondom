@@ -75,6 +75,7 @@ function blank_username_password($user, $username, $password) {
 }
 
 function trim_incoming_numeric($val){
+     if(is_null($val)){ $val = 0; }
      $val = substr($val, 0, 15);
      $val = preg_replace('/[^0-9]/', '', $val);
      return $val;
@@ -83,6 +84,7 @@ function trim_incoming_numeric($val){
 // wp_check_invalid_utf8();
 // wp_strip_all_tags();
 function trim_incoming_filename($val){
+     if(is_null($val)){ $val = ''; }
      $val = substr($val, 0, 128);
      $val = sanitize_textarea_field($val);
      $val = preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $val);
@@ -90,6 +92,7 @@ function trim_incoming_filename($val){
 }
 
 function trim_incoming_string($val){
+     if(is_null($val)){ $val = ''; }
      $val = substr($val, 0, 1024 *8);
      $val = sanitize_textarea_field($val);
      return $val;

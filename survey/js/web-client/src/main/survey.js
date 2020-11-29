@@ -218,7 +218,6 @@ class Survey extends Controller {
           let target = this.model.toc.post_content;
 
           if(null == target.booktoc){ target.booktoc = []; }
-
           if(null == target.history){ target.history = []; }
 
           this.model.threadLog.setColl(target.coll);
@@ -232,18 +231,7 @@ class Survey extends Controller {
           target.navstep = parseInt(target.navstep);
 
 console.log(target.refs);
-          let link = target.refs[0];
-
-          if(SurveyConfig.LINEAR_HISTORY == SurveyConfig.navigationHistory){
-               if(null != target.history[target.navstep -1]){
-                   link = target.history[target.navstep -1];
-               }
-          }
-          else {
-               if(null != target.booktoc[target.tocstep -1]){
-                   link = target.booktoc[target.tocstep -1];
-               }
-          }
+          let ref = target.refs[0];
 
           this.model.panels = [];
 
@@ -259,7 +247,8 @@ console.log(target.refs);
                this.model.navToPanelAction = null;
           }
 
-          this.loadPanel(link);
+          this.loadPanel(ref);
+
           this.setLink();
      }
 
@@ -414,7 +403,7 @@ console.log(target);
 
      loadPanel(ref){
 
-          this.corrToc(ref);
+          // this.corrToc(ref);
 
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
@@ -718,11 +707,11 @@ console.log(condition);
      evalNextPanel(){
           let ref = this;
           let links = [];
-          let target = this.model.panel.post_content.ref;
+          let target = this.model.panel.post_content;
 console.log(target);
-          for(let idx in this.model.toc.post_content.rulez){
-               let rule = this.model.toc.post_content.rulez[idx];
-               if(target != rule.ref){ continue; }
+          for(let idx in target.rulez){
+               let rule = taqrget.rulez[idx];
+               if(target.ref != rule.ref){ continue; }
 console.log(rule);
                rule.actions.forEach(function(actionpack){
 console.log(actionpack);
@@ -746,19 +735,12 @@ console.log(actionpack);
      }
 
      nextPanel(){
-console.log('nextPanel: ', arguments);
-          let target = this.model.toc.post_content.master;
-
-/*
-          this.model.toc.post_content.position++;
-          if(this.model.toc.post_content.position 
-               >= this.model.toc.post_content.master.length){ 
-                    this.model.toc.post_content.position = this.model.toc.post_content.master.length -1 
-          }
-          let ref = this.model.toc.post_content.master[this.model.toc.post_content.position];
+          let target = this.model.toc.post_content;
+              target.position++;
+              if(target.position >= target.refs.length){ target.position = target.refs.length -1; }
+          let ref = target.refs[target.position];
 console.log('next link from default: ', ref);
           this.loadPanel(ref);
-*/
      }
 
      prevPanel(){
