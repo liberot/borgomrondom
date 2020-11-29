@@ -249,15 +249,20 @@ function set_session_ticket($key, $value, $force=false){
           $_SESSION[$key] = $value;
           return true;
      }
-     if(false == is_null($_SESSION['$key'])){
-          $_SESSION[$key] = $value;
-     }
      return true;
+/*
+     global $wp_session;
+     $wp_session[$key] = $value;
+*/
 }
 
 function get_session_ticket($key){
      session_start();
      return $_SESSION[$key];
+/*
+     global $wp_session;
+     return $wp_session[$key]; 
+*/
 }
 
 function debug_sql($sql){

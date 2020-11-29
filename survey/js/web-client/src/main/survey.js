@@ -230,7 +230,6 @@ class Survey extends Controller {
           target.position = parseInt(target.position);
           target.navstep = parseInt(target.navstep);
 
-console.log(target.refs);
           let ref = target.refs[0];
 
           this.model.panels = [];
@@ -735,38 +734,34 @@ console.log(actionpack);
      }
 
      nextPanel(){
+          let ref = null;
           let target = this.model.toc.post_content;
               target.position++;
               if(target.position >= target.refs.length){ target.position = target.refs.length -1; }
-          let ref = target.refs[target.position];
+              ref = target.refs[target.position];
 console.log('next link from default: ', ref);
-          this.loadPanel(ref);
+              this.loadPanel(ref);
      }
 
      prevPanel(){
-console.log('prevPanel: ', arguments);
-/*
-          this.corrStep();
-          this.model.toc.post_content.position--;
-          if(this.model.toc.post_content.position <= 0){ this.model.toc.post_content.initstep = 0 }
-          let ref = this.model.toc.post_content.master[this.model.toc.post_content.position];
-console.log('prev link from default: ', ref);
-          this.loadPanel(ref);
-*/
+          let ref = null;
+          let target = this.model.toc.post_content;
+              target.position--;
+              if(target.position <= 0){ taqrget.position = 0 }
+              ref = target.refs[target.position];
+              this.loadPanel(ref);
      }
 
      selectPanel(step){
-console.log('selectPanel: ', arguments);
-/*
-          this.model.toc.post_content.position = parseInt(step);
-          if(this.model.toc.post_content.position <= 0){ this.model.toc.post_content.initstep = 0 }
-          if(this.model.toc.post_content.position
-               >= this.model.toc.master.length.length){
-                   this.model.toc.post_content.position = this.model.toc.master.length -1
-          }
-          let ref = this.model.toc.post_content.master[this.model.toc.post_content.position];
-          this.loadPanel(ref);
-*/
+          let ref = null;
+          let target = this.model.toc.post_content;
+              target.position = parseInt(step);
+              if(target.position <= 0){ target.initstep = 0 }
+              if(target.position >= target.refs.length){
+                   target.position = target.refs.length -1
+              }
+              ref = target.refs[target.position];
+              this.loadPanel(ref);
      }
 
      initSpreads(msg){
