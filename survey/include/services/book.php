@@ -123,8 +123,8 @@ function exec_init_book_by_thread_id(){
 
 
 // ---------------------------- pages
-print_r($thread); exit();
-     foreach($thread->post_content['toc']['book'] as $ref){
+// print_r($thread); exit();
+     foreach($thread->post_content['book'] as $ref){
           $res = add_spread($section_id, 'Title of a Spread', $chapter_id, $ref);
           if(false != $res){
                $spread_ids[]= $res['spread_id'];
@@ -132,8 +132,14 @@ print_r($thread); exit();
           }
      }
 
-// ---------------------------- toc  
-     $toc_id = add_toc($book_id, 'Title of a ToC', $thread->post_content['toc']['book'], $spread_ids, $spread_refs);
+// ---------------------------- toc
+     $toc = [];
+     $toc['book'] = $thread->post_content['book'];
+     $toc['spread_ids'] = $spread_ids;
+     $toc['spread_refs'] = $spread_refs;
+     $toc['post_excerpt'] = $thread->post_excerpt;
+
+     $toc_id = add_toc($book_id, 'Title of a ToC', $toc);
 
      $coll['book'] = get_book_by_id($book_id);
      $coll['toc'] = get_toc_by_book_id($book_id);

@@ -276,25 +276,22 @@ function add_intro($chapter_id, $title){
      return $spread_id;
 }
 
-function add_toc($book_id, $title, $toc, $spread_ids, $spread_refs){
+function add_toc($book_id, $title, $toc){
 
      $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($book_id);
-     $uuid = psuuid();
 
-     $toc->post_content['spread_ids'] = $spread_ids;
-     $toc->post_content['spread_refs'] = $spread_refs;
-     $uuid = psuuid();
      $conf = [
           'post_type'=>'surveyprint_toc',
           'post_title'=>$title,
           'post_author'=>$author_id,
           'post_parent'=>$book_id,
-          'post_name'=>$uuid,
-          'post_excerpt'=>$toc->post_excerpt,
-          'post_content'=>pigpack($toc->post_content)
+          'post_name'=>psuuid(),
+          'post_excerpt'=>$toc['post_excerpt'],
+          'post_content'=>pigpack($toc)
      ];
+
      $toc_id = init_toc($conf);
 
      return $toc_id;

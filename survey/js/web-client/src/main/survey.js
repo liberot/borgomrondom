@@ -33,7 +33,6 @@ class Survey extends Controller {
           this.register(new Subscription(           'input::done', this.storeInput));
           this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
-          this.register(new Subscription(            'toc::saved', this.debugSavedToc));
 
           // ------
           this.extractDeeplink(window.location.hash.substr(1));
@@ -52,13 +51,6 @@ class Survey extends Controller {
           this.notify(new Message('download::fieldings', this.model));
      }
 
-     debugSavedToc(msg){
-          console.log(msg);
-          let l = msg.model.e.coll[0];
-              l.post_content = SurveyUtil.pagpick(l.post_content);
-          console.log(l);
-     }
- 
      showValidationError(msg){
          console.log(msg);
          alert(__survey.__('invalid', 'nosuch'));
@@ -333,8 +325,6 @@ class Survey extends Controller {
           this.setCondition(ref, val);
 
           this.notify(new Message('input::done', this.model));
-
-console.log('>>', this.model.thread.post_content.conditions);
      }
 
      setCondition(key, val){
@@ -719,14 +709,13 @@ console.log('loadPanel: ', ref);
           let links = [];
           let target = this.model.section.post_content.toc;
           let panel = this.model.panel.post_content.ref;
-console.log(panel);
-console.log(target.rulez);
+// console.log(panel);
+// console.log(target.rulez);
           for(let idx in target.rulez){
                let rule = target.rulez[idx];
                if(panel != rule.ref){ continue; }
 console.log(rule);
                rule.actions.forEach(function(actionpack){
-console.log(actionpack);
                     if(false != ref.evalCondition(actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
@@ -758,7 +747,7 @@ console.log(actionpack);
               pos = target.refs.length -1;
           }
           let ref = target.refs[pos];
-console.log('next link from default: ', target);
+console.log('next link from default: ', ref);
           this.loadPanel(ref);
      }
 

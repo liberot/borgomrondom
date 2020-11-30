@@ -386,22 +386,30 @@ class Tools extends Controller {
      }
 
      bindBook(msg){
+
           if(null == msg.model.book){
               console.log('no book');
               return false;
           }
+
           this.model.book = msg.model.book;
           if(null == msg.model.chapter){
               console.log('no chapter');
               return false;
           }
+
           this.model.chapter = msg.model.chapter;
           if(null == msg.model.toc){
               console.log('no toc');
               return false;
           }
+
+console.log(msg.model);
           this.model.toc = msg.model.toc[0];
+
           this.model.toc.post_content = LayoutUtil.pagpick(this.model.toc.post_content);
+console.log(this.model.toc);
+
           this.model.spreads = [];
           this.model.spidx = 0;
 // todo 
