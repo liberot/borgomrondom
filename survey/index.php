@@ -1,7 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-
-define ('NOSUCH_VERSION', '003.yancsee.zummieecow');
+define ('NOSUCH_VERSION', '005.001001001001001001001001001');
 define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'nosuch', DIRECTORY_SEPARATOR, 'survey'));
 
 require_once('include/config/config.php');
@@ -33,22 +32,9 @@ require_once('include/views/client.php');
 require_once('include/views/web.php');
 require_once('include/utils/utils.php');
 
-function set_dev_env(){
-     // init_survey_page();
-     // insert_guest_client();
-     // auth_guest_client(); 
-}
-
-function set_test_env(){
-     require_once('survey/test/typeform.php');
-     require_once('survey/test/survey.php');
-     require_once('survey/test/session.php');
-     require_once('survey/test/book.php');
-     add_action('init', '__suspend__run__');
-     function __suspend__run__(){ exit(); }
-}
-
 // add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
-// add_action('init', function(){ set_dev_env(); });
 // add_action('init', function(){ init_log('test', ['the1st'=>'xXx', 'the2nd'=>'yYY']); } );
+
+
+
 
