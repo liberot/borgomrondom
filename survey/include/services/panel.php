@@ -110,8 +110,7 @@ function exec_init_panel(){
 
      $panel_id = init_panel($conf);
 
-     // $coll = get_panel_by_ref($section_id, panel_id);
-     $coll = [];
+     $coll = get_panel_by_ref($section_id, $panel_ref);
 
      $message = esc_html(__('panel saved', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));

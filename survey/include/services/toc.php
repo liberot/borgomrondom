@@ -16,19 +16,30 @@ function exec_get_toc_by_id(){
 add_action('admin_post_exec_save_toc', 'exec_save_toc');
 function exec_save_toc(){
 
+// policy
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+// session client
      $author_id = get_author_id();
 
+// tickets
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
 
      $section_id = trim_incoming_numeric($_POST['section_id']);
      $section_id = get_session_ticket('section_id');
-     $section = get_section_by_id($section_id);
+
+// the section
+     $section = get_section_by_id($section_id)[0];
+     if(is_null($section)){
+          $message = esc_html(__('no such section', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
      $section->post_content = pagpick($section->post_content);
 
      $panel_ref = trim_incoming_numeric($_POST['panel_ref']);
@@ -40,12 +51,12 @@ function exec_save_toc(){
      $section->post_content['toc']['history'] = $history;
      $section->post_content['toc']['book'] = $book;
      $section->post_content = pigpack($section->post_content);
+     $section->post_author = $author_id;
 
-// todo save section
-//
-print_r($section);
+     $section_id = wp_insert_post($section);
 
-     $coll = [];
+     $coll = get_section_by_id($section_id);
+
      $message = esc_html(__('toc is saved', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }

@@ -6,33 +6,33 @@ class Survey extends Controller {
           this.model = new SurveyModel();
           jQuery('.survey-messages').html(this.fillTemplate(__srv_msg_001_tmpl__, {msg: __survey.__('welcome')}));
           // controls
-          this.register(new Subscription(        'parse::assets', this.parseAssets));
-          this.register(new Subscription(        'select::yesno', this.bindYesNoInput));
-          this.register(new Subscription(         'confirm::ref', this.bindMultipleChoiceInput));
-          this.register(new Subscription(       'confirm::image', this.bindMultipleChoiceInput));
-          this.register(new Subscription(       'confirm::input', this.bindTextInput));
-          this.register(new Subscription(      'confirm::upload', this.bindUploadInput));
-          this.register(new Subscription(       'confirm::group', this.bindGroupInput));
-          this.register(new Subscription('fieldings::downloaded', this.bindFieldings));
-          this.register(new Subscription(    'select::statement', this.bindSelectStatement));
-          this.register(new Subscription(            'nav::back', this.evalPrevPanel));
-          this.register(new Subscription(         'set::opinion', this.bindOpinion));
+          this.register(new Subscription(         'parse::assets', this.parseAssets));
+          this.register(new Subscription(         'select::yesno', this.bindYesNoInput));
+          this.register(new Subscription(          'confirm::ref', this.bindMultipleChoiceInput));
+          this.register(new Subscription(        'confirm::image', this.bindMultipleChoiceInput));
+          this.register(new Subscription(        'confirm::input', this.bindTextInput));
+          this.register(new Subscription(       'confirm::upload', this.bindUploadInput));
+          this.register(new Subscription(        'confirm::group', this.bindGroupInput));
+          this.register(new Subscription( 'fieldings::downloaded', this.bindFieldings));
+          this.register(new Subscription(     'select::statement', this.bindSelectStatement));
+          this.register(new Subscription(             'nav::back', this.evalPrevPanel));
+          this.register(new Subscription(          'set::opinion', this.bindOpinion));
           // events
-          this.register(new Subscription(         'thread::next', this.nextPanel));
-          this.register(new Subscription(         'thread::prev', this.evalPrevPanel));
-          this.register(new Subscription(       'thread::loaded', this.bindThread));
-          this.register(new Subscription(       'thread::inited', this.bindThread));
-          this.register(new Subscription(     'assets::uploaded', this.bindAssets));
-          this.register(new Subscription(   'assets::downloaded', this.bindAssets));
-          this.register(new Subscription(        'spreads::init', this.initSpreads));
-          this.register(new Subscription(       'asset::scanned', this.bindScan));
-          this.register(new Subscription(          'scans::done', this.uploadAssets));
-          this.register(new Subscription(          'scans::done', this.renderAssetCopies));
-          this.register(new Subscription(        'assets::bound', this.renderAssetCopies));
-          this.register(new Subscription(        'panel::loaded', this.bindPanel));
-          this.register(new Subscription(          'input::done', this.storeInput));
-          this.register(new Subscription(         'panel::saved', this.bindSavedPanel));
-          this.register(new Subscription(       'input::corrupt', this.showValidationError));
+          this.register(new Subscription(          'thread::next', this.nextPanel));
+          this.register(new Subscription(          'thread::prev', this.evalPrevPanel));
+          this.register(new Subscription(         'thread::loaded', this.bindThread));
+          this.register(new Subscription(        'thread::inited', this.bindThread));
+          this.register(new Subscription(      'assets::uploaded', this.bindAssets));
+          this.register(new Subscription(    'assets::downloaded', this.bindAssets));
+          this.register(new Subscription(         'spreads::init', this.initSpreads));
+          this.register(new Subscription(        'asset::scanned', this.bindScan));
+          this.register(new Subscription(           'scans::done', this.uploadAssets));
+          this.register(new Subscription(           'scans::done', this.renderAssetCopies));
+          this.register(new Subscription(         'assets::bound', this.renderAssetCopies));
+          this.register(new Subscription(         'panel::loaded', this.bindPanel));
+          this.register(new Subscription(           'input::done', this.storeInput));
+          this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
+          this.register(new Subscription(        'input::corrupt', this.showValidationError));
           // ------
           this.extractDeeplink(window.location.hash.substr(1));
           this.navDeeplink(window.location.hash.substr(1));
@@ -208,16 +208,6 @@ class Survey extends Controller {
           if(null == target.refposition) { target.refposition = 0; }
           target.refposition = parseInt(target.refposition);
 
-// current postion of the book toc as for insert
-          if(null == target.tocstep) { target.tocstep = 0; }
-          target.tocstep = parseInt(target.tocstep);
-
-// current postion of the history ref as for to step back
-          if(null == target.historystep) { target.historystep = 0; }
-          target.historystep = parseInt(target.historystep);
-
-
-
 
 // section
 // todo: there might be more than one section
@@ -368,35 +358,20 @@ return;
           let ref = this.model.panel.post_content.ref;
           let pos = this.model.toc.post_content.booktoc.indexOf(ref);
           if(-1 != pos){ 
-               this.model.toc.post_content.tocstep = pos; 
           }
      }
 
 // adds an entry to the book table of contents
      pushBookToc(){
-return;
           if(null == this.model.panel){ 
                return false; 
           }
           let ref = this.model.panel.post_content.ref;
-          let target = this.model.toc.post_content;
-              target.tocstep = parseInt(target.tocstep);
-              if(-1 == target.booktoc.indexOf(ref)){
-                   target.tocstep++;
-                   target.booktoc[target.tocstep] = ref;
+          let target = this.model.thread.post_content;
+              if(-1 == target.book.indexOf(ref)){
+                   target.book.push(ref);
               }
-     }
-
-// removes an entry from the book table of contents
-     pullBookToc(){
-return;
-          let target = this.model.toc.post_content;
-              target.tocstep--;
-              if(target.tocstep <= 0){ target.tocstep = 0; }
-              let res = null;
-              if(null != target.booktoc[target.tocstep]){
-                   res = target.booktoc[target.tocstep];
-              }
+console.log(target);
      }
 
      loadPanel(ref){
@@ -690,19 +665,13 @@ console.log(condition);
      }
 
      evalPrevPanel(){
-          let link = this.pullBookToc();
-          console.log('prev link from toc: ', link);
-          if(null != link){
-               this.loadPanel(link);
-               return true;
-          }
           this.prevPanel();
      }
 
      evalNextPanel(){
           let ref = this;
           let links = [];
-          let target = this.model.panel.post_content;
+          let target = this.model.section.post_content.toc;
 console.log(target);
           for(let idx in target.rulez){
                let rule = target.rulez[idx];
@@ -731,7 +700,7 @@ console.log(actionpack);
 
      nextPanel(){
           let ref = null;
-          let target = this.model.toc.post_content;
+          let target = this.model.section.post_content.toc;
               target.refposition++;
               if(target.refposition >= target.refs.length){ target.refposition = target.refs.length -1; }
               ref = target.refs[target.refposition];
@@ -741,7 +710,7 @@ console.log('next link from default: ', ref);
 
      prevPanel(){
           let ref = null;
-          let target = this.model.toc.post_content;
+          let target = this.model.section.post_content.toc;
               target.refposition--;
               if(target.refposition <= 0){ target.refposition = 0 }
               ref = target.refs[target.refposition];
@@ -750,7 +719,7 @@ console.log('next link from default: ', ref);
 
      selectPanel(step){
           let ref = null;
-          let target = this.model.toc.post_content;
+          let target = this.model.section.post_content.toc;
               target.refposition = parseInt(step);
               if(target.refposition <= 0){ target.initstep = 0 }
               if(target.refposition >= target.refs.length){
@@ -845,8 +814,6 @@ console.log('next link from default: ', ref);
      }
 
      uploadAssets(msg){
-console.log('will not upload until client is authed');
-console.log(this.model.clientAuthed);
           for(let idx in this.model.panel.assetCopies){
                if(true != this.model.panel.assetCopies[idx].upload){ continue; }
                let model = {
@@ -1014,7 +981,6 @@ class SurveyModel extends Model {
           this.threads;
           this.thread;
           this.step = 0;
-          this.tocstep = 0;
           this.maxImageAssets;
 // deeplink -----------------------------
           this.rThread;

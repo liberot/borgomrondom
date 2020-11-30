@@ -91,9 +91,8 @@ console.log(msg);
           let data = {
                action: 'exec_save_toc',
                thread_id: msg.model.section.ID,
-               toc_id: msg.model.toc.ID,
-               booktoc: msg.model.toc.post_content.booktoc,
-               history: msg.model.toc.post_content.history
+               booktoc: msg.model.thread.post_content.book,
+               history: msg.model.thread.post_content.history
           }
           let cb = function(e){
                ref.notify(new Message('toc::saved', { e }));

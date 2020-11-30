@@ -58,9 +58,6 @@ function exec_init_thread(){
      $toc = [];
      $toc['book'] = [];
      $toc['history'] = [];
-     $toc['tocstep'] = '0';
-     $toc['refposition'] = '0';
-     $toc['historystep'] = '0';
      $toc['coll'] = [];
      $toc = pigpack($toc);
      $conf = [
@@ -92,6 +89,7 @@ function exec_init_thread(){
      $post = [];
      $post['survey'] = pagpick($survey->post_content);
      $post['toc'] = pagpick($toc->post_content);
+     $post['toc']['refposition'] = '0';
      $post = pigpack($post);
 
 // inserts a post of type section
