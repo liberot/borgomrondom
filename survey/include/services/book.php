@@ -80,23 +80,17 @@ function exec_init_book_by_thread_id(){
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
+     $thread = get_thread_by_id($thread_id);
+     if(is_null($thread)){
+          $message = esc_html(__('no such thread', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     $thread->post_content = pagpick($thread->post_content);
 
+// todo...
      $section_id = trim_incoming_filename($_POST['section_id']);
      $section_id = get_session_ticket('section_id');
-
-     $thread_toc = get_toc_by_thread_id($thread_id)[0];
-     if(is_null($thread_toc)){
-          $message = esc_html(__('no toc in db', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-     $thread_toc->post_content = pagpick($thread_toc->post_content);
-
-     if(null == $thread_toc->post_content['booktoc']){
-          $message = esc_html(__('no booktoc records', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
 
      $spread_ids = [];
      $spread_refs = [];
@@ -127,7 +121,7 @@ function exec_init_book_by_thread_id(){
 
 
 // ---------------------------- pages
-     foreach($thread_toc->post_content['booktoc'] as $ref){
+     foreach($thread->post_content['toc']['book'] as $ref){
           $res = add_spread($section_id, 'Title of a Spread', $chapter_id, $ref);
           if(false != $res){
                $spread_ids[]= $res['spread_id'];
@@ -136,7 +130,7 @@ function exec_init_book_by_thread_id(){
      }
 
 // ---------------------------- toc  
-     $toc_id = add_toc($book_id, 'Title of a ToC', $thread_toc, $spread_ids, $spread_refs);
+     $toc_id = add_toc($book_id, 'Title of a ToC', $thread->post_content['toc']['book'], $spread_ids, $spread_refs);
 
      $coll['book'] = get_book_by_id($book_id);
      $coll['toc'] = get_toc_by_book_id($book_id);

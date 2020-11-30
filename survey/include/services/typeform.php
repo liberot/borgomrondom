@@ -19,11 +19,14 @@ function exec_edit_typeform_survey(){
 add_action('admin_post_exec_construct_typeform_survey', 'exec_construct_typeform_survey');
 function exec_construct_typeform_survey(){
 
+// policy
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     $survey_type = 'typeform'; 
 
 // sets file name that is to be parsed
      $survey_file_name = trim_incoming_filename($_POST['survey_file_name']);
@@ -41,12 +44,12 @@ function exec_construct_typeform_survey(){
           return false;
      }
 
-// parses document
+// parses json document
      $doc = json_decode($data);
      if(is_null($doc)){
           $message = esc_html(__('no document: ', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message.$path));
-          return;
+          return false;
      }
      $doc = walk_the_doc($doc);
 
@@ -54,7 +57,6 @@ function exec_construct_typeform_survey(){
      $survey_type = 'typeform'; 
      $survey_ref = $doc['id'];
      $survey_title = $doc['title'];
-
      $surveyprint_uuid = psuuid();
      $survey_id = wp_insert_post([
           'post_type'=>'surveyprint_survey',
@@ -63,23 +65,22 @@ function exec_construct_typeform_survey(){
           'post_excerpt'=>$survey_ref,
           'post_content'=>pigpack($doc)
      ]);
-
      if(is_null($survey_id)){
           $message = esc_html(__('no survey write', 'nosuch'));
           echo json_encode(
                [ 'res'=>'failed', 'message'=>$message, 'survey_id'=>$survey_id, 'typeform_ref'=>$typeform_ref, 'uuid'=>$uuid ]
           );
-          return;
+          return false;
      }
 
-// insert posts of type question 
-     $survey_type = 'typeform'; 
-     $nodez = parse_nodes($doc['fields'], $survey_id);
+// inserts posts of type questions and groups of questions into the db
+     $nodes = insert_question_groups($doc['fields'], $survey_id);
 
+// inserts post type table of contents
      $post_content = [];
+     $post_content['master'] = $nodes;
      $post_content['rulez'] = $doc['logic'];
-     $post_content['master'] = $nodez;
-     $post_content['refs'] = flatten_toc_refs($nodez);
+     $post_content['refs'] = flatten_toc_refs($nodes);
      $post_content = pigpack($post_content);
      $conf = [
           'post_type'=>'surveyprint_toc',
@@ -98,19 +99,27 @@ function exec_construct_typeform_survey(){
      }
 
      $message = sprintf('survey added: %s: %s', $survey_id, $survey_title);
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'nodez'=>$nodez));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'nodes'=>$nodes));
 }
 
-function parse_nodes($nodes, $survey_id, $link=null, $res=null){
+function insert_question_groups($nodes, $survey_id, $link=null, $res=null){
 
-     if(is_null($res)){ $res = []; }
-     if(is_null($link)){ $link = 'root'; }
-     if(is_null($nodes)){ return $res; }
+     if(is_null($res)){ 
+          $res = []; 
+     }
+
+     if(is_null($link)){ 
+          $link = 'root'; 
+     }
+
+     if(is_null($nodes)){ 
+          return $res; 
+     }
 
      foreach($nodes as $node){
-
+// writes toc reference of the insert
           $res = insert_into_toc($res, $link, $node['ref']);
-
+// writes a post of type question
           $node['conf'] = [];
           $node['conf']['max_asset'] = '1';
           $node['conf']['layout_group'] = 'default';
@@ -125,7 +134,8 @@ function parse_nodes($nodes, $survey_id, $link=null, $res=null){
           ];
           $question_id = wp_insert_post($conf);
           if(!is_null($node['properties']['fields'])){
-               $res = parse_nodes($node['properties']['fields'], $survey_id, $node['ref'], $res);
+// writes all groups of groups of groups
+               $res = insert_question_groups($node['properties']['fields'], $survey_id, $node['ref'], $res);
                continue;
           }
      }

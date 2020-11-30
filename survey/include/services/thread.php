@@ -25,32 +25,10 @@ function exec_init_thread(){
           return false;
      }
 
-// loads a previosly inited guest survey
-// obollette since there is no guest client not authed
-/*
-     $unique_guest = get_session_ticket('unique_guest');
-     $thread_id = get_session_ticket('thread_id');
-
-     if(!is_null($thread_id)){
-          $coll = [];
-          $coll['thread'] = get_thread_by_id($thread_id);
-          $coll['toc'] = get_toc_by_thread_id($thread_id);
-          $coll['sections'] = get_sections_by_thread_id($thread_id);
-     }
-
-     if(!is_null($coll['thread'][0])){
-          $message = esc_html(__('cached thread is loaded', 'nosuch'));
-          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
-          return true;
-     }
-*/
-
-// todo
-// client might own on or more threads
+// todo:: client might own on or more threads
      $threads = get_threads_of_client();
      if(!is_null($threads[0])){
           $coll['thread'] = $threads;
-          $coll['toc'] = get_toc_by_thread_id($coll['thread'][0]->ID);
           $coll['sections'] = get_sections_by_thread_id($coll['thread'][0]->ID);
           if(!is_null($coll['thread'])){
                set_session_ticket('thread_id', $coll['thread'][0]->ID, true);
@@ -64,7 +42,6 @@ function exec_init_thread(){
 // inits a customer thread
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
-     $unique_guest = get_session_ticket('unique_guest');
 
      $survey = get_survey_by_title('__fielding_questions__')[0];
      // $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
@@ -77,18 +54,25 @@ function exec_init_thread(){
           return false;
      }
 
-// inserts a post of type thread 
+// inserts a post of type thread
+     $toc = [];
+     $toc['book'] = [];
+     $toc['history'] = [];
+     $toc['tocstep'] = '0';
+     $toc['refposition'] = '0';
+     $toc['historystep'] = '0';
+     $toc['coll'] = [];
+     $toc = pigpack($toc);
      $conf = [
           'post_type'=>'surveyprint_thread',
           'post_author'=>$author_id,
           'post_title'=>$surveyprint_uuid,
           'post_excerpt'=>$surveyprint_uuid,
           'post_name'=>$surveyprint_uuid,
-          'post_content'=>$surveyprint_uuid
+          'post_content'=>$toc
      ];
-
      $thread_id = init_thread($conf);
-     if(0 == $thread_id){
+     if(is_null($thread_id)){
           $message = esc_html(__('could not init a thread', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -97,16 +81,28 @@ function exec_init_thread(){
 // sets the session ticket thread id for incoming field validation
      set_session_ticket('thread_id', $thread_id, true);
 
+// loads the toc of the survey 
+     $toc = get_toc_by_survey_id($survey->ID)[0];
+     if(is_null($toc)){
+          $message = esc_html(__('no toc', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $post = [];
+     $post['survey'] = pagpick($survey->post_content);
+     $post['toc'] = pagpick($toc->post_content);
+     $post = pigpack($post);
+
 // inserts a post of type section
-     $surveyprint_uuid = psuuid();
      $conf = [
           'post_type'=>'surveyprint_section',
           'post_author'=>$author_id,
           'post_title'=>$unique_quest,
           'post_excerpt'=>$survey->post_excerpt,
           'post_name'=>$surveyprint_uuid,
-          'post_content'=>$survey->post_content,
-          'post_parent'=>$thread_id
+          'post_parent'=>$thread_id,
+          'post_content'=>$post
      ];
      $section_id = init_section($conf);
      if(is_null($section_id)){
@@ -133,29 +129,8 @@ function exec_init_thread(){
           }
      }
 
-// loads the toc 
-     $toc = get_toc_by_survey_id($survey->ID)[0];
-     if(is_null($toc)){
-          $message = esc_html(__('no toc', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
-     $surveyprint_uuid = psuuid();
-     $conf = [
-          'post_type'=>'surveyprint_toc',
-          'post_title'=>$toc->post_title,
-          'post_name'=>$surveyprint_uuid,
-          'post_excerpt'=>$surveyprint_uuid,
-          'post_parent'=>$thread_id,
-          'post_content'=>$toc->post_content
-     ];
-     $toc_id = init_toc($conf);
-     set_session_ticket('toc_id', $toc_id, true);
-
      $coll = [];
      $coll['thread'] = get_thread_by_id($thread_id);
-     $coll['toc'] = get_toc_by_thread_id($thread_id);
      $coll['sections'] = get_sections_by_thread_id($thread_id);
 
 // preloads the panels

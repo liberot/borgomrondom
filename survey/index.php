@@ -50,6 +50,5 @@ function set_test_env(){
 
 // add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
 // add_action('init', function(){ set_dev_env(); });
-
-add_action('init', function(){ init_log('test', ['the1st'=>'xXx', 'the2nd'=>'yYY']); } );
+// add_action('init', function(){ init_log('test', ['the1st'=>'xXx', 'the2nd'=>'yYY']); } );
 

@@ -76,19 +76,18 @@ class Survey extends Controller {
      }
 
      bindFieldings(msg){
+
           if(null == msg.model.e.coll.thread){
                console.log('no thread');
                return false;
           }
-          if(null == msg.model.e.coll.toc){
-               console.log('no toc');
-               return false;
-          }
+
           let thread = msg.model.e.coll.thread;
           let panels = msg.model.e.coll.panels;
           let sections = msg.model.e.coll.sections;
-          let toc = msg.model.e.coll.toc;
-          let m = { model: { e: { coll: { thread: thread, toc: toc, panels: panels, sections: sections }}}}
+
+          let m = { model: { e: { coll: { thread: thread, panels: panels, sections: sections }}}}
+
           this.bindThread(m);
      }
 
@@ -192,33 +191,16 @@ class Survey extends Controller {
 
      bindThread(msg){
 
+// thread
           if(null == msg.model.e.coll.thread[0]){
                console.log('no thread');
                return false;
           }
 
-          if(null == msg.model.e.coll.toc[0]){
-               console.log('no toc');
-               return false;
-          }
-
-          if(null == msg.model.e.coll.sections){
-               console.log('no sections');
-               return false;
-          }
-
-          this.model.section = msg.model.e.coll.sections[0];
-          this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
-
           this.model.thread = msg.model.e.coll.thread[0];
+          this.model.thread.post_content = SurveyUtil.pagpick(this.model.thread.post_content);
 
-          this.model.toc = msg.model.e.coll.toc[0];
-          this.model.toc.post_content = SurveyUtil.pagpick(this.model.toc.post_content);
-
-          let target = this.model.toc.post_content;
-
-          if(null == target.booktoc){ target.booktoc = []; }
-          if(null == target.history){ target.history = []; }
+          let target = this.model.thread.post_content;
 
           this.model.threadLog.setColl(target.coll);
 
@@ -234,18 +216,23 @@ class Survey extends Controller {
           if(null == target.historystep) { target.historystep = 0; }
           target.historystep = parseInt(target.historystep);
 
-// ref of the current panel 
-          let ref = target.refs[0];
 
+
+
+// section
+// todo: there might be more than one section
+          if(null == msg.model.e.coll.sections){
+               console.log('no sections');
+               return false;
+          }
+
+          this.model.section = msg.model.e.coll.sections[0];
+          this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
           this.model.panels = [];
 
-          if(SurveyConfig.preloadPanels){
-               for(let idx in msg.model.e.coll.panels){
-                    this.model.panels[msg.model.e.coll.panels[idx].post_excerpt] = msg.model.e.coll.panels[idx];
-                    this.model.panels[msg.model.e.coll.panels[idx].post_excerpt].post_content = SurveyUtil.pagpick(msg.model.e.coll.panels[idx].post_content);
-               }
-          }
+
+
 
 // deeplink
           if(null != this.model.navToPanelAction){
@@ -253,7 +240,8 @@ class Survey extends Controller {
                this.model.navToPanelAction = null;
           }
 
-// load of the current panel by its reference
+// loads the current panel by its reference
+          let ref = this.model.section.post_content.toc.refs[0];
           this.loadPanel(ref);
 
 // link hash
@@ -373,6 +361,7 @@ class Survey extends Controller {
      }
 
      corrBookToc(){
+return;
           if(null == this.model.panel){ 
                return false; 
           }
@@ -385,6 +374,7 @@ class Survey extends Controller {
 
 // adds an entry to the book table of contents
      pushBookToc(){
+return;
           if(null == this.model.panel){ 
                return false; 
           }
@@ -399,6 +389,7 @@ class Survey extends Controller {
 
 // removes an entry from the book table of contents
      pullBookToc(){
+return;
           let target = this.model.toc.post_content;
               target.tocstep--;
               if(target.tocstep <= 0){ target.tocstep = 0; }

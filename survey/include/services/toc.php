@@ -28,44 +28,24 @@ function exec_save_toc(){
 
      $section_id = trim_incoming_numeric($_POST['section_id']);
      $section_id = get_session_ticket('section_id');
+     $section = get_section_by_id($section_id);
+     $section->post_content = pagpick($section->post_content);
 
      $panel_ref = trim_incoming_numeric($_POST['panel_ref']);
      $panel_ref = get_session_ticket('panel_ref');
 
-     $toc = get_toc_by_thread_id($thread_id)[0];
-     if(is_null($toc)){
-          $message = esc_html(__('no toc', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$coll));
-          return false;
-     }
-
-     $toc->post_content = pagpick($toc->post_content);
-
      $history = trim_incoming_toc($_POST['history']);
-     // $res = validate_incoming_toc($history, $toc->post_content['history']);
+     $booktoc = trim_incoming_toc($_POST['book']);
 
-     $booktoc = trim_incoming_toc($_POST['booktoc']);
-     // $res = validate_incoming_toc($booktoc, $toc->post_content['booktoc']);
+     $section->post_content['toc']['history'] = $history;
+     $section->post_content['toc']['book'] = $book;
+     $section->post_content = pigpack($section->post_content);
 
-     $toc->post_content['history'] = $history;
-     $toc->post_content['booktoc'] = $booktoc;
-     $toc->post_content = pigpack($toc->post_content);
-
-     $conf = [
-          'post_type'=>'surveyprint_toc',
-          'post_author'=>$author_id,
-          'post_content'=>$toc->post_content,
-          'post_parent'=>$thread_id
-     ];
-
-     if(Proc::UPDATE_ON_PERSIST){
-          $conf['ID'] = $toc->ID;
-     }
-
-     $toc_id = save_toc($conf);
+// todo save section
+//
+print_r($section);
 
      $coll = [];
-     $coll['toc'] = get_toc_by_id($toc_id);
      $message = esc_html(__('toc is saved', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }

@@ -161,7 +161,7 @@ function exec_get_panel_by_ref(){
           }
 
           $section->post_content = pagpick($section->post_content);
-          $title = $section->post_content['title'];
+          $title = $section->post_content['survey']['title'];
 
           $survey = get_survey_by_title($title)[0];
           if(is_null($survey)){
