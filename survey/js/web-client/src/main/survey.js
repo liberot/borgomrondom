@@ -643,22 +643,36 @@ console.log(condition);
      }
 
      evalRule(rule){
-          if(null == rule.vars){ return false; }
+
+// evaluates condition groups
+          if(null == rule.vars){ 
+               return false; 
+          }
+
           for(let idx in rule.vars){
+
+// does the cycle until all condition groups is evaluated
                if(null != rule.vars[idx].op){ 
                     this.evalRule(rule.vars[idx]);
                     continue;
                }
+
+// evals the condition of a *leaf
                rule.vars[idx].result = false;
-               let panel = this.model.panel;
-               if(null != this.model.panels[rule.vars[idx].value]){
-                  panel = this.model.panels[rule.vars[idx].value]
-                  rule.vars[idx].result = true;
-               }
+
                switch(rule.vars[idx].type){
+
+// evals field of index of the rule 
+                    case 'field':
+                         rule.vars[idx].result =
+                              rule.vars[idx].value == this.model.panel.post_content.ref;
+                         break;
+
+// evals input condition of the rule
                     case 'choice':
                     case 'constant':
-                         rule.vars[idx].result = panel.post_content.answer == this.model.threadLog.get(rule.vars[idx].value);
+                         rule.vars[idx].result =
+                              this.model.panel.post_content.answer == this.model.threadLog.get(rule.vars[idx].value);
                          break;
                }
           }
@@ -672,10 +686,12 @@ console.log(condition);
           let ref = this;
           let links = [];
           let target = this.model.section.post_content.toc;
-console.log(target);
+          let panel = this.model.panel.post_content.ref;
+console.log(panel);
+console.log(target.rulez);
           for(let idx in target.rulez){
                let rule = target.rulez[idx];
-               if(target.ref != rule.ref){ continue; }
+               if(panel != rule.ref){ continue; }
 console.log(rule);
                rule.actions.forEach(function(actionpack){
 console.log(actionpack);
