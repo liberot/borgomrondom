@@ -80,7 +80,8 @@ function exec_init_book_by_thread_id(){
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
-     $thread = get_thread_by_id($thread_id);
+
+     $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){
           $message = esc_html(__('no such thread', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -88,10 +89,11 @@ function exec_init_book_by_thread_id(){
      }
      $thread->post_content = pagpick($thread->post_content);
 
-// todo...
+// todo:: different sections of a thread
      $section_id = trim_incoming_filename($_POST['section_id']);
      $section_id = get_session_ticket('section_id');
 
+// todo: fixdiss
      $spread_ids = [];
      $spread_refs = [];
 
@@ -121,6 +123,7 @@ function exec_init_book_by_thread_id(){
 
 
 // ---------------------------- pages
+print_r($thread); exit();
      foreach($thread->post_content['toc']['book'] as $ref){
           $res = add_spread($section_id, 'Title of a Spread', $chapter_id, $ref);
           if(false != $res){

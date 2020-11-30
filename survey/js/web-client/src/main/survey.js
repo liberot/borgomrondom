@@ -33,6 +33,8 @@ class Survey extends Controller {
           this.register(new Subscription(           'input::done', this.storeInput));
           this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
+          this.register(new Subscription(            'toc::saved', this.debugSavedToc));
+
           // ------
           this.extractDeeplink(window.location.hash.substr(1));
           this.navDeeplink(window.location.hash.substr(1));
@@ -44,13 +46,19 @@ class Survey extends Controller {
                if('undefined' == typeof(surveyQueue)){ 
                      return false; 
                }
-// fixdiss
                surveyQueue.route('nav::back');
           };
           // ------
           this.notify(new Message('download::fieldings', this.model));
      }
 
+     debugSavedToc(msg){
+          console.log(msg);
+          let l = msg.model.e.coll[0];
+              l.post_content = SurveyUtil.pagpick(l.post_content);
+          console.log(l);
+     }
+ 
      showValidationError(msg){
          console.log(msg);
          alert(__survey.__('invalid', 'nosuch'));
@@ -63,7 +71,7 @@ class Survey extends Controller {
      storeInput(msg){
           if(false == this.model.clientAuthed){}
           this.notify(new Message('save::panel', this.model));
-          this.notify(new Message('save::toc', this.model));
+          // this.notify(new Message('save::toc', this.model));
      }
 
      bindSelectStatement(){
@@ -202,12 +210,7 @@ class Survey extends Controller {
 
           let target = this.model.thread.post_content;
 
-          this.model.threadLog.setColl(target.coll);
-
-// current position in the panel refs collection
-          if(null == target.refposition) { target.refposition = 0; }
-          target.refposition = parseInt(target.refposition);
-
+          this.model.threadLog.setColl(target.conditions);
 
 // section
 // todo: there might be more than one section
@@ -271,25 +274,26 @@ class Survey extends Controller {
      }
 
      bindTextInput(msg){
+
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = jQuery('.answer-input input').val();
           let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
+
           switch(required){
+
                 case true:
                      if(3 >= val.length){
                           this.notify(new Message('input::corrupt', this.model));
                           return false;
                      }
                      break;
+
                 case false:
-// false will not validate
-                     if(3 >= val.length){
-                          this.notify(new Message('input::corrupt', this.model));
-                          return false;
-                     }
+// no validation
                      break;
           }
+
           this.bindInput(panel, ref, val);
      }
 
@@ -350,17 +354,6 @@ class Survey extends Controller {
           return question;
      }
 
-     corrBookToc(){
-return;
-          if(null == this.model.panel){ 
-               return false; 
-          }
-          let ref = this.model.panel.post_content.ref;
-          let pos = this.model.toc.post_content.booktoc.indexOf(ref);
-          if(-1 != pos){ 
-          }
-     }
-
 // adds an entry to the book table of contents
      pushBookToc(){
           if(null == this.model.panel){ 
@@ -375,22 +368,29 @@ console.log(target);
      }
 
      loadPanel(ref){
+
+console.log('loadPanel:', ref);
+
           this.model.requestedPanelRef = ref;
+
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
                this.initPanel();
                return;
           }
+
           this.notify(new Message('load::panel', this.model));
      }
 
      bindPanel(msg){
+
           if(null == msg.model.e.coll[0]){
                return false;
           }
+
           this.model.panel = msg.model.e.coll[0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
-          this.corrBookToc();
+
           this.initPanel();
      }
 
@@ -599,12 +599,13 @@ console.log(target);
      }
 
      evalCondition(condition){
+
           // condition = new MockLogic().logic.condition;
           let res = null;
-              res = this.evalRule(condition);
+              res = this.evalRuleR(condition);
               res = this.evalGroup(condition);
               res = condition.result;
-console.log(condition);
+
           return res;
      }
 
@@ -642,7 +643,7 @@ console.log(condition);
           }
      }
 
-     evalRule(rule){
+     evalRuleR(rule){
 
 // evaluates condition groups
           if(null == rule.vars){ 
@@ -653,7 +654,7 @@ console.log(condition);
 
 // does the cycle until all condition groups is evaluated
                if(null != rule.vars[idx].op){ 
-                    this.evalRule(rule.vars[idx]);
+                    this.evalRuleR(rule.vars[idx]);
                     continue;
                }
 
@@ -706,43 +707,57 @@ console.log(actionpack);
                     }
                });
           }
+
+// loads evaluated panel
           let link = links[0];
           if(null != link){
                this.loadPanel(link);
                return true;
           }
+
+// loads default panel
           this.nextPanel();
      }
 
      nextPanel(){
-          let ref = null;
           let target = this.model.section.post_content.toc;
-              target.refposition++;
-              if(target.refposition >= target.refs.length){ target.refposition = target.refs.length -1; }
-              ref = target.refs[target.refposition];
-console.log('next link from default: ', ref);
-              this.loadPanel(ref);
+          let currentPos = target.refs.indexOf(this.model.panel.post_content.ref);
+          let pos = currentPos +1;
+          if(pos >= target.refs.length -1){
+              pos = target.refs.length -1;
+          }
+          let ref = target.refs[pos];
+console.log('next link from default: ', target);
+          this.loadPanel(ref);
      }
 
      prevPanel(){
-          let ref = null;
+          if(null == this.model.panel){
+               return false;
+          }
           let target = this.model.section.post_content.toc;
-              target.refposition--;
-              if(target.refposition <= 0){ target.refposition = 0 }
-              ref = target.refs[target.refposition];
-              this.loadPanel(ref);
+          let currentPos = target.refs.indexOf(this.model.panel.post_content.ref);
+          let pos = currentPos -1;
+          if(pos <= 0){
+               pos = 0;
+          }
+          let ref = target.refs[pos];
+console.log('prev link from default: ', ref);
+          this.loadPanel(ref);
+          return true;
      }
 
-     selectPanel(step){
-          let ref = null;
+     selectPanel(pos){
           let target = this.model.section.post_content.toc;
-              target.refposition = parseInt(step);
-              if(target.refposition <= 0){ target.initstep = 0 }
-              if(target.refposition >= target.refs.length){
-                   target.refposition = target.refs.length -1
-              }
-              ref = target.refs[target.refposition];
-              this.loadPanel(ref);
+          if(pos <= 0){
+               pos = 0;
+          }
+          if(pos >= target.refs.length -1){
+              pos = target.refs.length -1;
+          }
+          let ref = target.refs[pos];
+          this.loadPanel(ref);
+          return true;
      }
 
      initSpreads(msg){

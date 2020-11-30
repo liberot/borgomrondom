@@ -91,7 +91,7 @@ console.log(msg);
           let data = {
                action: 'exec_save_toc',
                thread_id: msg.model.section.ID,
-               booktoc: msg.model.thread.post_content.book,
+               book: msg.model.thread.post_content.book,
                history: msg.model.thread.post_content.history
           }
           let cb = function(e){

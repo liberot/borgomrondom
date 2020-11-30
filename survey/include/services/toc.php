@@ -46,7 +46,7 @@ function exec_save_toc(){
      $panel_ref = get_session_ticket('panel_ref');
 
      $history = trim_incoming_toc($_POST['history']);
-     $booktoc = trim_incoming_toc($_POST['book']);
+     $book = trim_incoming_toc($_POST['book']);
 
      $section->post_content['toc']['history'] = $history;
      $section->post_content['toc']['book'] = $book;
