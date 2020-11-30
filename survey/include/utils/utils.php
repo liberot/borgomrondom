@@ -110,6 +110,18 @@ function trim_incoming_toc($toc){
      return $res;
 }
 
+function trim_incoming_key_val($coll){
+     $res = null;
+     if(false == is_array($coll)){ return $res; }
+     $res = [];
+     foreach($coll as $key=>$val){
+          $key = preg_replace('/[^A-Za-z0-9-]/', '', $key);
+          $val = preg_replace('/[^A-Za-z0-9-]/', '', $val);
+          $res[$key] = $val;
+     }
+     return $res;
+}
+
 function validate_incoming_toc($toc, $ref_toc){
      $res = false;
      $i = 1;

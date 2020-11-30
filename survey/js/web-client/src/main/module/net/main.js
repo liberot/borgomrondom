@@ -5,6 +5,7 @@ class SurveyNet extends Controller {
           // events
           this.register(new Subscription(        'save::panel', this.savePanel));
           this.register(new Subscription(          'save::toc', this.saveToc));
+          this.register(new Subscription(       'save::thread', this.saveThread));
           // controls 
           this.register(new Subscription(       'init::thread', this.initThread));
           this.register(new Subscription('download::fieldings', this.downloadFieldings));
@@ -86,13 +87,30 @@ console.log(msg);
           this.postData(data, cb);
      }
 
+/*
      saveToc(msg){
           let ref = this;
           let data = {
                action: 'exec_save_toc',
-               thread_id: msg.model.section.ID,
+               section_id: msg.model.section.ID,
                book: msg.model.thread.post_content.book,
                history: msg.model.thread.post_content.history
+          }
+          let cb = function(e){
+               ref.notify(new Message('toc::saved', { e }));
+          }
+          this.postData(data, cb);
+     }
+*/
+
+     saveThread(msg){
+          let ref = this;
+          let data = {
+               action: 'exec_save_thread',
+               thread_id: msg.model.thread.ID,
+               book: msg.model.thread.post_content.book,
+               history: msg.model.thread.post_content.history,
+               conditions: msg.model.thread.post_content.conditions
           }
           let cb = function(e){
                ref.notify(new Message('toc::saved', { e }));

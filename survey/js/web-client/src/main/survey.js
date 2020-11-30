@@ -69,9 +69,8 @@ class Survey extends Controller {
      }
  
      storeInput(msg){
-          if(false == this.model.clientAuthed){}
           this.notify(new Message('save::panel', this.model));
-          // this.notify(new Message('save::toc', this.model));
+          this.notify(new Message('save::thread', this.model));
      }
 
      bindSelectStatement(){
@@ -210,8 +209,6 @@ class Survey extends Controller {
 
           let target = this.model.thread.post_content;
 
-          this.model.threadLog.setColl(target.conditions);
-
 // section
 // todo: there might be more than one section
           if(null == msg.model.e.coll.sections){
@@ -323,13 +320,46 @@ class Survey extends Controller {
 
      bindInput(panel, ref, val){
           if('undefined' == typeof(val)){ val = ''; }
+
           let answer = SurveyUtil.trimIncomingString(val);
+
           let question = this.corrQuestion(this.model.panel.post_content.title);
               question = SurveyUtil.trimIncomingString(question);
+
           this.model.panel.post_content.question = question;
           this.model.panel.post_content.answer = answer;
-          this.model.threadLog.add(ref, answer);
+
+// stores condition ref for logic jumps
+          this.setCondition(ref, val);
+
           this.notify(new Message('input::done', this.model));
+
+console.log('>>', this.model.thread.post_content.conditions);
+     }
+
+     setCondition(key, val){
+          let target = this.model.thread.post_content.conditions;
+          let fill = 0x01;
+          for(let idx in target){
+               if(key == target[idx].key){
+                    target[idx].val = val;
+                    fill = 0x02;
+               }
+          }
+          if(0x01 == fill){
+               target.push({key: key, val: val});
+          }
+     }
+
+     getCondition(key){
+          let res = null;
+          let target = this.model.thread.post_content.conditions;
+          for(let idx in target){
+               if(key == target[idx].key){
+                   res = target[idx].val;
+               }
+          }
+          return res;
      }
 
      corrQuestion(question){
@@ -339,7 +369,9 @@ class Survey extends Controller {
                    key = key.replace(/[{}]/g, '');
                    key = key.split(':');
                    key = key[1];
-               let val = this.model.threadLog.get(key);
+
+               let val = this.getCondition(key);
+
                if(null == val){ 
                    val = 'Could not find ref: ' +key;
                    val = '';
@@ -364,12 +396,11 @@ class Survey extends Controller {
               if(-1 == target.book.indexOf(ref)){
                    target.book.push(ref);
               }
-console.log(target);
      }
 
      loadPanel(ref){
 
-console.log('loadPanel:', ref);
+console.log('loadPanel: ', ref);
 
           this.model.requestedPanelRef = ref;
 
@@ -673,7 +704,7 @@ console.log('loadPanel:', ref);
                     case 'choice':
                     case 'constant':
                          rule.vars[idx].result =
-                              this.model.panel.post_content.answer == this.model.threadLog.get(rule.vars[idx].value);
+                              this.model.panel.post_content.answer == this.getCondition(rule.vars[idx].value);
                          break;
                }
           }
@@ -967,42 +998,9 @@ let __dropdown_cell_tmpl__ = `
 <option class='dropdown-cell' value='{ref}'>{label}</option>
 `
 
-class ThreadLog extends Model {
-     constructor(){
-          super();
-          this.coll = [];
-     }
-     add(ref, val){
-          if(null == this.coll) { this.coll = []; }
-          this.coll[ref] = val;
-     }
-     getColl(){
-          let res = [];
-          for(let idx in this.coll){
-               res.push({ key: idx, val: this.coll[idx] })
-          }
-          return res;
-     }
-     setColl(coll){
-          for(let idx in coll){
-               let key = coll[idx].key;
-               let val = coll[idx].val;
-               this.coll[key] = val;
-          }
-     }
-     get(ref){
-          if(null == this.coll){ this.coll = []; }
-          if(null == this.coll[ref]){
-               return null;
-          }
-          return this.coll[ref];
-     }
-}
-
 class SurveyModel extends Model {
      constructor(){
           super();
-          this.threadLog = new ThreadLog();
           this.clientAuthed = false;
           this.toc;
           this.sections;

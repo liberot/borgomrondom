@@ -13,6 +13,7 @@ function exec_get_toc_by_id(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
+/***************************
 add_action('admin_post_exec_save_toc', 'exec_save_toc');
 function exec_save_toc(){
 
@@ -60,5 +61,50 @@ function exec_save_toc(){
      $message = esc_html(__('toc is saved', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
+*/
 
+add_action('admin_post_exec_save_thread', 'exec_save_thread');
+function exec_save_thread(){
+
+// policy
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+// session client
+     $author_id = get_author_id();
+
+// tickets
+     $thread_id = trim_incoming_numeric($_POST['thread_id']);
+     $thread_id = get_session_ticket('thread_id');
+
+     $book = trim_incoming_toc($_POST['book']);
+     $history = trim_incoming_toc($_POST['history']);
+
+     $conditions = trim_incoming_key_val($_POST['conditions']);
+
+     $thread = get_thread_by_id($thread_id)[0];
+     if(is_null($thread)){
+          $message = esc_html(__('no such thread', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message));
+          return false;
+     }
+
+     $thread->post_content = pagpick($thread->post_content);
+
+     $thread->post_content['book'] = null == $book ? [] : $book;
+     $thread->post_content['history'] = null == $history ? [] : $history;
+     $thread->post_content['conditions'] = null == $conditions ? [] : $conditions;
+     $thread->post_author = $author_id;
+     $thread->post_content = pigpack($thread->post_content);
+
+     $thread_id = wp_insert_post($thread);
+
+     $coll = get_thread_by_id($thread_id);
+
+     $message = esc_html(__('thread is saved', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
 
