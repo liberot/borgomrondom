@@ -168,7 +168,6 @@ function rgb2hex($r, $g, $b){
      return $res;
 }
 
-add_action('init', 'get_all_grey_like_colors');
 function get_all_grey_like_colors(){
      $res = [];
      for($idx = 0; $idx < 255; $idx++){
