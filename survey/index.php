@@ -35,6 +35,3 @@ require_once('include/utils/utils.php');
 // add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
 // add_action('init', function(){ init_log('test', ['the1st'=>'xXx', 'the2nd'=>'yYY']); } );
 
-
-
-

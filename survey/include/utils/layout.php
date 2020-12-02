@@ -163,6 +163,20 @@ function hex2rgb($hex) {
      return $rgb;
 }
 
+function rgb2hex($r, $g, $b){
+     $res = sprintf('#%02x%02x%02x', $r, $g, $b);
+     return $res;
+}
+
+add_action('init', 'get_all_grey_like_colors');
+function get_all_grey_like_colors(){
+     $res = [];
+     for($idx = 0; $idx < 255; $idx++){
+          $res[]= rgb2hex($idx, $idx, $idx);
+     }
+     return $res;
+}
+
 function px_pump($px, $ppi_1st, $ppi_2nd){
      $ppi_1st = floatval($ppi_1st);
      $ppi_2nd = floatval($ppi_2nd);

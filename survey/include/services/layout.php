@@ -391,10 +391,11 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                          $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
 
 // #ededed and #dadada is the image cut in
-                         $slot_colors = ['#ededed', '#dadada', '#EDEDED', '#DADADA'];
+                         // $slot_colors = ['#ededed', '#dadada'];
+                         $slot_colors = get_all_grey_like_colors();;
                          $is_image_slot = false;
                          foreach($slot_colors as $slot_color){
-                              if(0 == strcmp($color, $slot_color)){
+                              if(0 == strcmp(mb_strtolower($color), mb_strtolower($slot_color))){
                                    $is_image_slot = true;
                               }
                          }
