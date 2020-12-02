@@ -305,6 +305,7 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
      $d = 0;
      foreach($svg_doc as $node){
           switch($node['tag']){
+
                case 'path':
                     $asset = [];
                     $asset['type'] = 'path';
@@ -314,18 +315,7 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
                     $asset['indx'] = sprintf('path_%s', $idx);
                     $asset['d'] = corr_path_d($node['attributes']['d'], $doc);
 
-// css style extern
-                    $css = $node['attributes']['class'];
-                    if(null != $css){
-                         $style = get_style_by_selector($css_coll, $css);
-                         $color = $style['fill'];
-                         $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-                         if(is_grey_hex($color)){;
-                              $asset['slot'] = true;
-                         }
-                    }
-
-// css style as attribute
+// css style attribute
                     $style = $node['attributes']['style'];
                     if(!is_null($style)){
                          $color = preg_match('/fill:(.{1,13}?);/', $style, $match);
@@ -336,7 +326,27 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
                                    $asset['slot'] = true;
                               }
                          }
+                         $opacity = preg_match('/fill-opacity:(.{1,5}?);/', $style, $match);
+                         $opacity = $match[1];
+                         if(!is_null($opacity)){
+                              $asset['conf']['opacity'] = $opacity;
+                         }
                     }
+
+// css style extern
+                    $css = $node['attributes']['class'];
+                    if(!is_null($css)){
+                         $style = get_style_by_selector($css_coll, $css);
+                         $color = $style['fill'];
+                         if(!is_null($color)){
+                              $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+                              if(is_grey_hex($color)){;
+                                   $asset['slot'] = true;
+                              }
+                         }
+                    }
+
+// push
                     $res[]= $asset;
                     $idx++;
                     break;
