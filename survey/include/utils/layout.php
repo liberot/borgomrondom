@@ -176,6 +176,21 @@ function get_all_grey_like_colors(){
      return $res;
 }
 
+function is_grey_hex($color){
+      $res = false;
+      $c = hex2rgb($color);
+      if(255 > intval($c['b'])){
+           if(0 < intval($c['b'])){
+                if(intval($c['b']) == intval($c['r'])){
+                     if(intval($c['b']) == intval($c['g'])){
+                          $res = true;
+                     }
+                }
+           }
+     }
+     return $res;
+}
+
 function px_pump($px, $ppi_1st, $ppi_2nd){
      $ppi_1st = floatval($ppi_1st);
      $ppi_2nd = floatval($ppi_2nd);

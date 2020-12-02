@@ -311,14 +311,32 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
                     $asset['conf'] = [];
                     $asset['conf']['unit'] = $doc['unit'];
                     $asset['conf']['depth'] = $d;
+                    $asset['indx'] = sprintf('path_%s', $idx);
+                    $asset['d'] = corr_path_d($node['attributes']['d'], $doc);
+
+// css style extern
                     $css = $node['attributes']['class'];
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
                          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+                         if(is_grey_hex($color)){;
+                              $asset['slot'] = true;
+                         }
                     }
-                    $asset['d'] = corr_path_d($node['attributes']['d'], $doc);
-                    $asset['indx'] = sprintf('path_%s', $idx);
+
+// css style as attribute
+                    $style = $node['attributes']['style'];
+                    if(!is_null($style)){
+                         $color = preg_match('/fill:(.{1,13}?);/', $style, $match);
+                         $color = $match[1];
+                         if(!is_null($color)){
+                              $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+                              if(is_grey_hex($color)){;
+                                   $asset['slot'] = true;
+                              }
+                         }
+                    }
                     $res[]= $asset;
                     $idx++;
                     break;
@@ -395,30 +413,13 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     if(null != $css){
                          $style = get_style_by_selector($css_coll, $css);
                          $color = $style['fill'];
-
                          $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
 
-// #ededed and #dadada and gray colors is the image cut in
-/*
-                         $slot_colors = get_all_grey_like_colors();;
-                         $is_image_slot = false;
-                         foreach($slot_colors as $slot_color){
-                              if(0 == strcmp(mb_strtolower($color), mb_strtolower($slot_color))){
-                                   $is_image_slot = true;
-                              }
-                         }
-*/
-
 // kind of gray
-                         $c = hex2rgb($color);
-                         if(intval($c['b']) == intval($c['r'])){
-                              if(intval($c['b']) == intval($c['g'])){
-                                   $is_image_slot = true;
-                              }
-                         }
-
+// #ededed and #dadada and gray colors is the image cut in
 // description of image slots
-                         if($is_image_slot){
+
+                         if(is_grey_hex($color)){;
                               $poly['slot'] = true;
                               $poly['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
                               $poly['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
