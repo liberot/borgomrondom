@@ -225,6 +225,7 @@ function corr_layout_pos($val, $doc){
 }
 
 function corr_path_d($d, $doc){
+
      $d = sprintf('%sx', $d);
      preg_match_all('/([a-zA-Z])(.*?)(?=[a-zA-Z])/', $d, $temp);
      $buf = '';
@@ -281,6 +282,13 @@ function corr_path_d($d, $doc){
                     $x = corr_layout_pos($ary[0], $doc);
                     $y = corr_layout_pos($ary[1], $doc);
                     $buf.= sprintf('%s%s,%s', $command, $x, $y);
+                    break;
+
+               case 'h': case 'H':
+               case 'v': case 'V':
+                    $pos = corr_layout_pos($ary[0], $doc);
+                    // $buf.= sprintf(' %s %s', $command, $pos);
+                    $buf.= sprintf('%s%s', $command, $pos);
                     break;
 
 // close of the path
