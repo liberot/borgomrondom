@@ -34,7 +34,7 @@ function build_survey_test_web_view() {
      wp_register_script('navigation_utility', WP_PLUGIN_URL.SURVeY.'/js/web-client/navigation.js', array('jquery'));
      wp_enqueue_script('navigation_utility');
 
-     wp_register_style('web_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/web.css');
+     wp_register_style('web_style', WP_PLUGIN_URL.SURVeY.'/css/web-client/style.css');
      wp_enqueue_style('web_style');
 
      if(is_null($_REQUEST['thread_id'])){

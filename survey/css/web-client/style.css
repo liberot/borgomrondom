@@ -99,7 +99,6 @@ html {
 }
 .answer-input input:focus {
      outline: none !important;
-     border: none !important;
 }
 
 .survey-messages {
@@ -182,3 +181,15 @@ a:hover {
      width: 100%;
 }
 
+.short-text {
+     font-size: 3em;
+}
+
+.short-text textarea {
+     width: 100%;
+     height: 3em;
+}
+
+.short-text input[type=submit] {
+     font-size: 0.75em;
+}
