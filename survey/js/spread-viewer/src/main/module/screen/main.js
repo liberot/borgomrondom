@@ -255,11 +255,8 @@ class Screen extends Controller {
                out+= chunk;
                out+= ' ';
           }
-console.log(out);
           let colr = this.fetchColor(target);
-console.log(colr);
           let p = this.model.currentScreen.path(out);
-          // let p = this.model.currentScreen.path('M 0 0 H 1000 A 20 20 0 1 0 100 50 v 1000 C 50 125 0 85 0 85 z');
               p.fill(colr);
      }
 

@@ -33,7 +33,7 @@ class Layout {
      const               CUT_INTO_SLOT = 'cut_into_slot';
      const            IMAGE_SCALE_TYPE = 'cut_into_slot';
 // --------------------------------------------------------
-     const                      Y_STEP = 101;
+     const                      Y_STEP = 13;
 }
 
 class Proc {

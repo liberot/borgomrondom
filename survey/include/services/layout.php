@@ -75,6 +75,12 @@ function exec_get_layout_by_group_and_rule(){
  -----------------------------------------------------------------------
  -----------------------------------------------------------------------
  -----------------------------------------------------------------------
+ --
+ does work with svg plain documents
+ as i copy and paste them in place from some wild svg documents
+ as for to find the grey slots for the images
+ and the hearties that is above the masked image assets
+ -----------------------------------------------------------------------
 */
 add_action('admin_post_exec_import_layouts', 'exec_import_layouts');
 function exec_import_layouts(){
@@ -175,7 +181,6 @@ function parse_layout_doc($svg_path){
      $doc['assumed_ppi_of_origin'] = Layout::ASSUMED_SVG_UNIT;
 
      $svg_doc = flatten_groups($svg_doc);
-     $css_coll = extract_stylesheets($svg_doc);;
 
      $res = eval_doc_size($svg_doc, $doc);
 
@@ -185,11 +190,11 @@ function parse_layout_doc($svg_path){
      $doc['doc_y_offset'] = $res['doc_y_offset'];
      $doc['origin'] = $svg_path;
 
-     $res = eval_text_fields($svg_doc, $css_coll, $doc);
+     $res = eval_text_fields($svg_doc, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
 // polygon fields in grey is the image slots
-     $res = eval_polygon_fields($svg_doc, $css_coll, $doc);
+     $res = eval_polygon_fields($svg_doc, $doc);
 
 // layout code is to be determined such as LPP 
 // landscape horizont horizont
@@ -203,9 +208,8 @@ function parse_layout_doc($svg_path){
      $doc['assets'] = array_merge($doc['assets'], $res);
 
 // path fields as hearts and such
-     $res = eval_path_fields($svg_doc, $css_coll, $doc);
+     $res = eval_path_fields($svg_doc, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
-
 
      return $doc;
 }
@@ -225,8 +229,10 @@ function corr_layout_pos($val, $doc){
 }
 
 function corr_path_d($d, $doc){
+
      $d = preg_replace('/e\-\d+/', '', $d);
      $d = sprintf('%sx', $d);
+
      preg_match_all('/([a-zA-Z])(.*?)(?=[a-zA-Z])/', $d, $temp);
      $buf = '';
      for($idx = 0; $idx < count($temp[1]); $idx++){
@@ -235,11 +241,11 @@ function corr_path_d($d, $doc){
 // 1,2-3 which is 1,2,-3
           $chunk = str_replace(',-', '-', $temp[2][$idx]);
           $chunk = str_replace('-', ',-', $chunk);
-//
-          $ary = explode(',', $chunk);
+
+// M 1,2 V 1,2 c 1,2...
           switch($command){
 
-// m as in move
+// m as in move to
                case 'm': case 'M':
                case 'l': case 'L':
                case 'c': case 'C': 
@@ -257,8 +263,9 @@ function corr_path_d($d, $doc){
                     $buf.= sprintf('%s %s ', $command, implode(' ', $k));
                     break;
 
-// arc i think
+// arc 
                case 'a': case 'A':
+                    $ary = explode(',', $chunk);
                     $r = [];
                     $c = 0;
                     foreach($ary as $i){
@@ -275,26 +282,30 @@ function corr_path_d($d, $doc){
                          }
                          $c++;
                     }
-                    $rcc = implode(',', $r);
+                    $rcc = implode(' ', $r);
                     $buf.= sprintf('%s %s ', $command, $rcc);
                     break;
 
+// horizontal and vertical paths
                case 'h': case 'H':
                case 'v': case 'V':
-                    $pos = corr_layout_pos($ary[0], $doc);
+                    $chunk = preg_replace('/,/', '', $chunk);
+                    $chunk = preg_replace('/\s+/', '', $chunk);
+                    $pos = corr_layout_pos($chunk, $doc);
                     $buf.= sprintf('%s %s ', $command, $pos);
                     break;
 
-// close of the path
+// close of a path
                case 'z': case 'Z':
                     $buf.= sprintf('%s', $command);
                     break;
           }
      }
+
      return $buf;
 }
 
-function eval_path_fields($svg_doc, $css_coll, $doc){
+function eval_path_fields($svg_doc, $doc){
      $res = [];
      $d = 0;
      foreach($svg_doc as $node){
@@ -310,33 +321,13 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
                     $asset['d'] = corr_path_d($node['attributes']['d'], $doc);
 
 // css style attribute
-                    $style = $node['attributes']['style'];
-                    if(!is_null($style)){
-                         $color = preg_match('/fill:(.{1,13}?);/', $style, $match);
-                         $color = $match[1];
-                         if(!is_null($color)){
-                              $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-                              if(is_grey_hex($color)){;
-                                   $asset['slot'] = true;
-                              }
-                         }
-                         $opacity = preg_match('/fill-opacity:(.{1,5}?);/', $style, $match);
-                         $opacity = $match[1];
-                         if(!is_null($opacity)){
-                              $asset['conf']['opacity'] = $opacity;
-                         }
-                    }
-
-// css style extern
-                    $css = $node['attributes']['class'];
+                    $css = $node['attributes']['style'];
                     if(!is_null($css)){
-                         $style = get_style_by_selector($css_coll, $css);
+                         $style = get_style_coll_from_attribute($css);
                          $color = $style['fill'];
-                         if(!is_null($color)){
-                              $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-                              if(is_grey_hex($color)){;
-                                   $asset['slot'] = true;
-                              }
+                         $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+                         if(is_grey_hex($color)){;
+                              $asset['slot'] = true;
                          }
                     }
 
@@ -350,7 +341,7 @@ function eval_path_fields($svg_doc, $css_coll, $doc){
       return $res;
 }
 
-function eval_polygon_fields($svg_doc, $css_coll, $doc){
+function eval_polygon_fields($svg_doc, $doc){
      $res = [];
      $indx = intval(0);
      $d = 0;
@@ -413,12 +404,11 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
                     $poly['slot'] = false;
 
 // evaluates the class af a polygon
-                    $css = $node['attributes']['class'];
+                    $css = $node['attributes']['style'];
                     if(null != $css){
-                         $style = get_style_by_selector($css_coll, $css);
+                         $style = get_style_coll_from_attribute($css);
                          $color = $style['fill'];
                          $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-
 // kind of gray
 // #ededed and #dadada and gray colors is the image cut in
 // description of image slots
@@ -444,36 +434,46 @@ function eval_polygon_fields($svg_doc, $css_coll, $doc){
      return $res;
 }
 
-function eval_text_fields($svg_doc, $css_coll, $doc){
+function eval_text_fields($svg_doc, $doc){
 
      $text_fields = [];
      $buf = '';
      $d = 0;
 
 // adds up text fields until the note of width and height is found
+
      foreach($svg_doc as $node){
+
           switch($node['tag']){
+// text node has style information
                case 'text':
+                    $class = $node['attributes']['class'];
+                    $style = $node['attributes']['style'];
+                    $cls = null == $class ? $style : null;
+                    $cls = null == $style ? null : $style;
+                    break;
+
+               case 'tspan':
+// buf adds up until such: 'x 42.52 px y 96.378 px w 363.78 px middle h 253.622 px'
                     $buf.= sprintf('%s ', $node['value']);
-                    preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $buf, $mtch);
-                    if(!is_null($mtch[0])){
+                    preg_match('/x(.{0,64}?)px.{0,64}?y(.{0,64}?)px.{0,64}?w(.{0,64}?)px.{0,64}?h(.{0,64}?)px/i', $buf, $mtch);
+                    if(!is_null($mtch[4])){
                          $temp = [];
-                         $temp['pos'] = $buf;
+                         $temp['pos_descriptor'] = $buf;
                          $temp['depth'] = $d;
-                         $temp['style'] = 'no style';
-                         $cls = $node['attributes']['class'];
-                         if(!is_null($cls)){
-                              $style = get_style_by_selector($css_coll, $cls);
-                              $temp['style'] = $style;
-                         }
-                         $buf = '';
+                         $temp['style'] = get_style_coll_from_attribute($cls);
                          $text_fields[]= $temp;
+                         $buf = '';
+                         $cls = null;
                     }
                     break;
           }
+
+// depth as in z-sort
           $d += Layout::Y_STEP;
      }
 
+// random words
      $random_span_ary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
      $tmp = [];
      foreach($random_span_ary as $row){
@@ -486,25 +486,24 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
      $line = 1.35;
      foreach($text_fields as $field){
 
-          $temp = $field['pos'];
-          preg_match('/x(.{1,64}?)px(.{1,64}?)y(.{1,64}?)w(.{1,64}?)px(.{1,64}?)h(.{1,64}?)px/i', $temp, $mtch);
+          preg_match('/x(.{0,64}?)px.{0,64}?y(.{0,64}?)px.{0,64}?w(.{0,64}?)px.{0,64}?h(.{0,64}?)px/i', $field['pos_descriptor'], $mtch);
 
           $xpos = $mtch[1];
           $xpos = preg_replace('/\s+/i', '', $xpos);
           $xpos = floatval($xpos);
           $xpos = corr_layout_pos($xpos, $doc);
 
-          $ypos = $mtch[3];
+          $ypos = $mtch[2];
           $ypos = preg_replace('/\s+/i', '', $ypos);
           $ypos = floatval($ypos);
           $ypos = corr_layout_pos($ypos, $doc);
 
-          $width = $mtch[4];
+          $width = $mtch[3];
           $width = preg_replace('/\s+/i', '', $width);
           $width = floatval($width);
           $width = corr_layout_pos($width, $doc);
 
-          $height = $mtch[6];
+          $height = $mtch[4];
           $height = preg_replace('/\s+/i', '', $height);
           $height = floatval($height);
           $height = corr_layout_pos($height, $doc);
@@ -514,7 +513,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
           $font_size = floatval($font_size);
           $font_size = corr_layout_pos($font_size, $doc);
           if(0 >= $font_size){ $font_size = 1; }
-         
+
           $font_family = match_font_family($field['style']);
           $font_weight = match_font_weight($field['style']);
           $color = rgb2cmyk(hex2rgb($field['style']['fill']));
@@ -528,6 +527,7 @@ function eval_text_fields($svg_doc, $css_coll, $doc){
 
           $depth = intval($field['depth']);
 
+// asset of type text
           $asset = [];
           $asset['type'] = 'text';
           $asset['indx'] = sprintf('text_%s', $indx);
@@ -669,7 +669,7 @@ function insert_image_assets($doc, $polys){
                $r = intval($doc['ppi']) /300;
                switch(intval($doc['ppi'])){
 
-                    case 300: 
+                    case 300:
                          $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *1;
                          break;
 
@@ -696,7 +696,7 @@ function insert_image_assets($doc, $polys){
      return $res;
 }
 
-function extract_stylesheets($svg_doc){
+function eval_stylesheets($svg_doc){
      $res = [];
      foreach($svg_doc as $node){ switch($node['tag']){
           case 'style':
@@ -705,7 +705,6 @@ function extract_stylesheets($svg_doc){
                break;
           }
      }
-     // @file_put_contents('/tmp/out', json_encode($res, JSON_PRETTY_PRINT), FILE_APPEND);
      return $res;
 }
 
@@ -722,6 +721,16 @@ function flatten_groups($svg_doc){
           }
      }
      $res = array_merge($res, $grouped_nodes);
+     return $res;
+}
+
+function get_style_coll_from_attribute($style){
+     $res = [];
+     $tmp = explode(';', $style);
+     foreach($tmp as $directive){
+          $t = explode(':', $directive);
+          $res[$t[0]] = $t[1];
+     }
      return $res;
 }
 
