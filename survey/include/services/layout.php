@@ -225,34 +225,36 @@ function corr_layout_pos($val, $doc){
 }
 
 function corr_path_d($d, $doc){
-
+     $d = preg_replace('/e\-\d+/', '', $d);
      $d = sprintf('%sx', $d);
      preg_match_all('/([a-zA-Z])(.*?)(?=[a-zA-Z])/', $d, $temp);
      $buf = '';
      for($idx = 0; $idx < count($temp[1]); $idx++){
           $command = $temp[1][$idx];
+
+// 1,2-3 which is 1,2,-3
           $chunk = str_replace(',-', '-', $temp[2][$idx]);
           $chunk = str_replace('-', ',-', $chunk);
+//
           $ary = explode(',', $chunk);
           switch($command){
 
 // m as in move
                case 'm': case 'M':
-                    $x = corr_layout_pos($ary[0], $doc);
-                    $y = corr_layout_pos($ary[1], $doc);
-                    $buf.= sprintf('%s%s,%s', $command, $x, $y);
-                    break;
-
-// circle and spline or such 
-               case 'c': case 'C': case 's': case 'S':
-                    $r = [];
-                    foreach($ary as $i){
-                         if(null == $i){ continue; }
-                         $r[]= corr_layout_pos($i, $doc);;
+               case 'l': case 'L':
+               case 'c': case 'C': 
+               case 's': case 'S':
+                    $t = explode(' ', $chunk);
+                    $k = [];
+                    foreach($t as $b){
+                         $n = explode(',', $b);
+                         foreach($n as $f){
+                              if('' != $f){
+                                   $k[]= corr_layout_pos($f, $doc);
+                              }
+                         }
                     }
-                    $rcc = implode(',', $r);
-                    // $rcc = str_replace(',-', '-', $rcc);
-                    $buf.= sprintf('%s%s', $command, $rcc);
+                    $buf.= sprintf('%s %s ', $command, implode(' ', $k));
                     break;
 
 // arc i think
@@ -274,21 +276,13 @@ function corr_path_d($d, $doc){
                          $c++;
                     }
                     $rcc = implode(',', $r);
-                    // $rcc = str_replace(',-', '-', $rcc);
-                    $buf.= sprintf('%s%s', $command, $rcc);
-                    break;
-// line i think
-               case 'l': case 'L':
-                    $x = corr_layout_pos($ary[0], $doc);
-                    $y = corr_layout_pos($ary[1], $doc);
-                    $buf.= sprintf('%s%s,%s', $command, $x, $y);
+                    $buf.= sprintf('%s %s ', $command, $rcc);
                     break;
 
                case 'h': case 'H':
                case 'v': case 'V':
                     $pos = corr_layout_pos($ary[0], $doc);
-                    // $buf.= sprintf(' %s %s', $command, $pos);
-                    $buf.= sprintf('%s%s', $command, $pos);
+                    $buf.= sprintf('%s %s ', $command, $pos);
                     break;
 
 // close of the path
@@ -635,7 +629,8 @@ function get_layout_code_of_spread($nodes){
                $res = sprintf('%s%s', $res, $node['layout_code']);
           }
      }
-     if('' == $res){ $res = 'U'; }
+     // if('' == $res){ $res = 'U'; }
+     if('' == $res){ $res = 'PP'; }
      return $res;
 }
 

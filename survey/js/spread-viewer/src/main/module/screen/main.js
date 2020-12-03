@@ -1,28 +1,31 @@
 class Screen extends Controller {
 
      constructor(queue){
+
           super(queue);
+
           this.model = new ScreenModel();
           this.model.screen = SVG().addTo('.screen');
           this.model.printScreen = SVG().addTo('.printscreen');
           this.model.currentScreen = this.model.screen;
-          this.register(new Subscription('document::inited', this.initScreen));
-          this.register(new Subscription('exportbtn::released', this.print));
-          this.register(new Subscription('pagesize::updated', this.updateScreen));
-          this.register(new Subscription('recalcbtn::released', this.updateScreen));
-          this.register(new Subscription('text::updated', this.updateScreen));
-          this.register(new Subscription('ppi::updated', this.updateScreen));
-          this.register(new Subscription('printsize::updated', this.updateScreen));
-          this.register(new Subscription('arrowkey::pressed', this.updateScreen));
-          this.register(new Subscription('document::updated', this.updateScreen));
+
+          this.register(new Subscription(   'exportbtn::released', this.print));
+          this.register(new Subscription(      'document::inited', this.initScreen));
+          this.register(new Subscription(     'pagesize::updated', this.updateScreen));
+          this.register(new Subscription(   'recalcbtn::released', this.updateScreen));
+          this.register(new Subscription(         'text::updated', this.updateScreen));
+          this.register(new Subscription(          'ppi::updated', this.updateScreen));
+          this.register(new Subscription(    'printsize::updated', this.updateScreen));
+          this.register(new Subscription(     'arrowkey::pressed', this.updateScreen));
+          this.register(new Subscription(     'document::updated', this.updateScreen));
           this.register(new Subscription('adaptclayout::released', this.updateScreen));
-          this.register(new Subscription('font::updated', this.updateScreen));
-          this.register(new Subscription('text::moved', this.updateScreen));
-          this.register(new Subscription('mousedrag::released', this.updateScreen));
-          this.register(new Subscription('asset::updated', this.updateScreen));
-          this.register(new Subscription('image::moved', this.updateScreen));
-          this.register(new Subscription('item::selected', this.updateScreen));
-          this.register(new Subscription('asset::corrected', this.updateScreen));
+          this.register(new Subscription(         'font::updated', this.updateScreen));
+          this.register(new Subscription(           'text::moved', this.updateScreen));
+          this.register(new Subscription(   'mousedrag::released', this.updateScreen));
+          this.register(new Subscription(        'asset::updated', this.updateScreen));
+          this.register(new Subscription(          'image::moved', this.updateScreen));
+          this.register(new Subscription(        'item::selected', this.updateScreen));
+          this.register(new Subscription(      'asset::corrected', this.updateScreen));
      }
 
      initScreen(msg){
@@ -241,8 +244,22 @@ class Screen extends Controller {
      }
 
      renderPath(target){
+          let tmp = target.d.split(' ');
+          let out = '';
+          let chunk = '';
+          for(let idx = 0; idx < tmp.length; idx++){
+               chunk = tmp[idx];
+               if(jQuery.isNumeric(chunk)){
+                    chunk = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(chunk), target.conf.unit);
+               }
+               out+= chunk;
+               out+= ' ';
+          }
+console.log(out);
           let colr = this.fetchColor(target);
-          let p = this.model.currentScreen.path(target.d);
+console.log(colr);
+          let p = this.model.currentScreen.path(out);
+          // let p = this.model.currentScreen.path('M 0 0 H 1000 A 20 20 0 1 0 100 50 v 1000 C 50 125 0 85 0 85 z');
               p.fill(colr);
      }
 
