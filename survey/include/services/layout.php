@@ -77,9 +77,9 @@ function exec_get_layout_by_group_and_rule(){
  -----------------------------------------------------------------------
  --
  does work with svg plain documents
- as i copy and paste them in place from some wild svg documents
- as for to find the grey slots for the images
- and the hearties that is above the masked image assets
+ as i copy and paste them into place from some wild svg documents
+ as for to find the grey slots for to place the image assets
+ and the hearties that is rendered above the masked image assets
  -----------------------------------------------------------------------
 */
 add_action('admin_post_exec_import_layouts', 'exec_import_layouts');
@@ -152,9 +152,11 @@ function exec_import_layouts(){
 
 function parse_layout_doc($svg_path){
 
+// grabs plain svg file
      $ldd = @file_get_contents($svg_path);
      if(null == $ldd){ return false; }
 
+// sets up a parser
      $parser = xml_parser_create();
      xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, 'UTF-8');
      xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
@@ -162,10 +164,12 @@ function parse_layout_doc($svg_path){
      xml_parse_into_struct($parser, trim($ldd), $svg_doc);
      xml_parser_free($parser);
 
+// grabs mock spread json file
      $path = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'layout-draft'.DIRECTORY_SEPARATOR.'mock-spread.json';
      $spread = @file_get_contents($path);
      if(null == $spread){ return false; }
 
+// parses json 
      $doc = json_decode($spread);
      if(null == $doc){ return false; }
      
@@ -178,10 +182,12 @@ function parse_layout_doc($svg_path){
 
 // the exported svg documents come up with some client units of 1132 
 // which is A4 kind of which is 2500px at 300ppi
+// which is constructed at 72ppi i guess
      $doc['assumed_ppi_of_origin'] = Layout::ASSUMED_SVG_UNIT;
 
      $svg_doc = flatten_groups($svg_doc);
 
+// size of the svg document as in the view box and some masks
      $res = eval_doc_size($svg_doc, $doc);
 
      $doc['printSize']['width'] = $res['doc_width'];
@@ -190,6 +196,7 @@ function parse_layout_doc($svg_path){
      $doc['doc_y_offset'] = $res['doc_y_offset'];
      $doc['origin'] = $svg_path;
 
+// text filds within the svg 
      $res = eval_text_fields($svg_doc, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
@@ -197,7 +204,7 @@ function parse_layout_doc($svg_path){
      $res = eval_polygon_fields($svg_doc, $doc);
 
 // layout code is to be determined such as LPP 
-// landscape horizont horizont
+// landscape portrait portrait
      $doc['layout']['code'] = get_layout_code_of_spread($res);
 
 // insert of mock image assets
@@ -207,7 +214,8 @@ function parse_layout_doc($svg_path){
      $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
-// path fields as hearts and such
+// path fields as hearts and circls and such
+// and then sometimes the image slots is paths too
      $res = eval_path_fields($svg_doc, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
@@ -263,7 +271,7 @@ function corr_path_d($d, $doc){
                     $buf.= sprintf('%s %s ', $command, implode(' ', $k));
                     break;
 
-// arc 
+// arc
                case 'a': case 'A':
                     $ary = explode(',', $chunk);
                     $r = [];
@@ -338,6 +346,7 @@ function eval_path_fields($svg_doc, $doc){
           }
           $d += Layout::Y_STEP;
       }
+
       return $res;
 }
 
@@ -345,8 +354,11 @@ function eval_polygon_fields($svg_doc, $doc){
      $res = [];
      $indx = intval(0);
      $d = 0;
+
      foreach($svg_doc as $node){
+
           switch($node['tag']){
+
                case 'polygon':
 
                     $poly = [];
@@ -429,8 +441,10 @@ function eval_polygon_fields($svg_doc, $doc){
                     $indx++;
                     break;
           }
+
           $d += Layout::Y_STEP;
      }
+
      return $res;
 }
 
@@ -445,8 +459,9 @@ function eval_text_fields($svg_doc, $doc){
      foreach($svg_doc as $node){
 
           switch($node['tag']){
-// text node has style information
+
                case 'text':
+// text node has style information
                     $class = $node['attributes']['class'];
                     $style = $node['attributes']['style'];
                     $cls = null == $class ? $style : null;
@@ -572,8 +587,8 @@ function eval_doc_size($svg_doc, $doc){
 
           switch($node['tag']){
 
-// doc size is typed in the view box attribute
                case 'svg':
+// doc size is typed in the view box attribute
                     $view_box = $node['attributes']['viewBox'];
                     if(false == is_null($view_box)){
                          $temp = explode(' ', $view_box);
@@ -584,8 +599,8 @@ function eval_doc_size($svg_doc, $doc){
                     }
                     break;
 
-// there is a mask sometimes that manips the viewbox
                case 'clipPath':
+// there is a mask sometimes that manips the viewbox
                     $transform = $node['attributes']['transform'];
                     if(false == is_null($transform)){
                          preg_match('/translate\((.{0,10})\s(.{0,10})\)/', $transform, $mtc);
@@ -594,9 +609,9 @@ function eval_doc_size($svg_doc, $doc){
                     }
                     break;
 
-// the rect within the clipmask defines the document size 
                case 'rect':
-                    if(false == is_null(floatval($node['attributes']['width']) /2)){
+// the rect within the clipmask defines the document size 
+                    if(false == is_null(floatval($node['attributes']['width']))){
                          $res['doc_width'] = floatval($node['attributes']['width']) /2;
                          $res['doc_height'] = floatval($node['attributes']['height']);
                          $res['doc_width'] = corr_layout_pos($res['doc_width'], $doc);
