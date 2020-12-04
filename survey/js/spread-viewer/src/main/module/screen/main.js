@@ -244,7 +244,7 @@ class Screen extends Controller {
      }
 
      renderPath(target){
-          let tmp = target.d.split(' ');
+          let tmp = target.path.split(' ');
           let out = '';
           let chunk = '';
           for(let idx = 0; idx < tmp.length; idx++){
@@ -262,7 +262,7 @@ class Screen extends Controller {
 
      renderPoly(target){
           let ref = this;
-          let tmp = target.conf.points.split(' ');
+          let tmp = target.points.split(' ');
           let out = '';
           for(let idx = 0; idx < tmp.length; idx+= 2){
                out+= LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(tmp[idx +0]), target.conf.unit);

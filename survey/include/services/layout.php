@@ -209,14 +209,14 @@ function parse_layout_doc($svg_path){
 
 // insert of mock image assets
      $res = insert_image_assets($doc, $res);
-
-// scale and fit of the image assets as is defined in the config 
+// scale and fit of the image assets as is defined in the config
      $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
 // path fields as hearts and circls and such
 // and then sometimes the image slots is paths too
      $res = eval_path_fields($svg_doc, $doc);
+     $res = insert_image_assets($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      return $doc;
@@ -233,6 +233,7 @@ function corr_layout_pos($val, $doc){
                $res = px_to_unit($doc['assumed_ppi_of_origin'], $val, $doc['ppi']);
                break;
      }
+
      return $res;
 }
 
@@ -314,19 +315,24 @@ function corr_path_d($d, $doc){
 }
 
 function eval_path_fields($svg_doc, $doc){
+
      $res = [];
      $d = 0;
+
      foreach($svg_doc as $node){
+
           switch($node['tag']){
 
                case 'path':
+
                     $asset = [];
                     $asset['type'] = 'path';
                     $asset['conf'] = [];
                     $asset['conf']['unit'] = $doc['unit'];
                     $asset['conf']['depth'] = $d;
+
                     $asset['indx'] = sprintf('path_%s', $idx);
-                    $asset['d'] = corr_path_d($node['attributes']['d'], $doc);
+                    $asset['path'] = corr_path_d($node['attributes']['d'], $doc);
 
 // css style attribute
                     $css = $node['attributes']['style'];
@@ -334,16 +340,109 @@ function eval_path_fields($svg_doc, $doc){
                          $style = get_style_coll_from_attribute($css);
                          $color = $style['fill'];
                          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+
+// assume asset is a grey
                          if(is_grey_hex($color)){;
+
                               $asset['slot'] = true;
+
+
+// relative and absolut v and h values
+                              $asset['path'] = preg_replace('/^m/', 'M', $asset['path']);
+                              preg_match(
+                                   '#^(M)\s+(.{1,64}?)\s+(.{1,64}?)\s+(V)\s+(.{1,64}?)\s+(H)\s+(.{1,64}?)\s+(V)\s+(.{1,64}?)\s+(H)\s+(.{1,64}?)\s+#',
+                                        $asset['path'],
+                                        $mtch
+                              );
+
+                              if(!empty($mtch)){
+                                   if('v' == $mtch[4]){
+                                        $mtch[4] = 'V';
+                                        $mtch[5] = floatval($mtch[3]) +floatval($mtch[5]);
+                                   }
+                                   if('v' == $mtch[8]){
+                                        $mtch[8] = 'V';
+                                        $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
+                                   }
+                                   if('h' == $mtch[6]){
+                                        $mtch[6] = 'H';
+                                        $mtch[7] = floatval($mtch[2]) +floatval($mtch[7]);
+                                   }
+                                   if('h' == $mtch[10]){
+                                        $mtch[10] = 'H';
+                                        $mtch[10] = floatval($mtch[7]) +floatval($mtch[11]);
+                                   }
+                                   $asset['path'] = implode(' ', $mtch);
+                              }
+
+
+
+// assume asset is a rectangle
+// MVHVH
+                              preg_match(
+                                   '/^M\s+(.{1,64}?)\s+(.{1,64}?)\s+V\s+(.{1,64}?)\s+H\s+(.{1,64}?)\s+V\s+(.{1,64}?)\s+H\s+(.{1,64})/', 
+                                        $asset['path'], 
+                                        $mtch
+                              );
+
+                              if(!empty($mtch)){
+
+                                   $xs = [ floatval($mtch[1]), floatval($mtch[4]), floatval($mtch[6]) ];
+                                    sort($xs); $xmin = $xs[0];
+                                   rsort($xs); $xmax = $xs[0];
+
+                                   $ys = [ floatval($mtch[2]), floatval($mtch[3]), floatval($mtch[5]) ];
+                                    sort($ys); $ymin = $ys[0];
+                                   rsort($ys); $ymax = $ys[0];
+
+                                   $asset['conf']['xpos'] = $xmin;
+                                   $asset['conf']['ypos'] = $ymin;
+                                   $asset['conf']['width'] = $xmax -$xmin;
+                                   $asset['conf']['height'] = $ymax -$ymin;
+
+                                   $asset['layout_code'] = 'P';
+                                   if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                                        $asset['layout_code'] = 'L';
+                                   }
+                              }
+
+// MHVHV
+                              preg_match(
+                                   '/^M\s+(.{1,64}?)\s+(.{1,64}?)\s+H\s+(.{1,64}?)\s+V\s+(.{1,64}?)\s+H\s+(.{1,64}?)\s+V\s+(.{1,64})/', 
+                                        $asset['path'], 
+                                        $mtch
+                              );
+
+                              if(!empty($mtch)){
+
+                                   $xs = [ floatval($mtch[1]), floatval($mtch[3]), floatval($mtch[5]) ];
+                                    sort($xs); $xmin = floatval($xs[0]);
+                                   rsort($xs); $xmax = floatval($xs[0]);
+
+                                   $ys = [ floatval($mtch[2]), floatval($mtch[4]), floatval($mtch[6]) ];
+                                    sort($ys); $ymin = floatval($ys[0]);
+                                   rsort($ys); $ymax = floatval($ys[0]);
+                                   
+                                   $asset['conf']['xpos'] = $xmin;
+                                   $asset['conf']['ypos'] = $ymin;
+                                   $asset['conf']['width'] = $xmax -$xmin;
+                                   $asset['conf']['height'] = $ymax -$ymin;
+
+                                   $asset['layout_code'] = 'P';
+                                   if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                                        $asset['layout_code'] = 'L';
+                                   }
+                              }
                          }
                     }
 
+// print_r($asset);
 // push
                     $res[]= $asset;
                     $idx++;
                     break;
           }
+
           $d += Layout::Y_STEP;
       }
 
@@ -351,6 +450,7 @@ function eval_path_fields($svg_doc, $doc){
 }
 
 function eval_polygon_fields($svg_doc, $doc){
+
      $res = [];
      $indx = intval(0);
      $d = 0;
@@ -361,13 +461,15 @@ function eval_polygon_fields($svg_doc, $doc){
 
                case 'polygon':
 
-                    $poly = [];
-                    $poly['type'] = 'poly';
-                    $poly['indx'] = sprintf('poly_%s', intval($indx));
-                    $poly['conf'] = [];
-                    $poly['conf']['unit'] = 'px';
-                    $poly['conf']['color'] = [];
-                    $poly['conf']['depth'] = $d;
+// asset
+                    $asset = [];
+                    $asset['type'] = 'poly';
+                    $asset['indx'] = sprintf('poly_%s', intval($indx));
+// asset conf
+                    $asset['conf'] = [];
+                    $asset['conf']['unit'] = 'px';
+                    $asset['conf']['depth'] = $d;
+                    $asset['conf']['color'] = [];
 
 // points of the poly
                     $points = $node['attributes']['points'];
@@ -411,33 +513,34 @@ function eval_polygon_fields($svg_doc, $doc){
                          $s++;
                     }
                     $points = implode(' ', $xtmp);
-                    $poly['conf']['points'] = $points;
+                    $asset['points'] = $points;
 
-                    $poly['slot'] = false;
+                    $asset['slot'] = false;
 
-// evaluates the class af a polygon
+// evaluates the style af a polygon
                     $css = $node['attributes']['style'];
                     if(null != $css){
                          $style = get_style_coll_from_attribute($css);
                          $color = $style['fill'];
-                         $poly['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-// kind of gray
-// #ededed and #dadada and gray colors is the image cut in
-// description of image slots
+                         $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
 
+// whether asset is slot or not
                          if(is_grey_hex($color)){;
-                              $poly['slot'] = true;
-                              $poly['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
-                              $poly['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
-                              $poly['width'] = $xmax -$xmin;
-                              $poly['height'] = $ymax -$ymin;
-                              $poly['layout_code'] = 'P';
-                              if(floatval($poly['width']) >= floatval($poly['height'])){ 
-                                   $poly['layout_code'] = 'L';
+
+                              $asset['slot'] = true;
+                              $asset['conf']['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
+                              $asset['conf']['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
+                              $asset['conf']['width'] = $xmax -$xmin;
+                              $asset['conf']['height'] = $ymax -$ymin;
+
+                              $asset['layout_code'] = 'P';
+                              if(floatval($asset['width']) >= floatval($asset['height'])){ 
+                                   $asset['layout_code'] = 'L';
                               }
                          }
                     }
-                    $res[]= $poly;
+
+                    $res[]= $asset;
                     $indx++;
                     break;
           }
@@ -649,65 +752,71 @@ function get_layout_code_of_spread($nodes){
      return $res;
 }
 
-function insert_image_assets($doc, $polys){
+function insert_image_assets($doc, $nodes){
 
      $res = [];
-     $idx = 0;
 
      $landscape = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.900.base');
-      $portrait = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.p.base');
-
-     if(null == $portrait){ $portrait = 'missing portrait image locator'; }
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
 
-     foreach($polys as $node){
-          if(false != $node['slot']){
-               $chunk = 'L' == $node['layout_code'] ? $landscape : $portrait;
-               $asset = [];
-               $asset['type'] = 'image'; 
-               $asset['indx'] = sprintf('image_%s', $idx);
-               $asset['src'] = $chunk;
-               $asset['conf'] = [];
-               $asset['conf']['unit'] = 'px';
-               $asset['conf']['xpos'] = $node['xpos'];
-               $asset['conf']['ypos'] = $node['ypos'];
-               $asset['conf']['width'] = $node['width'];
-               $asset['conf']['height'] = $node['height'];
-               $asset['conf']['slotW'] = $node['width'];
-               $asset['conf']['slotH'] = $node['height'];
-               $asset['conf']['slotX'] = $node['xpos'];
-               $asset['conf']['slotY'] = $node['ypos'];
-               $asset['conf']['opacity'] = '1';
-               $asset['conf']['depth'] = intval($node['conf']['depth']) +1;
-               $asset['conf']['maxScaleRatio'] = '1';
+     $portrait  = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.p.base');
+     if(null == $portrait){ $portrait = 'missing portrait image locator'; }
+
+     $idx = 0;
+
+     foreach($nodes as $node){
+
+          $res[]= $node;
+
+// adds images
+          if(true != $node['slot']){
+               continue;
+          }
+
+          $chunk = 'L' == $node['layout_code'] ? $landscape : $portrait;
+
+// sets up an image asset
+          $asset = [];
+          $asset['type'] = 'image'; 
+          $asset['indx'] = sprintf('image_%s', $idx);
+          $asset['src'] = $chunk;
+
+// conf 
+          $asset['conf'] = [];
+          $asset['conf']['unit'] = 'px';
+          $asset['conf']['xpos'] = $node['conf']['xpos'];
+          $asset['conf']['ypos'] = $node['conf']['ypos'];
+          $asset['conf']['width'] = $node['conf']['width'];
+          $asset['conf']['height'] = $node['conf']['height'];
+          $asset['conf']['slotW'] = $node['conf']['width'];
+          $asset['conf']['slotH'] = $node['conf']['height'];
+          $asset['conf']['slotX'] = $node['conf']['xpos'];
+          $asset['conf']['slotY'] = $node['conf']['ypos'];
+          $asset['conf']['opacity'] = '1';
+          $asset['conf']['depth'] = intval($node['conf']['depth']) +1;
+          $asset['conf']['maxScaleRatio'] = '1';
+
 // fixdiss
-               $r = intval($doc['ppi']) /300;
-               switch(intval($doc['ppi'])){
-
-                    case 300:
-                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *1;
-                         break;
-
-                    case 600:
-                         $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *2;
-                         break;
-               }
+          $r = intval($doc['ppi']) /300;
+          switch(intval($doc['ppi'])){
+               case 300:
+                    $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *1;
+                    break;
+               case 600:
+                    $asset['conf']['maxScaleRatio'] = Layout::IMAGE_MAX_SCALE *$r *2;
+                    break;
+          }
 
 
 // image asset scales into the slot until the max scale ratio 
 // and cuts the image asset by definition
-               $asset['conf']['scaleType'] = Layout::IMAGE_SCALE_TYPE;
+          $asset['conf']['scaleType'] = Layout::IMAGE_SCALE_TYPE;
+          // $asset['conf']['scaleType'] = 'no_scale';
 
-
-// image assets scales into the widht or into the height of the slot
-// without cutting the image asset
-// until the max scale ratio 
-               // $asset['conf']['scaleType'] = 'no_scale';
-               $res[]= $asset;
-               $idx++;
-          }
-          $res[]= $node;
+          $res[]= $asset;
+          $idx++;
      }
+
      return $res;
 }
 
