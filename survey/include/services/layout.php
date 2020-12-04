@@ -209,7 +209,6 @@ function parse_layout_doc($svg_path){
 
 // insert of mock image assets
      $res = insert_image_assets($doc, $res);
-// scale and fit of the image assets as is defined in the config
      $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
@@ -217,6 +216,7 @@ function parse_layout_doc($svg_path){
 // and then sometimes the image slots is paths too
      $res = eval_path_fields($svg_doc, $doc);
      $res = insert_image_assets($doc, $res);
+     $res = fit_image_assets_into_slot($doc, $res);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
      return $doc;
@@ -328,6 +328,7 @@ function eval_path_fields($svg_doc, $doc){
 
                     $asset = [];
                     $asset['type'] = 'path';
+// conf
                     $asset['conf'] = [];
                     $asset['conf']['unit'] = $doc['unit'];
                     $asset['conf']['depth'] = $d;
