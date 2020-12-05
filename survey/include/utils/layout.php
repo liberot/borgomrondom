@@ -290,7 +290,6 @@ function fit_image_asset_into_slot($doc, $asset){
                          $r = $slot_width /$width;
                          $w = $width *$r;
                          $h = $height *$r;
-
                     }
                     if($h >= $slot_height){
                          $r = $slot_height /$h;
@@ -339,7 +338,9 @@ function match_font_family($style){
      $font_family = preg_replace(  "/'/i", '', $font_family);
      $res = $font_family;
      $font_family_map = [
-          [ 'tokens'=>['American', 'Typewriter'], 'res'=>'American Typewriter' ]
+          [ 'tokens'=>['American', 'Typewriter'], 'res'=>'American Typewriter' ],
+          [ 'tokens'=>['Big', 'Booty', 'Bang'],   'res'=>'BigBooty' ],
+          [ 'tokens'=>['Badang', 'Badei'],        'res'=>'BadangBadei' ]
      ];
      foreach($font_family_map as $map){
           $m = 0;
