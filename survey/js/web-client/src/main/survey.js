@@ -35,10 +35,11 @@ class Survey extends Controller {
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
 
           // ------
-          // 127.0.0.1:8083/welcome.php?page_id=112932/#/mother:mother/child:child/whatever:200
+          // http://127.0.0.1:8083/welcome.php?page_id=112932/#/child:peter/affe:200/mother:bonita
           this.extractHiddenFields();
-console.log('mother:', this.getHiddenFieldVal('mother'));
-console.log('child:', this.getHiddenFieldVal('child'));
+
+
+console.log('child: ' , this.getHiddenFieldVal('child'));
 
           // ------
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
@@ -56,27 +57,24 @@ console.log('child:', this.getHiddenFieldVal('child'));
      }
 
      extractHiddenFields(){
-          let ref = this;
+          this.model.hiddenFields = [];
           let lnk = window.location.hash.substr(1);
           let tmp = lnk.split('/');
-          if(tmp.length <= 1){
-              return false;
+          if(tmp.length <= 1){ return false; }
+          for(let idx in tmp){
+               let t = tmp[idx].split(':');
+               if(2 < t.length){ continue; }
+               if(null == t[0] || '' == t[0]){ continue; }
+               this.model.hiddenFields.push({ key: t[0], val: t[1] });
           }
-          this.model.hiddenFields = tmp;
-
-
      }
 
      getHiddenFieldVal(key){
           let res = null;
           if(null == this.model.hiddenFields){ return res; }
-          let tmp = null;
           for(let idx in this.model.hiddenFields){
-               tmp = this.model.hiddenFields[idx];
-               tmp = tmp.split(':');
-               if(2 < tmp.length){ return res; }
-               if(key == tmp[0]){
-                    res = tmp[1];
+               if(key == this.model.hiddenFields[idx].key){
+                   res = this.model.hiddenFields[idx].val;
                }
           }
           return res;
@@ -149,9 +147,12 @@ console.log('child:', this.getHiddenFieldVal('child'));
           let chunk = '';
 
           if(lnk.match(/\/+$/)){ chunk = chunk.replace(/^\//, '');}
-          chunk += this.model.hiddenFields.join('/');
+          let temp = '';
+          for(let idx in this.model.hiddenFields){
+              temp+= '/'+this.model.hiddenFields[idx].key +':' +this.model.hiddenFields[idx].val;
+          }
 
-          window.location.hash = chunk;
+          window.location.hash = chunk +temp;
      }
 
      bindThread(msg){
