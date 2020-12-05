@@ -35,8 +35,12 @@ class Survey extends Controller {
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
 
           // ------
-          this.extractDeeplink(window.location.hash.substr(1));
-          this.navDeeplink(window.location.hash.substr(1));
+          // 127.0.0.1:8083/welcome.php?page_id=112932/#/mother:mother/child:child/whatever:200
+          this.extractHiddenFields();
+console.log('mother:', this.getHiddenFieldVal('mother'));
+console.log('child:', this.getHiddenFieldVal('child'));
+
+          // ------
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
           // ------
           history.pushState(null, null, window.location.href);
@@ -49,6 +53,33 @@ class Survey extends Controller {
           };
           // ------
           this.notify(new Message('download::fieldings', this.model));
+     }
+
+     extractHiddenFields(){
+          let ref = this;
+          let lnk = window.location.hash.substr(1);
+          let tmp = lnk.split('/');
+          if(tmp.length <= 1){
+              return false;
+          }
+          this.model.hiddenFields = tmp;
+
+
+     }
+
+     getHiddenFieldVal(key){
+          let res = null;
+          if(null == this.model.hiddenFields){ return res; }
+          let tmp = null;
+          for(let idx in this.model.hiddenFields){
+               tmp = this.model.hiddenFields[idx];
+               tmp = tmp.split(':');
+               if(2 < tmp.length){ return res; }
+               if(key == tmp[0]){
+                    res = tmp[1];
+               }
+          }
+          return res;
      }
 
      showValidationError(msg){
@@ -102,88 +133,23 @@ class Survey extends Controller {
      }
 
      bindHashChange(e){
-          this.extractDeeplink(window.location.hash.substr(1));
-          if(this.model.rPanelNav){
-          }
      }
 
-     extractDeeplink(lnk){
+     navDeeplink(){
+          let lnk = window.location.hash.substr(1);
           let ref = this;
-          let tmp = lnk.split('/');
-          if(tmp.length <= 1){
-              return;
-          }
-          if(tmp.length >= 4){
-               let id = this.getLinkVal('panel', tmp[3]);
-               if(id != this.model.rPanel){
-                   this.model.rPanel = id;
-                   this.model.rPanelNav = true;
-               }
-          }
-          if(tmp.length >= 3){
-               let id = this.getLinkVal('section', tmp[2]);
-               if(id != this.model.rSection){
-                   this.model.rSection = id;
-                   this.model.rSectionNav = true;
-               }
-          }
-          if(tmp.length >= 2){
-               let id = this.getLinkVal('thread', tmp[1]);
-               if(id != this.model.rThread){
-                   this.model.rThread = id;
-                   this.model.rThreadNav = true;
-               }
-          }
-     }
-
-     getLinkVal(target, chunk){
-          let res = null;
-          let tmp = chunk.split(':');
-          if(2 == tmp.length){
-               if(target == tmp[0]){
-                    res = tmp[1];
-               }
-          }
-          return res;
-     }
-
-     navDeeplink(lnk){
-          let ref = this;
-          if(this.model.rThreadNav){
-               if(this.model.rSectionNav){
-                    if(this.model.rPanelNav){
-                         this.model.navToPanelAction = function(){
-                              ref.selectPanel(ref.model.rPanel);
-                              ref.model.rPanelNav = false;
-                         }
-                    }
-                    this.model.navToThreadAction = function(){
-                         let model = { 'arguments': [ '', ref.model.rSection ] }
-                         ref.notify(new Message('select::thread', model));
-                         ref.model.rSectionNav = false;
-                    }
-               }
-               let model = { 'arguments': [ '', this.model.rThread ] }
-               this.model.rThreadNav = false;
-          }
      }
 
      setLink(){
 
+          if(null == this.model.hiddenFields){ return false; }
+
           let ref = this;
-          let chunk = '';
           let lnk = window.location.href.substr(1);
+          let chunk = '';
 
-          if(lnk.match(/\/+$/)){
-               chunk = chunk.replace(/^\//, '');
-          }
-
-          if(null != this.model.thread){
-               chunk+= '/thread:'+this.model.thread.ID;
-               if(null != this.model.section){
-                    chunk+= '/section:'+this.model.section.ID;
-               }
-          }
+          if(lnk.match(/\/+$/)){ chunk = chunk.replace(/^\//, '');}
+          chunk += this.model.hiddenFields.join('/');
 
           window.location.hash = chunk;
      }
@@ -213,14 +179,6 @@ class Survey extends Controller {
 
           this.model.panels = [];
 
-
-
-
-// deeplink
-          if(null != this.model.navToPanelAction){
-               this.model.navToPanelAction();
-               this.model.navToPanelAction = null;
-          }
 
 // loads the current panel by its reference
           let ref = this.model.section.post_content.toc.refs[0];
@@ -392,7 +350,7 @@ class Survey extends Controller {
 
 console.log('loadPanel: ', ref);
 
-          this.model.requestedPanelRef = ref;
+          this.model.requestedPanel = ref;
 
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
@@ -990,26 +948,24 @@ let __dropdown_cell_tmpl__ = `
 class SurveyModel extends Model {
      constructor(){
           super();
-          this.clientAuthed = false;
-          this.toc;
-          this.sections;
-          this.section;
-          this.panels;
-          this.panel;
+// --------------------------------------
           this.threads;
+          this.sections;
+          this.panels;
           this.thread;
-          this.step = 0;
+          this.section;
+          this.panel;
           this.maxImageAssets;
 // deeplink -----------------------------
-          this.rThread;
-          this.rSection;
-          this.rPanel;
-          this.rQuestionId;
-          this.navToThreadAction;
-          this.navToPanelAction;
+          this.requestedThread;
+          this.requestedSection;
+          this.requestedPanel;
+// hidden fields ------------------------
+          this.hiddenFields;
 // --------------------------------------
           this.parseProc;
           this.layoutGroup;
+// --------------------------------------
      }
 }
 
