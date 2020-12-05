@@ -36,10 +36,9 @@ class Survey extends Controller {
 
           // ------
           // http://127.0.0.1:8083/welcome.php?page_id=112932/#/child:peter/affe:200/mother:bonita
+          // 127.0.0.1:8083/welcome.php?page_id=112932&child=joséf&mother=marikkah
           this.extractHiddenFields();
-
-
-console.log('child: ' , this.getHiddenFieldVal('child'));
+console.log('page_id: ' , this.getHiddenFieldVal('page_id'));
 
           // ------
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
@@ -58,6 +57,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
 
      extractHiddenFields(){
           this.model.hiddenFields = [];
+/*
           let lnk = window.location.hash.substr(1);
           let tmp = lnk.split('/');
           if(tmp.length <= 1){ return false; }
@@ -66,6 +66,14 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                if(2 < t.length){ continue; }
                if(null == t[0] || '' == t[0]){ continue; }
                this.model.hiddenFields.push({ key: t[0], val: t[1] });
+          }
+*/
+          let link = window.location.search.substr(1);
+          let prms = link.split('&');
+          for(let idx in prms){
+               let temp = prms[idx].split('=');
+               if(null == temp || 2 < temp.length){ continue; }
+               this.model.hiddenFields.push({ key: unescape(temp[0]), val: unescape(temp[1]) });
           }
      }
 
@@ -139,7 +147,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      }
 
      setLink(){
-
+/*
           if(null == this.model.hiddenFields){ return false; }
 
           let ref = this;
@@ -153,6 +161,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           }
 
           window.location.hash = chunk +temp;
+*/
      }
 
      bindThread(msg){
