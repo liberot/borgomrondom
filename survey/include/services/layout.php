@@ -791,10 +791,10 @@ function insert_image_assets($doc, $nodes){
 
      $res = [];
 
-     $landscape = @file_get_contents(Path::get_asset_dir().'/test.900.base');
+     $landscape = @file_get_contents(Path::get_mock_dir().'/test.900.base');
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
 
-     $portrait  = @file_get_contents(Path::get_asset_dir().'/test.p.base');
+     $portrait  = @file_get_contents(Path::get_mock_dir().'/test.p.base');
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
 
      $idx = 0;

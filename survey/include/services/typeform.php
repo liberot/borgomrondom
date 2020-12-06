@@ -35,7 +35,7 @@ function exec_construct_typeform_survey(){
      }
 
 // reads tpeform survey json
-     $path = sprintf('%s/%s', Path::get_asset_dir(), $survey_file_name);
+     $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
      $data = @file_get_contents($path);
      if(is_null($data)){
           $message = esc_html(__('no json', 'nosuch'));
@@ -179,10 +179,10 @@ function exec_download_typeform_survey(){
      $path = '/tmp/delete_me.json';
      switch($type){
           case 'form':
-               $path = sprintf('%s/%s', Path::get_asset_dir(), 'typeform_survey.json');
+               $path = sprintf('%s/%s', Path::get_typeform_dir(), 'typeform_survey.json');
                break;
           case 'result':
-               $path = sprintf('%s/%s', Path::get_asset_dir(), 'typeform_survey_result.json');
+               $path = sprintf('%s/%s', Path::get_typeform_dir(), 'typeform_survey_result.json');
                break;
      }
 

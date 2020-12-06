@@ -354,9 +354,9 @@ function build_question_view(){
 
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
      wp_enqueue_style('admin_style');
-
+ 
      wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
-     wp_register_script('service_i18n',    WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
+     wp_register_script('service_i18n', WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
 
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');
@@ -439,8 +439,6 @@ EOD;
           echo '</tr>';
      }
 
-     $dp = json_encode($coll);
-
      echo <<<EOD
           <tfoot>
                <tr>
@@ -452,32 +450,6 @@ EOD;
                </tr>
           </tfoot>
           </table>
-
-          <script type='text/javascript'>
-               let ref = this;
-               let coll = {$dp};
-               jQuery(document).ready(function(e){
-                    for(let idx in coll){
-                         let ct = jQuery.parseJSON(atob(coll[idx].post_content));
-                         let id = coll[idx].ID
-                         jQuery('.msel-'+id).val(ct.conf.max_assets);
-                         jQuery('.lsel-'+id).val(ct.conf.layout_group);
-                    }
-                    jQuery('.max-asset-select').change(function(){
-                         let questionId = jQuery(this).attr('question_id');
-                         let max = this.value;
-                         let group = null;
-                         ref.saveQuestion(questionId, max, group);
-                    });
-                    jQuery('.layout-group-select').change(function(){
-                         let questionId = jQuery(this).attr('question_id');
-                         let max = null;
-                         let group = this.value;
-                         ref.saveQuestion(questionId, max, group);
-                    });
-               });
-          </script>
-
 EOD;
 
 }
@@ -548,16 +520,16 @@ EOD;
 add_shortcode('spreads_view', 'build_spreads_view');
 function build_spreads_view() {
 
-     wp_register_script('viewer-config',       WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/config-spreads.js');
-     wp_register_script('viewer-main',         WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/main.js');
-     wp_register_script('viewer-tools',        WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/tools/main.js');
-     wp_register_script('viewer-screen',       WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/main.js');
-     wp_register_script('viewer-correct',      WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/correct.js');
-     wp_register_script('viewer-bitmap',       WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/bitmap.js');
-     wp_register_script('viewer-svg',          WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/lib/svg.js');
-     wp_register_script('viewer-layout_util',  WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/util/main.js');
-     wp_register_script('viewer-layout_net',   WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init',  WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/init.js', array('jquery'));
+     wp_register_script(     'viewer-config', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/config-spreads.js');
+     wp_register_script(       'viewer-main', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/main.js');
+     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/tools/main.js');
+     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/main.js');
+     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/correct.js');
+     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/bitmap.js');
+     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/lib/svg.js');
+     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/util/main.js');
+     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/init.js', array('jquery'));
 
      wp_enqueue_script('viewer-config');
      wp_enqueue_script('viewer-main');
@@ -605,16 +577,16 @@ EOD;
 add_shortcode('layouts_view', 'build_layouts_view');
 function build_layouts_view() {
 
-     wp_register_script('viewer-config',       WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/config-layouts.js');
-     wp_register_script('viewer-main',         WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/main.js');
-     wp_register_script('viewer-tools',        WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/tools/main.js');
-     wp_register_script('viewer-screen',       WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/main.js');
-     wp_register_script('viewer-correct',      WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/correct.js');
-     wp_register_script('viewer-bitmap',       WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/bitmap.js');
-     wp_register_script('viewer-svg',          WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/lib/svg.js');
-     wp_register_script('viewer-layout_util',  WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/util/main.js');
-     wp_register_script('viewer-layout_net',   WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init',  WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/init.js', array('jquery'));
+     wp_register_script(     'viewer-config', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/config-layouts.js');
+     wp_register_script(       'viewer-main', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/main.js');
+     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/tools/main.js');
+     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/main.js');
+     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/correct.js');
+     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/bitmap.js');
+     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/lib/svg.js');
+     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/util/main.js');
+     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/init.js', array('jquery'));
 
      wp_enqueue_script('viewer-config');
      wp_enqueue_script('viewer-main');
