@@ -1,3 +1,17 @@
+function initSurveyPage(){
+      let data = { 
+           action: 'exec_init_survey_page'
+      };
+      this.postCommand(data);
+}
+
+function cleanSurveyDB(){
+      let data = { 
+           action: 'exec_clean_bookbuilder_db'
+      };
+      this.postCommand(data);
+}
+
 function constructFieldingQuestions(){
       let data = { 
            action: 'exec_construct_typeform_survey',
