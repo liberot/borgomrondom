@@ -84,7 +84,7 @@ function build_surveyprint_utils_view(){
      EOD;
 
      $actions = esc_html(__('Actions:', 'nosuch'));
-     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/fielding_questions.json"', 'nosuch'));
+     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/fielding_questions.json"', 'nosuch'));
      $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'nosuch'));
      $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
      $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
