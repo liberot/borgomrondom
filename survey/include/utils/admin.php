@@ -1,5 +1,25 @@
 <?php defined('ABSPATH') || exit;
 
+function clean_layouts(){
+     global $wpdb;
+
+     $tables = [
+          'surveyprint_layout',
+     ];
+
+     $res = null;
+
+     foreach($tables as $table){
+
+          $sql = <<<EOD
+               delete from wp_posts where post_type = '{$table}'
+EOD;
+          $sql = debug_sql($sql);
+          $res = $wpdb->get_results($sql);
+     }
+     return $res;
+}
+
 function clean_surveys(){
      global $wpdb;
 
@@ -106,6 +126,16 @@ EOD;
 function dump_surveys(){
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_survey';
+EOD;
+     global $wpdb;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+function dump_threads(){
+     $sql = <<<EOD
+          select * from wp_posts where post_type = 'surveyprint_thread';
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);

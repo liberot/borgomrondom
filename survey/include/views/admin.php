@@ -89,7 +89,9 @@ function build_surveyprint_utils_view(){
      $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
      $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
      $clean_bookbuilder_db = esc_html(__('Deletion of all BookBuilder DB Entries', 'nosuch'));
+     $clean_layouts = esc_html(__('Deletion of all parsed Layout Records', 'nosuch'));
      $dump_surveys = esc_html(__('Dump of Stored Surveys', 'nosuch'));
+     $dump_threads = esc_html(__('Dump of Client Threads', 'nosuch'));
      $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
      echo <<<EOD
      <div class='edit'>
@@ -97,8 +99,10 @@ function build_surveyprint_utils_view(){
           <div><a href='javascript:constructFieldingQuestions();'>{$construct_fielding_questions}</a></div>
           <div><a href='javascript:initSurveyPage();'>{$init_survey_page}</a></div>
           <div><a href='javascript:dumpSurveys();'>{$dump_surveys}</a></div>
+          <div><a href='javascript:dumpClientThreads();'>{$dump_threads}</a></div>
           <div><a href='javascript:cleanSurveys();'>{$clean_surveys}</a></div>
           <div><a href='javascript:cleanClientThreads();'>{$clean_client_threads}</a></div>
+          <div><a href='javascript:cleanLayouts();'>{$clean_layouts}</a></div>
           <div><a href='javascript:cleanSurveyDB();'>{$clean_bookbuilder_db}</a></div>
      </div>
 EOD;

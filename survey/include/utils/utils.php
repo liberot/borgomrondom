@@ -116,7 +116,7 @@ function trim_incoming_key_val($coll){
      $res = [];
      foreach($coll as $key=>$val){
           $key = preg_replace('/[^A-Za-z0-9-]/', '', $key);
-          $val = preg_replace('/[^A-Za-z0-9-]/', '', $val);
+          $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $val);
           $res[$key] = $val;
      }
      return $res;

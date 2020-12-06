@@ -1,3 +1,17 @@
+function cleanLayouts(){
+      let data = { 
+           action: 'exec_clean_layouts'
+      };
+      this.postCommand(data);
+}
+
+function dumpClientThreads(){
+      let data = { 
+           action: 'exec_dump_threads'
+      };
+      this.postCommand(data);
+}
+
 function dumpSurveys(){
       let data = { 
            action: 'exec_dump_surveys'

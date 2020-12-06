@@ -36,6 +36,18 @@ function exec_clean_bookbuilder_db(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
 }
 
+add_action('admin_post_exec_clean_layouts', 'exec_clean_layouts');
+function exec_clean_layouts(){
+     if(!policy_match([Role::ADMIN])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     $res = clean_layouts();
+     $message = esc_html(__('layouts deleted', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
+}
+
 add_action('admin_post_exec_init_survey_page', 'exec_init_survey_page');
 function exec_init_survey_page(){
      if(!policy_match([Role::ADMIN])){
@@ -62,12 +74,42 @@ function exec_dump_surveys(){
           $survey->post_content = pagpick($survey->post_content);
           $chunk = json_encode($survey, JSON_PRETTY_PRINT);
           $path = Path::get_backup_dir();
-          $file = trim_incoming_filename($survey->post_excerpt);
+          $file = sprintf('%s_%s', 'survey', trim_incoming_filename($survey->post_excerpt));
           if(false == $file){ $file = 'no_filename'; }
           $path = sprintf('%s/%s.json', $path, $file);
           $dumps[]= $path;
           $res = @file_put_contents($path, $chunk);
      }
      $message = esc_html(__('surveys dumped', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'dumps'=>$dumps));
+}
+
+add_action('admin_post_exec_dump_threads', 'exec_dump_threads');
+function exec_dump_threads(){
+     if(!policy_match([Role::ADMIN])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     $res = dump_threads();
+     $dumps = [];
+
+// todo: client id and such
+// todo: folder
+// todo: panels of thread
+// todo: assets of thread
+// todo: book of thread
+// todo: zip
+     foreach($res as $thread){
+          $thread->post_content = pagpick($thread->post_content);
+          $chunk = json_encode($thread, JSON_PRETTY_PRINT);
+          $path = Path::get_backup_dir();
+          $file = sprintf('%s_%s', 'thread', trim_incoming_filename($thread->post_excerpt));
+          if(false == $file){ $file = 'no_filename'; }
+          $path = sprintf('%s/%s.json', $path, $file);
+          $dumps[]= $path;
+          $res = @file_put_contents($path, $chunk);
+     }
+     $message = esc_html(__('threads dumped', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'dumps'=>$dumps));
 }
