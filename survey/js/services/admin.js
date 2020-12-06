@@ -1,3 +1,17 @@
+function cleanSurveys(){
+      let data = { 
+           action: 'exec_clean_surveys'
+      };
+      this.postCommand(data);
+}
+
+function cleanClientThreads(){
+      let data = { 
+           action: 'exec_clean_client_threads'
+      };
+      this.postCommand(data);
+}
+
 function initSurveyPage(){
       let data = { 
            action: 'exec_init_survey_page'

@@ -86,6 +86,8 @@ function build_surveyprint_utils_view(){
      $actions = esc_html(__('Actions:', 'nosuch'));
      $construct_fielding_questions = esc_html(__('Construciton of the Fielding Questions from "./asset/fielding_questions.json"', 'nosuch'));
      $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'nosuch'));
+     $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
+     $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
      $clean_bookbuilder_db = esc_html(__('Deletion of all BookBuilder DB Entries', 'nosuch'));
      $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
      echo <<<EOD
@@ -93,6 +95,8 @@ function build_surveyprint_utils_view(){
           <div class='unit'>{$actions}</div>
           <div><a href='javascript:constructFieldingQuestions();'>{$construct_fielding_questions}</a></div>
           <div><a href='javascript:initSurveyPage();'>{$init_survey_page}</a></div>
+          <div><a href='javascript:cleanSurveys();'>{$clean_surveys}</a></div>
+          <div><a href='javascript:cleanClientThreads();'>{$clean_client_threads}</a></div>
           <div><a href='javascript:cleanSurveyDB();'>{$clean_bookbuilder_db}</a></div>
      </div>
 EOD;

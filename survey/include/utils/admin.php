@@ -1,5 +1,52 @@
 <?php defined('ABSPATH') || exit;
 
+function clean_surveys(){
+     global $wpdb;
+
+     $tables = [
+          'surveyprint_question',
+          'surveyprint_section',
+          'surveyprint_thread'
+     ];
+
+     $res = null;
+
+     foreach($tables as $table){
+
+          $sql = <<<EOD
+               delete from wp_posts where post_type = '{$table}'
+EOD;
+          $sql = debug_sql($sql);
+          $res = $wpdb->get_results($sql);
+     }
+     return $res;
+}
+
+function clean_client_threads(){
+     global $wpdb;
+
+     $tables = [
+          'surveyprint_book',
+          'surveyprint_chapter',
+          'surveyprint_panel',
+          'surveyprint_section',
+          'surveyprint_spread',
+          'surveyprint_thread'
+     ];
+
+     $res = null;
+
+     foreach($tables as $table){
+
+          $sql = <<<EOD
+               delete from wp_posts where post_type = '{$table}'
+EOD;
+          $sql = debug_sql($sql);
+          $res = $wpdb->get_results($sql);
+     }
+     return $res;
+}
+
 function clean_bookbuilder_db(){
      global $wpdb;
 
