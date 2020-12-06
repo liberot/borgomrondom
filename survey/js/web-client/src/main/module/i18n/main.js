@@ -9,12 +9,12 @@ let __survey = {
 }
 
 let __str = {
-     'wait': 'Pleaze wait',
-     'start': 'Let\'s get it on',
+     'wait': 'Please wait',
+     'start': 'Let’s get it on',
      'done': 'I am done with the input and i would like to submit the input',
      'welcome': 'Welcome',
-     'yes': 'But Yeas',
-     'no': 'I\'d rather not',
+     'yes': 'Yes',
+     'no': 'No',
      'spreads': 'I would like to see the spreads now',
      'invalid': 'Your input be not computed',
      '':''
