@@ -35,8 +35,7 @@ function exec_construct_typeform_survey(){
      }
 
 // reads tpeform survey json
-     $ds = DIRECTORY_SEPARATOR;
-     $path = WP_PLUGIN_DIR.SURVeY.$ds.'asset'.$ds.$survey_file_name;
+     $path = sprintf('%s/%s', Path::get_asset_dir(), $survey_file_name);
      $data = @file_get_contents($path);
      if(is_null($data)){
           $message = esc_html(__('no json', 'nosuch'));
@@ -177,13 +176,13 @@ function exec_download_typeform_survey(){
           return;
      }
 
-     $path = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR;
+     $path = '/tmp/delete_me.json';
      switch($type){
           case 'form':
-               $path.= 'typeform_survey.json';
+               $path = sprintf('%s/%s', Path::get_asset_dir(), 'typeform_survey.json');
                break;
           case 'result':
-               $path.= 'typeform_survey_result.json';
+               $path = sprintf('%s/%s', Path::get_asset_dir(), 'typeform_survey_result.json');
                break;
      }
 

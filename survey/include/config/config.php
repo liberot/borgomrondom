@@ -8,10 +8,10 @@ class Role {
 }
 
 class Path {
+
      const                    INKSCAPE = '/Applications/Inkscape.app/Contents/MacOS/inkscape';
      const                 GHOSTSCRIPT = '/opt/local/bin/gs';
      const                SERVICE_BASE = '/wp-admin/admin.php';
-     const            UPLOAD_DIRECTORY = '/wp-content/uploads/book_builder';
 
      static public final function get_upload_path(){
           return sprintf('%s%s', wp_upload_dir()['basedir'], '/book_builder');
@@ -19,6 +19,33 @@ class Path {
 
      static public final function get_upload_url(){
           return sprintf('%s%s', wp_upload_dir()['baseurl'], '/book_builder');
+     }
+
+     static public final function get_backup_dir(){
+          $base = Path::get_base_dir();
+          return sprintf('%s%s', $base, '/asset/backup');
+     }
+
+     static public final function get_asset_dir(){
+          $base = Path::get_base_dir();
+          return sprintf('%s%s', $base, '/asset');
+     }
+
+     static public final function get_layout_template_dir(){
+          $base = Path::get_base_dir();
+          return sprintf('%s%s', $base, '/asset/default-layouts/svg');
+     }
+
+     static public final function get_mock_dir(){
+          $base = Path::get_base_dir();
+          return sprintf('%s%s', $base, '/asset/layout-draft');
+     }
+
+     static private final function get_base_dir(){
+          $base = plugin_dir_path(__DIR__);
+          $base = preg_match('/^(.{0,1024})\/nosuch\/survey\//', $base, $mtch);
+          $base = $mtch[1];
+          return sprintf('%s%s', $base, '/nosuch/survey');
      }
 }
 

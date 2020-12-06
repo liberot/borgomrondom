@@ -103,3 +103,12 @@ EOD;
      ]);
 }
 
+function dump_surveys(){
+     $sql = <<<EOD
+          select * from wp_posts where post_type = 'surveyprint_survey';
+EOD;
+     global $wpdb;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}

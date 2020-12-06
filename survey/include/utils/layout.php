@@ -203,7 +203,7 @@ function px_pump($px, $ppi_1st, $ppi_2nd){
 function fit_image_asset_into_slot($doc, $asset){
 
      // $asset['src'] = 'http://127.0.0.1:8083/wp-content/plugins/nosuch/survey/asset/test.300.png';
-     // $asset['src'] = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.300.png';
+     // $asset['src'] = Path::get_asset_dir().'/test.300.png';
 
      $temp = $asset['src'];
      $temp = remove_base_from_chunk($temp);

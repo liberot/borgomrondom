@@ -89,12 +89,14 @@ function build_surveyprint_utils_view(){
      $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
      $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
      $clean_bookbuilder_db = esc_html(__('Deletion of all BookBuilder DB Entries', 'nosuch'));
+     $dump_surveys = esc_html(__('Dump of Stored Surveys', 'nosuch'));
      $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
      echo <<<EOD
      <div class='edit'>
           <div class='unit'>{$actions}</div>
           <div><a href='javascript:constructFieldingQuestions();'>{$construct_fielding_questions}</a></div>
           <div><a href='javascript:initSurveyPage();'>{$init_survey_page}</a></div>
+          <div><a href='javascript:dumpSurveys();'>{$dump_surveys}</a></div>
           <div><a href='javascript:cleanSurveys();'>{$clean_surveys}</a></div>
           <div><a href='javascript:cleanClientThreads();'>{$clean_client_threads}</a></div>
           <div><a href='javascript:cleanSurveyDB();'>{$clean_bookbuilder_db}</a></div>

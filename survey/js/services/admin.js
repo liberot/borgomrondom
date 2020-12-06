@@ -1,3 +1,10 @@
+function dumpSurveys(){
+      let data = { 
+           action: 'exec_dump_surveys'
+      };
+      this.postCommand(data);
+}
+
 function cleanSurveys(){
       let data = { 
            action: 'exec_clean_surveys'

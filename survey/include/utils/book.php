@@ -171,7 +171,7 @@ function add_cover($chapter_id, $title){
      $author_id = esc_sql(get_author_id());
      $uuid = psuuid();
 
-     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
+     $path = Path::get_mock_dir().'/mock-spread.json';
 
      $doc = @file_get_contents($path);
      $doc = json_decode($doc);
@@ -208,7 +208,7 @@ function add_inside_cover($chapter_id, $title){
      $author_id = esc_sql(get_author_id());
      $uuid = psuuid();
 
-     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
+     $path = Path::get_mock_dir().'/mock-spread.json';
      $doc = @file_get_contents($path);
      $doc = json_decode($doc);
      $doc = walk_the_doc($doc);
@@ -245,7 +245,7 @@ function add_intro($chapter_id, $title){
      $author_id = esc_sql(get_author_id());
      $uuid = psuuid();
 
-     $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
+     $path = Path::get_mock_dir().'/mock-spread.json';
      $doc = @file_get_contents($path);
      $doc = json_decode($doc);
      $doc = walk_the_doc($doc);
@@ -331,7 +331,7 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
      $doc = get_layout_by_group_and_rule($layout_group, $layout_code)[0];
 
      if(null == $doc){
-          $path = WP_PLUGIN_DIR.SURVeY.'/asset/layout-draft/mock-spread.json';
+          $path = Path::get_mock_dir().'/mock-spread.json';
           $doc = @file_get_contents($path);
           $doc = json_decode($doc);
           $doc = walk_the_doc($doc);

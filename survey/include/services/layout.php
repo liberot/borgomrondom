@@ -92,7 +92,7 @@ function exec_import_layouts(){
      }
 
 // reads layout svg fro the given rsloc
-     $path = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'default-layouts'.DIRECTORY_SEPARATOR.'svg';
+     $path = Path::get_layout_template_dir();
 
      if(!is_dir($path)){
           $message = esc_html(__('nothing to import', 'nosuch'));
@@ -165,7 +165,7 @@ function parse_layout_doc($svg_path){
      xml_parser_free($parser);
 
 // grabs mock spread json file
-     $path = WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'layout-draft'.DIRECTORY_SEPARATOR.'mock-spread.json';
+     $path = Path::get_mock_dir().'/mock-spread.json';
      $spread = @file_get_contents($path);
      if(null == $spread){ return false; }
 
@@ -589,7 +589,7 @@ function eval_text_fields($svg_doc, $doc){
      $d = 0;
 
 // random words as for debug
-     $random_span_ary = file(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'mock.txt');
+     $random_span_ary = file(Path::get_mock_dir().'/mock.txt');
      $tmp = [];
      foreach($random_span_ary as $row){
           $tmp[]= trim_for_print($row);
@@ -791,10 +791,10 @@ function insert_image_assets($doc, $nodes){
 
      $res = [];
 
-     $landscape = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.900.base');
+     $landscape = @file_get_contents(Path::get_asset_dir().'/test.900.base');
      if(null == $landscape){ $landscape = 'missing landscape image locator'; }
 
-     $portrait  = @file_get_contents(WP_PLUGIN_DIR.SURVeY.DIRECTORY_SEPARATOR.'asset'.DIRECTORY_SEPARATOR.'test.p.base');
+     $portrait  = @file_get_contents(Path::get_asset_dir().'/test.p.base');
      if(null == $portrait){ $portrait = 'missing portrait image locator'; }
 
      $idx = 0;
