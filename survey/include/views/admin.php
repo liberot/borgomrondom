@@ -1,4 +1,4 @@
-<?php // defined('ABSPATH') || exit;
+<?php defined('ABSPATH') || exit;
 
 // plugin menu insert
 add_action('admin_menu', 'setup_admin_menu');

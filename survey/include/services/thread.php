@@ -43,7 +43,7 @@ function exec_init_thread(){
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
 
-     $survey = get_survey_by_title('__fielding_questions__')[0];
+     $survey = get_survey_by_title('201204 Cover and Preface')[0];
      // $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
      // $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
      // $survey = get_survey_by_title('Fieldtypes')[0];
