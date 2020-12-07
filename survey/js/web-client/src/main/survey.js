@@ -35,10 +35,9 @@ class Survey extends Controller {
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
 
           // ------
-          // http://127.0.0.1:8083/welcome.php?page_id=112932/#/child:peter/affe:200/mother:bonita
-          // 127.0.0.1:8083/welcome.php?page_id=112932&child=joséf&mother=marikkah
+          // 127.0.0.1:8083/welcome.php?page_id=112932/#/child=joséf&mother=marikkah
           this.extractHiddenFields();
-console.log('page_id: ' , this.getHiddenFieldVal('page_id'));
+console.log('child: ' , this.getHiddenFieldVal('child'));
 
           // ------
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
@@ -68,7 +67,8 @@ console.log('page_id: ' , this.getHiddenFieldVal('page_id'));
                this.model.hiddenFields.push({ key: t[0], val: t[1] });
           }
 */
-          let link = window.location.search.substr(1);
+          // let link = window.location.search.substr(1);
+          let link = window.location.hash.substr(1);
           let prms = link.split('&');
           for(let idx in prms){
                let temp = prms[idx].split('=');
@@ -321,9 +321,12 @@ console.log('page_id: ' , this.getHiddenFieldVal('page_id'));
      }
 
      corrQuestion(question){
-          let refmtch = question.match(/{{(.{1,128}?)}}/g);
-          for(let idx in refmtch){
-               let key = refmtch[idx]; 
+
+          let mtch = question.match(/{{(.{1,128}?)}}/g);
+
+          for(let idx in mtch){
+
+               let key = mtch[idx]; 
                    key = key.replace(/[{}]/g, '');
                    key = key.split(':');
                    key = key[1];
@@ -339,8 +342,14 @@ console.log('page_id: ' , this.getHiddenFieldVal('page_id'));
                question = question.replace(/\*/g, '');
                question = question.replace(/\n\r/g, '');
                question = question.replace(/\n/g, '');
-               question = question.replace(refmtch[idx], val);
+
+console.log(question, val);
+console.log(mtch[idx]);
+
+               question = question.replace(mtch[idx], val);
+console.log(question);
           }
+
           return question;
      }
 
@@ -401,6 +410,8 @@ console.log('loadPanel: ', ref);
           let question = this.model.panel.post_content.title;
               question = SurveyUtil.trimIncomingString(question);
               question = this.corrQuestion(question);
+
+console.log('q:', question);
 
           let answer = this.model.panel.post_content.answer;
               answer = SurveyUtil.trimIncomingString(answer);
@@ -484,7 +495,7 @@ console.log('loadPanel: ', ref);
 
                case 'statement':
                    buf1st = this.fillTemplate(__statement_tmpl__, {
-                        question: this.model.panel.post_content.title,
+                        question: question,
                         button: this.model.panel.post_content.properties.button_text,
                         ref: this.model.panel.post_content.ref,
                    })
