@@ -139,7 +139,6 @@ function exec_get_panel_by_ref(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     
      set_session_ticket('panel_ref', $panel_ref, true);
 
 // sets up a panel

@@ -89,7 +89,6 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      }
 
      showValidationError(msg){
-         console.log(msg);
          alert(__survey.__('invalid', 'nosuch'));
      }
 
@@ -107,7 +106,6 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      }
 
      bindOpinion(msg){
-          console.log(msg);
           this.evalNextPanel();
      }
 
@@ -343,11 +341,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                question = question.replace(/\n\r/g, '');
                question = question.replace(/\n/g, '');
 
-console.log(question, val);
-console.log(mtch[idx]);
-
                question = question.replace(mtch[idx], val);
-console.log(question);
           }
 
           return question;
@@ -360,9 +354,21 @@ console.log(question);
           }
           let ref = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
-              if(-1 == target.book.indexOf(ref)){
-                   target.book.push(ref);
-              }
+          if(-1 == target.book.indexOf(ref)){
+              target.book.push(ref);
+          }
+     }
+
+// todo
+// book toc is semantic linear
+// history is wild steps from field to field
+     pushHistory(){
+          if(null == this.model.panel){ 
+               return false; 
+          }
+          let ref = this.model.panel.post_content.ref;
+          let target = this.model.thread.post_content;
+              target.history.push(ref);
      }
 
      loadPanel(ref){
@@ -392,6 +398,7 @@ console.log('loadPanel: ', ref);
           this.initPanel();
      }
 
+// initpanel sets up the screen
      initPanel(){
 
           let ref = this;
@@ -529,7 +536,6 @@ console.log('q:', question);
                    buf2nd+= '</div>';
                    break;
 
-
                default:
                    buf1st = 'Unknown type: ' +this.model.panel.post_content.type;
           }
@@ -540,8 +546,10 @@ console.log('q:', question);
           jQuery('.survey-controls3rd').html(buf3rd);
           jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
 
-          this.setLink();
           this.pushBookToc();
+          this.pushHistory();
+
+          this.setLink();
      }
 
      renderFileupload(){
@@ -680,6 +688,16 @@ console.log('q:', question);
      }
 
      evalPrevPanel(){
+
+          let target = this.model.thread.post_content;
+          let ref = target.history.pop();
+              ref = target.history.pop();
+
+          if(null != ref){
+               this.loadPanel(ref);
+               return true;
+          }
+
           this.prevPanel();
      }
 

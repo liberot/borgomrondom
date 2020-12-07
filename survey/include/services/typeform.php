@@ -171,7 +171,7 @@ function exec_download_typeform_survey(){
      $doc = json_decode($doc);
 
      if(is_null($doc)){
-          $message = esc_html(__('no document', 'nosuch'));
+          $message = esc_html(__('no document: ', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return;
      }
