@@ -429,8 +429,6 @@ console.log('loadPanel: ', ref);
               question = SurveyUtil.trimIncomingString(question);
               question = this.corrQuestion(question);
 
-console.log('q:', question);
-
           let answer = this.model.panel.post_content.answer;
               answer = SurveyUtil.trimIncomingString(answer);
 

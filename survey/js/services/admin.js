@@ -55,6 +55,13 @@ function constructFieldingQuestions(){
       this.postCommand(data);
 }
 
+function constructAllSurveys(){
+      let data = { 
+           action: 'exec_construct_all_surveys',
+      };
+      this.postCommand(data);
+}
+
 function saveQuestion(id, max, group){
       let data = {
            action: 'exec_save_question',
