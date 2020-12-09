@@ -84,8 +84,6 @@ function build_surveyprint_utils_view(){
      EOD;
 
      $actions = esc_html(__('Actions:', 'nosuch'));
-     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'nosuch'));
-     $construct_surveys_from_folder = esc_html(__('Construction of all Surveys from "./asset/typeform/*.json"', 'nosuch'));
      $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'nosuch'));
      $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
      $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
@@ -97,8 +95,6 @@ function build_surveyprint_utils_view(){
      echo <<<EOD
      <div class='edit'>
           <div class='unit'>{$actions}</div>
-          <div><a href='javascript:constructFieldingQuestions();'>{$construct_fielding_questions}</a></div>
-          <div><a href='javascript:constructAllSurveys();'>{$construct_surveys_from_folder}</a></div>
           <div><a href='javascript:initSurveyPage();'>{$init_survey_page}</a></div>
           <div><a href='javascript:dumpSurveys();'>{$dump_surveys}</a></div>
           <div><a href='javascript:dumpClientThreads();'>{$dump_threads}</a></div>
@@ -136,6 +132,8 @@ function build_typeform_utils_view(){
      $download_resultset = esc_html(__('Download of a Typeform Resultset', 'nosuch'));
      $construction = esc_html(__('Construciton of a Questionnaire', 'nosuch'));
      $edit = esc_html(__('Edit of a Questionnaire', 'nosuch'));
+     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'nosuch'));
+     $construct_surveys_from_folder = esc_html(__('Construction of all Surveys from "./asset/typeform/*.json"', 'nosuch'));
      echo <<<EOD
      <div class='edit'>
           <div class='unit'>{$auth_token}</div>
@@ -147,6 +145,8 @@ function build_typeform_utils_view(){
           <div><a href='javascript:downloadTypeformSurvey();'>{$download_survey}</a></div>
           <div><a href='javascript:downloadTypeformSurveyResult();'>{$download_resultset}</a></div>
           <div><a href='javascript:constructTypeformSurvey();'>{$construction}</a></div>
+          <div><a href='javascript:constructAllSurveys();'>{$construct_surveys_from_folder}</a></div>
+          <div><a href='javascript:constructFieldingQuestions();'>{$construct_fielding_questions}</a></div>
      </div>
 EOD;
 

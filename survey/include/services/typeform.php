@@ -74,7 +74,7 @@ function exec_construct_typeform_survey(){
 
      $res = init_typeform_survey($survey_file_name);
 
-     $message = sprintf('survey added: %s', $path);
+     $message = sprintf('survey added: %s', $survey_file_name);
      echo json_encode(array('res'=>'success', 'message'=>$message));
 }
 
