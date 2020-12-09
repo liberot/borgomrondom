@@ -13,7 +13,7 @@ class Survey extends Controller {
           this.register(new Subscription(        'confirm::input', this.bindTextInput));
           this.register(new Subscription(       'confirm::upload', this.bindUploadInput));
           this.register(new Subscription(        'confirm::group', this.bindGroupInput));
-          this.register(new Subscription( 'fieldings::downloaded', this.bindFieldings));
+          this.register(new Subscription( 'fieldings::downloaded', this.bindFieldingQuestions));
           this.register(new Subscription(     'select::statement', this.bindSelectStatement));
           this.register(new Subscription(             'nav::back', this.evalPrevPanel));
           this.register(new Subscription(          'set::opinion', this.bindOpinion));
@@ -109,7 +109,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           this.evalNextPanel();
      }
 
-     bindFieldings(msg){
+     bindFieldingQuestions(msg){
 
           if(null == msg.model.e.coll.thread){
                console.log('no thread');
@@ -648,7 +648,9 @@ console.log('q:', question);
                     }
                     break;
                case 'always':
-                    condition.result = true;
+// this i don't know  i guess always evaluates always to true
+                    // condition.result = true;
+                    condition.result = false;
                     break;
           }
           condition.result = 1 == condition.result ? true : false;

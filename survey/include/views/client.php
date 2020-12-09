@@ -49,20 +49,6 @@ EOD;
      echo $res;
 }
 
-/***
-add_filter('the_content', 'filter_the_content');
-function filter_the_content($content) { 
-
-     $pattern = 'Welcome to the Survey Session';
-     if(-1 != strpos($content, $pattern)){
-          $res = do_shortcode('[constructor_view]');
-     }
-
-     echo $res;
-     return $res;
-}
-*/
-
 add_shortcode('constructor_view', 'build_constructor_view');
 function build_constructor_view() {
 
