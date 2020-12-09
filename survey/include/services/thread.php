@@ -141,6 +141,23 @@ function exec_init_thread(){
      }
 
      $message = esc_html(__('thread inited', 'nosuch'));
-     echo json_encode(array('res'=>'success', 'message'=>'fielding questions inited', 'coll'=>$coll));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
      return true;
 }
+
+add_action('admin_post_exec_get_section_by_id', 'exec_get_section_by_id');
+function exec_get_section_by_id(){
+// policy
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+//
+     $section_id = trim_incoming_filename($_POST['section_id']);
+
+     $coll = get_section_by_ref($section_id);
+     $message = esc_html(__('section loaded', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
+

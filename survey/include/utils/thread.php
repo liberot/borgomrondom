@@ -115,3 +115,15 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 }
+
+function get_section_by_ref($section_ref){
+     $section_id = esc_sql($section_ref);
+     $author_id = esc_sql(get_author_id());
+     $sql = <<<EOD
+          select * from wp_posts where post_type = 'surveyprint_section' and post_author = '{$author_id}' and  post_excerpt = '{$section_ref}';
+EOD;
+     $sql = debug_sql($sql);
+     global $wpdb;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}

@@ -382,9 +382,8 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      loadPanel(ref){
 
 console.log('loadPanel: ', ref);
-          if(null == ref){
-               return false;
-          }
+
+          if(null == ref){ return false; }
 
           this.model.requestedPanel = ref;
 
@@ -715,21 +714,40 @@ console.log('condition always found');
      }
 
      evalNextPanel(){
+
           let ref = this;
           let links = [];
-          let target = this.model.section.post_content.toc;
+
+          let settings = this.model.section.post_content.survey.settings;
+
+          let toc = this.model.section.post_content.toc;
           let panel = this.model.panel.post_content.ref;
+
+// check wheather or not a next survey is to be load
+          let pos = this.model.section.post_content.toc.refs.indexOf(panel);
+          let len = this.model.section.post_content.toc.refs.length;
+          if(pos >= len -1){
+               let lnk = settings.redirect_after_submit_url;
+               let res = lnk.match(/\/to\/(.{1,32})#/);
+               if(null != res[1]){
+                    ref.notify(new Message('load::section', res[1]));
+                    return true;
+               }
+          }
+
 // console.log(panel);
-// console.log(target.rulez);
-          for(let idx in target.rulez){
-               let rule = target.rulez[idx];
+// console.log(toc.rulez);
+          for(let idx in toc.rulez){
+               let rule = toc.rulez[idx];
                if(panel != rule.ref){ continue; }
+
 console.log(rule);
                rule.actions.forEach(function(actionpack){
                     if(false != ref.evalCondition(actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
-console.log('link from logic:', actionpack.details.to.value);
+
+console.log('link from logic: ', actionpack.details.to.value);
 console.log(actionpack);
                                    links.push(actionpack.details.to.value);
                                    break;
@@ -747,6 +765,7 @@ console.log(actionpack);
 
 // loads default panel
           this.nextPanel();
+          return true;
      }
 
      nextPanel(){

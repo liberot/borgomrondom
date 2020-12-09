@@ -3,19 +3,32 @@ class SurveyNet extends Controller {
      constructor(queue){
           super(queue);
           // events
-          this.register(new Subscription(        'save::panel', this.savePanel));
-          this.register(new Subscription(          'save::toc', this.saveToc));
-          this.register(new Subscription(       'save::thread', this.saveThread));
+          this.register(new Subscription(         'save::panel', this.savePanel));
+          this.register(new Subscription(           'save::toc', this.saveToc));
+          this.register(new Subscription(        'save::thread', this.saveThread));
           // controls 
-          this.register(new Subscription(       'init::thread', this.initThread));
-          this.register(new Subscription('download::fieldings', this.downloadFieldings));
-          this.register(new Subscription(     'select::thread', this.loadThread));
-          this.register(new Subscription(   'download::assets', this.downloadAssets));
-          this.register(new Subscription(      'upload::asset', this.uploadAsset));
-          this.register(new Subscription(        'load::panel', this.loadPanel));
+          this.register(new Subscription(        'init::thread', this.initThread));
+          this.register(new Subscription( 'download::fieldings', this.downloadFieldingQuestions));
+          this.register(new Subscription(      'select::thread', this.loadThread));
+          this.register(new Subscription(    'download::assets', this.downloadAssets));
+          this.register(new Subscription(       'upload::asset', this.uploadAsset));
+          this.register(new Subscription(         'load::panel', this.loadPanel));
+          this.register(new Subscription(       'load::section', this.loadSection));
      }
 
-     downloadFieldings(){
+     loadSection(msg){
+          let ref = this;
+          let data = { 
+               'action': 'exec_get_section_by_id',
+               'section_id': msg.model
+          }
+          let cb = function(e){ 
+               ref.notify(new Message('section::downloaded', { e })); 
+          }
+          this.postData(data, cb);
+     }
+
+     downloadFieldingQuestions(){
           let ref = this;
           let data = { 'action': 'exec_init_thread' }
           let cb = function(e){ ref.notify(new Message('fieldings::downloaded', { e })); }
