@@ -43,7 +43,7 @@ function exec_construct_all_surveys(){
      $files = [];
      while(false !== ($file = readdir($h))){
           if($file != '.' && $file != '..'){
-               preg_match('/(.json$)?/', $file, $mtch);
+               preg_match('/(.json$)/', $file, $mtch);
                if(!empty($mtch)){
                     $res = init_typeform_survey($file);
                     $files[]= $file;
