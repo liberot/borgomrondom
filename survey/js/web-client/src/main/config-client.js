@@ -4,6 +4,7 @@ SurveyConfig = {
      LINEAR_HISTORY: 0x00,
      CONTEXT_SENSITVEY_HISTORY: 0x01,
      navigationHistory: 0x00,
-     preloadPanels: false
+     preloadPanels: false,
+     resetSurveyState: true
 }
 

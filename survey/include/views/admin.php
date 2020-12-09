@@ -84,7 +84,7 @@ function build_surveyprint_utils_view(){
      EOD;
 
      $actions = esc_html(__('Actions:', 'nosuch'));
-     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/fielding_questions.json"', 'nosuch'));
+     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'nosuch'));
      $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'nosuch'));
      $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'nosuch'));
      $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'nosuch'));
@@ -385,6 +385,7 @@ function build_question_view(){
           <thead>
                <tr>
                     <th>{$id}</th>
+                    <th>{$excerpt}</th>
                     <th>{$date}</th>
                     <th>{$title}</th>
                     <th>{$layout_group}</th>
@@ -436,6 +437,7 @@ EOD;
 
           echo '<tr>';
           echo sprintf('<td>%s</td>', esc_html($question->ID));
+          echo sprintf('<td>%s</td>', esc_html($question->post_excerpt));
           echo sprintf('<td>%s</td>', esc_html($d));
           echo sprintf('<td class="%s %s">%s</td>', $group_style, $node_style, esc_html($question->post_content['title']));
           echo sprintf('<td>%s</td>', '');
@@ -447,6 +449,7 @@ EOD;
           <tfoot>
                <tr>
                     <th>{$id}</th>
+                    <th>{$excerpt}</th>
                     <th>{$date}</th>
                     <th>{$title}</th>
                     <th>{$layout_group}</th>

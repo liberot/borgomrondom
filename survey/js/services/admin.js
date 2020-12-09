@@ -50,7 +50,7 @@ function cleanSurveyDB(){
 function constructFieldingQuestions(){
       let data = { 
            action: 'exec_construct_typeform_survey',
-           survey_file_name: 'fielding_questions.json'
+           survey_file_name: '201204-Cover-and-Pre--cMsCFF9a.json'
       };
       this.postCommand(data);
 }

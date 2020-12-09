@@ -186,10 +186,18 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
           this.model.panels = [];
-
+          let ref; 
 
 // loads the current panel by its reference
-          let ref = this.model.section.post_content.toc.refs[0];
+          if(SurveyConfig.resetSurveyState){
+// survey loads the page that was left
+               if(0 <= this.model.thread.post_content.history.length){
+                    ref = this.model.thread.post_content.history.pop();
+               }
+          }
+          if(null == ref){
+               ref = this.model.section.post_content.toc.refs[0];
+          }
           this.loadPanel(ref);
 
 // link hash
@@ -374,6 +382,9 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      loadPanel(ref){
 
 console.log('loadPanel: ', ref);
+          if(null == ref){
+               return false;
+          }
 
           this.model.requestedPanel = ref;
 
@@ -697,6 +708,7 @@ console.log('q:', question);
                this.loadPanel(ref);
                return true;
           }
+
 
           this.prevPanel();
      }
