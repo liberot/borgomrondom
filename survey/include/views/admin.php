@@ -370,10 +370,8 @@ function build_question_view(){
      $message = esc_html(__('List of Questions', 'nosuch'));
      $id = esc_html(__('ID', 'nosuch'));
      $title = esc_html(__('Question', 'nosuch'));
-     $max_assets = esc_html(__('Num of Max Assets', 'nosuch'));
      $headline = esc_html(__('Book Builder Stored Questionnaire', 'nosuch'));
      $welcome = esc_html(__('Welcome', 'nosuch'));
-     $layout_group = esc_html(__('Layout Group', 'nosuch'));
      $date = esc_html(__('Date of Init', 'nosuch'));
 
      echo <<<EOD
@@ -390,8 +388,6 @@ function build_question_view(){
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
                     <th>{$title}</th>
-                    <th>{$layout_group}</th>
-                    <th>{$max_assets}</th>
                </tr>
           </thead>
 EOD;
@@ -442,8 +438,6 @@ EOD;
           echo sprintf('<td>%s</td>', esc_html($question->post_excerpt));
           echo sprintf('<td>%s</td>', esc_html($d));
           echo sprintf('<td class="%s %s">%s</td>', $group_style, $node_style, esc_html($question->post_content['title']));
-          echo sprintf('<td>%s</td>', '');
-          echo sprintf('<td>%s</td>', '');
           echo '</tr>';
      }
 
@@ -454,8 +448,6 @@ EOD;
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
                     <th>{$title}</th>
-                    <th>{$layout_group}</th>
-                    <th>{$max_assets}</th>
                </tr>
           </tfoot>
           </table>

@@ -647,8 +647,9 @@ console.log('loadPanel: ', ref);
                     break;
                case 'always':
 // this i don't know  i guess always evaluates always to true
-                    // condition.result = true;
-                    condition.result = false;
+console.log('condition always found');
+                    condition.result = true;
+                    // condition.result = false;
                     break;
           }
           condition.result = 1 == condition.result ? true : false;
