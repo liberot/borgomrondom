@@ -8,7 +8,7 @@ class Survey extends Controller {
           // controls
           this.register(new Subscription(         'parse::assets', this.parseAssets));
           this.register(new Subscription(         'select::yesno', this.bindYesNoInput));
-          this.register(new Subscription(          'confirm::ref', this.bindMultipleChoiceInput));
+          this.register(new Subscription(     'confirm::multiple', this.bindMultipleChoiceInput));
           this.register(new Subscription(        'confirm::image', this.bindMultipleChoiceInput));
           this.register(new Subscription(        'confirm::input', this.bindTextInput));
           this.register(new Subscription(       'confirm::upload', this.bindUploadInput));
@@ -266,7 +266,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      bindMultipleChoiceInput(msg){
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
-          let val = null;
+          let val = '';
           let choice = null;
           for(let idx in this.model.panel.post_content.properties.choices){
                choice = this.model.panel.post_content.properties.choices[idx]; 
@@ -274,6 +274,8 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                    val = choice.label;
                }
           };
+console.log(choice, ref, val);
+          this.clearInput(panel);
           this.bindInput(panel, ref, val);
      }
 
@@ -284,38 +286,51 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           this.bindInput(panel, ref, val);
      }
 
-     bindInput(panel, ref, val){
+     clearInput(panel){
+          let target = this.model.thread.post_content.conditions;
+          let temp = [];
+          for(let idx in target){
+               if(panel == target[idx].panel){
+                    continue;
+               }
+               temp.push(target[idx]);
+          }
+          this.model.thread.post_content.conditions = temp;
+     }
+
+     getCondition(panel, key){
+     }
+
+     bindInput(panel, key, val){
           if('undefined' == typeof(val)){ val = ''; }
-
           let answer = SurveyUtil.trimIncomingString(val);
-
           let question = this.corrQuestion(this.model.panel.post_content.title);
               question = SurveyUtil.trimIncomingString(question);
-
           this.model.panel.post_content.question = question;
           this.model.panel.post_content.answer = answer;
-
 // stores condition ref for logic jumps
-          this.setCondition(ref, val);
-
+          this.setCondition(panel, key, val);
           this.notify(new Message('input::done', this.model));
      }
 
-     setCondition(key, val){
+     setCondition(panel, key, val){
           let target = this.model.thread.post_content.conditions;
-          let fill = 0x01;
+          let fill = 0x00;
           for(let idx in target){
-               if(key == target[idx].key){
-                    target[idx].val = val;
-                    fill = 0x02;
+               if(panel == target[idx].panel){
+                    if(key == target[idx].key){
+                         target[idx].val = val;
+                         fill = 0x01;
+                    }
                }
           }
-          if(0x01 == fill){
-               target.push({key: key, val: val});
+          if(0x00 == fill){
+               target.push({panel: panel, key: key, val: val});
           }
+console.log(target);
      }
 
-     getCondition(key){
+     getCondition(panel, key){
           let res = null;
           let target = this.model.thread.post_content.conditions;
           for(let idx in target){
@@ -614,18 +629,18 @@ console.log('loadPanel: ', ref);
           return formdata;
      }
 
-     evalCondition(condition){
+     evalCondition(panel, condition){
 
           // condition = new MockLogic().logic.condition;
           let res = null;
-              res = this.evalRuleR(condition);
-              res = this.evalGroup(condition);
+              res = this.evalRuleR(panel, condition);
+              res = this.evalGroup(panel, condition);
               res = condition.result;
 
           return res;
      }
 
-     evalGroup(condition){
+     evalGroup(panel, condition){
           switch(condition.op){
                case 'is':
                case 'and':
@@ -662,7 +677,7 @@ console.log('condition always found');
           }
      }
 
-     evalRuleR(rule){
+     evalRuleR(panel, rule){
 
 // evaluates condition groups
           if(null == rule.vars){ 
@@ -691,8 +706,12 @@ console.log('condition always found');
 // evals input condition of the rule
                     case 'choice':
                     case 'constant':
+
                          rule.vars[idx].result =
-                              this.model.panel.post_content.answer == this.getCondition(rule.vars[idx].value);
+                              panel.answer == this.getCondition(panel, rule.vars[idx].value);
+
+console.log(panel, rule.vars[idx]);
+
                          break;
                }
           }
@@ -715,9 +734,6 @@ console.log('condition always found');
 
      evalNextPanel(){
 
-          let ref = this;
-          let links = [];
-
           let settings = this.model.section.post_content.survey.settings;
 
           let toc = this.model.section.post_content.toc;
@@ -735,15 +751,34 @@ console.log('condition always found');
                }
           }
 
+// loads panel from logic
+          let lnk = this.evalLogicAction(panel, toc);
+          if(null != lnk){
+               this.loadPanel(lnk);
+               return true;
+          }
+
+// loads default panel
+          this.nextPanel();
+          return true;
+     }
+
+     evalLogicAction(panel, toc){
+
+         let ref = this;
+         let links = [];
+
+// evaluation of actions of the current panel
 // console.log(panel);
 // console.log(toc.rulez);
+
           for(let idx in toc.rulez){
                let rule = toc.rulez[idx];
                if(panel != rule.ref){ continue; }
 
 console.log(rule);
                rule.actions.forEach(function(actionpack){
-                    if(false != ref.evalCondition(actionpack.condition)){
+                    if(false != ref.evalCondition(panel, actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
 
@@ -756,16 +791,7 @@ console.log(actionpack);
                });
           }
 
-// loads evaluated panel
-          let link = links[0];
-          if(null != link){
-               this.loadPanel(link);
-               return true;
-          }
-
-// loads default panel
-          this.nextPanel();
-          return true;
+          return links[0];
      }
 
      nextPanel(){
@@ -984,7 +1010,7 @@ let __yes_no_tmpl__ = `
 
 let __choice_tmpl__ = `
 <div class='choice-output'>
-<span><a href='javascript:surveyQueue.route("confirm::ref", "{ref}");'>{choice}</a></span>
+<span><a href='javascript:surveyQueue.route("confirm::multiple", "{ref}");'>{choice}</a></span>
 </div>
 `;
 
