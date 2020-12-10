@@ -23,7 +23,7 @@ class SurveyNet extends Controller {
                'section_ref': msg.model
           }
           let cb = function(e){ 
-               ref.notify(new Message('section::downloaded', { e })); 
+               ref.notify(new Message('section::loaded', { e })); 
           }
           this.postData(data, cb);
      }

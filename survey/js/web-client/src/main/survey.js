@@ -20,7 +20,7 @@ class Survey extends Controller {
           // events
           this.register(new Subscription(          'thread::next', this.nextPanel));
           this.register(new Subscription(          'thread::prev', this.evalPrevPanel));
-          this.register(new Subscription(         'thread::loaded', this.bindThread));
+          this.register(new Subscription(        'thread::loaded', this.bindThread));
           this.register(new Subscription(        'thread::inited', this.bindThread));
           this.register(new Subscription(      'assets::uploaded', this.bindAssets));
           this.register(new Subscription(    'assets::downloaded', this.bindAssets));
@@ -33,7 +33,7 @@ class Survey extends Controller {
           this.register(new Subscription(           'input::done', this.storeInput));
           this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
-
+          this.register(new Subscription(       'section::loaded', this.bindSection));
           // ------
           // 127.0.0.1:8083/welcome.php?page_id=112932/#/child=joséf&mother=marikkah
           this.extractHiddenFields();
@@ -52,6 +52,21 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           };
           // ------
           this.notify(new Message('download::fieldings', this.model));
+     }
+
+     bindSection(msg){
+
+          if(null == msg.model.e.coll.section){
+               console.log('no section');
+               return false;
+          }
+
+          this.model.section = msg.model.e.coll.section;
+          this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
+
+          let ref = this.model.section.post_content.toc.refs[0];
+
+          this.loadPanel(ref);
      }
 
      extractHiddenFields(){
@@ -121,7 +136,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           let panels = msg.model.e.coll.panels;
           let sections = msg.model.e.coll.sections;
 
-          let m = { model: { e: { coll: { thread: thread, panels: panels, sections: sections }}}}
+          let m = { model: { e: { coll: { thread: thread, sections: sections, panels: panels }}}}
 
           this.bindThread(m);
      }
@@ -173,8 +188,6 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
 
           this.model.thread = msg.model.e.coll.thread[0];
           this.model.thread.post_content = SurveyUtil.pagpick(this.model.thread.post_content);
-
-          let target = this.model.thread.post_content;
 
 // section
 // todo: there might be more than one section

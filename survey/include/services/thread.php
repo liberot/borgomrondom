@@ -135,6 +135,7 @@ function exec_get_section_by_ref(){
 
      if(!is_null($section)){
           $coll['section'] = $section;
+          set_session_ticket('section_id', $section->ID, true);
           $message = esc_html(__('section loaded', 'nosuch'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
@@ -157,7 +158,9 @@ function exec_get_section_by_ref(){
           return false;
      }
 
-     $coll['section'] = get_section_by_ref($thread_id, $section_ref)[0];
+     set_session_ticket('section_id', $section_id, true);
+
+     $coll['sections'] = get_section_by_ref($thread_id, $section_ref)[0];
 
      $message = esc_html(__('section loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
