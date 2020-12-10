@@ -26,29 +26,9 @@ function exec_construct_all_surveys(){
           return false;
      }
 
-     $path = Path::get_typeform_dir();
-     if(false == is_dir($path)){
-          $message = esc_html(__('no typeform directory', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
-     $h = opendir($path);
-     if(is_null($h)){
-          $message = esc_html(__('no typeform directory', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
-     $files = [];
-     while(false !== ($file = readdir($h))){
-          if($file != '.' && $file != '..'){
-               preg_match('/(.json$)/', $file, $mtch);
-               if(!empty($mtch)){
-                    $res = init_typeform_survey($file);
-                    $files[]= $file;
-               }
-          }
+     $files = read_typeform_json_descriptors();
+     foreach($files as $file){
+          $res = init_typeform_survey($file);
      }
 
      $message = sprintf('surveys added %s', '');

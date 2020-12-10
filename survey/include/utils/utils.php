@@ -111,14 +111,14 @@ function trim_incoming_toc($toc){
 }
 
 function trim_incoming_key_val($coll){
-print_r($coll);
      $res = null;
      if(false == is_array($coll)){ return $res; }
      $res = [];
-     foreach($coll as $key=>$val){
-          $res['panel'] = preg_replace('/[^A-Za-z0-9-]/', '', $res['panel']);
-          $res['key'] = preg_replace('/[^A-Za-z0-9-]/', '', $res['key']);
-          $res['val'] = preg_replace('/[^A-Za-z0-9-\s]/', '', $res['val']);
+     foreach($coll as $item){
+          $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
+          $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['val']);
+          $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
+          $res[]= ['panel'=>$panel, 'key'=>$key, 'val'=>$val];
      }
      return $res;
 }

@@ -10,7 +10,7 @@ let __service = {
 
 let __str = {
      'welcome': 'Welcome',
-     'wait': 'Pleaze wait...',
+     'wait': 'Please wait...',
      '':''
 };
 

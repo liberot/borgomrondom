@@ -27,32 +27,19 @@ function exec_init_thread(){
 
 // todo:: client might own on or more threads
      $threads = get_threads_of_client();
-     if(!is_null($threads[0])){
+     if(!empty($threads)){
           $coll['thread'] = $threads;
           $coll['sections'] = get_sections_by_thread_id($coll['thread'][0]->ID);
-          if(!is_null($coll['thread'])){
-               set_session_ticket('thread_id', $coll['thread'][0]->ID, true);
-               set_session_ticket('section_id', $coll['sections'][0]->ID, true);
-               $message = esc_html(__('stored thread is loaded', 'nosuch'));
-               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
-               return true;
-          }
+          set_session_ticket('thread_id', $coll['thread'][0]->ID, true);
+          set_session_ticket('section_id', $coll['sections'][0]->ID, true);
+          $message = esc_html(__('stored thread is loaded', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+          return true;
      }
 
 // inits a customer thread
      $author_id = get_author_id();
      $surveyprint_uuid = psuuid();
-
-     $survey = get_survey_by_title('201204 Cover and Preface')[0];
-     // $survey = get_survey_by_title('Viktor Chapter 1 (copy)')[0];
-     // $survey = get_survey_by_title('Viktor Cover and Preface (Yael) (copy)')[0];
-     // $survey = get_survey_by_title('Fieldtypes')[0];
-
-     if(is_null($survey)){
-          $message = esc_html(__('no initial survey', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'survey'=>$survey));
-          return false;
-     }
 
 // inserts a post of type thread
      $toc = [];
@@ -78,55 +65,23 @@ function exec_init_thread(){
 // sets the session ticket thread id for incoming field validation
      set_session_ticket('thread_id', $thread_id, true);
 
-// loads the toc of the survey 
-     $toc = get_toc_by_survey_id($survey->ID)[0];
-     if(is_null($toc)){
-          $message = esc_html(__('no toc', 'nosuch'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
+// client kicks off with the survey 'Cover and Preface'
+     $survey = get_survey_by_title('201204 Cover and Preface')[0];
 
-     $post = [];
-     $post['survey'] = pagpick($survey->post_content);
-     $post['toc'] = pagpick($toc->post_content);
-     $post = pigpack($post);
-
-// inserts a post of type section
-     $conf = [
-          'post_type'=>'surveyprint_section',
-          'post_author'=>$author_id,
-          'post_title'=>$unique_quest,
-          'post_excerpt'=>$survey->post_excerpt,
-          'post_name'=>$surveyprint_uuid,
-          'post_parent'=>$thread_id,
-          'post_content'=>$post
-     ];
-     $section_id = init_section($conf);
+     $section_id = init_section_from_survey($thread_id, $survey->post_excerpt);
      if(is_null($section_id)){
           $message = esc_html(__('no section', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      set_session_ticket('section_id', $section_id, true);
 
+     $coll = [];
      if(Proc::PRE_GENERATE_SECTION_PANELS) {
-          $questions = get_questions_by_survey_id($survey->ID);
-          foreach($questions as $question){
-               $surveyprint_uuid = psuuid();
-               $conf = [
-                    'post_type'=>'surveyprint_panel',
-                    'pos t_author'=>$author_id,
-                    'post_title'=>$question->post_title,
-                    'post_excerpt'=>$question->post_excerpt,
-                    'post_name'=>$surveyprint_uuid,
-                    'post_content'=>$question->post_content,
-                    'post_parent'=>$section_id
-              ];
-              $panel_id = init_panel($conf);
-          }
+          $coll['panels'] = init_panels_from_survey_id($survey->ID);
      }
 
-     $coll = [];
      $coll['thread'] = get_thread_by_id($thread_id);
      $coll['sections'] = get_sections_by_thread_id($thread_id);
 
@@ -140,6 +95,7 @@ function exec_init_thread(){
           }
      }
 
+//
      $message = esc_html(__('thread inited', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
      return true;
@@ -153,10 +109,56 @@ function exec_get_section_by_id(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-//
      $section_id = trim_incoming_filename($_POST['section_id']);
+     $coll = get_section_by_id($section_id);
+     $message = esc_html(__('section loaded', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
 
-     $coll = get_section_by_ref($section_id);
+add_action('admin_post_exec_get_section_by_ref', 'exec_get_section_by_ref');
+function exec_get_section_by_ref(){
+
+// policy
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $coll = [];
+
+     $thread_id = get_session_ticket('thread_id');
+     $section_ref = trim_incoming_filename($_POST['section_ref']);
+
+// read of the requested section
+     $section = get_section_by_ref($thread_id, $section_ref)[0];
+
+     if(!is_null($section)){
+          $coll['section'] = $section;
+          $message = esc_html(__('section loaded', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+          return true;
+     }
+
+// init of the requested section
+     if(is_null($section)){
+          $survey = get_survey_by_ref($section_ref)[0];
+     }
+
+     if(is_null($survey)){
+          return false;
+     }
+
+     $section_id = init_section_from_survey($thread_id, $survey->post_excerpt);
+
+     if(is_null($section_id)){
+          $message = esc_html(__('no section', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $coll['section'] = get_section_by_ref($thread_id, $section_ref)[0];
+
      $message = esc_html(__('section loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }

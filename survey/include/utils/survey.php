@@ -119,11 +119,11 @@ EOD;
      return $res;
 }
 
-function get_surveys_by_ref($ref){
+function get_survey_by_ref($ref){
 
     $ref = esc_sql($ref);
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_survey' and post_excerpt = '{$ref}' order by ID desc;
+          select * from wp_posts where post_type = 'surveyprint_survey' and post_excerpt = '{$ref}' order by ID desc limit 1;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;

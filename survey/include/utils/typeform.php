@@ -23,20 +23,13 @@ EOD;
      return $res;
 }
 
-
 function init_typeform_survey($survey_file_name){
 
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
      $data = @file_get_contents($path);
-     if(is_null($data)){
-          return false;
-     }
-
+     if(is_null($data)){ return false; }
      $doc = json_decode($data);
-
-     if(is_null($doc)){
-          return false;
-     }
+     if(is_null($doc)){ return false; }
      $doc = walk_the_doc($doc);
 
 // inserts a post of type survey
@@ -51,9 +44,7 @@ function init_typeform_survey($survey_file_name){
           'post_excerpt'=>$survey_ref,
           'post_content'=>pigpack($doc)
      ]);
-     if(is_null($survey_id)){
-          return false;
-     }
+     if(is_null($survey_id)){ return false; }
 
 // inserts posts of type questions and groups of questions into the db
      $nodes = insert_question_groups($doc['fields'], $survey_id);
@@ -74,7 +65,48 @@ function init_typeform_survey($survey_file_name){
      ];
      $toc_id = init_toc($conf);
 
-     if(is_null($toc_id)){
-          return false;
-     }
+     if(is_null($toc_id)){ return false; }
+
+// parses the next caption
+     $redirect = $doc['settings']['redirect_after_submit_url'];
+     preg_match('/\/to\/(.{0,124})#/', $redirect, $mtch);
+     if(!empty($mtch)){ if(!is_null($mtch[1])){
+          parse_next_section_of_survey($mtch[1]);
+     }}
 }
+
+function parse_next_section_of_survey($survey_ref){
+
+     // checks whether or not survey is already parsed
+     $survey = get_survey_by_ref($survey_ref)[0];
+     if(!is_null($survey)){ return false; }
+
+     // reads files
+     $files = read_typeform_json_descriptors();
+     foreach($files as $file){
+          if(false !== strpos($file, $survey_ref)){
+               init_typeform_survey($file);
+               return true;
+          }
+     }
+
+     return false;
+}
+
+function read_typeform_json_descriptors(){
+     $files = [];
+     $path = Path::get_typeform_dir();
+     $h = opendir($path);
+     if(is_null($h)){ return $files; }
+     while(false !== ($file = readdir($h))){
+          if($file != '.' && $file != '..'){
+               preg_match('/(.json$)/', $file, $mtch);
+               if(!empty($mtch)){
+                    $files[]= $file;
+               }
+          }
+     }
+     closedir($h);
+     return $files;
+}
+

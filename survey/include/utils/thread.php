@@ -68,7 +68,11 @@ function get_thread_by_id($thread_id, $client_id=null){
           $author_id = esc_sql($client_id);
      }
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_thread' and post_author = '{$author_id}' and ID = '{$thread_id}';
+          select * from wp_posts
+               where post_type = 'surveyprint_thread' 
+               and post_author = '{$author_id}' 
+               and ID = '{$thread_id}'
+               limit 1;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
@@ -96,7 +100,11 @@ function get_sections_by_thread_id($thread_id, $client_id=null){
      $author_id = esc_sql(get_author_id());
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); };
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_section' and post_author = '{$author_id}' and post_parent = '{$thread_id}';
+          select * from wp_posts 
+               where post_type = 'surveyprint_section' 
+               and post_author = '{$author_id}'
+               and post_parent = '{$thread_id}'
+               limit 1;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
@@ -108,7 +116,11 @@ function get_section_by_id($section_id){
      $section_id = esc_sql($section_id);
      $author_id = esc_sql(get_author_id());
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_section' and post_author = '{$author_id}' and  ID = '{$section_id}';
+          select * from wp_posts 
+               where post_type = 'surveyprint_section' 
+               and post_author = '{$author_id}' 
+               and  ID = '{$section_id}'
+               limit 1
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
@@ -116,14 +128,74 @@ EOD;
      return $res;
 }
 
-function get_section_by_ref($section_ref){
+function get_section_by_ref($thread_id, $section_ref){
+     $thread_id = esc_sql($thread_id);
      $section_id = esc_sql($section_ref);
      $author_id = esc_sql(get_author_id());
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_section' and post_author = '{$author_id}' and  post_excerpt = '{$section_ref}';
+          select * from wp_posts 
+               where post_type = 'surveyprint_section' 
+               and post_author = '{$author_id}' 
+               and  post_excerpt = '{$section_ref}'
+               and  post_parent = '{$thread_id}'
+               limit 1
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
+}
+
+function init_section_from_survey($thread_id, $survey_ref){
+     $thread_id = esc_sql($thread_id);
+     $survey_ref = esc_sql($survey_ref);
+
+// survey
+     $survey = get_survey_by_ref($survey_ref)[0];
+     if(is_null($survey)){ return false; }
+
+// toc
+     $toc = get_toc_by_survey_id($survey->ID)[0];
+     if(is_null($toc)){ return false; }
+
+// post of he section
+     $post = [];
+     $post['survey'] = pagpick($survey->post_content);
+     $post['toc'] = pagpick($toc->post_content);
+     $post = pigpack($post);
+     $conf = [
+          'post_type'=>'surveyprint_section',
+          'post_author'=>$author_id,
+          'post_title'=>$unique_quest,
+          'post_excerpt'=>$survey->post_excerpt,
+          'post_name'=>$surveyprint_uuid,
+          'post_parent'=>$thread_id,
+          'post_content'=>$post
+     ];
+
+     $section_id = init_section($conf);
+
+     if(is_null($section_id)){ return false; }
+
+     return $section_id;
+}
+
+function init_panels_from_survey_id($survey_id){
+     $questions = get_questions_by_survey_id($survey_id);
+     $coll = [];
+     foreach($questions as $question){
+          $surveyprint_uuid = psuuid();
+          $conf = [
+               'post_type'=>'surveyprint_panel',
+               'pos t_author'=>$author_id,
+               'post_title'=>$question->post_title,
+               'post_excerpt'=>$question->post_excerpt,
+               'post_name'=>$surveyprint_uuid,
+               'post_content'=>$question->post_content,
+               'post_parent'=>$section_id
+         ];
+         $panel_id = init_panel($conf);
+         $coll[]= $panel_id;
+     }
+     return $coll;
 }

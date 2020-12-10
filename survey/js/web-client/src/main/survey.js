@@ -111,12 +111,13 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
 
      bindFieldingQuestions(msg){
 
+// todo
           if(null == msg.model.e.coll.thread){
                console.log('no thread');
                return false;
           }
-
           let thread = msg.model.e.coll.thread;
+
           let panels = msg.model.e.coll.panels;
           let sections = msg.model.e.coll.sections;
 
@@ -177,7 +178,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
 
 // section
 // todo: there might be more than one section
-          if(null == msg.model.e.coll.sections){
+          if(null == msg.model.e.coll.sections[0]){
                console.log('no sections');
                return false;
           }
@@ -190,7 +191,6 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
 
 // loads the current panel by its reference
           if(SurveyConfig.resetSurveyState){
-// survey loads the page that was left
                if(0 <= this.model.thread.post_content.history.length){
                     ref = this.model.thread.post_content.history.pop();
                }
@@ -322,6 +322,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                }
           }
           if(0x00 == fill){
+console.log(target);
                target.push({panel: panel, key: key, val: val});
           }
      }
@@ -657,7 +658,7 @@ console.log('loadPanel: ', ref);
                     break;
                case 'always':
 // this i don't know  i guess always evaluates always to true
-console.log('condition always found');
+console.log('condition "always" found');
                     condition.result = true;
                     // condition.result = false;
                     break;
@@ -727,6 +728,8 @@ console.log('condition always found');
      }
 
      evalNextPanel(){
+
+          let ref = this;
 
           let settings = this.model.section.post_content.survey.settings;
 
