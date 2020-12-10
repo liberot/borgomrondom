@@ -274,7 +274,6 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                    val = choice.label;
                }
           };
-console.log(choice, ref, val);
           this.clearInput(panel);
           this.bindInput(panel, ref, val);
      }
@@ -298,15 +297,13 @@ console.log(choice, ref, val);
           this.model.thread.post_content.conditions = temp;
      }
 
-     getCondition(panel, key){
-     }
-
      bindInput(panel, key, val){
           if('undefined' == typeof(val)){ val = ''; }
           let answer = SurveyUtil.trimIncomingString(val);
           let question = this.corrQuestion(this.model.panel.post_content.title);
               question = SurveyUtil.trimIncomingString(question);
           this.model.panel.post_content.question = question;
+          this.model.panel.post_content.condition_ref = key;
           this.model.panel.post_content.answer = answer;
 // stores condition ref for logic jumps
           this.setCondition(panel, key, val);
@@ -327,15 +324,17 @@ console.log(choice, ref, val);
           if(0x00 == fill){
                target.push({panel: panel, key: key, val: val});
           }
-console.log(target);
      }
 
      getCondition(panel, key){
+
           let res = null;
           let target = this.model.thread.post_content.conditions;
           for(let idx in target){
-               if(key == target[idx].key){
-                   res = target[idx].val;
+               if(panel == target[idx].panel){
+                    if(key == target[idx].key){
+                         res = target[idx].key;
+                    }
                }
           }
           return res;
@@ -395,27 +394,22 @@ console.log(target);
      }
 
      loadPanel(ref){
-
 console.log('loadPanel: ', ref);
 
           if(null == ref){ return false; }
 
           this.model.requestedPanel = ref;
-
           if(null != this.model.panels[ref]){
                this.model.panel = this.model.panels[ref];
                this.initPanel();
                return;
           }
-
           this.notify(new Message('load::panel', this.model));
      }
 
      bindPanel(msg){
 
-          if(null == msg.model.e.coll[0]){
-               return false;
-          }
+          if(null == msg.model.e.coll[0]){ return false; }
 
           this.model.panel = msg.model.e.coll[0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
@@ -629,18 +623,20 @@ console.log('loadPanel: ', ref);
           return formdata;
      }
 
-     evalCondition(panel, condition){
+     evalCondition(condition){
 
           // condition = new MockLogic().logic.condition;
           let res = null;
-              res = this.evalRuleR(panel, condition);
-              res = this.evalGroup(panel, condition);
+              res = this.evalRuleR(condition);
+              res = this.evalGroup(condition);
               res = condition.result;
 
           return res;
      }
 
-     evalGroup(panel, condition){
+     evalGroup(condition){
+          condition.result = null;
+
           switch(condition.op){
                case 'is':
                case 'and':
@@ -677,7 +673,7 @@ console.log('condition always found');
           }
      }
 
-     evalRuleR(panel, rule){
+     evalRuleR(rule){
 
 // evaluates condition groups
           if(null == rule.vars){ 
@@ -706,12 +702,10 @@ console.log('condition always found');
 // evals input condition of the rule
                     case 'choice':
                     case 'constant':
-
-                         rule.vars[idx].result =
-                              panel.answer == this.getCondition(panel, rule.vars[idx].value);
-
-console.log(panel, rule.vars[idx]);
-
+                         let condition = this.model.panel.post_content.condition_ref
+                         let panel = this.model.panel.post_content.ref;
+                         let key = rule.vars[idx].value;
+                         rule.vars[idx].result = condition == this.getCondition(panel, key);
                          break;
                }
           }
@@ -752,7 +746,7 @@ console.log(panel, rule.vars[idx]);
           }
 
 // loads panel from logic
-          let lnk = this.evalLogicAction(panel, toc);
+          let lnk = this.evalLogicAction(toc);
           if(null != lnk){
                this.loadPanel(lnk);
                return true;
@@ -763,22 +757,19 @@ console.log(panel, rule.vars[idx]);
           return true;
      }
 
-     evalLogicAction(panel, toc){
+     evalLogicAction(toc){
 
-         let ref = this;
-         let links = [];
-
-// evaluation of actions of the current panel
-// console.log(panel);
-// console.log(toc.rulez);
+          let ref = this;
+          let links = [];
+          let panel = this.model.panel;
 
           for(let idx in toc.rulez){
                let rule = toc.rulez[idx];
-               if(panel != rule.ref){ continue; }
+               if(panel.post_content.ref != rule.ref){ continue; }
 
 console.log(rule);
                rule.actions.forEach(function(actionpack){
-                    if(false != ref.evalCondition(panel, actionpack.condition)){
+                    if(false != ref.evalCondition(actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
 
