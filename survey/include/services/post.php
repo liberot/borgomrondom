@@ -1,6 +1,5 @@
 <?php
 
-// fixdiss
 $abs = (dirname(__FILE__));
 $abs = str_replace('/wp-content/plugins/nosuch/survey/include/services', '', $abs);
 

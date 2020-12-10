@@ -341,14 +341,24 @@ console.log(target);
      }
 
      getCondition(panel, key){
-
           let res = null;
           let target = this.model.thread.post_content.conditions;
           for(let idx in target){
                if(panel == target[idx].panel){
                     if(key == target[idx].key){
-                         res = target[idx].key;
+                        res = target[idx].key;
                     }
+               }
+          }
+          return res;
+     }
+
+     getAnswer(key){
+          let res = null;
+          let target = this.model.thread.post_content.conditions;
+          for(let idx in target){
+               if(key == target[idx].key){
+                   res = target[idx].val;
                }
           }
           return res;
@@ -365,7 +375,7 @@ console.log(target);
                    key = key.split(':');
                    key = key[1];
 
-               let val = this.getCondition(key);
+               let val = this.getAnswer(key);
 
                if(null == val){ 
                    val = 'Could not find ref: ' +key;
