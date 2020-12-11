@@ -115,10 +115,23 @@ function trim_incoming_key_val($coll){
      if(false == is_array($coll)){ return $res; }
      $res = [];
      foreach($coll as $item){
-          $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
-          $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['val']);
-          $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
-          $res[]= ['panel'=>$panel, 'key'=>$key, 'val'=>$val];
+          $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
+            $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
+              $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
+              $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['val']);
+             $res[]= ['panel'=>$panel, 'key'=>$key, 'val'=>$val];
+     }
+     return $res;
+}
+
+function trim_incoming_history($coll){
+     $res = null;
+     if(false == is_array($coll)){ return $res; }
+     $res = [];
+     foreach($coll as $item){
+          $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
+            $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
+             $res[]= ['section'=>$section, 'panel'=>$panel];
      }
      return $res;
 }

@@ -37,7 +37,6 @@ class Survey extends Controller {
           // ------
           // 127.0.0.1:8083/welcome.php?page_id=112932/#/child=joséf&mother=marikkah
           this.extractHiddenFields();
-console.log('child: ' , this.getHiddenFieldVal('child'));
 
           // ------
           window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
@@ -112,20 +111,12 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      }
  
      storeInput(msg){
-          this.notify(new Message('save::panel', this.model));
+// fixdiss
           this.notify(new Message('save::thread', this.model));
-     }
-
-     bindSelectStatement(){
-          this.evalNextPanel();
-     }
-
-     bindOpinion(msg){
-          this.evalNextPanel();
+          this.notify(new Message('save::panel', this.model));
      }
 
      bindFieldingQuestions(msg){
-
 // todo
           if(null == msg.model.e.coll.thread){
                console.log('no thread');
@@ -198,11 +189,13 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
 // panels
           this.model.panels = [];
           let ref; 
-
 // loads the current panel by its reference
           if(SurveyConfig.resetSurveyState){
                if(0 <= this.model.thread.post_content.history.length){
-                    ref = this.model.thread.post_content.history.pop();
+                    let history = this.model.thread.post_content.history.pop();
+                    if(null != history){
+                         ref = history.panel;
+                    }
                }
           }
           if(null == ref){
@@ -230,6 +223,7 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
      }
 
      bindUploadInput(msg){
+          let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = 'asset::uploaded';
@@ -243,37 +237,44 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                     }
                     break;
           }
-          this.bindInput(panel, ref, val);
+          this.bindInput(section, panel, ref, val);
+     }
+
+     bindSelectStatement(msg){
+          let section = this.model.section.post_excerpt;
+          let panel = this.model.panel.post_content.ref;
+          let ref = msg.model.arguments[1];
+          let val = 'noticed';
+          this.bindInput(section, panel, ref, val);
+     }
+
+     bindOpinion(msg){
+console.log('bindOpinion: ', msg);
+          this.evalNextPanel();
      }
 
      bindTextInput(msg){
-
+          let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = jQuery('.answer-input input').val();
           let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
-
           switch(required){
-
                 case true:
                      if(3 >= val.length){
                           this.notify(new Message('input::corrupt', this.model));
                           return false;
                      }
                      break;
-
                 case false:
 // no validation
                      break;
           }
-
-          this.bindInput(panel, ref, val);
-     }
-
-     bindImageInput(msg){
+          this.bindInput(section, panel, ref, val);
      }
 
      bindMultipleChoiceInput(msg){
+          let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = '';
@@ -284,30 +285,33 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                    val = choice.label;
                }
           };
-          this.clearInput(panel);
-          this.bindInput(panel, ref, val);
+          this.clearInput(section, panel, ref, val);
+          this.bindInput(section, panel, ref, val);
      }
 
      bindYesNoInput(msg){
+          let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
           let ref = msg.model.arguments[1];
           let val = msg.model.arguments[2] == 'true' ? 'true' : 'false';
-          this.bindInput(panel, ref, val);
+          this.bindInput(section, panel, ref, val);
      }
 
-     clearInput(panel){
+     clearInput(section, panel, ref, val){
           let target = this.model.thread.post_content.conditions;
-          let temp = [];
+          let copy = [];
           for(let idx in target){
-               if(panel == target[idx].panel){
-                    continue;
+               if(section == target[idx].section){
+                    if(panel == target[idx].panel){
+                         continue;
+                    }
                }
-               temp.push(target[idx]);
+               copy.push(target[idx]);
           }
-          this.model.thread.post_content.conditions = temp;
+          this.model.thread.post_content.conditions = copy;
      }
 
-     bindInput(panel, key, val){
+     bindInput(section, panel, key, val){
           if('undefined' == typeof(val)){ val = ''; }
           let answer = SurveyUtil.trimIncomingString(val);
           let question = this.corrQuestion(this.model.panel.post_content.title);
@@ -315,26 +319,27 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
           this.model.panel.post_content.question = question;
           this.model.panel.post_content.condition_ref = key;
           this.model.panel.post_content.answer = answer;
-// stores condition ref for logic jumps
-          this.setCondition(panel, key, val);
+          this.setCondition(section, panel, key, val);
           this.notify(new Message('input::done', this.model));
      }
 
-     setCondition(panel, key, val){
+     setCondition(section, panel, key, val){
           let target = this.model.thread.post_content.conditions;
           let fill = 0x00;
           for(let idx in target){
-               if(panel == target[idx].panel){
-                    if(key == target[idx].key){
-                         target[idx].val = val;
-                         fill = 0x01;
+               if(section == target[idx].section){
+                    if(panel == target[idx].panel){
+                         if(key == target[idx].key){
+                              target[idx].val = val;
+                              fill = 0x01;
+                         }
                     }
                }
           }
           if(0x00 == fill){
-console.log(target);
-               target.push({panel: panel, key: key, val: val});
+               target.push({section: section, panel: panel, key: key, val: val});
           }
+console.log('setCondition: ', target);
      }
 
      getCondition(panel, key){
@@ -392,9 +397,7 @@ console.log(target);
 
 // adds an entry to the book table of contents
      pushBookToc(){
-          if(null == this.model.panel){ 
-               return false; 
-          }
+          if(null == this.model.panel){ return false; }
           let ref = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
           if(-1 == target.book.indexOf(ref)){
@@ -406,12 +409,12 @@ console.log(target);
 // book toc is semantic linear
 // history is wild steps from field to field
      pushHistory(){
-          if(null == this.model.panel){ 
-               return false; 
-          }
-          let ref = this.model.panel.post_content.ref;
+          if(null == this.model.section){ return false; }
+          if(null == this.model.panel){ return false; }
+          let section = this.model.section.post_excerpt;
+          let panel = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
-              target.history.push(ref);
+          target.history.push({ section: section, panel: panel });
      }
 
      loadPanel(ref){
@@ -505,7 +508,7 @@ console.log('loadPanel: ', ref);
                    target = this.model.panel.post_content.properties.choices;
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
-                        buf2nd+= this.fillTemplate(__choice_tmpl__, { choice: choice, ref: target[idx].ref });
+                        buf2nd+= this.fillTemplate(__mutliple_choice_tmpl__, { choice: choice, ref: target[idx].ref });
                    }
                    break;
 
@@ -678,7 +681,7 @@ console.log('loadPanel: ', ref);
                     break;
                case 'always':
 // this i don't know  i guess always evaluates always to true
-console.log('condition "always" found');
+console.log('condition: "always" found');
                     condition.result = true;
                     // condition.result = false;
                     break;
@@ -733,17 +736,13 @@ console.log('condition "always" found');
      }
 
      evalPrevPanel(){
-
           let target = this.model.thread.post_content;
-          let ref = target.history.pop();
-              ref = target.history.pop();
-
-          if(null != ref){
-               this.loadPanel(ref);
+          let history = target.history.pop();
+              history = target.history.pop();
+          if(null != history){
+               this.loadPanel(history.panel);
                return true;
           }
-
-
           this.prevPanel();
      }
 
@@ -790,14 +789,14 @@ console.log('condition "always" found');
                let rule = toc.rulez[idx];
                if(panel.post_content.ref != rule.ref){ continue; }
 
-console.log(rule);
+console.log('rule: ', rule);
                rule.actions.forEach(function(actionpack){
                     if(false != ref.evalCondition(actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
 
 console.log('link from logic: ', actionpack.details.to.value);
-console.log(actionpack);
+console.log('actionpack: ', actionpack);
                                    links.push(actionpack.details.to.value);
                                    break;
                          }
@@ -947,7 +946,9 @@ console.log('prev link from default: ', ref);
      }
 
      evalRsLoc(rsloc){
+// rsloc as in resource locator
           let mtch = rsloc.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+// no resource locator
           if(null == mtch){
                rsloc = rsloc.replace('data:image/png;base64,', '');
                rsloc = 'data:image/png;base64,' +rsloc;
@@ -1022,14 +1023,16 @@ let __yes_no_tmpl__ = `
 </div>
 `;
 
-let __choice_tmpl__ = `
+let __mutliple_choice_tmpl__ = `
 <div class='choice-output'>
 <span><a href='javascript:surveyQueue.route("confirm::multiple", "{ref}");'>{choice}</a></span>
 </div>
 `;
 
 let __picture_choice_tmpl__ = `
+<div class='picture-choice'>
 <span><a href='javascript:surveyQueue.route("confirm::image", "{ref}");'><img src="{src}"></span>
+</div>
 `;
 
 let __srv_msg_001_tmpl__ = `

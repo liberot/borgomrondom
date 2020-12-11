@@ -46,8 +46,8 @@ function exec_save_toc(){
      $panel_ref = trim_incoming_numeric($_POST['panel_ref']);
      $panel_ref = get_session_ticket('panel_ref');
 
-     $history = trim_incoming_toc($_POST['history']);
      $book = trim_incoming_toc($_POST['book']);
+     $history = trim_incoming_history($_POST['history']);
 
      $section->post_content['toc']['history'] = $history;
      $section->post_content['toc']['book'] = $book;
@@ -81,8 +81,8 @@ function exec_save_thread(){
      $thread_id = get_session_ticket('thread_id');
 
      $book = trim_incoming_toc($_POST['book']);
-     $history = trim_incoming_toc($_POST['history']);
 
+     $history = trim_incoming_history($_POST['history']);
      $conditions = trim_incoming_key_val($_POST['conditions']);
 
      $thread = get_thread_by_id($thread_id)[0];
