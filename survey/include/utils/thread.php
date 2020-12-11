@@ -180,7 +180,7 @@ function init_section_from_survey($thread_id, $survey_ref){
      return $section_id;
 }
 
-function init_panels_from_survey_id($survey_id){
+function init_panels_from_survey($section_id, $survey_id){
      $questions = get_questions_by_survey_id($survey_id);
      $coll = [];
      foreach($questions as $question){

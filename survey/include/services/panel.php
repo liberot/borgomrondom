@@ -139,60 +139,12 @@ function exec_get_panel_by_ref(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     set_session_ticket('panel_ref', $panel_ref, true);
-
-// sets up a panel
-     if(false == Proc::PRE_GENERATE_SECTION_PANELS){
-
-          $coll = get_panel_by_ref($section_id, $panel_ref);
-          if(!is_null($coll[0])){
-               $message = esc_html(__('cached panel is loaded', 'nosuch'));
-               echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
-               return true;
-          }
-
-          $section = get_section_by_id($section_id)[0];
-          if(is_null($section)){
-               $message = esc_html(__('section corrupt', 'nosuch'));
-               echo json_encode(array('res'=>'failed', 'message'=>$message));
-               return false;
-          }
-
-          $section->post_content = pagpick($section->post_content);
-          $title = $section->post_content['survey']['title'];
-
-          $survey = get_survey_by_title($title)[0];
-          if(is_null($survey)){
-               $message = esc_html(__('survey corrupt', 'nosuch'));
-               echo json_encode(array('res'=>'failed', 'message'=>$message));
-               return false;
-          }
-
-          $question = get_question_by_ref($survey->ID, $panel_ref)[0];
-          if(is_null($question)){
-               $message = esc_html(__('question corrupt', 'nosuch'));
-               echo json_encode(array('res'=>'failed', 'message'=>$message));
-               return false;
-          }
-
-          $surveyprint_uuid = psuuid();
-          $auhor_id = get_author_id();
-          $conf = [
-               'post_type'=>'surveyprint_panel',
-               'post_author'=>$author_id,
-               'post_title'=>$question->post_title,
-               'post_excerpt'=>$question->post_excerpt,
-               'post_name'=>$surveyprint_uuid,
-               'post_content'=>$question->post_content,
-               'post_parent'=>$section_id
-          ];
-
-          $panel_id = init_panel($conf);
-     }
 
 // loads the panel
      $coll = get_panel_by_ref($section_id, $panel_ref);
 
+// 
+     set_session_ticket('panel_ref', $panel_ref, true);
      $message = esc_html(__('panel is loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }

@@ -132,11 +132,10 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                return false;
           }
           let thread = msg.model.e.coll.thread;
-
+          let section = msg.model.e.coll.section;
           let panels = msg.model.e.coll.panels;
-          let sections = msg.model.e.coll.sections;
 
-          let m = { model: { e: { coll: { thread: thread, sections: sections, panels: panels }}}}
+          let m = { model: { e: { coll: { thread: thread, section: section, panels: panels }}}}
 
           this.bindThread(m);
      }
@@ -185,20 +184,18 @@ console.log('child: ' , this.getHiddenFieldVal('child'));
                console.log('no thread');
                return false;
           }
-
           this.model.thread = msg.model.e.coll.thread[0];
           this.model.thread.post_content = SurveyUtil.pagpick(this.model.thread.post_content);
 
 // section
-// todo: there might be more than one section
-          if(null == msg.model.e.coll.sections[0]){
-               console.log('no sections');
+          if(null == msg.model.e.coll.section[0]){
+               console.log('no section');
                return false;
           }
-
-          this.model.section = msg.model.e.coll.sections[0];
+          this.model.section = msg.model.e.coll.section[0];
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
+// panels
           this.model.panels = [];
           let ref; 
 
@@ -1063,11 +1060,9 @@ class SurveyModel extends Model {
      constructor(){
           super();
 // --------------------------------------
-          this.threads;
-          this.sections;
-          this.panels;
           this.thread;
           this.section;
+          this.panels;
           this.panel;
           this.maxImageAssets;
 // deeplink -----------------------------

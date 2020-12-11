@@ -69,7 +69,6 @@ class Layout {
 }
 
 class Proc {
-     const PRE_GENERATE_SECTION_PANELS = false;
      const           UPDATE_ON_PERSIST = false;
      const    EVAL_UPLOADED_ASSET_SIZE = true;
      const           MEDIA_UPLOAD_PROC = 'base64_upload';
