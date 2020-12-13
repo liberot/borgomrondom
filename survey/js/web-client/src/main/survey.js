@@ -614,10 +614,8 @@ console.log('loadPanel: ', ref);
      isBottomPanel(){
           let res = false;
           let target = this.model.section.post_content.toc;
-          for(let idx in target.refs){
-               if(this.model.panel.post_content.ref == target.refs[idx]){
-                   res = true;
-               }
+          if(this.model.panel.post_content.ref == target.refs[parseInt(target.refs.length -1)]){
+               res = true;
           }
           return res;
      }
