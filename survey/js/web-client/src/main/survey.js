@@ -606,7 +606,7 @@ console.log('loadPanel: ', ref);
           this.setLink();
 
           if(this.isBottomPanel()){
-               ref.notify(new Message('bottompanel::reached', {} ));
+               ref.notify(new Message('bottompanel::reached', this.model.panel ));
           }
 
      }
