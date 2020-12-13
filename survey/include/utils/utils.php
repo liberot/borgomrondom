@@ -102,9 +102,10 @@ function trim_incoming_toc($toc){
      $res = null;
      if(false == is_array($toc)){ return $res; }
      $res = [];
-     foreach($toc as $ref){
-          $temp = preg_replace('/[^A-Za-z0-9-]/', '', $ref);
-          $temp = substr($temp, 0, 36);
+     foreach($toc as $item){
+          $temp = [];
+          $temp['section'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
+          $temp['panel'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
           $res[]= $temp;
      }
      return $res;

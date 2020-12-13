@@ -325,30 +325,32 @@ console.log('bindOpinion: ', msg);
 
      setCondition(section, panel, key, val){
           let target = this.model.thread.post_content.conditions;
-          let fill = 0x00;
+          let conditionRec = false;
           for(let idx in target){
                if(section == target[idx].section){
                     if(panel == target[idx].panel){
                          if(key == target[idx].key){
                               target[idx].val = val;
-                              fill = 0x01;
+                              conditionRec = 0x01;
                          }
                     }
                }
           }
-          if(0x00 == fill){
+          if(false == conditionRec){
                target.push({section: section, panel: panel, key: key, val: val});
           }
 console.log('setCondition: ', target);
      }
 
-     getCondition(panel, key){
+     getCondition(section, panel, key){
           let res = null;
           let target = this.model.thread.post_content.conditions;
           for(let idx in target){
-               if(panel == target[idx].panel){
-                    if(key == target[idx].key){
-                        res = target[idx].key;
+               if(section == target[idx].section){
+                    if(panel == target[idx].panel){
+                         if(key == target[idx].key){
+                             res = target[idx].key;
+                         }
                     }
                }
           }
@@ -398,10 +400,20 @@ console.log('setCondition: ', target);
 // adds an entry to the book table of contents
      pushBookToc(){
           if(null == this.model.panel){ return false; }
-          let ref = this.model.panel.post_content.ref;
+          let section = this.model.section.post_excerpt;
+          let panel = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
-          if(-1 == target.book.indexOf(ref)){
-              target.book.push(ref);
+          let panelRec = false;
+          for(let idx in target.book){
+console.log(target.book[idx]);
+               if(target.book[idx].section = section){
+                    if(target.book[idx].panel = panel){
+                         panelRec = true;
+                    }
+               }
+          }
+          if(!panelRec){
+              target.book.push({section: section, panel: panel });
           }
      }
 
@@ -947,6 +959,7 @@ console.log('prev link from default: ', ref);
 
      evalRsLoc(rsloc){
 // rsloc as in resource locator
+          if(null == rsloc){ return rsloc; }
           let mtch = rsloc.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
 // no resource locator
           if(null == mtch){
