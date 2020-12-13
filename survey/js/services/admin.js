@@ -1,3 +1,10 @@
+function cleanSurveyPage(){
+      let data = { 
+           action: 'exec_clean_survey_page'
+      };
+      this.postCommand(data);
+}
+
 function cleanLayouts(){
       let data = { 
            action: 'exec_clean_layouts'

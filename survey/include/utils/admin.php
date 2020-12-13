@@ -98,14 +98,17 @@ EOD;
      return $res;
 }
 
-function init_survey_page(){
+function clean_survey_page(){
      $sql = <<<EOD
           delete from wp_posts where post_name = '__survey__thread__view__' and post_type = 'page'
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+}
 
+function init_survey_page(){
+     clean_survey_page();
      $conti = <<<EOD
         <p>[survey_view]</p>
         <!-- <p>[constructor_view]</p> //-->
