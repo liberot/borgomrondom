@@ -108,7 +108,7 @@ EOD;
 
      $conti = <<<EOD
         <p>[survey_view]</p>
-        <p>[constructor_view]</p>
+        <!-- <p>[constructor_view]</p> //-->
 EOD;
      $page_id = wp_insert_post([
           'post_author'=>get_author_id(),

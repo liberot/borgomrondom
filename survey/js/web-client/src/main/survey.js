@@ -738,10 +738,11 @@ console.log('condition: "always" found');
 // evals input condition of the rule
                     case 'choice':
                     case 'constant':
-                         let condition = this.model.panel.post_content.condition_ref
+                         let section = this.model.section.post_excerpt;
+                         let condition = this.model.panel.post_content.condition_ref;
                          let panel = this.model.panel.post_content.ref;
                          let key = rule.vars[idx].value;
-                         rule.vars[idx].result = condition == this.getCondition(panel, key);
+                         rule.vars[idx].result = condition == this.getCondition(section, panel, key);
                          break;
                }
           }
