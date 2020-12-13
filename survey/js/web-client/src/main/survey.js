@@ -34,6 +34,7 @@ class Survey extends Controller {
           this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
           this.register(new Subscription(       'section::loaded', this.bindSection));
+          this.register(new Subscription(  'bottompanel::reached', this.bindBottomPanel));
           // ------
           // 127.0.0.1:8083/welcome.php?page_id=112932/#/child=joséf&mother=marikkah
           this.extractHiddenFields();
@@ -453,7 +454,7 @@ console.log('loadPanel: ', ref);
           this.initPanel();
      }
 
-// initpanel sets up the screen
+// initpanel sets up the panel . the field 
      initPanel(){
 
           let ref = this;
@@ -603,6 +604,26 @@ console.log('loadPanel: ', ref);
           this.pushHistory();
 
           this.setLink();
+
+          if(this.isBottomPanel()){
+               ref.notify(new Message('bottompanel::reached', {} ));
+          }
+
+     }
+
+     isBottomPanel(){
+          let res = false;
+          let target = this.model.section.post_content.toc;
+          for(let idx in target.refs){
+               if(this.model.panel.post_content.ref == target.refs[idx]){
+                   res = true;
+               }
+          }
+          return res;
+     }
+
+     bindBottomPanel(msg){
+         console.log('bindBottomPanel: ', msg);
      }
 
      renderFileupload(){
