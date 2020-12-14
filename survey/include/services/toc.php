@@ -83,7 +83,7 @@ function exec_save_thread(){
      $book = trim_incoming_toc($_POST['book']);
 
      $history = trim_incoming_history($_POST['history']);
-     $conditions = trim_incoming_key_val($_POST['conditions']);
+     $conditions = trim_incoming_conditions($_POST['conditions']);
 
      $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){

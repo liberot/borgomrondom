@@ -13,17 +13,16 @@ class SurveyNet extends Controller {
           this.register(new Subscription(    'download::assets', this.downloadAssets));
           this.register(new Subscription(       'upload::asset', this.uploadAsset));
           this.register(new Subscription(         'load::panel', this.loadPanel));
-          this.register(new Subscription(       'load::section', this.loadSection));
+          this.register(new Subscription(   'load::nextsection', this.loadNextSection));
      }
 
-     loadSection(msg){
+     loadNextSection(msg){
           let ref = this;
           let data = { 
-               'action': 'exec_get_section_by_ref',
-               'section_ref': msg.model
+               'action': 'exec_get_next_section'
           }
           let cb = function(e){ 
-               ref.notify(new Message('section::loaded', { e })); 
+               ref.notify(new Message('nextsection::loaded', { e })); 
           }
           this.postData(data, cb);
      }

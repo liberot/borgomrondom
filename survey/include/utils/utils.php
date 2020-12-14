@@ -111,7 +111,7 @@ function trim_incoming_toc($toc){
      return $res;
 }
 
-function trim_incoming_key_val($coll){
+function trim_incoming_conditions($coll){
      $res = null;
      if(false == is_array($coll)){ return $res; }
      $res = [];
@@ -120,7 +120,7 @@ function trim_incoming_key_val($coll){
             $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
               $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
               $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['val']);
-             $res[]= ['panel'=>$panel, 'key'=>$key, 'val'=>$val];
+             $res[]= ['section'=>$section, 'panel'=>$panel, 'key'=>$key, 'val'=>$val];
      }
      return $res;
 }

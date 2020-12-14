@@ -152,11 +152,11 @@ function init_section_from_survey($thread_id, $survey_ref){
 
 // survey
      $survey = get_survey_by_ref($survey_ref)[0];
-     if(is_null($survey)){ return false; }
+     if(is_null($survey)){ return null; }
 
 // toc
      $toc = get_toc_by_survey_id($survey->ID)[0];
-     if(is_null($toc)){ return false; }
+     if(is_null($toc)){ return null; }
 
 // post of he section
      $post = [];
@@ -172,22 +172,24 @@ function init_section_from_survey($thread_id, $survey_ref){
           'post_parent'=>$thread_id,
           'post_content'=>$post
      ];
-
+// res
      $section_id = init_section($conf);
-
-     if(is_null($section_id)){ return false; }
-
      return $section_id;
 }
 
 function init_panels_from_survey($section_id, $survey_id){
+
+     $section_id = esc_sql($section_id);
+     $survey_id = esc_sql($survey_id);
+
      $questions = get_questions_by_survey_id($survey_id);
+
      $coll = [];
      foreach($questions as $question){
           $surveyprint_uuid = psuuid();
           $conf = [
                'post_type'=>'surveyprint_panel',
-               'pos t_author'=>$author_id,
+               'post_author'=>$author_id,
                'post_title'=>$question->post_title,
                'post_excerpt'=>$question->post_excerpt,
                'post_name'=>$surveyprint_uuid,

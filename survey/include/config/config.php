@@ -9,9 +9,9 @@ class Role {
 
 class Path {
 
-     const      INKSCAPE = '/Applications/Inkscape.app/Contents/MacOS/inkscape';
-     const   GHOSTSCRIPT = '/opt/local/bin/gs';
-     const  SERVICE_BASE = '/wp-admin/admin.php';
+     const      INKSCAPE  = '/Applications/Inkscape.app/Contents/MacOS/inkscape';
+     const   GHOSTSCRIPT  = '/opt/local/bin/gs';
+     const  SERVICE_BASE  = '/wp-admin/admin.php';
 
      static public final function get_upload_path(){
           return sprintf('%s%s', wp_upload_dir()['basedir'], '/book_builder');
@@ -69,11 +69,12 @@ class Layout {
 }
 
 class Proc {
-     const           UPDATE_ON_PERSIST = false;
-     const    EVAL_UPLOADED_ASSET_SIZE = true;
-     const           MEDIA_UPLOAD_PROC = 'base64_upload';
-     const               BASE64_UPLOAD = 'base64_upload';
-     const                 FILE_UPLOAD = 'file_upload';
+     const        UPDATE_ON_PERSIST = false;
+     const EVAL_UPLOADED_ASSET_SIZE = true;
+     const        MEDIA_UPLOAD_PROC = 'base64_upload';
+     const            BASE64_UPLOAD = 'base64_upload';
+     const              FILE_UPLOAD = 'file_upload';
+     const           KICKOFF_SURVEY = '201204 Cover and Preface';
 }
 
 
