@@ -39,7 +39,7 @@ class SurveyNet extends Controller {
           let data = {
                'action': 'exec_get_panel_by_ref',
                'thread_id': msg.model.thread.ID,
-               'section_id': msg.model.section.ID,
+               'section_ref': msg.model.requestedSection,
                'panel_ref': msg.model.requestedPanel
           }
           let cb = function(e){

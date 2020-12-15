@@ -116,6 +116,11 @@ function exec_init_panel(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
+
+
+/***
+   evaluates panel by reference
+ */
 add_action('admin_post_exec_get_panel_by_ref', 'exec_get_panel_by_ref');
 function exec_get_panel_by_ref(){
 
@@ -125,9 +130,10 @@ function exec_get_panel_by_ref(){
           return false;
      }
 
-     $section_id = trim_incoming_filename($_POST['section_id']);
-     $section_id = get_session_ticket('section_id');
-     if(is_null($section_id)){
+     $thread_id = get_session_ticket('thread_id');
+
+     $section_ref = trim_incoming_filename($_POST['section_ref']);
+     if(is_null($section_ref)){
           $message = esc_html(__('section corrupt', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
@@ -140,11 +146,23 @@ function exec_get_panel_by_ref(){
           return false;
      }
 
+// todo:: init section if not there
+     $section = get_section_by_ref($thread_id, $section_ref)[0];
+     if(is_null($section)){
+          $message = esc_html(__('no such section', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+     $section_id = $section->ID;
+
 // loads the panel
      $coll = get_panel_by_ref($section_id, $panel_ref);
 
-// 
+// session tickets
+     set_session_ticket('thread_id', $thread_id, true);
+     set_session_ticket('section_id', $section_id, true);
      set_session_ticket('panel_ref', $panel_ref, true);
+
      $message = esc_html(__('panel is loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }

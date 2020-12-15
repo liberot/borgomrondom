@@ -35,6 +35,7 @@ class Survey extends Controller {
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
           this.register(new Subscription(   'nextsection::loaded', this.bindSection));
           this.register(new Subscription(  'bottompanel::reached', this.bindBottomPanel));
+          this.register(new Subscription(     'toppanel::reached', this.bindTopPanel));
           // ------
           // 127.0.0.1:8083/welcome.php?page_id=112932/#/child=joséf&mother=marikkah
           this.extractHiddenFields();
@@ -67,9 +68,10 @@ console.log('bindSection: ', this.model.section);
 
           this.recSection();
 
+          let section = this.model.section.post_excerpt;
           let ref = this.model.section.post_content.toc.refs[0];
 
-          this.loadPanel(ref);
+          this.loadPanel(section, ref);
      }
 
      recSection(){
@@ -215,7 +217,10 @@ console.log('recSection: ', this.model.sections);
           if(null == ref){
                ref = this.model.section.post_content.toc.refs[0];
           }
-          this.loadPanel(ref);
+
+          let section = this.model.section.post_excerpt;
+
+          this.loadPanel(section, ref);
 
 // link hash
           this.setLink();
@@ -237,11 +242,15 @@ console.log('recSection: ', this.model.sections);
      }
 
      bindUploadInput(msg){
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
+
           let ref = msg.model.arguments[1];
           let val = 'asset::uploaded';
+
           let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
+
           switch(required){
                case true:
                case false:
@@ -251,14 +260,18 @@ console.log('recSection: ', this.model.sections);
                     }
                     break;
           }
+
           this.bindInput(section, panel, ref, val);
      }
 
      bindSelectStatement(msg){
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
+
           let ref = msg.model.arguments[1];
           let val = 'noticed';
+
           this.bindInput(section, panel, ref, val);
      }
 
@@ -268,11 +281,15 @@ console.log('bindOpinion: ', msg);
      }
 
      bindTextInput(msg){
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
+
           let ref = msg.model.arguments[1];
           let val = jQuery('.answer-input input').val();
+
           let required = this.checkIfRequired(this.model.panel.post_content.validations.required);
+
           switch(required){
                 case true:
                      if(3 >= val.length){
@@ -284,30 +301,38 @@ console.log('bindOpinion: ', msg);
 // no validation
                      break;
           }
+
           this.bindInput(section, panel, ref, val);
      }
 
      bindMultipleChoiceInput(msg){
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
+
           let ref = msg.model.arguments[1];
           let val = '';
           let choice = null;
+
           for(let idx in this.model.panel.post_content.properties.choices){
                choice = this.model.panel.post_content.properties.choices[idx]; 
                if(ref == choice.ref){
                    val = choice.label;
                }
           };
+
           this.clearInput(section, panel, ref, val);
           this.bindInput(section, panel, ref, val);
      }
 
      bindYesNoInput(msg){
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
+
           let ref = msg.model.arguments[1];
           let val = msg.model.arguments[2] == 'true' ? 'true' : 'false';
+
           this.bindInput(section, panel, ref, val);
      }
 
@@ -414,10 +439,13 @@ console.log('setCondition: ', target);
 // adds an entry to the book table of contents
      pushBookToc(){
           if(null == this.model.panel){ return false; }
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
+
           let target = this.model.thread.post_content;
           let panelRec = false;
+
           for(let idx in target.book){
 console.log('pushBookToc: ', target.book[idx]);
                if(target.book[idx].section = section){
@@ -435,25 +463,36 @@ console.log('pushBookToc: ', target.book[idx]);
 // book toc is semantic linear
 // history is wild steps from field to field
      pushHistory(){
+
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
+
           let section = this.model.section.post_excerpt;
           let panel = this.model.panel.post_content.ref;
           let target = this.model.thread.post_content;
+
           target.history.push({ section: section, panel: panel });
      }
 
-     loadPanel(ref){
-console.log('loadPanel: ', ref);
+     loadPanel(section, panel){
+console.log('loadPanel: ', section, panel);
 
-          if(null == ref){ return false; }
+          if(null == section){ return false; }
+          if(null == panel){ return false; }
 
-          this.model.requestedPanel = ref;
-          if(null != this.model.panels[ref]){
-               this.model.panel = this.model.panels[ref];
-               this.initPanel();
-               return;
+          if(null != this.model.sections[section]){ 
+               if(null != this.model.panels[panel]){
+                    this.model.panel = this.model.panels[panel];
+                    this.initPanel();
+                    return;
+               }
           }
+
+          this.model.requestedPanel = panel;
+          this.model.requestedSection = section;
+
+console.log(this.model.requestedPanel);
+console.log(this.model.requestedSection);
           this.notify(new Message('load::panel', this.model));
      }
 
@@ -622,6 +661,9 @@ console.log('loadPanel: ', ref);
                ref.notify(new Message('bottompanel::reached', this.model.panel ));
           }
 
+          if(this.isTopPanel()){
+               ref.notify(new Message('toppanel::reached', this.model.panel ));
+          }
      }
 
      isBottomPanel(){
@@ -631,6 +673,19 @@ console.log('loadPanel: ', ref);
                res = true;
           }
           return res;
+     }
+
+     isTopPanel(){
+          let res = false;
+          let target = this.model.section.post_content.toc;
+          if(this.model.panel.post_content.ref == target.refs[0]){
+               res = true;
+          }
+          return res;
+     }
+
+     bindTopPanel(msg){
+         console.log('bindTopPanel: ', msg);
      }
 
      bindBottomPanel(msg){
@@ -770,10 +825,13 @@ console.log('condition: "always" found');
 // evals input condition of the rule
                     case 'choice':
                     case 'constant':
+
                          let section = this.model.section.post_excerpt;
                          let condition = this.model.panel.post_content.condition_ref;
+
                          let panel = this.model.panel.post_content.ref;
                          let key = rule.vars[idx].value;
+
                          rule.vars[idx].result = condition == this.getCondition(section, panel, key);
                          break;
                }
@@ -781,36 +839,36 @@ console.log('condition: "always" found');
      }
 
      evalPrevPanel(){
+
           let target = this.model.thread.post_content;
+
           let history = target.history.pop();
               history = target.history.pop();
+
           if(null != history){
-               this.loadPanel(history.panel);
+               this.loadPanel(history.section, history.panel);
                return true;
           }
+
           this.loadPrevPanel();
      }
 
      evalNextPanel(){
-
-// end of a section
+// evaluates whether or not this panel is the last one in the section
           if(this.isBottomPanel()){
                this.loadNextSection();
                return true;
           }
-
-// the next panel
-          let ref = this;
-
+// the next panel (field) to be displayed
           let settings = this.model.section.post_content.survey.settings;
 
           let toc = this.model.section.post_content.toc;
-          let panel = this.model.panel.post_content.ref;
+          let section = this.model.section.post_excerpt;
 
 // loads panel from logic
-          let lnk = this.evalLogicAction(toc);
-          if(null != lnk){
-               this.loadPanel(lnk);
+          let panel = this.evalLogicAction(toc);
+          if(null != panel){
+               this.loadPanel(section, panel);
                return true;
           }
 
@@ -852,6 +910,8 @@ console.log('actionpack: ', actionpack);
 console.log('loadNextSection: ', this.model.sections);
           let pos = null;
           let nextSection;
+
+// evaluates position of current section within the loaded sections
           if(null != this.model.sections){
                pos = this.model.sections.indexOf(this.model.section);
                if(-1 != pos){
@@ -870,43 +930,58 @@ console.log('loadNextSection: ', this.model.sections);
      }
 
      loadNextPanel(){
+
+          if(null == this.model.section){ return false; }
+          if(null == this.model.panel){ return false; }
+
+          let section = this.model.section.post_excerpt;
           let target = this.model.section.post_content.toc;
-          let currentPos = target.refs.indexOf(this.model.panel.post_content.ref);
-          let pos = currentPos +1;
+
+          let pos = target.refs.indexOf(this.model.panel.post_content.ref);
+              pos+= 1;
+
           if(pos >= target.refs.length -1){
               pos = target.refs.length -1;
           }
-          let ref = target.refs[pos];
-console.log('loadNextPanel: next link from default: ', ref);
-          this.loadPanel(ref);
+
+          let panel = target.refs[pos];
+console.log('loadNextPanel: next link from default: ', section, panel);
+
+          this.loadPanel(section, panel);
+          return true;
      }
 
      loadPrevPanel(){
-          if(null == this.model.panel){
-               return false;
-          }
+
+          if(null == this.model.section){ return false; }
+          if(null == this.model.panel){ return false; }
+
+          let section = this.model.section.post_excerpt;
           let target = this.model.section.post_content.toc;
-          let currentPos = target.refs.indexOf(this.model.panel.post_content.ref);
-          let pos = currentPos -1;
-          if(pos <= 0){
-               pos = 0;
-          }
-          let ref = target.refs[pos];
-console.log('loadPrevPanel: prev link from default: ', ref);
-          this.loadPanel(ref);
+
+          let pos = target.refs.indexOf(this.model.panel.post_content.ref);
+              pos-= 1;
+
+          if(pos <= 0){ pos = 0; }
+
+          let panel = target.refs[pos];
+console.log('loadPrevPanel: prev link from default: ', panel);
+
+          this.loadPanel(section, panel);
           return true;
      }
 
      selectPanel(pos){
+
+          let section = this.model.section.post_excerpt;
           let target = this.model.section.post_content.toc;
-          if(pos <= 0){
-               pos = 0;
-          }
-          if(pos >= target.refs.length -1){
-              pos = target.refs.length -1;
-          }
+
+          if(pos <= 0){ pos = 0; }
+          if(pos >= target.refs.length -1){ pos = target.refs.length -1; }
+
           let ref = target.refs[pos];
-          this.loadPanel(ref);
+
+          this.loadPanel(section, ref);
           return true;
      }
 
