@@ -133,6 +133,7 @@ function exec_get_next_section(){
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$section_id));
           return false;
      }
+
      $current_section->post_content = pagpick($current_section->post_content);
 
 // eval of the redirect field
@@ -146,6 +147,14 @@ function exec_get_next_section(){
           return false;
      }
 
+// loads next section
+     $next_section = get_section_by_ref($thread_id, $ref);
+     if(!is_null($section)){
+          $message = esc_html(__('next section loaded', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$mtch));
+          return true;
+     }
+
 // loads next survey
      $ref = $mtch[1];
      $survey = get_survey_by_ref($ref)[0];
@@ -155,6 +164,12 @@ function exec_get_next_section(){
           return false;
      }
      $survey_id = $survey->ID;
+
+
+
+
+
+
 
 // todo... whether or not section is already written
 // generation of a section
