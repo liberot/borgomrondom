@@ -160,7 +160,11 @@ function exec_get_panel_by_ref(){
      $section_id = $section->ID;
 
 // loads the panel
-     $coll = get_panel_by_ref($section_id, $panel_ref);
+     $coll['panel'] = get_panel_by_ref($section_id, $panel_ref);
+
+// result
+     $coll['section_ref'] = $section_ref;
+     $coll['panel_ref'] = $panel_ref;
 
 // session tickets
      set_session_ticket('thread_id', $thread_id, true);

@@ -510,12 +510,36 @@ console.log('loadPanel(): ', section, panel);
 
      bindPanel(msg){
 
-          if(null == msg.model.e.coll[0]){ return false; }
+          if(null == msg.model.e.coll['panel']){ 
+               console.log('bindPanel(): no panel');
+               return false; 
+          }
 
-          this.model.panel = msg.model.e.coll[0];
+          this.model.panel = msg.model.e.coll['panel'][0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
 
+          this.selectSection(msg.model.e.coll['section_ref']);
+
           this.initPanel();
+     }
+
+     selectSection(ref){
+
+          let section;
+
+          for(let idx in this.model.sections){
+               if(ref == this.model.sections[idx].post_excerpt){
+                    section = this.model.sections[idx];
+               }
+          }
+
+          if(null == section){
+               return false;
+          }
+
+          this.model.section = section;
+
+console.log('selectSection(): ', this.model.section);
      }
 
 // initpanel sets up the panel . the field 
@@ -664,11 +688,6 @@ console.log('loadPanel(): ', section, panel);
           jQuery('.survey-controls3rd').html(buf3rd);
           jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
 
-          this.pushBookToc();
-          this.pushHistory();
-
-          this.setLink();
-
           if(this.isBottomPanel()){
                ref.notify(new Message('bottompanel::reached', this.model.panel ));
           }
@@ -676,6 +695,11 @@ console.log('loadPanel(): ', section, panel);
           if(this.isTopPanel()){
                ref.notify(new Message('toppanel::reached', this.model.panel ));
           }
+
+          this.pushBookToc();
+          this.pushHistory();
+
+          this.setLink();
      }
 
      isBottomPanel(){
@@ -705,7 +729,9 @@ console.log('loadPanel(): ', section, panel);
      }
 
      renderFileupload(){
+
           let ref = this;
+
           if(null == this.model.panel.post_content.conf){
                return;
           }
@@ -744,6 +770,7 @@ console.log('loadPanel(): ', section, panel);
      }
 
      initImageUpload(files){
+
           let formdata = new FormData();
           let max = 10;
           for(let idx in files){
@@ -755,6 +782,7 @@ console.log('loadPanel(): ', section, panel);
                formdata.append(  'panelRef', this.model.thread.post_excerpt);
                formdata.append('image_'+idx, files[idx]);
           }
+
           return formdata;
      }
 
@@ -770,6 +798,7 @@ console.log('loadPanel(): ', section, panel);
      }
 
      evalGroup(condition){
+
           condition.result = null;
 
           switch(condition.op){
