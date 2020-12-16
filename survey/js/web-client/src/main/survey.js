@@ -65,7 +65,10 @@ class Survey extends Controller {
           this.model.section = msg.model.e.coll.section;
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
-console.log('bindSection(): ', this.model.section);
+console.log('bindSection(): section: ', this.model.section);
+
+          this.model.redirect = msg.model.e.coll.redirect;
+console.log('bindSection(): redirect: ', this.model.redirect);
 
           this.recSection();
 
