@@ -136,13 +136,13 @@ class SurveyNet extends Controller {
                e = jQuery.parseJSON(e);
                switch(e.res){
                     case 'success':
-                         console.log(e);
+                         console.log('postData(): success: ', e);
                          jQuery('.survey-messages').html(e.message);
                          null != suc ? suc(e) : false;
                          break;
                     case 'failed':
                     default:
-                         console.log(e);
+                         console.log('postData(): failed: ', e);
                          jQuery('.survey-messages').html(e.message);
                          null != err ? err() : false;
                          break;
@@ -177,12 +177,12 @@ class SurveyNet extends Controller {
                processData: false,
                success: function(e){
                     e = jQuery.parseJSON(e);
-                    console.log(e);
+                    console.log('uploadAsset(): success: ', e);
                     jQuery('.survey-messages').html(e.message);
                     ref.notify(new Message('assets::uploaded', { e }));
                },
                error: function(e){
-                    console.log(e);
+                    console.log('uploadAsset(): error: ', e);
                }
           });
      }

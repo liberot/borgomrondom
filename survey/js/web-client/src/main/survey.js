@@ -65,12 +65,13 @@ class Survey extends Controller {
           this.model.section = msg.model.e.coll.section;
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
+console.log('bindSection(): ', this.model.section);
+
           this.recSection();
 
           let section = this.model.section.post_excerpt;
           let panel = this.model.section.post_content.toc.refs[0];
 
-console.log('bindSection(): ', this.model.section);
           this.loadPanel(section, panel);
      }
 
@@ -145,6 +146,7 @@ console.log('recSection(): ', this.model.sections);
           let m = { model: { e: { coll: { thread: thread, sections: sections, panels: panels }}}}
 
 console.log('bindFieldingQuestions(): ', m)
+
           this.bindThread(m);
      }
 
@@ -201,11 +203,15 @@ console.log('bindFieldingQuestions(): ', m)
 // panels
           this.model.panels = [];
           let panel; 
+
+          let section = this.model.section.post_excerpt;
+
 // loads the current panel by its reference
           if(SurveyConfig.resetSurveyState){
                if(0 <= this.model.thread.post_content.history.length){
                     let history = this.model.thread.post_content.history.pop();
                     if(null != history){
+                         section = history.section;
                          panel = history.panel;
                     }
                }
@@ -215,14 +221,15 @@ console.log('bindFieldingQuestions(): ', m)
                panel = this.model.section.post_content.toc.refs[0];
           }
 
-          let section = this.model.section.post_excerpt;
 
-          this.loadPanel(section, panel);
+console.log('bindThread(): ', this.model.thread);
 
 // link hash
           this.setLink();
 
-console.log('bindThread(): ', this.model.thread);
+// loads panel as in initial panel
+          this.loadPanel(section, panel);
+
      }
 
      checkIfRequired(validation){
@@ -377,7 +384,9 @@ console.log('bindOpinion: ', msg);
           if(false == conditionRec){
                target.push({section: section, panel: panel, key: key, val: val});
           }
+
 console.log('setCondition(): ', target);
+
      }
 
      getCondition(section, panel, key){
@@ -457,6 +466,7 @@ console.log('setCondition(): ', target);
               target.book.push({section: section, panel: panel });
           }
 
+
 console.log('pushBook(): ', target.book);
      }
 
@@ -500,7 +510,7 @@ console.log('loadPanel(): ', section, panel);
 
      bindPanel(msg){
 
-          if(null == msg.model.e.coll['panel']){ 
+          if(null == msg.model.e.coll['panel'][0]){ 
                console.log('bindPanel(): no panel');
                return false; 
           }
@@ -936,7 +946,7 @@ console.log('evalLogicAction(): actionpack: ', actionpack);
 
      loadNextSection(){
 
-console.log('loadNextSection(): ', this.model.sections);
+console.log('loadNextSection(): this.model.sections: ', this.model.sections);
 
           let pos = null;
           let nextSection;
