@@ -58,7 +58,7 @@ class Survey extends Controller {
      bindSection(msg){
 
           if(null == msg.model.e.coll.section){
-               console.log('bindSection: no section');
+               console.log('bindSection(): no section');
                return false;
           }
 
@@ -134,7 +134,7 @@ console.log('recSection(): ', this.model.sections);
      bindFieldingQuestions(msg){
 // todo
           if(null == msg.model.e.coll.thread){
-               console.log('bindFieldingQuestions: no thread');
+               console.log('bindFieldingQuestions(): no thread');
                return false;
           }
 
@@ -144,18 +144,8 @@ console.log('recSection(): ', this.model.sections);
 
           let m = { model: { e: { coll: { thread: thread, sections: sections, panels: panels }}}}
 
+console.log('bindFieldingQuestions(): ', m)
           this.bindThread(m);
-     }
-
-     clear(){
-          this.model.thread = null;
-          this.model.questions = null;
-          jQuery('.survey-questions1st').html('');
-          jQuery('.survey-controls1st').html('');
-          jQuery('.survey-controls2nd').html('');
-          jQuery('.survey-controls3rd').html('');
-          jQuery('.survey-controls4th').html('');
-          jQuery('.survey-assets').html('');
      }
 
      bindHashChange(e){
@@ -446,7 +436,7 @@ console.log('setCondition(): ', target);
      }
 
 // adds an entry to the book table of contents
-     pushBookToc(){
+     pushBook(){
           if(null == this.model.panel){ return false; }
 
           let section = this.model.section.post_excerpt;
@@ -467,7 +457,7 @@ console.log('setCondition(): ', target);
               target.book.push({section: section, panel: panel });
           }
 
-console.log('pushBookToc(): ', target.book);
+console.log('pushBook(): ', target.book);
      }
 
 // todo
@@ -548,7 +538,7 @@ console.log('selectSection(): ', this.model.section);
           let ref = this;
 
           if(null == this.model.panel){
-               console.log('initPanel: no panel');
+               console.log('initPanel(): no panel');
                return false;
           }
 
@@ -696,7 +686,7 @@ console.log('selectSection(): ', this.model.section);
                ref.notify(new Message('toppanel::reached', this.model.panel ));
           }
 
-          this.pushBookToc();
+          this.pushBook();
           this.pushHistory();
 
           this.setLink();
@@ -821,7 +811,7 @@ console.log('selectSection(): ', this.model.section);
                     break;
                case 'always':
 // this i don't know  i guess always evaluates always to true
-console.log('condition: "always" found');
+console.log('evalGroup(): condition: "always" found');
                     condition.result = true;
                     // condition.result = false;
                     break;
@@ -985,7 +975,7 @@ console.log('loadNextSection(): ', this.model.sections);
           }
 
           let panel = target.refs[pos];
-console.log('loadNextPanel: next link from default: ', section, panel);
+console.log('loadNextPanel(): next link from default: ', section, panel);
 
           this.loadPanel(section, panel);
           return true;
@@ -1005,7 +995,7 @@ console.log('loadNextPanel: next link from default: ', section, panel);
           if(pos <= 0){ pos = 0; }
 
           let panel = target.refs[pos];
-console.log('loadPrevPanel: prev link from default: ', section, panel);
+console.log('loadPrevPanel(): prev link from default: ', section, panel);
 
           this.loadPanel(section, panel);
           return true;
@@ -1047,7 +1037,7 @@ console.log('loadPrevPanel: prev link from default: ', section, panel);
                         ref.scanAsset(indx, e.target.result, idx, true);
                    }
                    r.onerror = function(e){
-                        console.log('parseAssets:onError: ', e);
+                        console.log('parseAssets(): onError: ', e);
                    }; 
                    r.readAsDataURL(file);
           }

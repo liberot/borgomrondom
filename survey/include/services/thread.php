@@ -148,21 +148,23 @@ function exec_get_next_section(){
      preg_match('/\/to\/(.{0,124})#/', $redirect, $mtch);
      if(empty($mtch)){
           $message = esc_html(__('no next survey defined', 'nosuch'));
-          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$mtch));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$redirect));
           return false;
      }
      $ref = '';
      $ref = $mtch[1];
 
-// loads next section
+// loads next section from db
      $next_section = get_section_by_ref($thread_id, $ref)[0];
      if(!is_null($next_section)){
           $message = esc_html(__('next section loaded', 'nosuch'));
           $coll['section'] = $next_section;
+          $coll['redirect'] = $redirect;
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
      }
 
+// no next section found -> setup of the next section
 // loads next survey
      $ref = $mtch[1];
      $survey = get_survey_by_ref($ref)[0];
@@ -174,7 +176,7 @@ function exec_get_next_section(){
      $survey_id = $survey->ID;
 
 // todo... whether or not section is already written
-// generation of a section
+// setup of a section
      $section_id = init_section_from_survey($thread_id, $ref);
      if(empty($section_id)){
           $message = esc_html(__('could not init section', 'nosuch'));
@@ -182,16 +184,18 @@ function exec_get_next_section(){
           return false;
      }
 
-// generation of the panels of the section
+// setup of the panels of the section
      $panels = init_panels_from_survey($section_id, $survey_id);
 
 // result
      $coll['section'] = get_section_by_id($section_id)[0];
+     $coll['redirect'] = $redirect;
 
      set_session_ticket('section_id', $section_id, true);
 
      $message = esc_html(__('next section inited', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+
      return true;
 }
 
