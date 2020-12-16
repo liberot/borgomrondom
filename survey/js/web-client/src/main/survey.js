@@ -491,8 +491,6 @@ console.log('loadPanel: ', section, panel);
           this.model.requestedPanel = panel;
           this.model.requestedSection = section;
 
-console.log(this.model.requestedPanel);
-console.log(this.model.requestedSection);
           this.notify(new Message('load::panel', this.model));
      }
 

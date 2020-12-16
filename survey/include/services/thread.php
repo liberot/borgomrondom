@@ -146,12 +146,16 @@ function exec_get_next_section(){
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$mtch));
           return false;
      }
+     $ref = '';
+     $ref = $mtch[1];
 
 // loads next section
      $next_section = get_section_by_ref($thread_id, $ref);
-     if(!is_null($section)){
+     if(!is_null($next_section)){
           $message = esc_html(__('next section loaded', 'nosuch'));
-          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$mtch));
+          $coll['thread'] = get_thread_by_id($thread_id);
+          $coll['section'] = $next_section;
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
      }
 
