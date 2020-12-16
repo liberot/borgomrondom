@@ -9,11 +9,15 @@ function exec_get_panels_of_client(){
           return false;
      }
 
+// todo:: client probably has more threads
      $coll = [];
-     $res = get_threads_of_client();
-     foreach($res as $thread){
-          $coll[]= get_panels_by_thread_id($thread->ID);
+     $thread = get_thread_of_client()[0];
+     if(is_null($thread)){
+          $message = esc_html(__('client has no thread', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
      }
+     $coll[]= get_panels_by_thread_id($thread->ID);
      
      $message = esc_html(__('panels is loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));

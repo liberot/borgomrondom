@@ -98,7 +98,7 @@ function trim_incoming_string($val){
      return $val;
 }
 
-function trim_incoming_toc($toc){
+function trim_incoming_book($toc){
      $res = null;
      if(false == is_array($toc)){ return $res; }
      $res = [];

@@ -3,17 +3,17 @@
 
 
 /***
-   evaluates the threads of a client
+   evaluates the thread of a client
  */
-add_action('admin_post_exec_get_threads_of_client', 'exec_get_threads_of_client');
-function exec_get_threads_of_client(){
+add_action('admin_post_exec_get_thread_of_client', 'exec_get_thread_of_client');
+function exec_get_thread_of_client(){
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'nosuch'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     $coll = get_threads_of_client();
-     $message = esc_html(__('threads is loaded', 'nosuch'));
+     $coll = get_thread_of_client();
+     $message = esc_html(__('thread is loaded', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -34,12 +34,17 @@ function exec_init_thread(){
 
 // read of threads and sections of a client
 // todo:: client might own more than one thread
-     $threads = get_threads_of_client();
-     if(!empty($threads)){
-          $coll['thread'] = $threads;
-          $coll['section'] = get_sections_by_thread_id($coll['thread'][0]->ID);
-          set_session_ticket('thread_id', $coll['thread'][0]->ID, true);
-          set_session_ticket('section_id', $coll['section'][0]->ID, true);
+     $thread = get_thread_of_client()[0];
+     if(!is_null($thread)){
+
+          $coll['thread'] = $thread;
+          $coll['sections'] = get_sections_by_thread_id($thread->ID);
+
+// session tickets
+          set_session_ticket('thread_id', $thread->ID, true);
+          set_session_ticket('section_id', $coll['sections'][0]->ID, true);
+
+// res
           $message = esc_html(__('stored thread is loaded', 'nosuch'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
@@ -100,8 +105,8 @@ function exec_init_thread(){
 
 // result
      $coll = [];
-     $coll['thread'] = get_thread_by_id($thread_id);
-     $coll['section'] = get_sections_by_thread_id($thread_id);
+     $coll['thread'] = get_thread_by_id($thread_id)[0];
+     $coll['sections'] = get_sections_by_thread_id($thread_id);
 
      $message = esc_html(__('thread inited', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
@@ -150,10 +155,9 @@ function exec_get_next_section(){
      $ref = $mtch[1];
 
 // loads next section
-     $next_section = get_section_by_ref($thread_id, $ref);
+     $next_section = get_section_by_ref($thread_id, $ref)[0];
      if(!is_null($next_section)){
           $message = esc_html(__('next section loaded', 'nosuch'));
-          $coll['thread'] = get_thread_by_id($thread_id);
           $coll['section'] = $next_section;
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
@@ -169,12 +173,6 @@ function exec_get_next_section(){
      }
      $survey_id = $survey->ID;
 
-
-
-
-
-
-
 // todo... whether or not section is already written
 // generation of a section
      $section_id = init_section_from_survey($thread_id, $ref);
@@ -188,16 +186,57 @@ function exec_get_next_section(){
      $panels = init_panels_from_survey($section_id, $survey_id);
 
 // result
-     $coll['thread'] = get_thread_by_id($thread_id);
-     $coll['section'] = get_section_by_id($section_id);
-
-// debug
-     $coll['panels'] = $panels;
+     $coll['section'] = get_section_by_id($section_id)[0];
 
      set_session_ticket('section_id', $section_id, true);
 
      $message = esc_html(__('next section inited', 'nosuch'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
      return true;
+}
+
+add_action('admin_post_exec_save_thread', 'exec_save_thread');
+function exec_save_thread(){
+
+// policy
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'nosuch'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+// session client
+     $author_id = get_author_id();
+
+// tickets
+     $thread_id = trim_incoming_numeric($_POST['thread_id']);
+     $thread_id = get_session_ticket('thread_id');
+
+     $book = trim_incoming_book($_POST['book']);
+
+     $history = trim_incoming_history($_POST['history']);
+     $conditions = trim_incoming_conditions($_POST['conditions']);
+
+     $thread = get_thread_by_id($thread_id)[0];
+     if(is_null($thread)){
+          $message = esc_html(__('no such thread', 'nosuch'));
+          echo json_encode(array('res'=>'success', 'message'=>$message));
+          return false;
+     }
+
+     $thread->post_content = pagpick($thread->post_content);
+
+     $thread->post_content['book'] = null == $book ? [] : $book;
+     $thread->post_content['history'] = null == $history ? [] : $history;
+     $thread->post_content['conditions'] = null == $conditions ? [] : $conditions;
+     $thread->post_author = $author_id;
+     $thread->post_content = pigpack($thread->post_content);
+
+     $thread_id = wp_insert_post($thread);
+
+     $coll = get_thread_by_id($thread_id);
+
+     $message = esc_html(__('thread is saved', 'nosuch'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 

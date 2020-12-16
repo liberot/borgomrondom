@@ -56,22 +56,22 @@ class Survey extends Controller {
      }
 
      bindSection(msg){
-console.log(msg);
-          if(null == msg.model.e.coll.section[0]){
+
+          if(null == msg.model.e.coll.section){
                console.log('bindSection: no section');
                return false;
           }
 
-          this.model.section = msg.model.e.coll.section[0];
+          this.model.section = msg.model.e.coll.section;
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
-console.log('bindSection: ', this.model.section);
 
           this.recSection();
 
           let section = this.model.section.post_excerpt;
-          let ref = this.model.section.post_content.toc.refs[0];
+          let panel = this.model.section.post_content.toc.refs[0];
 
-          this.loadPanel(section, ref);
+console.log('bindSection(): ', this.model.section);
+          this.loadPanel(section, panel);
      }
 
      recSection(){
@@ -79,7 +79,8 @@ console.log('bindSection: ', this.model.section);
           if(-1 == this.model.sections.indexOf(this.model.section)){
                this.model.sections.push(this.model.section);
           }
-console.log('recSection: ', this.model.sections);
+
+console.log('recSection(): ', this.model.sections);
      }
 
      extractHiddenFields(){
@@ -136,11 +137,12 @@ console.log('recSection: ', this.model.sections);
                console.log('bindFieldingQuestions: no thread');
                return false;
           }
+
           let thread = msg.model.e.coll.thread;
-          let section = msg.model.e.coll.section;
+          let sections = msg.model.e.coll.sections;
           let panels = msg.model.e.coll.panels;
 
-          let m = { model: { e: { coll: { thread: thread, section: section, panels: panels }}}}
+          let m = { model: { e: { coll: { thread: thread, sections: sections, panels: panels }}}}
 
           this.bindThread(m);
      }
@@ -185,45 +187,52 @@ console.log('recSection: ', this.model.sections);
      bindThread(msg){
 
 // thread
-          if(null == msg.model.e.coll.thread[0]){
+          if(null == msg.model.e.coll.thread){
                console.log('bindThread: no thread');
                return false;
           }
-          this.model.thread = msg.model.e.coll.thread[0];
+
+          this.model.thread = msg.model.e.coll.thread;
           this.model.thread.post_content = SurveyUtil.pagpick(this.model.thread.post_content);
 
-// section
-          if(null == msg.model.e.coll.section[0]){
-               console.log('bindThread: no section');
+// sections
+          if(null == msg.model.e.coll.sections[0]){
+               console.log('bindThread: no sections');
                return false;
           }
-          this.model.section = msg.model.e.coll.section[0];
+
+          this.model.sections = msg.model.e.coll.sections;
+
+          this.model.section = msg.model.e.coll.sections[0];
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
           this.recSection();
 
 // panels
           this.model.panels = [];
-          let ref; 
+          let panel; 
 // loads the current panel by its reference
           if(SurveyConfig.resetSurveyState){
                if(0 <= this.model.thread.post_content.history.length){
                     let history = this.model.thread.post_content.history.pop();
                     if(null != history){
-                         ref = history.panel;
+                         panel = history.panel;
                     }
                }
           }
-          if(null == ref){
-               ref = this.model.section.post_content.toc.refs[0];
+
+          if(null == panel){
+               panel = this.model.section.post_content.toc.refs[0];
           }
 
           let section = this.model.section.post_excerpt;
 
-          this.loadPanel(section, ref);
+          this.loadPanel(section, panel);
 
 // link hash
           this.setLink();
+
+console.log('bindThread(): ', this.model.thread);
      }
 
      checkIfRequired(validation){
@@ -378,7 +387,7 @@ console.log('bindOpinion: ', msg);
           if(false == conditionRec){
                target.push({section: section, panel: panel, key: key, val: val});
           }
-console.log('setCondition: ', target);
+console.log('setCondition(): ', target);
      }
 
      getCondition(section, panel, key){
@@ -447,16 +456,18 @@ console.log('setCondition: ', target);
           let panelRec = false;
 
           for(let idx in target.book){
-console.log('pushBookToc: ', target.book[idx]);
-               if(target.book[idx].section = section){
-                    if(target.book[idx].panel = panel){
+               if(section == target.book[idx].section){
+                    if(panel == target.book[idx].panel){
                          panelRec = true;
                     }
                }
           }
+
           if(!panelRec){
               target.book.push({section: section, panel: panel });
           }
+
+console.log('pushBookToc(): ', target.book);
      }
 
 // todo
@@ -472,15 +483,18 @@ console.log('pushBookToc: ', target.book[idx]);
           let target = this.model.thread.post_content;
 
           target.history.push({ section: section, panel: panel });
+
+console.log('pushHistory(): ', target.history);
      }
 
      loadPanel(section, panel){
-console.log('loadPanel: ', section, panel);
+console.log('loadPanel(): ', section, panel);
 
           if(null == section){ return false; }
           if(null == panel){ return false; }
 
           if(null != this.model.sections[section]){ 
+               this.model.section = this.model.sections[section];
                if(null != this.model.panels[panel]){
                     this.model.panel = this.model.panels[panel];
                     this.initPanel();
@@ -683,11 +697,11 @@ console.log('loadPanel: ', section, panel);
      }
 
      bindTopPanel(msg){
-         console.log('bindTopPanel: ', msg);
+         console.log('bindTopPanel(): ', msg);
      }
 
      bindBottomPanel(msg){
-         console.log('bindBottomPanel: ', msg);
+         console.log('bindBottomPanel(): ', msg);
      }
 
      renderFileupload(){
@@ -837,18 +851,15 @@ console.log('condition: "always" found');
      }
 
      evalPrevPanel(){
-
           let target = this.model.thread.post_content;
-
           let history = target.history.pop();
               history = target.history.pop();
-
-          if(null != history){
-               this.loadPanel(history.section, history.panel);
-               return true;
+          if(null == history){
+               this.loadPrevPanel();
+               return false;
           }
-
-          this.loadPrevPanel();
+          this.loadPanel(history.section, history.panel);
+          return true;
      }
 
      evalNextPanel(){
@@ -886,14 +897,14 @@ console.log('condition: "always" found');
                let rule = toc.rulez[idx];
                if(panel.post_content.ref != rule.ref){ continue; }
 
-console.log('rule: ', rule);
+console.log('evalLogicAction(): rule: ', rule);
                rule.actions.forEach(function(actionpack){
                     if(false != ref.evalCondition(actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
 
-console.log('link from logic: ', actionpack.details.to.value);
-console.log('actionpack: ', actionpack);
+console.log('evalLogicAction(): link from logic: ', actionpack.details.to.value);
+console.log('evalLogicAction(): actionpack: ', actionpack);
                                    links.push(actionpack.details.to.value);
                                    break;
                          }
@@ -905,7 +916,9 @@ console.log('actionpack: ', actionpack);
      }
 
      loadNextSection(){
-console.log('loadNextSection: ', this.model.sections);
+
+console.log('loadNextSection(): ', this.model.sections);
+
           let pos = null;
           let nextSection;
 
@@ -963,7 +976,7 @@ console.log('loadNextPanel: next link from default: ', section, panel);
           if(pos <= 0){ pos = 0; }
 
           let panel = target.refs[pos];
-console.log('loadPrevPanel: prev link from default: ', panel);
+console.log('loadPrevPanel: prev link from default: ', section, panel);
 
           this.loadPanel(section, panel);
           return true;
@@ -977,9 +990,9 @@ console.log('loadPrevPanel: prev link from default: ', panel);
           if(pos <= 0){ pos = 0; }
           if(pos >= target.refs.length -1){ pos = target.refs.length -1; }
 
-          let ref = target.refs[pos];
+          let panel = target.refs[pos];
 
-          this.loadPanel(section, ref);
+          this.loadPanel(section, panel);
           return true;
      }
 

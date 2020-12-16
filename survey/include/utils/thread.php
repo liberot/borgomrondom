@@ -48,12 +48,14 @@ function init_thread($conf){
      return $res;
 }
 
-function get_threads_of_client(){
+function get_thread_of_client(){
      $author_id = esc_sql(get_author_id());
      $sql = <<<EOD
           select * from wp_posts
                where post_type = 'surveyprint_thread'
                and post_author = '{$author_id}'
+               order by ID
+               limit 1
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;

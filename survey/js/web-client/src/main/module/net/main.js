@@ -136,14 +136,14 @@ class SurveyNet extends Controller {
                e = jQuery.parseJSON(e);
                switch(e.res){
                     case 'success':
-                         jQuery('.survey-messages').html(e.message);
                          console.log(e);
+                         jQuery('.survey-messages').html(e.message);
                          null != suc ? suc(e) : false;
                          break;
                     case 'failed':
                     default:
-                         jQuery('.survey-messages').html(e.message);
                          console.log(e);
+                         jQuery('.survey-messages').html(e.message);
                          null != err ? err() : false;
                          break;
                }
