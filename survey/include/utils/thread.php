@@ -107,7 +107,6 @@ function get_sections_by_thread_id($thread_id, $client_id=null){
                and post_author = '{$author_id}'
                and post_parent = '{$thread_id}'
                order by ID
-               limit 1
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;

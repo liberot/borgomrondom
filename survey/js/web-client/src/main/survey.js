@@ -198,19 +198,21 @@ console.log('bindFieldingQuestions(): ', m)
           }
 
           this.model.sections = msg.model.e.coll.sections;
+          for(let idx in this.model.sections){
+               this.model.sections[idx].post_content = SurveyUtil.pagpick(this.model.sections[idx].post_content);
+          }
 
           this.model.section = msg.model.e.coll.sections[0];
-          this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
           this.recSection();
 
 // panels
           this.model.panels = [];
-          let panel; 
-
-          let section = this.model.section.post_excerpt;
 
 // loads the current panel by its reference
+          let section; 
+          let panel; 
+
           if(SurveyConfig.resetSurveyState){
                if(0 <= this.model.thread.post_content.history.length){
                     let history = this.model.thread.post_content.history.pop();
@@ -221,10 +223,11 @@ console.log('bindFieldingQuestions(): ', m)
                }
           }
 
+// loads from the start 
           if(null == panel){
+               section = this.model.section.post_excerpt;
                panel = this.model.section.post_content.toc.refs[0];
           }
-
 
 console.log('bindThread(): ', this.model.thread);
 
@@ -522,6 +525,7 @@ console.log('loadPanel(): ', section, panel);
           this.model.panel = msg.model.e.coll['panel'][0];
           this.model.panel.post_content = SurveyUtil.pagpick(this.model.panel.post_content);
 
+console.log('bindPanel(): ', msg);
           this.selectSection(msg.model.e.coll['section_ref']);
 
           this.initPanel();
@@ -709,6 +713,7 @@ console.log('selectSection(): ', this.model.section);
      isBottomPanel(){
           let res = false;
           let target = this.model.section.post_content.toc;
+console.log(this.model.section.post_content);
           if(this.model.panel.post_content.ref == target.refs[parseInt(target.refs.length -1)]){
                res = true;
           }
@@ -982,6 +987,8 @@ console.log('loadNextSection(): this.model.redirect: ', this.model.redirect);
 
           let section = this.model.section.post_excerpt;
           let target = this.model.section.post_content.toc;
+
+console.log(target);
 
           let pos = target.refs.indexOf(this.model.panel.post_content.ref);
               pos+= 1;
