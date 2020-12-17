@@ -30,7 +30,7 @@ class Survey extends Controller {
           this.register(new Subscription(           'scans::done', this.renderAssetCopies));
           this.register(new Subscription(         'assets::bound', this.renderAssetCopies));
           this.register(new Subscription(         'panel::loaded', this.bindPanel));
-          this.register(new Subscription(           'input::done', this.storeInput));
+          this.register(new Subscription(           'input::done', this.saveThread));
           this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
           this.register(new Subscription(        'input::corrupt', this.showValidationError));
           this.register(new Subscription(   'nextsection::loaded', this.bindSection));
@@ -129,8 +129,9 @@ console.log('recSection(): ', this.model.sections);
           this.evalNextPanel();
      }
  
-     storeInput(msg){
+     saveThread(msg){
 // fixdiss
+console.log('saveThread(): ', msg);
           this.notify(new Message('save::thread', this.model));
           this.notify(new Message('save::panel', this.model));
      }
@@ -962,6 +963,8 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
                    nextSection = this.model.sections[pos];
                    if(null != nextSection){
                         this.model.section = nextSection;
+
+console.log('loadNextSection(): this.model.redirect: ', this.model.redirect);
                         this.evalNextPanel();
                         return true;
                    }
@@ -1255,6 +1258,7 @@ class SurveyModel extends Model {
           this.requestedPanel;
 // hidden fields ------------------------
           this.hiddenFields;
+          this.redirect;
 // --------------------------------------
           this.parseProc;
           this.layoutGroup;

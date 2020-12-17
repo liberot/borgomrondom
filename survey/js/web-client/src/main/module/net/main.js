@@ -98,30 +98,27 @@ class SurveyNet extends Controller {
           this.postData(data, cb);
      }
 
-/*
-     saveToc(msg){
-          let ref = this;
-          let data = {
-               action: 'exec_save_toc',
-               section_id: msg.model.section.ID,
-               book: msg.model.thread.post_content.book,
-               history: msg.model.thread.post_content.history
-          }
-          let cb = function(e){
-               ref.notify(new Message('toc::saved', { e }));
-          }
-          this.postData(data, cb);
-     }
-*/
-
      saveThread(msg){
           let ref = this;
+
+// --------------------------------------------------------------------------------
+// fixdiss :: history and book getz elephant size :: send less ysfck
+          let book = JSON.stringify(msg.model.thread.post_content.book);
+              book = SurveyUtil.pigpack(book);
+
+          let history = JSON.stringify(msg.model.thread.post_content.history);
+              history = SurveyUtil.pigpack(history);
+
+          let conditions = JSON.stringify(msg.model.thread.post_content.conditions);
+              conditions = SurveyUtil.pigpack(conditions);
+// ---------------------------------------------------------------------------------
+
           let data = {
                action: 'exec_save_thread',
                thread_id: msg.model.thread.ID,
-               book: msg.model.thread.post_content.book,
-               history: msg.model.thread.post_content.history,
-               conditions: msg.model.thread.post_content.conditions
+               book: book, 
+               history: history,
+               conditions: conditions
           }
           let cb = function(e){
                ref.notify(new Message('thread::saved', { e }));

@@ -239,9 +239,7 @@ function pigpack($doc){
 
 function pagpick($pack){
      if(null == $pack){ return false; }
-
      $temp = base64_decode($pack, true);
-
      if(null == $temp){ return false; }
      $temp = json_decode($temp, true);
      if(null == $temp){ return false; }

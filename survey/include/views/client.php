@@ -21,6 +21,7 @@ function build_survey_view(){
      wp_register_script('client_util', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/util/main.js');
      wp_register_script('client_i18n', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/i18n/main.js');
      wp_register_script('client_init', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/init.js', ['jquery']);
+     wp_register_script(     'base64', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/lib/base64.js');
 
      wp_enqueue_script('config');
      wp_enqueue_script('client_i18n');
@@ -29,6 +30,7 @@ function build_survey_view(){
      wp_enqueue_script('net');
      wp_enqueue_script('client_util');
      wp_enqueue_script('client_init');
+     wp_enqueue_script('base64');
 
      $res = <<<EOD
      <div class='survey'>

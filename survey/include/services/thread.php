@@ -215,11 +215,14 @@ function exec_save_thread(){
 // tickets
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
+   
+     $book = pagpick($_POST['book']);
+     $history = pagpick($_POST['history']);
+     $conditions = pagpick($_POST['conditions']);
 
-     $book = trim_incoming_book($_POST['book']);
-
-     $history = trim_incoming_history($_POST['history']);
-     $conditions = trim_incoming_conditions($_POST['conditions']);
+     $book = trim_incoming_book($book);
+     $history = trim_incoming_history($history);
+     $conditions = trim_incoming_conditions($conditions);
 
      $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){
