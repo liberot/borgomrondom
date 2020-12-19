@@ -98,8 +98,9 @@ console.log('bindSection(): this.model.section: ', this.model.section);
                temp = hash[idx].split('=');
                let title = temp[0];
                let ref = temp[1];
-                   ref = ref.replace('{{', '');
-                   ref = ref.replace('}}', '');
+                   // ref = ref.replace('{{', '');
+                   // ref = ref.replace('}}', '');
+                   ref = ref.replace(/[{}]/g, '');
                    ref = ref.split(':');
                    if(null == ref){ return false; }
                    if(false == jQuery.isArray(ref)){ return false; }
@@ -377,13 +378,17 @@ console.log('bindOpinion: ', msg);
      }
 
      bindInput(section, panel, key, val){
+
           if('undefined' == typeof(val)){ val = ''; }
           let answer = SurveyUtil.trimIncomingString(val);
+
           let question = this.corrQuestion(this.model.panel.post_content.title);
               question = SurveyUtil.trimIncomingString(question);
+
           this.model.panel.post_content.question = question;
           this.model.panel.post_content.condition_ref = key;
           this.model.panel.post_content.answer = answer;
+
           this.setCondition(section, panel, key, val);
           this.notify(new Message('input::done', this.model));
      }
@@ -437,21 +442,36 @@ console.log('setCondition(): ', target);
 
      corrQuestion(question){
 
+console.log('corrQuestion(): question: ', question);
           let mtch = question.match(/{{(.{1,128}?)}}/g);
 
+console.log('corrQuestion(): mtch: ', mtch);
           for(let idx in mtch){
 
-               let key = mtch[idx]; 
-                   key = key.replace(/[{}]/g, '');
-                   key = key.split(':');
-                   key = key[1];
+               let temp = mtch[idx]; 
+                   temp = temp.replace(/[{}]/g, '');
+                   temp = temp.split(':');
 
-               let val = this.getAnswer(key);
+               let type = temp[0];
+               let key = temp[1];
+
+               let val = '';
+               switch(type){
+
+                   case 'field':
+                        val = this.getAnswer(key);
+                        break;
+
+                   case 'hidden':
+                        val = this.getHiddenFieldValue(key);
+                        break;
+               }
 
                if(null == val){ 
                    val = 'Could not find ref: ' +key;
                    val = '';
                }
+
                question = question.replace(/_/g, '');
                question = question.replace(/\*/g, '');
                question = question.replace(/\*/g, '');
@@ -486,7 +506,6 @@ console.log('setCondition(): ', target);
           if(!panelRec){
               target.book.push({section: section, panel: panel });
           }
-
 
 console.log('pushBook(): ', target.book);
      }
@@ -535,6 +554,27 @@ console.log('pushHiddenField(): ', target);
           }
 
           return null;
+     }
+
+     getHiddenFieldValue(ref){
+
+          let target = this.model.thread.post_content.hidden_fields;
+          let res;
+          let field;
+
+          for(let idx in target){
+               if(ref == target[idx].title){
+                    if(target[idx].title != target[idx].ref){
+                         field = target[idx];
+                    }
+               }
+          }
+
+          if(null != field){
+               res = this.getAnswer(field.ref);
+          }
+
+          return res;
      }
 
 // todo

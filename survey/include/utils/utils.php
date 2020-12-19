@@ -137,6 +137,20 @@ function trim_incoming_history($coll){
      return $res;
 }
 
+function trim_incoming_hidden_fields($coll){
+     $res = null;
+     if(false == is_array($coll)){ return $res; }
+     $res = [];
+     foreach($coll as $item){
+          $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
+            $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
+              $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
+              $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['ref']);
+             $res[]= ['section'=>$section, 'panel'=>$panel, 'key'=>$key, 'ref'=>$ref];
+     }
+     return $res;
+}
+
 function validate_incoming_toc($toc, $ref_toc){
      $res = false;
      $i = 1;

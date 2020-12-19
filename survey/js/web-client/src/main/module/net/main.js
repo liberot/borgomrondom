@@ -103,6 +103,11 @@ class SurveyNet extends Controller {
 
           let conditions = JSON.stringify(msg.model.thread.post_content.conditions);
               conditions = SurveyUtil.pigpack(conditions);
+
+          let hiddenFields = JSON.stringify(msg.model.thread.post_content.hidden_fields);
+              hiddenFields = SurveyUtil.pigpack(hiddenFields);
+// ---------------------------------------------------------------------------------
+
 // ---------------------------------------------------------------------------------
 
           let data = {
@@ -110,7 +115,8 @@ class SurveyNet extends Controller {
                thread_id: msg.model.thread.ID,
                book: book, 
                history: history,
-               conditions: conditions
+               conditions: conditions,
+               hidden_fields: hiddenFields
           }
           let cb = function(e){
                ref.notify(new Message('thread::saved', { e }));
