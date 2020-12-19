@@ -68,7 +68,7 @@ class Survey extends Controller {
 
 console.log('bindSection(): this.model.section: ', this.model.section);
 
-          this.evalRedirect();
+          this.evalHiddenFields();
           this.recSection();
 
           let section = this.model.section.post_excerpt;
@@ -77,7 +77,8 @@ console.log('bindSection(): this.model.section: ', this.model.section);
           this.loadPanel(section, panel);
      }
 
-     evalRedirect(){
+     evalHiddenFields(){
+
           this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
           if(null == this.model.redirect){ return false; }
 // mock
@@ -97,12 +98,13 @@ console.log('bindSection(): this.model.section: ', this.model.section);
                temp = hash[idx].split('=');
                let title = temp[0];
                let ref = temp[1];
-                   ref = ref.replace('/[{}]/', '');
+                   ref = ref.replace('/[\{\}]/', '');
                    ref = ref.split(':');
                    if(null == ref){ return false; }
                    if(false == jQuery.isArray(ref)){ return false; }
                    if(null == ref[1]){ return false; }
-                   ref = ref[1]
+                   ref = ref[1];
+
                this.pushHiddenField(section, panel, title, ref);
           }
      }
@@ -490,8 +492,11 @@ console.log('pushBook(): ', target.book);
 
      pushHiddenField(section, panel, title, ref){
 
+          if(null == this.model.thread.post_content.hidden_fields){
+               this.model.thread.post_content.hidden_fields = [];
+          }
+
           let target = this.model.thread.post_content.hidden_fields;
-              target = null == target ? [] : target;
 
           let rec = {
                section : section, 
@@ -500,9 +505,9 @@ console.log('pushBook(): ', target.book);
                ref: ref
           }
 
-          let temp = this.getHiddenField(section, panel, title, ref);
+          let temp;
 
-          if(null == temp){
+          if(null == (temp = this.getHiddenField(section, panel, title, ref))){
                target.push(rec);
           }
           else {
@@ -515,7 +520,6 @@ console.log('pushHiddenField(): ', target);
      getHiddenField(section, panel, title, ref){
 
           let target = this.model.thread.post_content.hidden_fields;
-              target = null == target ? [] : target;
 
           for(let idx in target){
                if(section == target[idx].section){
@@ -603,7 +607,7 @@ console.log('bindPanel(): ', msg);
           this.model.section = section;
 console.log('selectSection(): ', this.model.section);
  
-          this.evalRedirect() 
+          this.evalHiddenFields() 
      }
 
 // initpanel sets up the panel . the field 
