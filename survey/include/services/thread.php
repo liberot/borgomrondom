@@ -239,6 +239,7 @@ function exec_save_thread(){
      $thread->post_content['book'] = null == $book ? [] : $book;
      $thread->post_content['history'] = null == $history ? [] : $history;
      $thread->post_content['conditions'] = null == $conditions ? [] : $conditions;
+     $thread->post_content['hidden_fields'] = null == $hidden_fields ? [] : $hidden_fields;
      $thread->post_author = $author_id;
      $thread->post_content = pigpack($thread->post_content);
 
