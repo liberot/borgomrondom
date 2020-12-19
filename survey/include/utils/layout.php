@@ -212,9 +212,9 @@ function fit_image_asset_into_slot($doc, $asset){
 // whether or not chunk is of type base64 
      $vali = base64_decode($temp, true);
      $ilav = base64_encode($vali);
-     $size = null;
 
 // asset is base64 chunk 
+     $size = null;
      if($temp == $ilav){
           $temp = add_base_to_chunk($temp);
           $size = getimagesize('data://'.$temp);

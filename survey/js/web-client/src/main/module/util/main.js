@@ -17,17 +17,20 @@ let SurveyUtil = {
      },
 
      pigpack: function(doc){
-          // return btoa(doc);
           return Base64.encode(doc);
      },
 
      pagpick: function(pack){
-          if(null == pack){ return pack; }
-          // let tmp = atob(pack);
-          let tmp = Base64.decode(pack);
-          if(null == tmp){ return pack; }
-          let res = jQuery.parseJSON(tmp);
-          if(null == res){ return pack; }
+          let res = pack;
+          if(null == res){ return res; }
+          try{ 
+               res = Base64.decode(res); 
+          }
+          catch(exc){ 
+               return pack;
+          }
+          if(null == res){ return res; }
+          res = jQuery.parseJSON(res);
           return res;
      },
 

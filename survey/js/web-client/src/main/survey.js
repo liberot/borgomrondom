@@ -57,7 +57,7 @@ class Survey extends Controller {
      }
 
      bindSection(msg){
-
+     
           if(null == msg.model.e.coll.section){
                console.log('bindSection(): no section');
                return false;
@@ -69,6 +69,10 @@ class Survey extends Controller {
 console.log('bindSection(): this.model.section: ', this.model.section);
 
           this.model.redirect = msg.model.e.coll.redirect;
+
+          if(null == this.model.redirect){
+               this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
+          }
 console.log('bindSection(): this.model.redirect: ', this.model.redirect);
 
           this.recSection();
@@ -951,9 +955,8 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
                    nextSection = this.model.sections[pos];
                    if(null != nextSection){
                         this.model.section = nextSection;
-
-console.log('loadNextSection(): this.model.redirect: ', this.model.redirect);
-                        this.evalNextPanel();
+                        this.notify(new Message('nextsection::loaded', { e: { coll: { section: this.model.section }}}));
+                        // this.evalNextPanel();
                         return true;
                    }
                }
