@@ -8,7 +8,6 @@ class SurveyNet extends Controller {
           this.register(new Subscription(        'save::thread', this.saveThread));
           // controls 
           this.register(new Subscription(        'init::thread', this.initThread));
-          this.register(new Subscription( 'download::fieldings', this.downloadFieldingQuestions));
           this.register(new Subscription(      'select::thread', this.loadThread));
           this.register(new Subscription(    'download::assets', this.downloadAssets));
           this.register(new Subscription(       'upload::asset', this.uploadAsset));
@@ -24,13 +23,6 @@ class SurveyNet extends Controller {
           let cb = function(e){ 
                ref.notify(new Message('nextsection::loaded', { e })); 
           }
-          this.postData(data, cb);
-     }
-
-     downloadFieldingQuestions(){
-          let ref = this;
-          let data = { 'action': 'exec_init_thread' }
-          let cb = function(e){ ref.notify(new Message('fieldings::downloaded', { e })); }
           this.postData(data, cb);
      }
 
@@ -160,28 +152,4 @@ class SurveyNet extends Controller {
           }
           this.postData(data, cb);
      }
-
-     /*
-     uploadAssets(msg){
-          let ref = this;
-          jQuery('.survey-messages').html(__survey.__('wait'));
-          jQuery.post({
-               url: SurveyConfig.serviceURL,
-               data: msg.model.form,
-               async: true,
-               cache: false,
-               contentType: false,
-               processData: false,
-               success: function(e){
-                    e = jQuery.parseJSON(e);
-                    console.log('uploadAsset(): success: ', e);
-                    jQuery('.survey-messages').html(e.message);
-                    ref.notify(new Message('assets::uploaded', { e }));
-               },
-               error: function(e){
-                    console.log('uploadAsset(): error: ', e);
-               }
-          });
-     }
-     */
 }

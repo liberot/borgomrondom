@@ -1,33 +1,5 @@
 <?php defined('ABSPATH') || exit();
 
-function init_test_page(){
-     $sql = <<<EOD
-          select * from wp_posts where post_type = 'page' and post_name = '__survey_test_web_view__';
-EOD;
-     global $wpdb;
-     $sql = debug_sql($sql);
-     $res = $wpdb->get_results($sql);
-
-     if(null != $res[0]){ return false; }
-
-     $conti = <<<EOD
-        <p>[survey_test_web_view]</p>
-EOD;
-
-     $page_id = wp_insert_post([
-          'post_author'=>get_current_user_id(),
-          'post_content'=>$conti,
-          'post_title'=>'Questionnaire Test Walkthrough',
-          'post_status'=>'publish',
-          'comment_status'=>'closed',
-          'ping_status'=>'closed',
-          'post_name'=>'__survey_test_web_view__',
-          'post_type'=>'page'
-     ]);
-}
-
-
-
 add_shortcode('survey_test_web_view', 'build_survey_test_web_view');
 function build_survey_test_web_view() {
 

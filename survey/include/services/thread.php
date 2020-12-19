@@ -35,6 +35,7 @@ function exec_init_thread(){
 // read of threads and sections of a client
 // todo:: client might own more than one thread
      $thread = get_thread_of_client()[0];
+
      if(!is_null($thread)){
 
           $coll['thread'] = $thread;

@@ -52,7 +52,8 @@ class Survey extends Controller {
                surveyQueue.route('nav::back');
           };
           // ------
-          this.notify(new Message('download::fieldings', this.model));
+          // this.notify(new Message('download::fieldings', this.model));
+          this.notify(new Message('init::thread', this.model));
      }
 
      bindSection(msg){
@@ -65,10 +66,10 @@ class Survey extends Controller {
           this.model.section = msg.model.e.coll.section;
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
 
-console.log('bindSection(): section: ', this.model.section);
+console.log('bindSection(): this.model.section: ', this.model.section);
 
           this.model.redirect = msg.model.e.coll.redirect;
-console.log('bindSection(): redirect: ', this.model.redirect);
+console.log('bindSection(): this.model.redirect: ', this.model.redirect);
 
           this.recSection();
 
@@ -134,24 +135,6 @@ console.log('recSection(): ', this.model.sections);
 console.log('saveThread(): ', msg);
           this.notify(new Message('save::thread', this.model));
           this.notify(new Message('save::panel', this.model));
-     }
-
-     bindFieldingQuestions(msg){
-// todo
-          if(null == msg.model.e.coll.thread){
-               console.log('bindFieldingQuestions(): no thread');
-               return false;
-          }
-
-          let thread = msg.model.e.coll.thread;
-          let sections = msg.model.e.coll.sections;
-          let panels = msg.model.e.coll.panels;
-
-          let m = { model: { e: { coll: { thread: thread, sections: sections, panels: panels }}}}
-
-console.log('bindFieldingQuestions(): ', m)
-
-          this.bindThread(m);
      }
 
      bindHashChange(e){
@@ -713,7 +696,7 @@ console.log('selectSection(): ', this.model.section);
      isBottomPanel(){
           let res = false;
           let target = this.model.section.post_content.toc;
-console.log(this.model.section.post_content);
+console.log('isBottomPanel(): ', this.model.section.post_content);
           if(this.model.panel.post_content.ref == target.refs[parseInt(target.refs.length -1)]){
                res = true;
           }
@@ -988,7 +971,7 @@ console.log('loadNextSection(): this.model.redirect: ', this.model.redirect);
           let section = this.model.section.post_excerpt;
           let target = this.model.section.post_content.toc;
 
-console.log(target);
+console.log('loadNextPanel(): ', target);
 
           let pos = target.refs.indexOf(this.model.panel.post_content.ref);
               pos+= 1;

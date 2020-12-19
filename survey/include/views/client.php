@@ -6,6 +6,9 @@ function build_survey_view(){
      wp_register_style('client_style', WP_PLUGIN_URL.'/nosuch/survey/css/web-client/style.css');
      wp_enqueue_style('client_style');
 
+     wp_register_script(     'config', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/config-client.js', ['jquery']);
+     wp_enqueue_script(      'config');
+
      if(!is_user_logged_in()){
           echo '<p>View runs dev ProfileBuilder authentication procedere<br/>u: surveyprint <br/>p: surveyprint</p>';
           echo do_shortcode('[wppb-login]');
@@ -14,23 +17,20 @@ function build_survey_view(){
           return;
      }
 
-     wp_register_script(     'config', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/config-client.js');
      wp_register_script(       'main', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/main.js');
      wp_register_script(     'client', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/survey.js');
      wp_register_script(        'net', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/net/main.js');
      wp_register_script('client_util', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/util/main.js');
      wp_register_script('client_i18n', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/src/main/module/i18n/main.js');
-     wp_register_script('client_init', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/init.js', ['jquery']);
      wp_register_script(     'base64', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/lib/base64.js');
-
-     wp_enqueue_script('config');
-     wp_enqueue_script('client_i18n');
-     wp_enqueue_script('main');
-     wp_enqueue_script('client');
-     wp_enqueue_script('net');
-     wp_enqueue_script('client_util');
-     wp_enqueue_script('client_init');
-     wp_enqueue_script('base64');
+     wp_register_script('client_init', WP_PLUGIN_URL.'/nosuch/survey/js/web-client/init.js');
+     wp_enqueue_script( 'client_i18n');
+     wp_enqueue_script(        'main');
+     wp_enqueue_script(      'client');
+     wp_enqueue_script(         'net');
+     wp_enqueue_script( 'client_util');
+     wp_enqueue_script( 'client_init');
+     wp_enqueue_script(      'base64');
 
      $res = <<<EOD
      <div class='survey'>
