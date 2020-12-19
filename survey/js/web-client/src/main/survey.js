@@ -68,13 +68,7 @@ class Survey extends Controller {
 
 console.log('bindSection(): this.model.section: ', this.model.section);
 
-          this.model.redirect = msg.model.e.coll.redirect;
-
-          if(null == this.model.redirect){
-               this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
-          }
-console.log('bindSection(): this.model.redirect: ', this.model.redirect);
-
+          this.evalRedirect();
           this.recSection();
 
           let section = this.model.section.post_excerpt;
@@ -83,12 +77,41 @@ console.log('bindSection(): this.model.redirect: ', this.model.redirect);
           this.loadPanel(section, panel);
      }
 
+     evalRedirect(){
+          this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
+          if(null == this.model.redirect){ return false; }
+// mock
+// this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}&partner={{field:c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d}}}}';
+// this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}';
+// this.model.redirect = '#';
+// 
+          let temp = null;
+          let section = this.model.section.post_excerpt;
+          let panel = this.model.section.post_content.toc.refs[0];
+          let hash = this.model.redirect.match(/\#(.{1,256})/);
+          if(null == hash){ return false; }
+          if(null == hash[1]){ return false; }
+          hash = hash[1];
+          hash = hash.split('&');
+          for(let idx in hash){
+               temp = hash[idx].split('=');
+               let title = temp[0];
+               let ref = temp[1];
+                   ref = ref.replace('/[{}]/', '');
+                   ref = ref.split(':');
+                   if(null == ref){ return false; }
+                   if(false == jQuery.isArray(ref)){ return false; }
+                   if(null == ref[1]){ return false; }
+                   ref = ref[1]
+               this.pushHiddenField(section, panel, title, ref);
+          }
+     }
+
      recSection(){
           if(null == this.model.sections) { this.model.sections = []; }
           if(-1 == this.model.sections.indexOf(this.model.section)){
                this.model.sections.push(this.model.section);
           }
-
 console.log('recSection(): ', this.model.sections);
      }
 
@@ -440,6 +463,7 @@ console.log('setCondition(): ', target);
 
 // adds an entry to the book table of contents
      pushBook(){
+
           if(null == this.model.panel){ return false; }
 
           let section = this.model.section.post_excerpt;
@@ -462,6 +486,50 @@ console.log('setCondition(): ', target);
 
 
 console.log('pushBook(): ', target.book);
+     }
+
+     pushHiddenField(section, panel, title, ref){
+
+          let target = this.model.thread.post_content.hidden_fields;
+              target = null == target ? [] : target;
+
+          let rec = {
+               section : section, 
+               panel: panel,
+               title: title,
+               ref: ref
+          }
+
+          let temp = this.getHiddenField(section, panel, title, ref);
+
+          if(null == temp){
+               target.push(rec);
+          }
+          else {
+               target[temp.idx] = temp.val;
+          }
+
+console.log('pushHiddenField(): ', target);
+     }
+
+     getHiddenField(section, panel, title, ref){
+
+          let target = this.model.thread.post_content.hidden_fields;
+              target = null == target ? [] : target;
+
+          for(let idx in target){
+               if(section == target[idx].section){
+                    if(panel == target[idx].panel){
+                         if(title == target[idx].title){
+                              if(ref == target[idx].ref){
+                                   return { idx: idx, val: target[idx] };
+                              }
+                         }
+                    }
+               }
+          }
+
+          return null;
      }
 
 // todo
@@ -533,8 +601,9 @@ console.log('bindPanel(): ', msg);
           }
 
           this.model.section = section;
-
 console.log('selectSection(): ', this.model.section);
+ 
+          this.evalRedirect() 
      }
 
 // initpanel sets up the panel . the field 
