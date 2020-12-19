@@ -98,7 +98,8 @@ console.log('bindSection(): this.model.section: ', this.model.section);
                temp = hash[idx].split('=');
                let title = temp[0];
                let ref = temp[1];
-                   ref = ref.replace('/[\{\}]/', '');
+                   ref = ref.replace('{{', '');
+                   ref = ref.replace('}}', '');
                    ref = ref.split(':');
                    if(null == ref){ return false; }
                    if(false == jQuery.isArray(ref)){ return false; }
