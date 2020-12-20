@@ -695,7 +695,6 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           jQuery('.file-upload').html('');
 
           buf1st = this.fillTemplate(__group_name_tmpl__, { parent: parent });
-console.log('>>>', buf1st);
           jQuery('.survey-controls5th').html(buf1st);
 
           let target;
