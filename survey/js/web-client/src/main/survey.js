@@ -133,6 +133,7 @@ console.log('recSection(): ', this.model.sections);
           }
 */
           // let link = window.location.search.substr(1);
+/*
           let link = window.location.hash.substr(1);
           let prms = link.split('&');
           for(let idx in prms){
@@ -140,8 +141,10 @@ console.log('recSection(): ', this.model.sections);
                if(null == temp || 2 < temp.length){ continue; }
                this.model.hiddenFields.push({ key: unescape(temp[0]), val: unescape(temp[1]) });
           }
+*/
      }
 
+/*
      getHiddenFieldVal(key){
           let res = null;
           if(null == this.model.hiddenFields){ return res; }
@@ -152,7 +155,7 @@ console.log('recSection(): ', this.model.sections);
           }
           return res;
      }
-
+*/
      showValidationError(msg){
          alert(__survey.__('invalid', 'nosuch'));
      }

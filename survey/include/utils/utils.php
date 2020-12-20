@@ -144,9 +144,9 @@ function trim_incoming_hidden_fields($coll){
      foreach($coll as $item){
           $section = preg_replace('/[^A-Za-z0-9-]/', '', $item['section']);
             $panel = preg_replace('/[^A-Za-z0-9-]/', '', $item['panel']);
-              $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
-              $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['ref']);
-             $res[]= ['section'=>$section, 'panel'=>$panel, 'key'=>$key, 'ref'=>$ref];
+            $title = preg_replace('/[^A-Za-z0-9-]/', '', $item['title']);
+              $ref = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['ref']);
+             $res[]= ['section'=>$section, 'panel'=>$panel, 'title'=>$title, 'ref'=>$ref];
      }
      return $res;
 }

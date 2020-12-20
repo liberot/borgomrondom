@@ -125,16 +125,23 @@ class SurveyNet extends Controller {
      }
 
      postData(data, suc, err){
+
           let ref = this;
+
           jQuery('.survey-messages').html(__survey.__('wait'));
+
           jQuery.post(SurveyConfig.serviceURL, data, function(e){
+
                e = jQuery.parseJSON(e);
+
                switch(e.res){
+
                     case 'success':
                          console.log('postData(): success: ', e);
                          jQuery('.survey-messages').html(e.message);
                          null != suc ? suc(e) : false;
                          break;
+
                     case 'failed':
                     default:
                          console.log('postData(): failed: ', e);
