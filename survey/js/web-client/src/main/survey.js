@@ -664,11 +664,17 @@ console.log('selectSection(): ', this.model.section);
                return false;
           }
 
+console.log('initPanel(): this.model.panel: ', this.model.panel);
+console.log('initPanel(): this.model.panel.post_content.type: ', this.model.panel.post_content.type);
+console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post_content.conf.parent);
+
           this.model.maxImageAssets = 1;
 
           let buf1st = '';
           let buf2nd = '';
           let buf3rd = '';
+
+          let parent = this.model.panel.post_content.conf.parent;
 
           let question = this.model.panel.post_content.title;
               question = SurveyUtil.trimIncomingString(question);
@@ -681,10 +687,16 @@ console.log('selectSection(): ', this.model.section);
 
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
+          jQuery('.survey-controls4th').html('');
+          jQuery('.survey-controls5th').html('');
           jQuery('.survey-assets').html('');
           jQuery('.fake').off();
           jQuery('.files').off();
           jQuery('.file-upload').html('');
+
+          buf1st = this.fillTemplate(__group_name_tmpl__, { parent: parent });
+console.log('>>>', buf1st);
+          jQuery('.survey-controls5th').html(buf1st);
 
           let target;
           switch(this.model.panel.post_content.type){
@@ -1288,6 +1300,11 @@ let __ctrl_tmpl_002__ = `
 <!-- <a href='javascript:surveyQueue.route("thread::prev");'>prev</a> //-->
 <!-- <a href='javascript:surveyQueue.route("thread::next");'>next</a> //-->
 `;
+
+let __group_name_tmpl__ = `
+<div class='parent-output'>Group: {parent}</div>
+`;
+
 
 let __short_text_tmpl__ = `
 <div class='question-output'>{question}</div>

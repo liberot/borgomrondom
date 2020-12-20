@@ -201,5 +201,6 @@ function init_panels_from_survey($section_id, $survey_id){
          $panel_id = init_panel($conf);
          $coll[]= $panel_id;
      }
+
      return $coll;
 }

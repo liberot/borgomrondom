@@ -58,27 +58,20 @@ function exec_construct_typeform_survey(){
      echo json_encode(array('res'=>'success', 'message'=>$message));
 }
 
-function insert_question_groups($nodes, $survey_id, $link=null, $res=null){
+function insert_question_groups($nodes, $survey_id, $parent=null, $res=null){
 
-     if(is_null($res)){ 
-          $res = []; 
-     }
-
-     if(is_null($link)){ 
-          $link = 'root'; 
-     }
-
-     if(is_null($nodes)){ 
-          return $res; 
-     }
+     if(is_null($res)){ $res = []; }
+     if(is_null($parent)){ $parent = 'root'; }
+     if(is_null($nodes)){ return $res; }
 
      foreach($nodes as $node){
 // writes toc reference of the insert
-          $res = insert_into_toc($res, $link, $node['ref']);
+          $res = insert_into_toc($res, $parent, $node['ref']);
 // writes a post of type question
           $node['conf'] = [];
           $node['conf']['max_asset'] = '1';
           $node['conf']['layout_group'] = 'default';
+          $node['conf']['parent'] = $parent;
           $surveyprint_uuid = psuuid();
           $conf = [ 
                'post_type'=>'surveyprint_question',
