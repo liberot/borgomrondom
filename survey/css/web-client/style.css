@@ -69,6 +69,11 @@ html {
      font-style: italic;
 }
 
+.section-output {
+     font-size: .55em;
+     font-style: italic;
+}
+
 .question-output {
      font-size: 1.35em;
      line-height: 1.575 !important;
