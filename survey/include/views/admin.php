@@ -374,6 +374,8 @@ function build_question_view(){
      $title = esc_html(__('Question', 'nosuch'));
      $headline = esc_html(__('Book Builder Stored Questionnaire', 'nosuch'));
      $welcome = esc_html(__('Welcome', 'nosuch'));
+     $excerpt = esc_html(__('Reference', 'nosuch'));
+     $parent = esc_html(__('Group', 'nosuch'));
      $date = esc_html(__('Date of Init', 'nosuch'));
 
      echo <<<EOD
@@ -389,6 +391,7 @@ function build_question_view(){
                     <th>{$id}</th>
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
+                    <th>{$parent}</th>
                     <th>{$title}</th>
                </tr>
           </thead>
@@ -421,15 +424,14 @@ EOD;
      foreach($coll as $question){
           $question->post_content = pagpick($question->post_content);
 
-          $group_style = '';
+          $node_style = '';
           if('group' == $question->post_content['type']){
-               $group_style = 'grouped-field';
+               $node_style = 'group-title';
           }
 
-          $node_style = '';
-          
+          $parent = '';
           if(!is_null($question->post_content['conf']['parent'])){
-               $node_style = 'node-field';
+               $parent = $question->post_content['conf']['parent'];
           }
 
           $d = date_create($question->post_date);
@@ -439,7 +441,8 @@ EOD;
           echo sprintf('<td>%s</td>', esc_html($question->ID));
           echo sprintf('<td>%s</td>', esc_html($question->post_excerpt));
           echo sprintf('<td>%s</td>', esc_html($d));
-          echo sprintf('<td class="%s %s">%s</td>', $group_style, $node_style, esc_html($question->post_content['title']));
+          echo sprintf('<td>%s</td>', esc_html($parent));
+          echo sprintf('<td class="%s">%s</td>', $node_style, esc_html($question->post_content['title']));
           echo '</tr>';
      }
 
@@ -449,6 +452,7 @@ EOD;
                     <th>{$id}</th>
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
+                    <th>{$parent}</th>
                     <th>{$title}</th>
                </tr>
           </tfoot>
