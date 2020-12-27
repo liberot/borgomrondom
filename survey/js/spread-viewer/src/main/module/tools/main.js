@@ -40,7 +40,7 @@ class Tools extends Controller {
      }
 
      bindImportedLayouts(msg){
-          console.log(msg);
+ console.log('bindImportedLayouts(): ', msg);
           jQuery('.layout-messages').html(msg.model.rules.join('; '));
      }
 
@@ -388,27 +388,27 @@ class Tools extends Controller {
      bindBook(msg){
 
           if(null == msg.model.book){
-              console.log('no book');
+console.log('bindBook(): no book');
               return false;
           }
 
           this.model.book = msg.model.book;
           if(null == msg.model.chapter){
-              console.log('no chapter');
+console.log('bindBook(): no chapter');
               return false;
           }
 
           this.model.chapter = msg.model.chapter;
           if(null == msg.model.toc){
-              console.log('no toc');
+console.log('bindBook(): no toc');
               return false;
           }
 
-console.log(msg.model);
+console.log('bindBook(): msg.model: ', msg.model);
           this.model.toc = msg.model.toc[0];
 
           this.model.toc.post_content = LayoutUtil.pagpick(this.model.toc.post_content);
-console.log(this.model.toc);
+console.log('bindBook(): this.model.toc: ', this.model.toc);
 
           this.model.spreads = [];
           this.model.spidx = 0;
@@ -477,8 +477,6 @@ console.log(this.model.toc);
      }
 
      initAsset(asset){
-         // console.log(this.model.spread);
-         // console.log(asset);
      }
 
      saveDocument(msg){
@@ -623,7 +621,9 @@ console.log(this.model.toc);
 
      getPrintSize(idx){
           let res = this.printSizes.A4;
-console.log(res)
+
+console.log('getPrintSize(): ', res);
+
           if(null != this.model.printSizes[idx]){
                res = this.model.printSizes[idx];
           }

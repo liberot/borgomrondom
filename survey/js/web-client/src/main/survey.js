@@ -1153,6 +1153,9 @@ console.log('loadPrevPanel(): prev link from default: ', sectionId, panelRef);
      }
 
      initSpreads(msg){
+console.log('initSpreads(): layoutQueue: ', layoutQueue)
+console.log('initSpreads(): msg: ', msg);
+
           if('undefined' == typeof(layoutQueue)){ return false; }
           layoutQueue.route('init::book', { threadId: this.model.thread.ID });
      }

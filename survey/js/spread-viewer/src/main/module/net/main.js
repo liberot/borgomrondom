@@ -133,13 +133,13 @@ class Net extends Controller {
                switch(e.res){
                     case 'success':
                          jQuery('.layout-messages').html(e.message);
-                         console.log(e);
+console.log('postData(): success e: ', e);
                          null != suc ? suc(e) : false;
                          break;
                     case 'failed':
                     default:
                          jQuery('.layout-messages').html(e.message);
-                         console.log(e);
+console.log('postData(): error e: ', e);
                          null != err ? err() : false;
                          break;
                }
@@ -178,7 +178,7 @@ class Net extends Controller {
                     jQuery('.layout-messages').html(e.message);
                },
                error: function(e){
-                    console.log(e);
+console.log('postData(): error e: ', e);
                }
           });
      }

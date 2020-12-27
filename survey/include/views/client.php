@@ -4,10 +4,10 @@ add_shortcode('survey_view', 'build_survey_view');
 function build_survey_view(){
 
      wp_register_style('client_style', WP_PLUGIN_URL.'/bookbuilder/survey/css/web-client/style.css');
-     wp_enqueue_style('client_style');
+      wp_enqueue_style('client_style');
 
-     wp_register_script(     'config', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/config-client.js', ['jquery']);
-     wp_enqueue_script(      'config');
+     wp_register_script('config', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/config-client.js', ['jquery']);
+      wp_enqueue_script('config');
 
      if(!is_user_logged_in()){
           echo '<p>View runs dev ProfileBuilder authentication procedere<br/>u: surveyprint <br/>p: surveyprint</p>';
@@ -24,13 +24,13 @@ function build_survey_view(){
      wp_register_script('client_i18n', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/src/main/module/i18n/main.js');
      wp_register_script(     'base64', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/lib/base64.js');
      wp_register_script('client_init', WP_PLUGIN_URL.'/bookbuilder/survey/js/web-client/init.js');
-     wp_enqueue_script( 'client_i18n');
-     wp_enqueue_script(        'main');
-     wp_enqueue_script(      'client');
-     wp_enqueue_script(         'net');
-     wp_enqueue_script( 'client_util');
-     wp_enqueue_script( 'client_init');
-     wp_enqueue_script(      'base64');
+      wp_enqueue_script('client_i18n');
+      wp_enqueue_script(       'main');
+      wp_enqueue_script(     'client');
+      wp_enqueue_script(        'net');
+      wp_enqueue_script('client_util');
+      wp_enqueue_script('client_init');
+      wp_enqueue_script(     'base64');
 
      $res = <<<EOD
      <div class='survey'>
