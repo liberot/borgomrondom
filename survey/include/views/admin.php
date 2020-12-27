@@ -274,6 +274,7 @@ function build_thread_entries_view(){
      $edit = esc_html(__('Edit', 'bookbuilder'));
      $assits = esc_html(__('Assets', 'bookbuilder'));
      $welcome = esc_html(__('Welcome', 'bookbuilder'));
+     $section = esc_html(__('Section', 'bookbuilder'));
 
      echo <<<EOD
           <div class='wrap'>
@@ -284,6 +285,7 @@ function build_thread_entries_view(){
                <table class="wp-list-table widefat striped table-view-list posts">
                <thead>
                     <tr>
+                         <th>{$section}</th>
                          <th>{$id}</th>
                          <th>{$question}</th>
                          <th>{$answer}</th>
@@ -312,10 +314,12 @@ EOD;
           foreach($assets as $asset){
                $buf.= sprintf('<img width="75px" src="%s">', add_base_to_chunk($asset->post_content));
           }
+
           $href = '#';
           $d = date_create($panel->post_date);
           $d = date_format($d, 'd-m-Y H:i:s');
           echo '<tr>';
+               echo sprintf('<td class="%s">%s</td>', $style, esc_html($item['sectionId']));
                echo sprintf('<td class="%s">%s</td>', $style, esc_html($panel->ID));
                echo sprintf('<td class="%s">%s</td>', $style, esc_html($panel->post_content['question']));
                echo sprintf('<td class="%s">%s</td>', $style, esc_html($panel->post_content['answer']));
@@ -328,6 +332,7 @@ EOD;
 echo <<<EOD
                <tfoot>
                     <tr>
+                         <th>{$section}</th>
                          <th>{$id}</th>
                          <th>{$question}</th>
                          <th>{$answer}</th>
@@ -375,6 +380,8 @@ function build_question_view(){
      $excerpt = esc_html(__('Reference', 'bookbuilder'));
      $parent = esc_html(__('Group', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
+     $layout = esc_html(__('Layout Rule', 'bookbuilder'));
+     $save_input = esc_html(__('Save', 'bookbuilder'));
 
      echo <<<EOD
 
@@ -391,6 +398,7 @@ function build_question_view(){
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
+                    <th>{$layout}</th>
                </tr>
           </thead>
 EOD;
@@ -423,14 +431,22 @@ EOD;
           $question->post_content = pagpick($question->post_content);
 
           $node_style = '';
+          $layout_input = '';
           if('group' == $question->post_content['type']){
                $node_style = 'group-title';
+               $layout_input = <<<EOD
+<form method='post'>
+     <textarea>[layout rule input]</textarea>
+     <input type='submit' value='{$save_input}'></input>
+</form>
+EOD;
           }
 
           $parent = '';
           if(!is_null($question->post_content['conf']['parent'])){
                $parent = $question->post_content['conf']['parent'];
           }
+
 
           $d = date_create($question->post_date);
           $d = date_format($d, 'd.m.Y H:i:s');
@@ -441,6 +457,7 @@ EOD;
           echo sprintf('<td>%s</td>', esc_html($d));
           echo sprintf('<td>%s</td>', esc_html($parent));
           echo sprintf('<td class="%s">%s</td>', $node_style, esc_html($question->post_content['title']));
+          echo sprintf('<td>%s</td>', $layout_input);
           echo '</tr>';
      }
 
@@ -452,6 +469,7 @@ EOD;
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
+                    <th>{$layout}</th>
                </tr>
           </tfoot>
           </table>

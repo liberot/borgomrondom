@@ -28,7 +28,7 @@ function exec_get_book_by_id(){
 
      $book_id = trim_incoming_numeric($_POST['book_id']);
 
-     init_log('exec_get_book_by_id', []);
+     init_log('admin_post_exec_get_book_by_id', ['book_id'=>$book_id]);
 
      $coll = [];
      $coll['book'] = get_book_by_id($book_id);
@@ -47,10 +47,10 @@ function exec_get_chapter_by_book_id(){
           return false;
      }
 
-     init_log('exec_get_chapter_by_book_id', []);
-
      $book_id = trim_incoming_numeric($_POST['book_id']);
      $coll = get_chapters_by_book_id($book_id);
+
+     init_log('admin_exec_get_chapter_by_book_id', ['book_id'=>$book_id]);
 
      $message = esc_html(__('the chapters is loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
@@ -65,9 +65,10 @@ function exec_get_spreads_by_chapter_id(){
           return false;
      }
 
-     init_log('exec_get_spreads_by_chapter_id', []);
-
      $chapter_id = trim_incoming_numeric($_POST['chapter_id']);
+
+     init_log('admin_exec_get_spreads_by_chapter_id', ['chapter_id'=>$chapter_id]);
+
      $coll = get_spreads_by_chapter_id($chapter_id);
 
      $message = esc_html(__('the spreads is loaded', 'bookbuilder'));
@@ -90,12 +91,12 @@ function exec_init_book_by_thread_id(){
           return false;
      }
 
-     init_log('admin_post_exec_init_book_by_thread_id', []);
-
      $author_id = get_author_id();
 
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
+
+     init_log('admin_post_exec_init_book_by_thread_id', ['thread_id'=>$thread_id]);
 
      $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){
