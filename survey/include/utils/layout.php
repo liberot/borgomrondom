@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') || exit;
+<?php if(true != defined('ABSPATH')){ exit(); };
 
 add_action('init', 'init_layout_utils');
 function init_layout_utils(){

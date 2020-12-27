@@ -34,6 +34,4 @@ require_once('include/views/admin.php');
 require_once('include/views/client.php');
 require_once('include/views/web.php');
 
-// add_action('init', function(){ wp_destroy_all_sessions(); exit(); });
-// add_action('init', function(){ init_log('test', ['the1st'=>'xXx', 'the2nd'=>'yYY']); } );
 
