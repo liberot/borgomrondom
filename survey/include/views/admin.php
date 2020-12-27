@@ -84,12 +84,12 @@ function build_surveyprint_utils_view(){
      EOD;
 
      $actions = esc_html(__('Actions:', 'bookbuilder'));
-     $init_survey_page = esc_html(__('Initial Insert of the BookBuilder Webpage', 'bookbuilder'));
-     $clean_surveys = esc_html(__('Deletion of all stored Questionnaire', 'bookbuilder'));
-     $clean_survey_page = esc_html(__('Deletion the Survey Page', 'bookbuilder'));
-     $clean_client_threads = esc_html(__('Deletion of all Client Threads', 'bookbuilder'));
-     $clean_bookbuilder_db = esc_html(__('Deletion of all BookBuilder DB Entries', 'bookbuilder'));
-     $clean_layouts = esc_html(__('Deletion of all parsed Layout Records', 'bookbuilder'));
+     $init_survey_page = esc_html(__('Insert of the BookBuilder Webpage', 'bookbuilder'));
+     $clean_survey_page = esc_html(__('Remove of the BookBuilder Webpage', 'bookbuilder'));
+     $clean_surveys = esc_html(__('Remove of all stored Questionnaire', 'bookbuilder'));
+     $clean_client_threads = esc_html(__('Remove of all Client Threads', 'bookbuilder'));
+     $clean_bookbuilder_db = esc_html(__('Remove of all BookBuilder DB Entries', 'bookbuilder'));
+     $clean_layouts = esc_html(__('Remove of all parsed Layout Records', 'bookbuilder'));
      $dump_surveys = esc_html(__('Dump of Stored Surveys', 'bookbuilder'));
      $dump_threads = esc_html(__('Dump of Client Threads', 'bookbuilder'));
      $edit = esc_html(__('Edit of a Questionnaire', 'bookbuilder'));
@@ -97,10 +97,10 @@ function build_surveyprint_utils_view(){
      <div class='edit'>
           <div class='unit'>{$actions}</div>
           <div><a href='javascript:initSurveyPage();'>{$init_survey_page}</a></div>
+          <div><a href='javascript:cleanSurveyPage();'>{$clean_survey_page}</a></div>
           <div><a href='javascript:dumpSurveys();'>{$dump_surveys}</a></div>
           <div><a href='javascript:dumpClientThreads();'>{$dump_threads}</a></div>
           <div><a href='javascript:cleanSurveys();'>{$clean_surveys}</a></div>
-          <div><a href='javascript:cleanSurveyPage();'>{$clean_survey_page}</a></div>
           <div><a href='javascript:cleanClientThreads();'>{$clean_client_threads}</a></div>
           <div><a href='javascript:cleanLayouts();'>{$clean_layouts}</a></div>
           <div><a href='javascript:cleanSurveyDB();'>{$clean_bookbuilder_db}</a></div>

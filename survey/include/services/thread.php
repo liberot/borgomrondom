@@ -61,7 +61,11 @@ function exec_init_thread(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      $survey_id = $survey->ID;
+     $survey->post_content = pagpick($survey->post_content);
+     $survey_title = $survey->post_content['title'];
+     $survey_type = 'form' == trim($survey->post_content['type']) ? 'Typeform' : 'Unknown';
 
 // init of a customer thread
      $author_id = get_author_id();
@@ -76,8 +80,8 @@ function exec_init_thread(){
      $conf = [
           'post_type'=>'surveyprint_thread',
           'post_author'=>$author_id,
-          'post_title'=>$surveyprint_uuid,
-          'post_excerpt'=>$surveyprint_uuid,
+          'post_title'=>$survey_title,
+          'post_excerpt'=>$survey_type,
           'post_name'=>$surveyprint_uuid,
           'post_content'=>$toc
      ];
