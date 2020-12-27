@@ -25,10 +25,14 @@ function init_log_utils(){
 
 // select post_author, post_date, from_base64(post_content) from wp_posts where post_type = 'surveyprint_log';
 function init_log($title, $log){
+
      if(is_null($log)){ return false; }
+
      $surveyprint_uuid = psuuid();
      $author_id = esc_sql(get_author_id());
+
      if(is_null($title)){ $title = surveyprint_uuid; }
+
      $title = esc_sql($title);
      $log = pigpack($log);
      $conf = [

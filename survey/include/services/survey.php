@@ -2,42 +2,59 @@
 
 add_action('admin_post_exec_get_surveys', 'exec_get_surveys');
 function exec_get_surveys(){
+
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('exec_get_surveys', []);
+
      $coll = get_surveys();
+
      echo json_encode(array('res'=>'success', 'message'=>'surveys loaded', 'coll'=>$coll));
 }
 
 add_action('admin_post_exec_get_survey_by_id', 'exec_get_survey_by_id');
 function exec_get_survey_by_id(){
+
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      $survey_id = trim_incoming_numeric($_POST['survey_id']);
+
+     init_log('admin_post_exec_get_survey_by_id', ['survey_id'=>$survey_id]);
+
      $coll = [];
      $coll['survey'] = get_survey_by_id($survey_id);
      $coll['threads'] = get_threads_by_survey_id($survey_id);
+
      $message = esc_html(__('survey is loaded', 'bookbuilder'));
+
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
 add_action('admin_post_exec_save_question', 'exec_save_question');
 function exec_save_question(){
+
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      $question_id = trim_incoming_numeric($_POST['id']);
      $max = trim_incoming_numeric($_POST['max']);
      $group = trim_incoming_string($_POST['group']);
 
+     init_log('exec_save_question', ['question_id'=>$question_id, 'max'=>$max, 'group'=>$group]);
+
      $coll = get_question_by_id($question_id)[0];
+
      if(null == $coll){
           $message = esc_html(__('no such question', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$question_id));

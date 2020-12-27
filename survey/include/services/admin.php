@@ -7,6 +7,7 @@ function exec_clean_surveys(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_clean_surveys', []);
      $res = clean_surveys();
      $message = esc_html(__('surveys deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
@@ -19,6 +20,7 @@ function exec_clean_client_threads(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_clean_client_threads', []);
      $res = clean_client_threads();
      $message = esc_html(__('client threads deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
@@ -31,6 +33,7 @@ function exec_clean_bookbuilder_db(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_clean_bookbuilder_db', []);
      $res = clean_bookbuilder_db();
      $message = esc_html(__('bookbuilder db deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
@@ -43,6 +46,7 @@ function exec_clean_layouts(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_clean_layouts', []);
      $res = clean_layouts();
      $message = esc_html(__('layouts deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
@@ -55,6 +59,7 @@ function exec_clean_survey_page(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_clean_survey_page', []);
      $res = clean_survey_page();
      $message = esc_html(__('survey page deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
@@ -67,6 +72,7 @@ function exec_init_survey_page(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_init_survey_page', []);
      $res = init_survey_page();
      $message = esc_html(__('survey page inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
@@ -80,6 +86,7 @@ function exec_dump_surveys(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_dump_surveys', []);
      $res = dump_surveys();
      $dumps = [];
      foreach($res as $survey){
@@ -103,6 +110,7 @@ function exec_dump_threads(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+     init_log('admin_post_exec_dump_threads', []);
      $res = dump_threads();
      $dumps = [];
 

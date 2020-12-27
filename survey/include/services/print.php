@@ -3,6 +3,8 @@
 add_action('admin_post_exec_export_prints', 'exec_export_prints');
 function exec_export_prints(){
 
+     init_log('admin_post_exec_export_prints', []);
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -47,6 +49,8 @@ function exec_export_prints(){
 
 add_action('admin_post_exec_export_separations', 'exec_export_separations');
 function exec_export_separations(){
+
+     init_log('exec_export_separations', []);
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));

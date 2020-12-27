@@ -13,40 +13,44 @@ class Path {
      const   GHOSTSCRIPT  = '/opt/local/bin/gs';
      const  SERVICE_BASE  = '/wp-admin/admin.php';
 
-     static public final function get_upload_path(){
+     public static final function get_upload_path(){
           return sprintf('%s%s', wp_upload_dir()['basedir'], '/book_builder');
      }
 
-     static public final function get_upload_url(){
+     public static final function get_upload_url(){
           return sprintf('%s%s', wp_upload_dir()['baseurl'], '/book_builder');
      }
 
-     static public final function get_backup_dir(){
+     public static final function get_backup_dir(){
           $base = Path::get_base_dir();
           return sprintf('%s%s', $base, '/asset/backup');
      }
 
-     static public final function get_asset_dir(){
+     public static final function get_asset_dir(){
           $base = Path::get_base_dir();
           return sprintf('%s%s', $base, '/asset');
      }
 
-     static public final function get_typeform_dir(){
+     public static final function get_typeform_dir(){
           $base = Path::get_base_dir();
           return sprintf('%s%s', $base, '/asset/typeform');
      }
 
-     static public final function get_layout_template_dir(){
+     public static final function get_layout_template_dir(){
           $base = Path::get_base_dir();
           return sprintf('%s%s', $base, '/asset/default-layouts/svg');
      }
 
-     static public final function get_mock_dir(){
+     public static final function get_mock_dir(){
           $base = Path::get_base_dir();
           return sprintf('%s%s', $base, '/asset/mock');
      }
 
-     static private final function get_base_dir(){
+     public static final function get_plugin_dir(){
+          return get_base_dir();
+     }
+
+     private static final function get_base_dir(){
           $base = plugin_dir_path(__DIR__);
           $base = preg_match('/^(.{0,1024})\/bookbuilder\/survey\//', $base, $mtch);
           $base = $mtch[1];

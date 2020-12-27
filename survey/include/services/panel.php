@@ -9,6 +9,8 @@ function exec_get_panels_of_client(){
           return false;
      }
 
+     init_log('exec_get_panels_of_client', []);
+
 // todo:: client probably has more threads
      $coll = [];
      $thread = get_thread_of_client()[0];
@@ -31,6 +33,8 @@ function exec_get_panels_by_thread_id(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('exec_get_panels_by_thread_id', []);
 
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
@@ -75,6 +79,8 @@ function exec_init_panel(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('admin_post_exec_init_panel', ['thread_id'=>$thread_id, 'section_id'=>$section_id]);
 
      $question = trim_incoming_string($_POST['question']);
      $question = trim_for_print($question);
@@ -149,6 +155,8 @@ function exec_get_panel_by_ref(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('admin_post_exec_get_panel_by_ref', ['section_id'=>$section_id, 'panel_ref'=>$panel_ref]);
 
 // todo:: init section if not there
      $section = get_section_by_id($thread_id, $section_id)[0];

@@ -7,13 +7,19 @@
  */
 add_action('admin_post_exec_get_thread_of_client', 'exec_get_thread_of_client');
 function exec_get_thread_of_client(){
+
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('exec_get_thread_of_client', []);
+
      $coll = get_thread_of_client();
+
      $message = esc_html(__('thread is loaded', 'bookbuilder'));
+
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -31,6 +37,8 @@ function exec_init_thread(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('admin_post_exec_init_thread', []);
 
 // read of threads and sections of a client
 // todo:: client might own more than one thread
@@ -133,6 +141,8 @@ function exec_get_next_section(){
           return false;
      }
 
+     init_log('admin_post_exec_get_next_section', []);
+
 // read of current section
      $thread_id = get_session_ticket('thread_id');
      $section_id = get_session_ticket('section_id');
@@ -220,7 +230,9 @@ function exec_save_thread(){
 // tickets
      $thread_id = trim_incoming_numeric($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
-   
+
+     init_log('admin_post_exec_save_thread', ['thread_id'=>$thread_id]);
+
      $book = pagpick($_POST['book']);
      $history = pagpick($_POST['history']);
      $conditions = pagpick($_POST['conditions']);

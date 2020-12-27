@@ -18,6 +18,8 @@ function exec_init_asset_by_panel_ref(){
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
      $panel_ref = get_session_ticket('panel_ref');
 
+     init_log('admin_post_exec_init_asset_by_panel_ref', ['thread_id'=>$thread_id, 'section_id'=>$section_id, 'panel_ref'=>$panel_ref]);
+
      $image = $_POST['base'];
      $image = remove_base_from_chunk($image);
 
@@ -156,6 +158,8 @@ function exec_get_assets_by_panel_ref(){
      $section_id = get_session_ticket('section_id');
 
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
+
+     init_log('admin_post_exec_init_asset_by_panel_ref', ['thread_id'=>$thread_id, 'section_id'=>$section_id, 'panel_ref'=>$panel_ref]);
 
      $max = 1;
      $res = get_assets_by_panel_ref($section_id, $panel_ref, $max);

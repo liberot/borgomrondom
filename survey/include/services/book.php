@@ -9,6 +9,8 @@ function exec_get_books(){
           return false;
      }
 
+     init_log('admin_post_exec_get_books', []);
+
      $coll = get_books();
 
      $message = esc_html(__('books loaded', 'bookbuilder'));
@@ -25,6 +27,9 @@ function exec_get_book_by_id(){
      }
 
      $book_id = trim_incoming_numeric($_POST['book_id']);
+
+     init_log('exec_get_book_by_id', []);
+
      $coll = [];
      $coll['book'] = get_book_by_id($book_id);
      $coll['chapter'] = get_chapter_by_book_id($book_id);
@@ -42,6 +47,8 @@ function exec_get_chapter_by_book_id(){
           return false;
      }
 
+     init_log('exec_get_chapter_by_book_id', []);
+
      $book_id = trim_incoming_numeric($_POST['book_id']);
      $coll = get_chapters_by_book_id($book_id);
 
@@ -57,6 +64,8 @@ function exec_get_spreads_by_chapter_id(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('exec_get_spreads_by_chapter_id', []);
 
      $chapter_id = trim_incoming_numeric($_POST['chapter_id']);
      $coll = get_spreads_by_chapter_id($chapter_id);
@@ -80,6 +89,8 @@ function exec_init_book_by_thread_id(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('admin_post_exec_init_book_by_thread_id', []);
 
      $author_id = get_author_id();
 

@@ -9,6 +9,8 @@ function exec_edit_typeform_survey(){
           return false;
      }
 
+     init_log('admin_post_exec_edit_typeform_survey', []);
+
      $ref = trim_incoming_string($_POST['bucket']); 
      $coll = get_typeform_surveys_by_ref($ref);
 
@@ -25,6 +27,8 @@ function exec_construct_all_surveys(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('admin_post_exec_construct_all_surveys', []);
 
      $files = read_typeform_json_descriptors();
      foreach($files as $file){
@@ -51,6 +55,8 @@ function exec_construct_typeform_survey(){
      if(is_null($survey_file_name)){
           $survey_file_name = 'typeform_survey.json';
      }
+
+     init_log('admin_post_exec_construct_typeform_survey', ['survey_file_name'=>$survey_file_name]);
 
      $res = init_typeform_survey($survey_file_name);
 

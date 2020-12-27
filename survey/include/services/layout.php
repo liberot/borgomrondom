@@ -9,6 +9,8 @@ function exec_init_layout(){
           return false;
      }
 
+     init_log('admin_post_exec_init_layout', []);
+
      $rule = trim_incoming_filename($_POST['rule']);
      $group = trim_incoming_filename($_POST['group']);
 
@@ -43,6 +45,8 @@ function exec_get_layouts_by_group(){
           return false;
      }
 
+     init_log('admin_post_exec_get_layouts_by_group', []);
+
      $group = trim_incoming_filename($_POST['group']);
      $coll = get_layouts_by_group($group);
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
@@ -57,6 +61,8 @@ function exec_get_layout_by_group_and_rule(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('admin_post_exec_get_layout_by_group_and_rule', []);
 
      $group = trim_incoming_filename($_POST['group']);
      $rule = trim_incoming_filename($_POST['rule']);
@@ -90,6 +96,8 @@ function exec_import_layouts(){
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
+     init_log('exec_import_layouts', []);
 
 // reads layout svg fro the given rsloc
      $path = Path::get_layout_template_dir();
@@ -151,6 +159,8 @@ function exec_import_layouts(){
 }
 
 function parse_layout_doc($svg_path){
+
+     init_log('parse_layout_doc', []);
 
 // grabs plain svg file
      $ldd = @file_get_contents($svg_path);
@@ -224,8 +234,12 @@ function parse_layout_doc($svg_path){
 }
 
 function corr_layout_pos($val, $doc){
+
+     init_log('corr_layout_pos', []);
+
      $res = null;
      $val = floatval($val);
+
      switch($doc['unit']){
           case 'px':
                $res = px_pump($val, $doc['assumed_ppi_of_origin'], $doc['ppi']);
@@ -239,6 +253,8 @@ function corr_layout_pos($val, $doc){
 }
 
 function corr_path_d($d, $doc){
+
+     init_log('corr_path_d', []);
 
      $d = preg_replace('/e\-\d+/', '', $d);
      $d = sprintf('%sx', $d);
@@ -316,6 +332,8 @@ function corr_path_d($d, $doc){
 }
 
 function eval_path_fields($svg_doc, $doc){
+
+     init_log('eval_path_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $idx = 0;
      $res = [];
@@ -464,6 +482,8 @@ function eval_path_fields($svg_doc, $doc){
 
 function eval_polygon_fields($svg_doc, $doc){
 
+     init_log('eval_polygon_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
+
      $res = [];
      $indx = intval(0);
      $d = 0;
@@ -582,6 +602,8 @@ function eval_polygon_fields($svg_doc, $doc){
 // ****************************************************
 // ****************************************************
 function eval_text_fields($svg_doc, $doc){
+
+     init_log('eval_text_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $res = [];
      $buf = '';
@@ -716,6 +738,8 @@ function eval_text_fields($svg_doc, $doc){
 
 function eval_doc_size($svg_doc, $doc){
 
+     init_log('eval_doc_size', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
+
      $res['doc_width'] = 0;
      $res['doc_height'] = 0;
      $res['doc_x_offset'] = 0;
@@ -763,6 +787,9 @@ function eval_doc_size($svg_doc, $doc){
 }
 
 function fit_image_assets_into_slot($doc, $assets){
+
+     init_log('fit_image_asset_into_slot', ['doc'=>$doc, 'assets'=>$assets]);
+
      $res = [];
      foreach($assets as $asset){
           if('image' == $asset['type']){
@@ -776,6 +803,9 @@ function fit_image_assets_into_slot($doc, $assets){
 }
 
 function get_layout_code_of_spread($doc){
+
+     init_log('get_layout_code_of_spread', ['doc'=>$doc]);
+
      $res = '';
      foreach($doc['assets'] as $node){
           if(false != $node['slot']){
@@ -788,6 +818,8 @@ function get_layout_code_of_spread($doc){
 }
 
 function insert_image_assets($doc, $nodes){
+
+     init_log('insert_image_assets', ['doc'=>$doc, 'nodes'=>$nodes]);
 
      $res = [];
 
@@ -856,6 +888,9 @@ function insert_image_assets($doc, $nodes){
 }
 
 function eval_stylesheets($svg_doc){
+
+     init_log('eval_stylesheets', ['svg_doc'=>$svg_doc]);
+
      $res = [];
      foreach($svg_doc as $node){ switch($node['tag']){
           case 'style':
@@ -864,10 +899,14 @@ function eval_stylesheets($svg_doc){
                break;
           }
      }
+
      return $res;
 }
 
 function flatten_groups($svg_doc){
+
+     init_log('flatten_groups', ['svg_doc'=>$svg_doc]);
+
      $res = $svg_doc;
      $grouped_nodes = [];
      foreach($svg_doc as $node){
@@ -880,20 +919,28 @@ function flatten_groups($svg_doc){
           }
      }
      $res = array_merge($res, $grouped_nodes);
+
      return $res;
 }
 
 function get_style_coll_from_attribute($style){
+
+     init_log('get_style_coll_from_attribute', ['style'=>$style]);
+
      $res = [];
      $tmp = explode(';', $style);
      foreach($tmp as $directive){
           $t = explode(':', $directive);
           $res[$t[0]] = $t[1];
      }
+
      return $res;
 }
 
 function get_style_by_selector($coll, $css){
+
+     init_log('get_style_by_selector', ['coll'=>$coll, 'css'=>$css]);
+
      $res = [];
      $css = explode(' ', $css);
      foreach($css as $style){
@@ -907,6 +954,7 @@ function get_style_by_selector($coll, $css){
                $res[$ary[0]] = $ary[1];
           }
      }
+
      return $res;
 }
 
