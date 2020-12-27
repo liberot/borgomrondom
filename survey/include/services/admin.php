@@ -81,13 +81,17 @@ function exec_init_survey_page(){
 // todo: by id like by one each
 add_action('admin_post_exec_dump_surveys', 'exec_dump_surveys');
 function exec_dump_surveys(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      init_log('admin_post_exec_dump_surveys', []);
+
      $res = dump_surveys();
+
      $dumps = [];
      foreach($res as $survey){
           $survey->post_content = pagpick($survey->post_content);
@@ -99,18 +103,22 @@ function exec_dump_surveys(){
           $dumps[]= $path;
           $res = @file_put_contents($path, $chunk);
      }
+
      $message = esc_html(__('surveys dumped', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'dumps'=>$dumps));
 }
 
 add_action('admin_post_exec_dump_threads', 'exec_dump_threads');
 function exec_dump_threads(){
+
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
+
      init_log('admin_post_exec_dump_threads', []);
+
      $res = dump_threads();
      $dumps = [];
 
@@ -124,12 +132,15 @@ function exec_dump_threads(){
           $thread->post_content = pagpick($thread->post_content);
           $chunk = json_encode($thread, JSON_PRETTY_PRINT);
           $path = Path::get_backup_dir();
-          $file = sprintf('%s_%s', 'thread', trim_incoming_filename($thread->post_excerpt));
+          // $file = sprintf('%s_%s', 'thread', trim_incoming_filename($thread->post_excerpt));
+          $file = sprintf('%s_%s', 'thread', trim_incoming_filename(sprintf('%s_%s_%s', $thread->ID, $thread->post_author, $thread->post_title)));
           if(false == $file){ $file = 'no_filename'; }
           $path = sprintf('%s/%s.json', $path, $file);
           $dumps[]= $path;
           $res = @file_put_contents($path, $chunk);
      }
+
      $message = esc_html(__('threads dumped', 'bookbuilder'));
+
      echo json_encode(array('res'=>'success', 'message'=>$message, 'dumps'=>$dumps));
 }
