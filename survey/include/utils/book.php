@@ -123,6 +123,7 @@ EOD;
 function setup_new_book($title){
 
      $title = esc_sql(trim_for_print($title));
+
      $author_id = esc_sql(get_author_id());
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
@@ -141,13 +142,16 @@ function setup_new_book($title){
      return $book_id;
 }
 
-function add_chapter($book_id, $title, $desc){
+function add_chapter($book_id, $section_id){
 
-     $title = esc_sql(trim_for_print($title));
-     $desc = esc_sql(trim_for_print($desc));
      $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($book_id);
+     $section_id = esc_sql($section_id);
+
      $uuid = psuuid();
+
+     $title = esc_sql('No Title so far');
+     $description = esc_sql('No Description so far');
 
      $uuid = psuuid();
      $conf = [
@@ -155,20 +159,22 @@ function add_chapter($book_id, $title, $desc){
           'post_title'=>$title,
           'post_author'=>$author_id,
           'post_parent'=>$book_id,
+          'post_excerpt'=>$section_id,
           'post_name'=>$uuid,
-          'post_excerpt'=>$uuid,
-          'post_content'=>$desc
+          'post_content'=>$description
      ];
 
      $chapter_id = init_chapter($conf);
+
      return $chapter_id;
 }
 
-function add_cover($chapter_id, $title){
+function add_cover($book_id, $chapter_id){
 
      $chapter_id = esc_sql($chapter_id);
-     $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
+
+     $title = esc_sql('No Title so far');
      $uuid = psuuid();
 
      $path = Path::get_mock_dir().'/mock-spread.json';
@@ -201,11 +207,13 @@ function add_cover($chapter_id, $title){
      return $spread_id;
 }
 
-function add_inside_cover($chapter_id, $title){
+function add_inside_cover($book_id, $chapter_id){
 
+     $book_id = esc_sql($book_id);
      $chapter_id = esc_sql($chapter_id);
-     $title = esc_sql(trim_for_print($title));
+
      $author_id = esc_sql(get_author_id());
+     $title = esc_sql('No Title so far');
      $uuid = psuuid();
 
      $path = Path::get_mock_dir().'/mock-spread.json';
@@ -238,8 +246,9 @@ function add_inside_cover($chapter_id, $title){
      return $spread_id;
 }
 
-function add_intro($chapter_id, $title){
+function add_intro($book_id, $chapter_id){
 
+     $book_id = esc_sql($book_id);
      $chapter_id = esc_sql($chapter_id);
      $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
@@ -276,7 +285,7 @@ function add_intro($chapter_id, $title){
      return $spread_id;
 }
 
-function add_toc($book_id, $title, $toc){
+function add_toc($book_id, $toc){
 
      $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
@@ -297,7 +306,7 @@ function add_toc($book_id, $title, $toc){
      return $toc_id;
 }
 
-function add_spread($section_id, $title, $chapter_id, $panel_ref){
+function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
 
      $author_id = get_author_id();
 
@@ -312,6 +321,8 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
 // https://stackoverflow.com/questions/4190667/how-to-get-width-of-a-truetype-font-character-in-1200ths-of-an-inch-with-python
 // https://stackoverflow.com/questions/2480183/get-width-of-a-single-character-from-ttf-font-in-php
 // https://www.php.net/imagettfbbox
+
+     $title = 'No Title so far';
 
 // panel might have a group as 'cover' with three panels
 // groups is going to gather differnt spreads in a semantic way
@@ -378,20 +389,22 @@ function add_spread($section_id, $title, $chapter_id, $panel_ref){
 
      $doc['panelId'] = $panel->ID;
      $doc['conf'] = $panel->post_content['conf'];
-     $ref = $panel->post_excerpt;
+     $panel_ref = $panel->post_excerpt;
      $uuid = psuuid();
      $conf = [
           'post_type'=>'surveyprint_spread',
           'post_author'=>$author_id,
           'post_title'=>$title,
-          'post_parent'=>$chapter_id,
           'post_name'=>$uuid,
-          'post_excerpt'=>$ref,
+          'post_parent'=>$chapter_id,
+          'post_excerpt'=>$panel_ref,
           'post_content'=>pigpack($doc)
      ];
+
      $res = [];
      $res['spread_id'] = init_spread($conf);
-     $res['spread_ref'] = $ref;
+     $res['spread_ref'] = $panel_ref;
+
      return $res;
 }
 
