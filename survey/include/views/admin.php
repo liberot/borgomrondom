@@ -389,7 +389,7 @@ function build_question_view(){
      $excerpt = esc_html(__('Reference', 'bookbuilder'));
      $parent = esc_html(__('Group', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
-     $layout = esc_html(__('Layout Rule', 'bookbuilder'));
+     $rulez = esc_html(__('Spread Rulez', 'bookbuilder'));
      $save_input = esc_html(__('Save', 'bookbuilder'));
      $apply = esc_html(__('Apply', 'bookbuilder'));
 
@@ -415,7 +415,7 @@ function build_question_view(){
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
-                    <th>{$layout}</th>
+                    <th>{$rulez}</th>
                </tr>
           </thead>
 EOD;
@@ -447,12 +447,12 @@ EOD;
           $question_id = $question->ID;
 
           $node_style = '';
-          $layout_input = '';
+          $rule_input = '';
           if('group' == $question->post_content['type']){
                $node_style = 'group-title';
           }
 
-          $layout_input = <<<EOD
+          $rule_input = <<<EOD
      <textarea name='layout_rule_of_question_{$question_id}_is'></textarea>
 EOD;
 
@@ -470,7 +470,7 @@ EOD;
           echo sprintf('<td>%s</td>', esc_html($d));
           echo sprintf('<td>%s</td>', esc_html($parent));
           echo sprintf('<td class="%s">%s</td>', $node_style, esc_html($question->post_content['title']));
-          echo sprintf('<td>%s</td>', $layout_input);
+          echo sprintf('<td>%s</td>', $rule_input);
           echo '</tr>';
      }
 
@@ -482,7 +482,7 @@ EOD;
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
-                    <th>{$layout}</th>
+                    <th>{$rulez}</th>
                </tr>
           </tfoot>
           </table>
