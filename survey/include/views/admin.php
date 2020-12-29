@@ -351,9 +351,18 @@ add_shortcode('questionnaire_view', 'build_questionnaire_view');
 function build_questionnaire_view(){
 
      switch($_REQUEST['edit']){
+
           case 'questions':
                build_question_view();
-               break; 
+               break;
+ 
+          case 'survey_printrules':
+               if(false == empty($_POST)){ 
+                    print_r(sprintf("<textarea>%s</textarea>", json_encode($_POST, JSON_PRETTY_PRINT)));
+               };
+               build_question_view();
+               break;
+
           default:
                build_questionnaire_list_view();
                break;
@@ -382,13 +391,21 @@ function build_question_view(){
      $date = esc_html(__('Date of Init', 'bookbuilder'));
      $layout = esc_html(__('Layout Rule', 'bookbuilder'));
      $save_input = esc_html(__('Save', 'bookbuilder'));
+     $apply = esc_html(__('Apply', 'bookbuilder'));
 
+     $survey_id = $_REQUEST['survey_id'];
+     $coll = get_questions_by_survey_id($survey_id);
+
+     $href = sprintf('%s?page=questionnaire&edit=survey_printrules&survey_id=%s', Path::SERVICE_BASE, $survey_id);
      echo <<<EOD
 
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
                <div class='page-title-action messages'><span>{$welcome}</span></div>
                <hr class='wp-header-end'>
+
+          <form method='post' action='{$href}'>
+
           <table class="wp-list-table widefat striped table-view-list posts">
 
           <thead>
@@ -424,29 +441,25 @@ EOD;
           <option value='default3rd'>Default Layout Group 5th</option>
 EOD;
 
-     $survey_id = $_REQUEST['survey_id'];
-     $coll = get_questions_by_survey_id($survey_id);
 
      foreach($coll as $question){
           $question->post_content = pagpick($question->post_content);
+          $question_id = $question->ID;
 
           $node_style = '';
           $layout_input = '';
           if('group' == $question->post_content['type']){
                $node_style = 'group-title';
-               $layout_input = <<<EOD
-<form method='post'>
-     <textarea>[layout rule input]</textarea>
-     <input type='submit' value='{$save_input}'></input>
-</form>
-EOD;
           }
+
+          $layout_input = <<<EOD
+     <textarea name='layout_rule_of_question_{$question_id}_is'></textarea>
+EOD;
 
           $parent = '';
           if(!is_null($question->post_content['conf']['parent'])){
                $parent = $question->post_content['conf']['parent'];
           }
-
 
           $d = date_create($question->post_date);
           $d = date_format($d, 'd.m.Y H:i:s');
@@ -473,6 +486,10 @@ EOD;
                </tr>
           </tfoot>
           </table>
+
+          <input type='submit' id='doaction' class='button action' value='{$apply}'>
+
+          </form>
 EOD;
 
 }
