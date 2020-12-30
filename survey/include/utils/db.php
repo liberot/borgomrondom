@@ -2,6 +2,7 @@
 
 // add_action('init', 'init_ref_table');
 function init_ref_table(){
+
      $sql = <<<EOD
      create table if not exists
           wp_xurveyprint_ref (
@@ -19,9 +20,12 @@ function init_ref_table(){
           )
           engine=innodb
 EOD;
+
      $sql = debug_sql($sql);
      // insert into wp_xurveyprint_ref (post_id, post_parent_id, init) values (31453, 31450, now());
+
      global $wpdb;
+
      $res = $wpdb->query($sql);
 }
 

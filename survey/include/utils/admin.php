@@ -9,6 +9,7 @@ function clean_layouts(){
 
      $res = null;
 
+/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -17,6 +18,19 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
+*/
+
+     foreach($tables as $table){
+          $conf = [
+               'post_type'=>$table,
+               'posts_per_page'=>-1
+          ];
+          $res = query_posts($conf);
+          foreach($res as $post){
+               $res = wp_delete_post($post->ID, true);
+          }
+     }
+
      return $res;
 }
 
@@ -31,6 +45,7 @@ function clean_surveys(){
 
      $res = null;
 
+/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -39,6 +54,19 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
+*/
+
+     foreach($tables as $table){
+          $conf = [
+               'post_type'=>$table,
+               'posts_per_page'=>-1
+          ];
+          $res = query_posts($conf);
+          foreach($res as $post){
+               $res = wp_delete_post($post->ID, true);
+          }
+     }
+
      return $res;
 }
 
@@ -55,7 +83,7 @@ function clean_client_threads(){
      ];
 
      $res = null;
-
+/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -64,6 +92,19 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
+*/
+
+     foreach($tables as $table){
+          $conf = [
+               'post_type'=>$table,
+               'posts_per_page'=>-1
+          ];
+          $res = query_posts($conf);
+          foreach($res as $post){
+               $res = wp_delete_post($post->ID, true);
+          }
+     }
+
      return $res;
 }
 
@@ -85,7 +126,7 @@ function clean_bookbuilder_db(){
      ];
 
      $res = null;
-
+/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -94,25 +135,62 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
+*/
+
+     foreach($tables as $table){
+          $conf = [
+               'post_type'=>$table,
+               'posts_per_page'=>-1
+          ];
+          $res = query_posts($conf);
+          foreach($res as $post){
+               $res = wp_delete_post($post->ID, true);
+          }
+     }
 
      return $res;
 }
 
 function clean_survey_page(){
+/*
      $sql = <<<EOD
-          delete from wp_posts where post_name = '__survey__thread__view__' and post_type = 'page'
+          delete from wp_posts where post_name like '%__survey__thread__view__%' and post_type = 'page'
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+*/
+
+     $conf = [
+          'post_type'=>'page',
+          'posts_per_page'=>-1,
+          'meta_query'=>[
+               'relation'=>'and', [
+                    'key'=>'post_name',
+                    'value'=>'%__survey__thread__view__%',
+                    'compare'=>'like'
+               ]
+          ]
+     ];
+
+     $res = query_posts($conf);
+
+     foreach($res as $post){
+          $res = wp_delete_post($post->ID, true);
+     }
+
+     return $res;
 }
 
 function init_survey_page(){
+
      clean_survey_page();
+
      $conti = <<<EOD
         <p>[survey_view]</p>
         <p>[constructor_view]</p>
 EOD;
+
      $page_id = wp_insert_post([
           'post_author'=>get_author_id(),
           'post_content'=>$conti,
@@ -124,9 +202,12 @@ EOD;
           'post_type'=>'page',
           'comment_count'=>0
      ]);
+
+     return $page_id;
 }
 
 function dump_surveys(){
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_survey';
 EOD;
@@ -134,9 +215,21 @@ EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_survey',
+          'orderby'=>'ID',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
+     return $res;
 }
 
 function dump_threads(){
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_thread';
 EOD;
@@ -144,25 +237,28 @@ EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_thread',
+          'orderby'=>'ID',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
+     return $res;
 }
 
 function init_test_page(){
-     $sql = <<<EOD
-          select * from wp_posts where post_type = 'page' and post_name = '__survey_test_web_view__';
-EOD;
-     global $wpdb;
-     $sql = debug_sql($sql);
-     $res = $wpdb->get_results($sql);
 
-     if(null != $res[0]){ return false; }
-
-     $conti = <<<EOD
+     $cont = <<<EOD
         <p>[survey_test_web_view]</p>
 EOD;
 
      $page_id = wp_insert_post([
           'post_author'=>get_current_user_id(),
-          'post_content'=>$conti,
+          'post_content'=>$cont,
           'post_title'=>'Questionnaire Test Walkthrough',
           'post_status'=>'publish',
           'comment_status'=>'closed',

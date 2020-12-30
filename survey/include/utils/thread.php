@@ -2,6 +2,7 @@
 
 add_action('init', 'init_thread_utils');
 function init_thread_utils(){
+
      $res = register_post_type(
           'surveyprint_thread',  [
                'label'                  =>'SurveyPrint Thread',
@@ -21,6 +22,7 @@ function init_thread_utils(){
                'show_in_rest'           => false
           ]
      );
+
      $res = register_post_type(
           'surveyprint_section',  [
                'label'                  =>'SurveyPrint Section',
@@ -40,6 +42,7 @@ function init_thread_utils(){
                'show_in_rest'           => false
           ]
      );
+
      return $res;
 }
 
@@ -50,6 +53,8 @@ function init_thread($conf){
 
 function get_thread_of_client(){
      $author_id = esc_sql(get_author_id());
+
+/*
      $sql = <<<EOD
           select * from wp_posts
                where post_type = 'surveyprint_thread'
@@ -60,15 +65,31 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_thread',
+          'post_author'=>$author_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_thread_by_id($thread_id, $client_id=null){
+
      $thread_id = esc_sql($thread_id);
      $author_id = esc_sql(get_author_id());
+
      if(!is_null($client_id)){
           $author_id = esc_sql($client_id);
      }
+
+/*
      $sql = <<<EOD
           select * from wp_posts
                where post_type = 'surveyprint_thread' 
@@ -79,16 +100,42 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_thread',
+          'post_author'=>$author_id,
+          'ID'=>$thread_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_threads(){
+
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_thread' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_thread',
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
@@ -98,9 +145,12 @@ function init_section($conf){
 }
 
 function get_sections_by_thread_id($thread_id, $client_id=null){
+
      $thread_id = esc_sql($thread_id);
      $author_id = esc_sql(get_author_id());
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); };
+
+/*
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_section' 
@@ -111,13 +161,29 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_section',
+          'post_author'=>$author_id,
+          'post_parent'=>$thread_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_section_by_id($thread_id, $section_id){
+
      $thread_id = esc_sql($thread_id);
      $section_id = esc_sql($section_id);
      $author_id = esc_sql(get_author_id());
+
+/*
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_section' 
@@ -129,24 +195,56 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_section',
+          'post_author'=>$author_id,
+          'post_parent'=>$thread_id,
+          'ID'=>$section_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_section_by_ref($thread_id, $section_ref){
+
      $thread_id = esc_sql($thread_id);
      $section_id = esc_sql($section_ref);
      $author_id = esc_sql(get_author_id());
+
+
+/*
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}' 
-               and  post_excerpt = '{$section_ref}'
-               and  post_parent = '{$thread_id}'
+               and post_excerpt = '{$section_ref}'
+               and post_parent = '{$thread_id}'
                limit 1
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_section',
+          'post_author'=>$author_id,
+          'post_parent'=>$thread_id,
+          'post_excerpt'=>$section_ref,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 

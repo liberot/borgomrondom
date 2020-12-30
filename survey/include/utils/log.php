@@ -2,6 +2,7 @@
 
 add_action('init', 'init_log_utils');
 function init_log_utils(){
+
       $res = register_post_type(
           'surveyprint_log',  [
                'label'                  =>'SurveyPrint Log',
@@ -35,6 +36,7 @@ function init_log($title, $log){
 
      $title = esc_sql($title);
      $log = pigpack($log);
+
      $conf = [
           'post_type'=>'surveyprint_log',
           'post_author'=>$author_id,
@@ -43,6 +45,8 @@ function init_log($title, $log){
           'post_title'=>$title,
           'post_content'=>$log
      ];
+
      $res = wp_insert_post($conf);
+
      return true;
 }

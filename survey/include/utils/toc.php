@@ -2,6 +2,7 @@
 
 add_action('init', 'init_toc_utils');
 function init_toc_utils(){
+
      $res = register_post_type(
           'surveyprint_toc',  [
                'label'                  =>'SurveyPrint ToC',
@@ -29,8 +30,11 @@ function init_toc($conf){
 }
 
 function get_toc_by_book_id($book_id){
+
      $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($book_id);
+
+/*
      $sql = <<<EOD
      select * from wp_posts 
           where post_type = 'surveyprint_toc'
@@ -42,14 +46,29 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_toc',
+          'post_author'=>$author_id,
+          'post_parent'=>$book_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_toc_by_id($toc_id){
+
      $book_id = esc_sql($toc_id);
      $author_id = esc_sql(get_author_id());
-     $sql = <<<EOD
 
+/*
+     $sql = <<<EOD
      select * from wp_posts 
           where post_type = 'surveyprint_toc' 
                and post_author = '{$author_id}' 
@@ -60,6 +79,18 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+     $conf = [
+          'post_type'=>'surveyprint_toc',
+          'post_author'=>$author_id,
+          'ID'=>$toc_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
@@ -69,6 +100,8 @@ function save_toc($conf){
 }
 
 function get_toc_by_survey_id($survey_id){
+
+/*
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_toc' 
@@ -79,6 +112,18 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_toc',
+          'post_parent'=>$survey_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 

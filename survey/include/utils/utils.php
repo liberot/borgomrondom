@@ -187,14 +187,18 @@ function trim_for_print($string){
 }
 
 function insert_guest_client(){
+
 // deletes guest client
+/*
      $sql = <<<EOD
           delete from wp_users where user_login = 'surveyprint'
 EOD;
-// sets up a guest client
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+// sets up a guest client
 // client is cutomer as for debug reasons
      // $role_title = Role::GUEST;
      $role_title = Role::CUSTOMER;
@@ -297,9 +301,9 @@ function get_session_ticket($key){
 }
 
 function debug_sql($sql){
-     $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
-     $sql.= "\n"; 
-     file_put_contents('/tmp/sql', $sql, FILE_APPEND);
+     // $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
+     // $sql.= "\n"; 
+     // file_put_contents('/tmp/sql', $sql, FILE_APPEND);
      return $sql;
 }
 

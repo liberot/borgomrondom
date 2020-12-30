@@ -2,6 +2,7 @@
 
 add_action('init', 'init_layout_utils');
 function init_layout_utils(){
+
      $res = register_post_type(
           'surveyprint_layout',  [
                'label'                  =>'SurveyPrint Layout',
@@ -21,6 +22,7 @@ function init_layout_utils(){
                'show_in_rest'           => false
           ]
      );
+
      return $res;
 }
 
@@ -31,17 +33,32 @@ function init_layout($conf){
 
 function get_layouts_by_group($group){
      // $res = get_posts(array('tag' => array($tags)));
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_layout' and post_title = '{$group}' order by ID desc limit 1;
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_layout',
+          'post_title'=>$group,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_layout_by_group_and_rule($group, $rule){
+
      // $res = get_posts(array('tag' => array($tags)));
+/*
      $sql = <<<EOD
           select * from wp_posts 
                where post_type = 'surveyprint_layout' 
@@ -54,11 +71,26 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_layout',
+          'post_title'=>$group,
+          'post_excerpt'=>$rule,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_layouts_by_tags($tags){
+
      $res = get_posts(array('tag' => array($tags)));
+
      $sql = <<<EOD
           select p.ID, t.term_id, t.name
                from wp_posts p, wp_term_relationships r, wp_terms t
@@ -82,22 +114,38 @@ EOD;
 
 function get_layout_by_rule($rule){
      $rule = esc_sql($rule);
+
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+     $conf = [
+          'post_type'=>'surveyprint_layout',
+          'post_excerpt'=>$rule,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function px_to_unit($ppi, $pxs, $unit){
+
      if(is_null($ppi)){ $ppi = 300; }
      if(is_null($pxs)){ $pxs = 0; }
      if(is_null($unit)){ $unit = 'mm'; }
+
      $pxs = floatval($pxs);
      $ppi = floatval($ppi);
      $res = 0;
+
      switch($unit){
           case 'px':
                $res = $pxs;
@@ -110,15 +158,19 @@ function px_to_unit($ppi, $pxs, $unit){
                $res = $pxs /((2480 /(210 /1 ) /300) *$ppi);
                break;
      }
+
      return $res;
 }
 
 function unit_to_px($ppi, $val, $unit){
+
      if(is_null($ppi)){ $ppi = 300; }
      if(is_null($val)){ $val = 0; }
      if(is_null($unit)){ $unit = 'mm'; }
+
      $val = floatval($val);
      $px = 0;
+
      switch(unit){
           case 'px':
               $px = $val;
@@ -131,35 +183,45 @@ function unit_to_px($ppi, $val, $unit){
               $px = ((2480 /(210 /1) /300) *$ppi) *val;
               break;
      }
+
      return $px;
 }
 
 // https://www.rapidtables.com/convert/color/rgb-to-cmyk.html
 function rgb2cmyk($rgb){
+
      // $rgb = ['r'=>'0', 'g'=>'0', 'b'=>'0'];
      $res = ['c'=>0, 'm'=>0, 'y'=>0, 'k'=>1];
      if(null == $rgb){ return $res; }
+
      $rrr = intval($rgb['r']) /255;
      $ggg = intval($rgb['g']) /255;
      $bbb = intval($rgb['b']) /255;
+
      if(0 == $rrr && 0 == $ggg && 0 == $bbb){
           return $res;
      }
+
      $res = [];
+
      $res['k'] = floatval(1 -max($rrr, $ggg, $bbb));
      $res['c'] = floatval((1 -$rrr -$res['k']) /(1 -$res['k']));
      $res['m'] = floatval((1 -$ggg -$res['k']) /(1 -$res['k']));
      $res['y'] = floatval((1 -$bbb -$res['k']) /(1 -$res['k']));
+
      return $res;
 }
 
 function hex2rgb($hex) {
+
      $color = str_replace('#', '', $hex);
+
      $rgb = array(
           'r'=>hexdec(substr($color, 0, 2)),
           'g'=>hexdec(substr($color, 2, 2)),
           'b'=>hexdec(substr($color, 4, 2)),
      );
+
      return $rgb;
 }
 
@@ -170,15 +232,19 @@ function rgb2hex($r, $g, $b){
 
 function get_all_grey_like_colors(){
      $res = [];
+
      for($idx = 0; $idx < 255; $idx++){
           $res[]= rgb2hex($idx, $idx, $idx);
      }
+
      return $res;
 }
 
 function is_grey_hex($color){
+
       $res = false;
       $c = hex2rgb($color);
+
       if(255 > intval($c['b'])){
            if(0 < intval($c['b'])){
                 if(intval($c['b']) == intval($c['r'])){
@@ -188,10 +254,12 @@ function is_grey_hex($color){
                 }
            }
      }
+
      return $res;
 }
 
 function px_pump($px, $ppi_1st, $ppi_2nd){
+
      $ppi_1st = floatval($ppi_1st);
      $ppi_2nd = floatval($ppi_2nd);
      $res = floatval($px);
@@ -370,3 +438,5 @@ function match_font_weight($style){
      $res = $font_weight;
      return $res;
 }
+
+

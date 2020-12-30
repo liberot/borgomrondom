@@ -372,6 +372,9 @@ function build_questionnaire_view(){
 add_shortcode('question_view', 'build_question_view');
 function build_question_view(){
 
+     $survey_id = $_REQUEST['survey_id'];
+     $coll = get_questions_by_survey_id($survey_id);
+
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
      wp_enqueue_style('admin_style');
  
@@ -392,9 +395,6 @@ function build_question_view(){
      $rulez = esc_html(__('Spread Rulez', 'bookbuilder'));
      $save_input = esc_html(__('Save', 'bookbuilder'));
      $apply = esc_html(__('Apply', 'bookbuilder'));
-
-     $survey_id = $_REQUEST['survey_id'];
-     $coll = get_questions_by_survey_id($survey_id);
 
      $href = sprintf('%s?page=questionnaire&edit=survey_printrules&survey_id=%s', Path::SERVICE_BASE, $survey_id);
      echo <<<EOD
@@ -497,6 +497,11 @@ EOD;
 add_shortcode('questionnaire_list_view', 'build_questionnaire_list_view');
 function build_questionnaire_list_view(){
 
+     $coll = get_surveys();
+// print 'build_questionnaire_list_view(): get_surveys(): ';
+// print_r($coll);
+// print "\n";
+
      $message = esc_html(__('List of stored Questionnaire:', 'bookbuilder'));
      $id = esc_html(__('ID', 'bookbuilder'));
      $excerpt = esc_html(__('Reference', 'bookbuilder'));
@@ -504,9 +509,9 @@ function build_questionnaire_list_view(){
      $date = esc_html(__('Date of Init', 'bookbuilder'));
      $action = esc_html(__('Action', 'bookbuilder'));
      $edit = esc_html(__('Edit Fields', 'bookbuilder'));
-
      $headline = esc_html(__('Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__('Welcome', 'bookbuilder'));
+
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -526,7 +531,6 @@ function build_questionnaire_list_view(){
 EOD;
 
      $style = 'column-primary';
-     $coll = get_surveys();
      if(!is_null($coll[0])){
           foreach($coll as $survey){
                $href = sprintf('%s?page=questionnaire&edit=questions&survey_id=%s', Path::SERVICE_BASE, $survey->ID);

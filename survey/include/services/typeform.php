@@ -59,9 +59,21 @@ function exec_construct_typeform_survey(){
      init_log('admin_post_exec_construct_typeform_survey', ['survey_file_name'=>$survey_file_name]);
 
      $res = init_typeform_survey($survey_file_name);
+     if(false == $res){
+          global $wpdb;
+          $message = [];
+          $message['survey_file_name'] = sprintf('%s', $survey_file_name);
+          $message['db_error'] = $db->last_error;
+          $message['db_query'] = $db->last_query;
+          $message['db_result'] = $db->last_result;
+          $message['rt_error'] = 'mom hates dad and dad hates mom and than and than something is always going wrong';
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
 
      $message = sprintf('survey added: %s', $survey_file_name);
      echo json_encode(array('res'=>'success', 'message'=>$message));
+     return true;
 }
 
 function insert_question_groups($nodes, $survey_id, $parent=null, $res=null){

@@ -2,6 +2,7 @@
 
 add_action('init', 'init_upload_utils');
 function init_upload_utils(){
+
      $res = register_post_type(
           'surveyprint_asset',  [
                'label'                  =>'SurveyPrint Asset',
@@ -21,6 +22,7 @@ function init_upload_utils(){
                'show_in_rest'           => false
           ]
      );
+
      return $res;
 }
 
@@ -30,13 +32,16 @@ function init_asset($conf){
 }
 
 function get_asset_by_id($asset_id){
+
      $asset_id = esc_sql($survey_id);
      $author_id = esc_sql(get_author_id());
+
      $res = query_posts([
           'post_type'=>'surveyprint_asset',
           'post_author'=>$author_id,
           'ID'=>$asset_id
      ]);
+
      return $res;
 }
 
@@ -48,6 +53,8 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
      $author_id = esc_sql(get_author_id());
 
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
+
+/*
      global $wpdb;
      $sql = <<<EOD
           select * from wp_posts 
@@ -60,6 +67,21 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_asset',
+          'post_author'=>$author_id,
+          'post_parent'=>$section_id,
+          'post_excerpt'=>$panel_ref,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>$limit
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
+
 

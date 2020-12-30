@@ -2,6 +2,7 @@
 
 add_action('init', 'init_book_utils');
 function init_book_utils(){
+
      $res = register_post_type(
           'surveyprint_book',  [
                'label'                  =>'SurveyPrint Book',
@@ -21,6 +22,7 @@ function init_book_utils(){
                'show_in_rest'           => false
           ]
      );
+
      $res = register_post_type(
           'surveyprint_chapter',  [
                'label'                  =>'SurveyPrint Chapter',
@@ -40,6 +42,7 @@ function init_book_utils(){
                'show_in_rest'           => false
           ]
      );
+
      $res = register_post_type(
           'surveyprint_spread',  [
                'label'                  =>'SurveyPrint Spread',
@@ -59,6 +62,7 @@ function init_book_utils(){
                'show_in_rest'           => false
           ]
      );
+
      return $res;
 }
 
@@ -87,36 +91,81 @@ function get_books(){
 function get_book_by_id($book_id){
      $book_id = esc_sql($book_id);
      $author_id = esc_sql(get_author_id());
+
+/*
 $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_book' and post_author = '{$author_id}' and ID = '{$book_id}';
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_book',
+          'post_author'=>$author_id,
+          'ID'=>$book_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_chapter_by_book_id($book_id){
      $book_id = esc_sql($book_id);
      $author_id = esc_sql(get_author_id());
+
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_chapter' and post_author = '{$author_id}' and post_parent = '{$book_id}' order by ID desc; 
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_chapter',
+          'post_author'=>$author_id,
+          'post_parent'=>$book_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
 function get_spreads_by_chapter_id($chapter_id){
      $chapter_id = esc_sql($chapter_id);
      $author_id = esc_sql(get_author_id());
+
+/*
      $sql = <<<EOD
           select * from wp_posts where post_type = 'surveyprint_spread' and post_author = '{$author_id}' and post_parent = '{$chapter_id}' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
+*/
+
+     $conf = [
+          'post_type'=>'surveyprint_spread',
+          'post_author'=>$author_id,
+          'post_parent'=>$chapter_id,
+          'orderby'=>'id',
+          'order'=>'desc',
+          'posts_per_page'=>-1
+     ];
+
+     $res = query_posts($conf);
+
      return $res;
 }
 
@@ -138,7 +187,9 @@ function setup_new_book($title){
           'post_excerpt'=>$uuid,
           'post_content'=>random_string(131)
      ];
+
      $book_id = init_book($conf);
+
      return $book_id;
 }
 
@@ -204,6 +255,7 @@ function add_cover($book_id, $chapter_id){
      ];
 
      $spread_id = init_spread($conf);
+
      return $spread_id;
 }
 
@@ -242,7 +294,9 @@ function add_inside_cover($book_id, $chapter_id){
           'post_excerpt'=>'inside_cover',
           'post_content'=>pigpack($doc)
      ];
+
      $spread_id = init_spread($conf);
+
      return $spread_id;
 }
 
@@ -282,6 +336,7 @@ function add_intro($book_id, $chapter_id){
      ];
 
      $spread_id = init_spread($conf);
+
      return $spread_id;
 }
 
