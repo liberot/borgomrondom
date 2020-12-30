@@ -54,10 +54,9 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
 
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
 
-/*
      global $wpdb;
      $sql = <<<EOD
-          select * from wp_posts 
+          select wp_posts.* from wp_posts 
                where post_type = 'surveyprint_asset' 
                and post_author = '{$author_id}' 
                and post_parent = '{$section_id}' 
@@ -67,8 +66,8 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
-
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_asset',
           'post_author'=>$author_id,
@@ -78,10 +77,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>$limit
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 

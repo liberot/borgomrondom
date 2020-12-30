@@ -1,25 +1,22 @@
 <?php defined('ABSPATH') || exit;
 
 function clean_layouts(){
-     global $wpdb;
 
+     global $wpdb;
      $tables = [
           'surveyprint_layout',
      ];
 
      $res = null;
-
-/*
      foreach($tables as $table){
-
           $sql = <<<EOD
                delete from wp_posts where post_type = '{$table}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
-*/
-
+     return $res;
+/*
      foreach($tables as $table){
           $conf = [
                'post_type'=>$table,
@@ -30,12 +27,11 @@ EOD;
                $res = wp_delete_post($post->ID, true);
           }
      }
-
      return $res;
+*/
 }
 
 function clean_surveys(){
-     global $wpdb;
 
      $tables = [
           'surveyprint_question',
@@ -43,9 +39,8 @@ function clean_surveys(){
           'surveyprint_thread'
      ];
 
+     global $wpdb;
      $res = null;
-
-/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -54,8 +49,8 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
-*/
-
+     return $res;
+/*
      foreach($tables as $table){
           $conf = [
                'post_type'=>$table,
@@ -66,12 +61,11 @@ EOD;
                $res = wp_delete_post($post->ID, true);
           }
      }
-
      return $res;
+*/
 }
 
 function clean_client_threads(){
-     global $wpdb;
 
      $tables = [
           'surveyprint_book',
@@ -82,8 +76,8 @@ function clean_client_threads(){
           'surveyprint_thread'
      ];
 
+     global $wpdb;
      $res = null;
-/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -92,8 +86,8 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
-*/
-
+     return $res;
+/*
      foreach($tables as $table){
           $conf = [
                'post_type'=>$table,
@@ -104,12 +98,11 @@ EOD;
                $res = wp_delete_post($post->ID, true);
           }
      }
-
      return $res;
+*/
 }
 
 function clean_bookbuilder_db(){
-     global $wpdb;
 
      $tables = [
           'surveyprint_asset',
@@ -125,8 +118,8 @@ function clean_bookbuilder_db(){
           'surveyprint_toc'
      ];
 
+     global $wpdb;
      $res = null;
-/*
      foreach($tables as $table){
 
           $sql = <<<EOD
@@ -135,32 +128,35 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
      }
-*/
 
+     return $res;
+/*
+// cli interface using* mister pleaz
      foreach($tables as $table){
           $conf = [
                'post_type'=>$table,
-               'posts_per_page'=>-1
+               'posts_per_page'=>10
           ];
           $res = query_posts($conf);
           foreach($res as $post){
                $res = wp_delete_post($post->ID, true);
           }
      }
-
      return $res;
+*/
 }
 
 function clean_survey_page(){
-/*
+
      $sql = <<<EOD
           delete from wp_posts where post_name like '%__survey__thread__view__%' and post_type = 'page'
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
-*/
+     return $res;
 
+/*
      $conf = [
           'post_type'=>'page',
           'posts_per_page'=>-1,
@@ -172,14 +168,12 @@ EOD;
                ]
           ]
      ];
-
      $res = query_posts($conf);
-
      foreach($res as $post){
           $res = wp_delete_post($post->ID, true);
      }
-
      return $res;
+*/
 }
 
 function init_survey_page(){
@@ -207,47 +201,45 @@ EOD;
 }
 
 function dump_surveys(){
-/*
+
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_survey';
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_survey';
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
-*/
 
+/*
      $conf = [
           'post_type'=>'surveyprint_survey',
           'orderby'=>'ID',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function dump_threads(){
-/*
+
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_thread';
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_thread';
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
-*/
 
+/*
      $conf = [
           'post_type'=>'surveyprint_thread',
           'orderby'=>'ID',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function init_test_page(){

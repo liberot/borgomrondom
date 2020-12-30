@@ -32,16 +32,17 @@ function init_layout($conf){
 }
 
 function get_layouts_by_group($group){
-     // $res = get_posts(array('tag' => array($tags)));
-/*
+
+
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_layout' and post_title = '{$group}' order by ID desc limit 1;
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_layout' and post_title = '{$group}' order by ID desc limit 1;
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
+/*
      $conf = [
           'post_type'=>'surveyprint_layout',
           'post_title'=>$group,
@@ -49,18 +50,15 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_layout_by_group_and_rule($group, $rule){
 
-     // $res = get_posts(array('tag' => array($tags)));
-/*
      $sql = <<<EOD
-          select * from wp_posts 
+          select wp_posts.* from wp_posts 
                where post_type = 'surveyprint_layout' 
                and post_title = '{$group}' 
                and post_excerpt = '{$rule}' 
@@ -71,8 +69,9 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
+/*
      $conf = [
           'post_type'=>'surveyprint_layout',
           'post_title'=>$group,
@@ -81,10 +80,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_layouts_by_tags($tags){
@@ -115,14 +113,14 @@ EOD;
 function get_layout_by_rule($rule){
      $rule = esc_sql($rule);
 
-/*
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
 EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_layout',
           'post_excerpt'=>$rule,
@@ -130,10 +128,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function px_to_unit($ppi, $pxs, $unit){

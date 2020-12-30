@@ -92,15 +92,15 @@ function get_book_by_id($book_id){
      $book_id = esc_sql($book_id);
      $author_id = esc_sql(get_author_id());
 
-/*
 $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_book' and post_author = '{$author_id}' and ID = '{$book_id}';
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_book' and post_author = '{$author_id}' and ID = '{$book_id}';
 EOD;
-     $sql = debug_sql($sql);
      global $wpdb;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
+/*
      $conf = [
           'post_type'=>'surveyprint_book',
           'post_author'=>$author_id,
@@ -109,25 +109,24 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_chapter_by_book_id($book_id){
      $book_id = esc_sql($book_id);
      $author_id = esc_sql(get_author_id());
 
-/*
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_chapter' and post_author = '{$author_id}' and post_parent = '{$book_id}' order by ID desc; 
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_chapter' and post_author = '{$author_id}' and post_parent = '{$book_id}' order by ID desc; 
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
+/*
      $conf = [
           'post_type'=>'surveyprint_chapter',
           'post_author'=>$author_id,
@@ -136,25 +135,24 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_spreads_by_chapter_id($chapter_id){
      $chapter_id = esc_sql($chapter_id);
      $author_id = esc_sql(get_author_id());
 
-/*
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_spread' and post_author = '{$author_id}' and post_parent = '{$chapter_id}' order by ID desc;
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_spread' and post_author = '{$author_id}' and post_parent = '{$chapter_id}' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
+/*
      $conf = [
           'post_type'=>'surveyprint_spread',
           'post_author'=>$author_id,
@@ -163,10 +161,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function setup_new_book($title){

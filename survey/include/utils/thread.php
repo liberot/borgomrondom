@@ -54,19 +54,18 @@ function init_thread($conf){
 function get_thread_of_client(){
      $author_id = esc_sql(get_author_id());
 
-/*
      $sql = <<<EOD
-          select * from wp_posts
+          select wp_posts.* from wp_posts
                where post_type = 'surveyprint_thread'
                and post_author = '{$author_id}'
                order by ID
                limit 1
 EOD;
-     $sql = debug_sql($sql);
      global $wpdb;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
-
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_thread',
           'post_author'=>$author_id,
@@ -74,10 +73,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_thread_by_id($thread_id, $client_id=null){
@@ -89,19 +87,18 @@ function get_thread_by_id($thread_id, $client_id=null){
           $author_id = esc_sql($client_id);
      }
 
-/*
      $sql = <<<EOD
-          select * from wp_posts
+          select wp_posts.* from wp_posts
                where post_type = 'surveyprint_thread' 
                and post_author = '{$author_id}' 
                and ID = '{$thread_id}'
                limit 1;
 EOD;
-     $sql = debug_sql($sql);
      global $wpdb;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
-
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_thread',
           'post_author'=>$author_id,
@@ -110,17 +107,16 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_threads(){
 
 /*
      $sql = <<<EOD
-          select * from wp_posts where post_type = 'surveyprint_thread' order by ID desc;
+          select wp_posts.* from wp_posts where post_type = 'surveyprint_thread' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
      global $wpdb;
@@ -133,9 +129,7 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>-1
      ];
-
      $res = query_posts($conf);
-
      return $res;
 }
 
@@ -150,9 +144,8 @@ function get_sections_by_thread_id($thread_id, $client_id=null){
      $author_id = esc_sql(get_author_id());
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); };
 
-/*
      $sql = <<<EOD
-          select * from wp_posts 
+          select wp_posts.* from wp_posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}'
                and post_parent = '{$thread_id}'
@@ -161,7 +154,7 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
      $conf = [
           'post_type'=>'surveyprint_section',
@@ -183,9 +176,8 @@ function get_section_by_id($thread_id, $section_id){
      $section_id = esc_sql($section_id);
      $author_id = esc_sql(get_author_id());
 
-/*
      $sql = <<<EOD
-          select * from wp_posts 
+          select wp_posts.* from wp_posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}' 
                and post_parent = '{$thread_id}' 
@@ -195,7 +187,7 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
 
      $conf = [
           'post_type'=>'surveyprint_section',
@@ -218,10 +210,8 @@ function get_section_by_ref($thread_id, $section_ref){
      $section_id = esc_sql($section_ref);
      $author_id = esc_sql(get_author_id());
 
-
-/*
      $sql = <<<EOD
-          select * from wp_posts 
+          select wp_posts.* from wp_posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}' 
                and post_excerpt = '{$section_ref}'
@@ -231,8 +221,8 @@ EOD;
      $sql = debug_sql($sql);
      global $wpdb;
      $res = $wpdb->get_results($sql);
-*/
-
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_section',
           'post_author'=>$author_id,
@@ -242,10 +232,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function init_section_from_survey($thread_id, $survey_ref){

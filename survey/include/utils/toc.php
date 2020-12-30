@@ -30,13 +30,11 @@ function init_toc($conf){
 }
 
 function get_toc_by_book_id($book_id){
-
      $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($book_id);
 
-/*
      $sql = <<<EOD
-     select * from wp_posts 
+     select wp_posts.* from wp_posts 
           where post_type = 'surveyprint_toc'
                and post_author = '{$author_id}'
                and post_parent = '{$book_id}'
@@ -46,8 +44,8 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
-
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_toc',
           'post_author'=>$author_id,
@@ -56,10 +54,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function get_toc_by_id($toc_id){
@@ -67,9 +64,8 @@ function get_toc_by_id($toc_id){
      $book_id = esc_sql($toc_id);
      $author_id = esc_sql(get_author_id());
 
-/*
      $sql = <<<EOD
-     select * from wp_posts 
+     select wp_posts.* from wp_posts 
           where post_type = 'surveyprint_toc' 
                and post_author = '{$author_id}' 
                and ID = '{$toc_id}' 
@@ -79,7 +75,8 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_toc',
           'post_author'=>$author_id,
@@ -88,10 +85,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 function save_toc($conf){
@@ -101,9 +97,8 @@ function save_toc($conf){
 
 function get_toc_by_survey_id($survey_id){
 
-/*
      $sql = <<<EOD
-          select * from wp_posts 
+          select wp_posts.* from wp_posts 
                where post_type = 'surveyprint_toc' 
                and post_parent = '{$survey_id}' 
                order by ID 
@@ -112,8 +107,8 @@ EOD;
      global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-*/
-
+     return $res;
+/*
      $conf = [
           'post_type'=>'surveyprint_toc',
           'post_parent'=>$survey_id,
@@ -121,10 +116,9 @@ EOD;
           'order'=>'desc',
           'posts_per_page'=>1
      ];
-
      $res = query_posts($conf);
-
      return $res;
+*/
 }
 
 
