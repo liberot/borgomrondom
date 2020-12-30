@@ -56,8 +56,10 @@ function init_survey($conf){
 function get_surveys(){
 
 /*
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_survey' order by ID desc;
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_survey' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
@@ -76,11 +78,13 @@ EOD;
 function get_survey_by_id($survey_id){
 
      $survey_id = esc_sql($survey_id);
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_survey' and ID = '{$survey_id}'
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_survey' and ID = '{$survey_id}'
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 
@@ -98,12 +102,15 @@ EOD;
 function get_questions_by_survey_id($survey_id){
      $survey_id = esc_sql($survey_id);
 
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_question' and post_parent = '{$survey_id}' order by ID;
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_question' and post_parent = '{$survey_id}' order by ID;
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
+
      return $res;
 
 /*
@@ -122,10 +129,11 @@ EOD;
 function get_question_by_id($id){
      $id = esc_sql($id);
 
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_question' and ID = '{$id}' order by ID desc limit 1;
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_question' and ID = '{$id}' order by ID desc limit 1;
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -146,14 +154,17 @@ function get_question_by_ref($survey_id, $panel_ref){
      $survey_id = esc_sql($survey_id);
      $panel_ref = esc_sql($panel_ref);
 
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts 
-          where post_type = 'surveyprint_question' 
-          and post_excerpt = '{$panel_ref}' 
-          and post_parent = '{$survey_id}'
-          order by ID desc limit 1;
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select {$prefix}posts.* 
+               from {$prefix}posts 
+               where post_type = 'surveyprint_question' 
+               and post_excerpt = '{$panel_ref}' 
+               and post_parent = '{$survey_id}'
+               order by ID desc limit 1;
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -175,11 +186,12 @@ EOD;
 function get_survey_by_title($title){
      $title = esc_sql($title);
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_survey' and post_title = '{$title}' order by ID desc limit 1;
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_survey' and post_title = '{$title}' order by ID desc limit 1;
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 /*
@@ -198,11 +210,13 @@ EOD;
 function get_survey_by_ref($ref){
      $ref = esc_sql($ref);
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_survey' and post_excerpt = '{$ref}' order by ID desc limit 1;
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_survey' and post_excerpt = '{$ref}' order by ID desc limit 1;
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 

@@ -55,8 +55,10 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
 
      global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts 
+          select {$prefix}posts.* from {$prefix}posts 
                where post_type = 'surveyprint_asset' 
                and post_author = '{$author_id}' 
                and post_parent = '{$section_id}' 

@@ -89,13 +89,15 @@ function get_books(){
 }
 
 function get_book_by_id($book_id){
+
      $book_id = esc_sql($book_id);
      $author_id = esc_sql(get_author_id());
 
-$sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_book' and post_author = '{$author_id}' and ID = '{$book_id}';
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+$sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_book' and post_author = '{$author_id}' and ID = '{$book_id}';
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -115,14 +117,20 @@ EOD;
 }
 
 function get_chapter_by_book_id($book_id){
+
      $book_id = esc_sql($book_id);
      $author_id = esc_sql(get_author_id());
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_chapter' and post_author = '{$author_id}' and post_parent = '{$book_id}' order by ID desc; 
+          select {$prefix}posts.* from {$prefix}posts 
+               where post_type = 'surveyprint_chapter' 
+               and post_author = '{$author_id}' 
+               and post_parent = '{$book_id}' 
+               order by ID desc; 
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 
@@ -144,11 +152,17 @@ function get_spreads_by_chapter_id($chapter_id){
      $chapter_id = esc_sql($chapter_id);
      $author_id = esc_sql(get_author_id());
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_spread' and post_author = '{$author_id}' and post_parent = '{$chapter_id}' order by ID desc;
+          select {$prefix}posts.* 
+               from {$prefix}posts 
+               where post_type = 'surveyprint_spread' 
+               and post_author = '{$author_id}' 
+               and post_parent = '{$chapter_id}' 
+               order by ID desc;
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 

@@ -3,6 +3,8 @@
 function clean_layouts(){
 
      global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $tables = [
           'surveyprint_layout',
      ];
@@ -10,7 +12,7 @@ function clean_layouts(){
      $res = null;
      foreach($tables as $table){
           $sql = <<<EOD
-               delete from wp_posts where post_type = '{$table}'
+               delete from {$prefix}posts where post_type = '{$table}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
@@ -40,11 +42,12 @@ function clean_surveys(){
      ];
 
      global $wpdb;
+     $prefix = $wpdb->prefix;
      $res = null;
      foreach($tables as $table){
 
           $sql = <<<EOD
-               delete from wp_posts where post_type = '{$table}'
+               delete from {$prefix}posts where post_type = '{$table}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
@@ -77,11 +80,12 @@ function clean_client_threads(){
      ];
 
      global $wpdb;
+     $prefix = $wpdb->prefix;
      $res = null;
      foreach($tables as $table){
 
           $sql = <<<EOD
-               delete from wp_posts where post_type = '{$table}'
+               delete from {$prefix}posts where post_type = '{$table}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
@@ -119,11 +123,12 @@ function clean_bookbuilder_db(){
      ];
 
      global $wpdb;
+     $prefix = $wpdb->prefix;
      $res = null;
      foreach($tables as $table){
 
           $sql = <<<EOD
-               delete from wp_posts where post_type = '{$table}'
+               delete from {$prefix}posts where post_type = '{$table}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->get_results($sql);
@@ -148,10 +153,11 @@ EOD;
 
 function clean_survey_page(){
 
-     $sql = <<<EOD
-          delete from wp_posts where post_name like '%__survey__thread__view__%' and post_type = 'page'
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          delete from {$prefix}posts where post_name like '%__survey__thread__view__%' and post_type = 'page'
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
@@ -202,10 +208,11 @@ EOD;
 
 function dump_surveys(){
 
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_survey';
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_survey';
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -223,10 +230,11 @@ EOD;
 
 function dump_threads(){
 
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_thread';
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_thread';
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;

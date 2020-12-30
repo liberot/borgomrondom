@@ -33,15 +33,17 @@ function get_toc_by_book_id($book_id){
      $author_id = esc_sql(get_author_id());
      $book_id = esc_sql($book_id);
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-     select wp_posts.* from wp_posts 
+     select {$prefix}posts.* from {$prefix}posts 
           where post_type = 'surveyprint_toc'
                and post_author = '{$author_id}'
                and post_parent = '{$book_id}'
                order by ID 
                desc limit 1;
 EOD;
-     global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -64,15 +66,17 @@ function get_toc_by_id($toc_id){
      $book_id = esc_sql($toc_id);
      $author_id = esc_sql(get_author_id());
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-     select wp_posts.* from wp_posts 
+     select {$prefix}posts.* from {$prefix}posts 
           where post_type = 'surveyprint_toc' 
                and post_author = '{$author_id}' 
                and ID = '{$toc_id}' 
                order by ID 
                desc limit 1;
 EOD;
-     global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -97,14 +101,16 @@ function save_toc($conf){
 
 function get_toc_by_survey_id($survey_id){
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts 
+          select {$prefix}posts.* from {$prefix}posts 
                where post_type = 'surveyprint_toc' 
                and post_parent = '{$survey_id}' 
                order by ID 
                desc limit 1;
 EOD;
-     global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;

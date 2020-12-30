@@ -3,6 +3,9 @@
 // add_action('init', 'init_ref_table');
 function init_ref_table(){
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
      create table if not exists
           wp_xurveyprint_ref (
@@ -14,7 +17,7 @@ function init_ref_table(){
                description varchar(255),
                content varchar(255),
                init datetime,
-               foreign key (post_id) references wp_posts(ID),
+               foreign key (post_id) references {$prefix}posts(ID),
                foreign key (post_parent_id) references wp_posts(ID),
                primary key (post_id, post_parent_id)
           )
@@ -24,7 +27,6 @@ EOD;
      $sql = debug_sql($sql);
      // insert into wp_xurveyprint_ref (post_id, post_parent_id, init) values (31453, 31450, now());
 
-     global $wpdb;
 
      $res = $wpdb->query($sql);
 }

@@ -607,7 +607,7 @@ console.log('loadPanel(): ', sectionId, panelRef);
      bindPanel(msg){
 console.log('bindPanel(): ', msg);
 
-          if(null == msg.model.e.coll['panel'][0]){ 
+          if(null == msg.model.e.coll['panel']){ 
                console.log('bindPanel(): no panel');
                return false; 
           }

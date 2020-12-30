@@ -54,14 +54,16 @@ function init_thread($conf){
 function get_thread_of_client(){
      $author_id = esc_sql(get_author_id());
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts
+          select {$prefix}posts.* from {$prefix}posts
                where post_type = 'surveyprint_thread'
                and post_author = '{$author_id}'
                order by ID
                limit 1
 EOD;
-     global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -87,14 +89,16 @@ function get_thread_by_id($thread_id, $client_id=null){
           $author_id = esc_sql($client_id);
      }
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts
+          select {$prefix}posts.* from {$prefix}posts
                where post_type = 'surveyprint_thread' 
                and post_author = '{$author_id}' 
                and ID = '{$thread_id}'
                limit 1;
 EOD;
-     global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -115,11 +119,12 @@ EOD;
 function get_threads(){
 
 /*
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_thread' order by ID desc;
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_thread' order by ID desc;
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
 */
 
@@ -144,15 +149,17 @@ function get_sections_by_thread_id($thread_id, $client_id=null){
      $author_id = esc_sql(get_author_id());
      if(!is_null($client_id)){ $author_id = esc_sql($client_id); };
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts 
+          select {$prefix}posts.* from {$prefix}posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}'
                and post_parent = '{$thread_id}'
                order by ID
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 
@@ -176,8 +183,11 @@ function get_section_by_id($thread_id, $section_id){
      $section_id = esc_sql($section_id);
      $author_id = esc_sql(get_author_id());
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts 
+          select {$prefix}posts.* from {$prefix}posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}' 
                and post_parent = '{$thread_id}' 
@@ -185,7 +195,6 @@ function get_section_by_id($thread_id, $section_id){
                limit 1
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 
@@ -210,8 +219,11 @@ function get_section_by_ref($thread_id, $section_ref){
      $section_id = esc_sql($section_ref);
      $author_id = esc_sql(get_author_id());
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          select wp_posts.* from wp_posts 
+          select {$prefix}posts.* from {$prefix}posts 
                where post_type = 'surveyprint_section' 
                and post_author = '{$author_id}' 
                and post_excerpt = '{$section_ref}'
@@ -219,7 +231,6 @@ function get_section_by_ref($thread_id, $section_ref){
                limit 1
 EOD;
      $sql = debug_sql($sql);
-     global $wpdb;
      $res = $wpdb->get_results($sql);
      return $res;
 /*

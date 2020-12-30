@@ -33,11 +33,11 @@ function init_layout($conf){
 
 function get_layouts_by_group($group){
 
-
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_layout' and post_title = '{$group}' order by ID desc limit 1;
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_layout' and post_title = '{$group}' order by ID desc limit 1;
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -57,8 +57,11 @@ EOD;
 
 function get_layout_by_group_and_rule($group, $rule){
 
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select wp_posts.* from wp_posts 
+          select {$prefix}posts.* 
+               from {$prefix}posts 
                where post_type = 'surveyprint_layout' 
                and post_title = '{$group}' 
                and post_excerpt = '{$rule}' 
@@ -66,7 +69,6 @@ function get_layout_by_group_and_rule($group, $rule){
                limit 1
 ;
 EOD;
-     global $wpdb;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -86,12 +88,11 @@ EOD;
 }
 
 function get_layouts_by_tags($tags){
-
-     $res = get_posts(array('tag' => array($tags)));
-
+     global $wpdb;
+     $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select p.ID, t.term_id, t.name
-               from wp_posts p, wp_term_relationships r, wp_terms t
+               from {$prefix}posts p, {$prefix}term_relationships r, {$prefix}terms t
                where p.post_type = 'surveyprint_layout'
                and r.term_taxonomy_id = t.term_id
                and p.ID = r.object_id
@@ -100,7 +101,8 @@ EOD;
      $sql = debug_sql($sql);
      $sql = <<<EOD
           select p.ID, p.post_title, t.name
-               from wp_posts p, wp_term_relationships r, wp_terms t
+               from {$prefix}posts p, 
+               {$prefix}term_relationships r, {$prefix}terms t
                where p.post_type = 'surveyprint_layout'
                and r.term_taxonomy_id = t.term_id
                and p.ID = r.object_id
@@ -113,10 +115,11 @@ EOD;
 function get_layout_by_rule($rule){
      $rule = esc_sql($rule);
 
-     $sql = <<<EOD
-          select wp_posts.* from wp_posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
-EOD;
      global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
+EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
