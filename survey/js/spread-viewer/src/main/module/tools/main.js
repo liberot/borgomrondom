@@ -810,7 +810,6 @@ console.log('getPrintSize(): ', res);
           if(0 != this.model.selectedImageSize){
                rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
           }
-          // let doc = {...this.model.doc};
           this.model.doc.printSize = { "idx": "xX", "width": "210", "height": "148" };
           this.model.doc.unit = 'mm';
           this.model.doc.ppi = '300';
@@ -1124,7 +1123,8 @@ console.log('getPrintSize(): ', res);
           let models = [];
           let max = parseInt(this.model.doc.pageSize);
           for(let idx = 0; idx < max; idx++){
-               let model = {...this.model.doc};
+               // let model = {...this.model.doc};
+               let model = this.model.doc;
                     model.pageSize = 1; 
                     let xmin = parseInt(model.printSize.width) *idx;
                     let xmax = xmin +parseInt(model.printSize.width);
@@ -1180,344 +1180,295 @@ console.log('getPrintSize(): ', res);
      this.notify(new Message('spread-iewer::inited', this.model));
 }
 
-let __msg__001__tmpl = `
-`;
+let __msg__001__tmpl = "";
 
+let __control__bar__tmpl = ""+ 
+"<div class='row'>"+
+"<div class='block'>"+
+     "<a href='javascript:layoutQueue.route(\"savelayoutbtn::released\")'>i would like to save this layout</a></select>"+
+"</div>"+
+"</div>"+
+"<div class='row'>"+
+"<div class='block'>"+
+     "<a href='javascript:layoutQueue.route(\"import::layouts\")'>i would like to import the layouts</a></select>"+
+"</div>"+
+"</div>";
 
+let __tool__bar__tmpl = ""+ 
+"<div class='row'>"+
+"<div class='block select_group'>"+
+     "<select onchange='javascript:layoutQueue.route(\"layoutgroup::selected\", this.value)'>"+
+          "<option value='x'>Layout Groups</option>"+
+          "<option value='0'>Default Group</option>"+
+     "</select>"+
+"</div>"+
+"</div>"+
 
-let __control__bar__tmpl = `
-<div class='row'>
-<div class='block'>
-     <a href='javascript:layoutQueue.route("savelayoutbtn::released")'>i would like to save this layout</a></select>
-</div>
-</div>
-<div class='row'>
-<div class='block'>
-     <a href='javascript:layoutQueue.route("import::layouts")'>i would like to import the layouts</a></select>
-</div>
-</div>
-`;
+"<div class='row'>"+
+"<div class='block select_preset_size'>"+
+     "<select>"+
+          "<option value='x'>Layout Image Size</option>"+
+          "<option value='0'>No Image</option>"+
+          "<option value='1'>One Image</option>"+
+          "<option value='2'>Two Images</option>"+
+          "<option value='3'>Three Images</option>"+
+          "<option value='4'>Four Images</option>"+
+     "</select>"+
+"</div>"+
+"</div>"+
 
+"<div class='row'>"+
+"<div class='block select_preset_rule'>"+
+     "<select>"+
+          "<option value='x'>Layout Preset Rules</option>"+
+     "</select>"+
+"</div>"+
+"</div>";
 
+let __tool__001__tmpl = ""+
+"<div class='row'>"+
+"<div class='block'>"+
+     "<a href='javascript:layoutQueue.route(\"exportbtn::released\");'>i would like to export the spreads</a>"+
+"</div>"+
+"</div>"+
 
-let __tool__bar__tmpl = `
+"<div class='row'>"+
+"<div class='block select_ppi'>"
+     "<select>"+
+          "<option value='600'>600 ppi</option>"+
+          "<option value='300'>300 ppi</option>"+
+          "<option value='150'>150 ppi</option>"+
+          "<option value='96'>96 ppi</option>"+
+          "<option value='72'>72 ppi</option>"+
+     "</select>"+
+"</div>"+
+"</div>"+
 
-<div class='row'>
-<div class='block select_group'>
-     <select onchange='javascript:layoutQueue.route("layoutgroup::selected", this.value)'>
-          <option value='x'>Layout Groups</option>
-          <option value='0'>Default Group</option>
-     </select>
-</div>
-</div>
+"<div class='row'>"+
+"<div class='block select_pagesize'>"+
+     "<select>"+
+          "<option value='5'>5</option>"+
+          "<option value='3'>3</option>"+
+          "<option value='2'>2</option>"+
+          "<option value='1'>1</option>"+
+     "</select>"+
+"</div>"+
+"</div>";
 
-<div class='row'>
-<div class='block select_preset_size'>
-     <select>
-          <option value='x'>Layout Image Size</option>
-          <option value='0'>No Image</option>
-          <option value='1'>One Image</option>
-          <option value='2'>Two Images</option>
-          <option value='3'>Three Images</option>
-          <option value='4'>Four Images</option>
-     </select>
-</div>
-</div>
+let __tool__981__tmpl = ""+
+"<div>"+
+     "<a href='javascript:layoutQueue.route(\"prevsectbtn::released\", \"\");'>prev</a>"+
+     "<a href='javascript:layoutQueue.route(\"nextsectbtn::released\", \"\");'>next</a>"+
+"</div>";
 
-<div class='row'>
-<div class='block select_preset_rule'>
-     <select>
-          <option value='x'>Layout Preset Rules</option>
-     </select>
-</div>
-</div>
-`
+let __tool__991__tmpl = ""+
+"<div>"+
+     "<a href='javascript:layoutQueue.route(\"prevsectbtn::released\", \"\");'>prev</a>"+
+     "<a href='javascript:layoutQueue.route(\"nextsectbtn::released\", \"\");'>next</a>"+
+"</div>";
 
+let __lib__003__tmpl = ""+
+"<div class='items'></div>"+
+"<div class='textedit'></div>"+
+"<div class='assetedit'></div>"+
+"<div class='file'></div>";
 
+let __lib__depth__tmpl = ""+
+"<div class='imgpanel'>"+
+     "<div class='toolsvg'></div>"+
+"</div>"+
 
-let __tool__001__tmpl = `
-<div class='row'>
-<div class='block'>
-<a href='javascript:layoutQueue.route("exportbtn::released");'>i would like to export the spreads</a>
-</div>
-</div>
+"<div class='label'>depth:</div>"+
+"<div class='row'>"+
+     "<div class='block select_unit'>"+
+          "<input class='xpos' type='number' step='1' value='{depth}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'depth', this.value);\""+
+          "></input>"+
+     "</div>"+
+"</div>";
 
-<div class='row'>
-<div class='block select_ppi'>
-     <select>
-          <option value='600'>600 ppi</option>
-          <option value='300'>300 ppi</option>
-          <option value='150'>150 ppi</option>
-          <option value='96'>96 ppi</option>
-          <option value='72'>72 ppi</option>
-     </select>
-</div>
-</div>
+let __lib__004__tmpl = "";
+"<div class='imgpanel'>"+
+     "<img src='{src}' height='71'/>"+
+"</div>"+
 
-<!--
-<div class='row'>
-     <div class='block select_size'></div>
-</div>
--->
+"<div class='label'>unit:</div>"+
+"<div class='row'>"+
+     "<div class='block select_unit'>"+
+          "<select onchange='javascript:layoutQueue.route(\"unitbtn::released\", this.value);'>"+
+               "<option value='mm'>mm</option>"+
+               "<option value='inch'>inch</option>"+
+               "<option value='px'>px</option>"+
+          "</select>"+
+     "</div>"+
+"</div>"+
 
-<div class='row'>
-<div class='block select_pagesize'>
-     <select>
-          <option value='5'>5</option>
-          <option value='3'>3</option>
-          <option value='2'>2</option>
-          <option value='1'>1</option>
-     </select>
-</div>
-</div>
-`;
+"<div class='label'>pos:</div>"+
+"<div class='row'>"+
+     "<div class='block'>"+
+          "<input class='xpos' type='number' step='1' value='{xpos}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'xpos', this.value);\""+
+          "></input>"+
+     "</div>"+
+     "<div class='block'>"+
+          "<input class='ypos' type='number' step='1' value='{ypos}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'ypos', this.value);\""+
+          "></input>"+
+     "</div>"+
+"</div>"+
 
+"<div class='label'>size:</div>"+
+"<div class='row'>"+
+     "<div class='block'>"+
+          "<input class='width' type='number' step='any' value='{width}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'width', this.value);\""+
+          "></input>"+
+     "</div>"+
+     "<div class='block'>"+
+          "<input class='height' type='number' step='any' value='{height}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'height', this.value);\""+
+          "></input>"+
+     "</div>"+
+"</div>"+
 
+"<div class='row'>"+
+     "<div class='block'>"+
+          "<input type='number' step='0.01' min='0.5' max='2' value='{scale}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'scale', this.value);\""+
+          "></input>"+
+     "</div>"+
+"</div>"+
 
-let __tool__981__tmpl = `
-<div>
-     <a href='javascript:layoutQueue.route("prevsectbtn::released", "");'>prev</a>
-     <a href='javascript:layoutQueue.route("nextsectbtn::released", "");'>next</a>
-</div>
+"<div class='label'>opac:</div>"+
+"<div class='row'>"+
+     "<div class='block'>"+
+          "<input type='number' step='0.01' min='0' max='1' value='{opacity}'"+
+               "onchange=\"javascript:layoutQueue.route('assetinput::updated', '{indx}', 'opacity', this.value);\""+
+          "></input>"+
+     "</div>"+
+"</div>";
 
-`;
+let __lib__002__tmpl = ""+
+"<a href='javascript:layoutQueue.route(\"select::asset\", \"{title}\")'>{title}</a>";
 
+let __lib__001__tmpl = ""+
+"<div class='row'>"+
+"<div class='block'>"+
+     "<textarea onchange='javascript:layoutQueue.route(\"textinput::updated\", \"{indx}\", \"text\", this.value);'>{text}</textarea>"+
+"</div>"+
+"</div>"
 
+"<div class='row'>"+
+"<div class='block'>"+
+     "<a href='javascript:layoutQueue.route(\"fontbtn::released\", \"{indx}\", \"left\");'>left</a>"+
+     "<a href='javascript:layoutQueue.route(\"fontbtn::released\", \"{indx}\", \"center\");'>center</a>"+
+     "<a href='javascript:layoutQueue.route(\"fontbtn::released\", \"{indx}\", \"right\");'>right</a>"+
+     "<a href='javascript:layoutQueue.route(\"fontbtn::released\", \"{indx}\", \"block\");'>block</a>"+
+     "<a href='javascript:layoutQueue.route(\"recalcbtn::released\", \"{indx}\", \"fit\");'>fixfits</a>"+
+"</div>"+
+"</div>"+
 
-let __tool__991__tmpl = `
-<div>
-     <a href='javascript:layoutQueue.route("prevsectbtn::released", "");'>prev</a>
-     <a href='javascript:layoutQueue.route("nextsectbtn::released", "");'>next</a>
-</div>
-`;
+"<div class='label'>font:</div>"+
+"<div class='row'>"+
+     "<div class='block select_font'></div>"+
+"</div>"+
 
+"<div class='row'>"+
+"<div class='block'>"+
+     "<input class='size' type='number' step='0.1' value='{size}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'size', this.value);\""+
+     "></input>"+
+"</div>"+
 
+"<div class='block'>"+
+     "<input class='space' type='number' step='0.1' value='{space}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'space', this.value);\""+
+     "></input>"+
+"</div>"+
 
-let __lib__003__tmpl = `
-<div class='items'></div>
-<div class='textedit'></div>
-<div class='assetedit'></div>
-<div class='file'></div>
-`;
+"<div class='block'>"+
+     "<input class='line' type='number' step='0.1' value='{line}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'line', this.value);\""+
+     "></input>"+
+"</div>"+
+"</div>"+
 
+"<div class='label'>unit:</div>"+
+"<div class='row'>"+
+"<div class='block select_unit'>"+
+     "<select onchange=\"javascript:layoutQueue.route('unitbtn::released', this.value);\">"+
+          "<option value='mm'>mm</option>"+
+          "<option value='inch'>inch</option>"+
+          "<option value='px'>px</option>"+
+     "</select>"+
+"</div>"+
+"</div>"+
 
+"<div class='label'>pos:</div>"+
+"<div class='row'>"+
+"<div class='block'>"+
+     "<input class='xpos' type='number' step='1' value='{xpos}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'xpos', this.value);\""+
+     "></input>"+
+"</div>"+
+"<div class='block'>"+
+     "<input class='ypos' type='number' step='1' value='{ypos}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'ypos', this.value);\""+
+     "></input>"+
+"</div>"+
+"</div>"+
 
-let __lib__depth__tmpl = `
-<div class='imgpanel'>
-     <div class='toolsvg'></div>
-</div>
-<div class='label'>depth:</div>
-<div class='row'>
-     <div class='block select_unit'>
-          <input class='xpos' type='number' step='1' value='{depth}'
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'depth', this.value);"
-          ></input>
-     </div>
-</div>
-`;
+"<div class='row'>"+
+"<div class='block'>"+
+     "<input class='width' type='number' step='1' value='{width}'"+ 
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'width', this.value);\""+
+     "></input>"+
+"</div>"+
+"</div>"+
 
+"<div class='label'>color:</div>"+
+"<div class='row'>"+
+"<div class='block'>"+
+     "<input type='number' step='0.01' min='0' max='1' value='{c}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'c', this.value);\""*
+     "></input>"+
+"</div>"+
 
+"<div class='block'>"+
+     "<input type=\"number\" step='0.01' min='0' max='1' value='{m}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'm', this.value);\""+
+     "></input>"+
+"</div>"+
 
-let __lib__004__tmpl = `
-<div class='imgpanel'>
-     <img src='{src}' height='71'/>
-</div>
+"<div class='block'>"+
+     "<input type='number' step='0.01' min='0' max='1' value='{y}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'y', this.value);\""+
+     "></input>"+
+"</div>"+
 
-<div class='label'>unit:</div>
-<div class='row'>
-     <div class='block select_unit'>
-          <select onchange='javascript:layoutQueue.route("unitbtn::released", this.value);''>
-               <option value='mm'>mm</option>
-               <option value='inch'>inch</option>
-               <option value='px'>px</option>
-          </select>
-     </div>
-</div>
+"<div class='block'>"+
+     "<input type='number' step='0.01' min='0' max='1' value='{k}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'k', this.value);\""+
+     "></input>"+
+"</div>"+
+"</div>"+
 
-<div class='label'>pos:</div>
-<div class='row'>
-     <div class='block'>
-          <input class='xpos' type='number' step='1' value='{xpos}'
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'xpos', this.value);"
-          ></input>
-     </div>
-     <div class='block'>
-          <input class='ypos' type='number' step='1' value='{ypos}' 
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'ypos', this.value);"
-          ></input>
-     </div>
-</div>
-<div class='label'>size:</div>
-<div class='row'>
-     <div class='block'>
-          <input class='width' type='number' step='any' value='{width}'
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'width', this.value);"
-          ></input>
-     </div>
-     <div class='block'>
-          <input class='height' type='number' step='any' value='{height}'
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'height', this.value);"
-          ></input>
-     </div>
-</div>
+"<div class='row'>"+
+"<div class='block'>"+
+     "<input type='number' step='0.01' min='0' max='1' value='{opacity}'"+
+          "onchange=\"javascript:layoutQueue.route('textinput::updated', '{indx}', 'opacity', this.value);\""+
+     "></input>"+
+"</div>"+
+"</div>"+
 
-<div class='row'>
-     <div class='block'>
-          <input type="number" step='0.01' min='0.5' max='2' value="{scale}" 
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'scale', this.value);"
-          ></input>
-     </div>
-</div>
+"</div>";
 
-<div class='label'>opac:</div>
-<div class='row'>
-     <div class='block'>
-          <input type="number" step='0.01' min='0' max='1' value="{opacity}" 
-               onchange="javascript:layoutQueue.route('assetinput::updated', '{indx}', 'opacity', this.value);"
-          ></input>
-     </div>
-</div>
-`;
+let __lib__007__tmpl = "";
 
-
-
-let __lib__002__tmpl = `
-<a href='javascript:layoutQueue.route("select::asset", "{title}")'>{title}</a>
-`;
-
-
-
-let __lib__001__tmpl = `
-<div class='row'>
-<div class='block'>
-     <textarea 
-          onchange='javascript:layoutQueue.route("textinput::updated", "{indx}", "text", this.value);'
-     >{text}</textarea>
-</div>
-</div>
-
-<div class='row'>
-<div class='block'>
-     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "left");'>left</a>
-     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "center");'>center</a>
-     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "right");'>right</a>
-     <a href='javascript:layoutQueue.route("fontbtn::released", "{indx}", "block");'>block</a>
-     <a href='javascript:layoutQueue.route("recalcbtn::released", "{indx}", "fit");'>fixfits</a>
-</div>
-</div>
-
-<div class='label'>font:</div>
-<div class='row'>
-     <div class='block select_font'></div>
-</div>
-<div class='row'>
-<div class='block'>
-     <input class='size' type='number' step='0.1' value='{size}'
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'size', this.value);"
-     ></input>
-</div>
-<div class='block'>
-     <input class='space' type='number' step='0.1' value='{space}' 
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'space', this.value);"
-     ></input>
-</div>
-<div class='block'>
-     <input class='line' type='number' step='0.1' value='{line}' 
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'line', this.value);"
-     ></input>
-</div>
-</div>
-
-<div class='label'>unit:</div>
-<div class='row'>
-<div class='block select_unit'>
-     <select onchange="javascript:layoutQueue.route('unitbtn::released', this.value);">
-          <option value='mm'>mm</option>
-          <option value='inch'>inch</option>
-          <option value='px'>px</option>
-     </select>
-</div>
-</div>
-
-<div class='label'>pos:</div>
-<div class='row'>
-<div class='block'>
-     <input class='xpos' type='number' step='1' value='{xpos}' 
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'xpos', this.value);"
-     ></input>
- </div>
-<div class='block'>
-     <input class='ypos' type='number' step='1' value='{ypos}' 
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'ypos', this.value);"
-     ></input>
-</div>
-</div>
-<div class='row'>
-<div class='block'>
-     <input class='width' type='number' step='1' value="{width}" 
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'width', this.value);"
-     ></input>
-</div>
-</div>
-
-<div class='label'>color:</div>
-<div class='row'>
-<div class='block'>
-     <input type="number" step='0.01' min='0' max='1' value='{c}'
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'c', this.value);"
-     ></input>
-</div>
-<div class='block'>
-     <input type="number" step='0.01' min='0' max='1' value='{m}'
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'm', this.value);"
-     ></input>
-</div>
-<div class='block'>
-     <input type="number" step='0.01' min='0' max='1' value='{y}'
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'y', this.value);"
-     ></input>
-</div>
-<div class='block'>
-     <input type="number" step='0.01' min='0' max='1' value='{k}'
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'k', this.value);"
-     ></input>
-</div>
-</div>
-<div class='row'>
-<div class='block'>
-     <input type="number" step='0.01' min='0' max='1' value='{opacity}'
-          onchange="javascript:layoutQueue.route('textinput::updated', '{indx}', 'opacity', this.value);"
-     ></input>
-</div>
-</div>
-
-</div>
-`;
-
-
-
-let __lib__007__tmpl = `
-<!--
-<div class='ctitle'></div>
-<div>
-     <span><a href='javascript:layoutQueue.route("addimagebtn::released");'>add image asset</a></span>
-     <span><a href='javascript:layoutQueue.route("addtextbtn::released");'>add text asset</a></span>
-</div>
-<div>
-     <span><a href='javascript:layoutQueue.route("savebtn::released");'>save</a></span>
-     <span>export be batched process: </span>
-     <span><a href='javascript:layoutQueue.route("exportbtn::released", "{indx}", "svg");'>export print formats</a></span>
-</div>
-//-->
-`;
-
-let __lib__009__tmpl = `
-<form>
-     <input type='file' class='fileupload' name='filename' multiple='multiple'></inpupt>
-</form>
-`;
-
-
+let __lib__009__tmpl = ""+
+"<form>"+
+     "<input type='file' class='fileupload' name='filename' multiple='multiple'></inpupt>"+
+"</form>";
 
 let ToolsModel = function() {
      this.spidx = 0;

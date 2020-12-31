@@ -122,7 +122,7 @@ LayoutUtil = {
           return res;
      },
 /*
-     mmToPx(ppi, val){
+     mmToPx: function(ppi, val){
           if(undefined == val){ 
                val = 0; 
           }
@@ -141,7 +141,7 @@ LayoutUtil = {
           let tmp2nd = jQuery.parseJSON(tmp1st);
           return tmp2nd;
      },
-     sanitizePrint(text){
+     sanitizePrint: function(text){
           if(null == text){
                return '';
           }
@@ -151,7 +151,7 @@ LayoutUtil = {
           res = text.replace(/\'/gm, '’');;
           return res;
      },
-     formatSettingFloat(val){
+     formatSettingFloat: function(val){
           let res = val;
           res = parseFloat(res).toFixed(2);
           return res;

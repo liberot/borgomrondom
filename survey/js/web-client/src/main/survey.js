@@ -1291,102 +1291,79 @@ console.log('initSpreads(): msg: ', msg);
      this.notify(new Message('init::thread', this.model));
 }
 
-let __upload_tmpl_002__ = `
-<form>
-     <input type='file' class='files' name='filename' multiple='multiple'></inpupt>
-     <div class='fake'>Drop Files Here</div>
-</form>
-`;
+let __upload_tmpl_002__= ""+
+"<form>"+
+     "<input type='file' class='files' name='filename' multiple='multiple'></inpupt>"+
+     "<div class='fake'>Drop Files Here</div>"+
+"</form>";
 
-let __ctrl_tmpl_003__ = `
-<a href='javascript:surveyQueue.route("confirm::input", "{ref}");'>{msg}</a>
-`;
+let __ctrl_tmpl_003__ = ""+
+"<a href='javascript:surveyQueue.route(\"confirm::input\", \"{ref}\");'>{msg}</a>";
 
-let __ctrl_tmpl_upload__ = `
-<a href='javascript:surveyQueue.route("confirm::upload", "{ref}");'>{msg}</a>
-`;
+let __ctrl_tmpl_upload__ = ""+
+"<a href='javascript:surveyQueue.route(\"confirm::upload\", \"{ref}\");'>{msg}</a>";
 
-let __ctrl_tmpl_group__ = `
-<a href='javascript:surveyQueue.route("confirm::group", "{ref}");'>{msg}</a>
-`;
+let __ctrl_tmpl_group__ = ""+
+"<a href='javascript:surveyQueue.route(\"confirm::group\", \"{ref}\");'>{msg}</a>";
 
-let __ctrl_tmpl_002__ = `
-<!-- <a href='javascript:surveyQueue.route("thread::prev");'>prev</a> //-->
-<!-- <a href='javascript:surveyQueue.route("thread::next");'>next</a> //-->
-`;
+let __ctrl_tmpl_002__ = "";
 
-let __group_title_tmpl__ = `
-<div class='parent-output'>Group: {parent}</div>
-`;
+let __group_title_tmpl__ = ""+
+"<div class='parent-output'>Group: {parent}</div>";
 
-let __section_title_tmpl__ = `
-<div class='section-output'>Section: {section}</div>
-`;
+let __section_title_tmpl__ = ""+
+"<div class='section-output'>Section: {section}</div>";
+
+let __short_text_tmpl__ = ""+
+"<div class='question-output'>{question}</div>"+
+"<div class='answer-input'><input type='text' value='{answer}'></input></div>";
+
+let __question_text_tmpl__ = ""+
+"<div class='question-output'>{question}</div>";
 
 
-let __short_text_tmpl__ = `
-<div class='question-output'>{question}</div>
-<div class='answer-input'><input type='text' value='{answer}'></input></div>
-`;
+let __group_tmpl__ = ""+
+"<div class='question-output'>{question}</div>"+
+"<div class='question-output'>{description}</div>";
 
-let __question_text_tmpl__ = `
-<div class='question-output'>{question}</div>
-`;
+let __statement_tmpl__ = ""+
+"<div class='question-output'>{question}</div>"+
+"<a href='javascript:surveyQueue.route(\"select::statement\", \"{ref}\", \"false\");'>{button}</a>";
 
+let __yes_no_tmpl__ = ""+
+"<div class='question-output'>{question}</div>"+
+"<div class='yesno-input'>"+
+     "<a href='javascript:surveyQueue.route(\"select::yesno\", \"{ref}\", \"true\");'>{yes}</a>"+
+     "<a href='javascript:surveyQueue.route(\"select::yesno\", \"{ref}\", \"false\");'>{no}</a>"+
+"</div>";
 
-let __group_tmpl__ = `
-<div class='question-output'>{question}</div>
-<div class='question-output'>{description}</div>
-`;
+let __mutliple_choice_tmpl__ = ""+
+"<div class='choice-output'>"+
+     "<span><a href='javascript:surveyQueue.route(\"confirm::multiple\", \"{ref}\");'>{choice}</a></span>"+
+"</div>";
 
-let __statement_tmpl__ = `
-<div class='question-output'>{question}</div>
-<a href='javascript:surveyQueue.route("select::statement", "{ref}", "false");'>{button}</a>
-`;
+let __picture_choice_tmpl__ = ""+
+"<div class='picture-choice'>"+
+     "<span><a href='javascript:surveyQueue.route(\"confirm::image\", \"{ref}\");'><img src=\"{src}\"></span>"+
+"</div>";
 
-let __yes_no_tmpl__ = `
-<div class='question-output'>{question}</div>
-<div class="yesno-input">
-     <a href='javascript:surveyQueue.route("select::yesno", "{ref}", "true");'>{yes}</a>
-     <a href='javascript:surveyQueue.route("select::yesno", "{ref}", "false");'>{no}</a>
-</div>
-`;
+let __srv_msg_001_tmpl__ = ""+
+"<div>{msg}</div>";
 
-let __mutliple_choice_tmpl__ = `
-<div class='choice-output'>
-<span><a href='javascript:surveyQueue.route("confirm::multiple", "{ref}");'>{choice}</a></span>
-</div>
-`;
+let __src_img_011_tmpl__ = ""+
+"<img class='uploaded-asset {indx}' src='{data}'></img>";
 
-let __picture_choice_tmpl__ = `
-<div class='picture-choice'>
-<span><a href='javascript:surveyQueue.route("confirm::image", "{ref}");'><img src="{src}"></span>
-</div>
-`;
+let __ctlr_tmpl_init_spreads__ = ""+
+"<a href='javascript:surveyQueue.route(\"spreads::init\");'>{init}</a>";
 
-let __srv_msg_001_tmpl__ = `
-<div>{msg}</div>
-`;
+let __opinion_cell_tmpl__ = ""+
+"<div class='opinion-cell'><a href='javascript:surveyQueue.route(\"set::opinion\", \"{idx}\");'>{idx}</a></div>";
 
-let __src_img_011_tmpl__ = `
-<img class='uploaded-asset {indx}' src='{data}'></img>
-`;
+let __dropdown_row_tmpl__ = ""+
+"<select class='dropdown-row' onchange='javascript:surveyQueue.routee(\"dropdown::row\", this);'>";
 
-let __ctlr_tmpl_init_spreads__ = `
-<a href='javascript:surveyQueue.route("spreads::init");'>{init}</a>
-`;
-
-let __opinion_cell_tmpl__ = `
-<div class='opinion-cell'><a href='javascript:surveyQueue.route("set::opinion", "{idx}");'>{idx}</a></div>
-`
-
-let __dropdown_row_tmpl__ = `
-<select class='dropdown-row' onchange='javascript:surveyQueue.routee("dropdown::row", this);'>
-`
-
-let __dropdown_cell_tmpl__ = `
-<option class='dropdown-cell' value='{ref}'>{label}</option>
-`
+let __dropdown_cell_tmpl__ = ""+
+"<option class='dropdown-cell' value='{ref}'>{label}</option>"
 
 let SurveyModel = function(){
      this.thread;
