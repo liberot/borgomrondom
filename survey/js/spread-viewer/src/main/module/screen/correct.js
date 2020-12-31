@@ -1,23 +1,23 @@
-class Correct extends Controller {
+let Correct = function() {
 
-     constructor(queue){
-          super(queue);
-          this.model = new CorrectModel();
-          this.model.offScreen = SVG().addTo('.offscreen'); 
-          this.register(new Subscription('document::inited', this.initWorker));
-          this.register(new Subscription('asset::iloaded', this.corrAssetSize));
-          this.register(new Subscription('ppi::updated', this.splitRowspans));
-          this.register(new Subscription('text::updated', this.splitRowspans));
-          this.register(new Subscription('recalcbtn::released', this.splitRowspans));
-          this.register(new Subscription('adaptclayout::released', this.implementLayout));
-     }
+     this.register = function(subscription){}
+     this.notify = function(message){}
 
-     initWorker(msg){
+     this.model = new CorrectModel();
+     this.model.offScreen = SVG().addTo('.offscreen'); 
+     this.register(new Subscription('document::inited', this.initWorker));
+     this.register(new Subscription('asset::iloaded', this.corrAssetSize));
+     this.register(new Subscription('ppi::updated', this.splitRowspans));
+     this.register(new Subscription('text::updated', this.splitRowspans));
+     this.register(new Subscription('recalcbtn::released', this.splitRowspans));
+     this.register(new Subscription('adaptclayout::released', this.implementLayout));
+
+     this.initWorker = function(msg){
           this.model.doc = msg.model;
           this.splitRowspans();
      }
 
-     corrAssetSize(msg){
+     this.corrAssetSize = function(msg){
 
           let target = msg.model.target;
           let width = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.ow, target.conf.unit);
@@ -88,7 +88,7 @@ class Correct extends Controller {
           // console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
      }
 
-     corrBlockWidth(target){
+     this.corrBlockWidth = function(target){
           if(parseFloat(target.conf.xpos) <= 0){
                target.conf.xpos = 0;
           }
@@ -98,7 +98,7 @@ class Correct extends Controller {
           this.splitRowspans();
      }
 
-     splitRowspans(msg) {
+     this.splitRowspans = function(msg) {
           this.model.offScreen.clear();
           for(let idx in this.model.doc.assets){
                if('text' != this.model.doc.assets[idx].type){
@@ -186,10 +186,7 @@ class Correct extends Controller {
      }
 }
 
-class CorrectModel extends Model{
-     constructor(){
-          super();
-          this.offScreen; 
-          this.doc;
-     }
+let CorrectModel = function(){
+     this.offScreen; 
+     this.doc;
 }

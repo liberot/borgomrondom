@@ -1,50 +1,11 @@
-class Tools extends Controller {
+let Tools = function(queue){
 
-     constructor(queue){
-          super(queue);
-          this.model = new ToolsModel();
-          let ref = this;
-          jQuery('.layout-messages').html(__msg__001__tmpl);
-          // control sequences
-          this.register(new Subscription(      'fontbtn::released', this.bindFontSetting));
-          this.register(new Subscription(     'textinput::updated', this.bindTextInput));
-          this.register(new Subscription(    'assetinput::updated', this.bindAssetInput));
-          this.register(new Subscription(          'select::asset', this.setupEditor));
-          this.register(new Subscription(         'font::selected', this.bindFontSelection));
-          this.register(new Subscription(       'ppibtn::released', this.setPpi))
-          this.register(new Subscription(    'printsize::selected', this.setPrintSize))
-          this.register(new Subscription(  'nextsectbtn::released', this.nextSpread));
-          this.register(new Subscription(  'prevsectbtn::released', this.prevSpread));
-          this.register(new Subscription(      'savebtn::released', this.saveDocument));
-          this.register(new Subscription(     'pagesize::selected', this.bindPageSize));
-          this.register(new Subscription('savelayoutbtn::released', this.saveLayout));
-          this.register(new Subscription(  'layoutgroup::selected', this.bindLayoutGroup));
-          // event messages
-          this.register(new Subscription(    'mousedrag::released', this.bindMouseDrag));
-          this.register(new Subscription(         'layout::loaded', this.bindLayout));
-          this.register(new Subscription(       'document::loaded', this.initDocument));
-          this.register(new Subscription(     'textinput::focused', this.lockControlKeys));
-          this.register(new Subscription(        'textinput::done', this.unlockControlKeys));
-          this.register(new Subscription(          'image::loaded', this.bindImageAsset));
-          this.register(new Subscription(           'book::loaded', this.bindBook));
-          this.register(new Subscription(      'unitbtn::released', this.bindUnit));
-          this.register(new Subscription(    'layoutgroup::loaded', this.bindLoadedLayoutGroup));
-          this.register(new Subscription(  'layoutpresets::loaded', this.bindLoadedLayoutPresets));
-          this.register(new Subscription(      'layouts::imported', this.bindImportedLayouts));
-          //
-          this.setupAssetPossibs();
-          if(SpreadViewerConfig.mouseControls){ this.setupMouseControls(); }
-          this.loadLocalDocument();
-          this.setupToolbar();
-          this.notify(new Message('spread-iewer::inited', this.model));
-     }
+     this.register = function(subscription){}
+     this.notify = function(message){}
 
-     bindImportedLayouts(msg){
- console.log('bindImportedLayouts(): ', msg);
-          jQuery('.layout-messages').html(msg.model.rules.join('; '));
-     }
+     this.queue = queue;
 
-     setupAssetPossibs(){
+     this.setupAssetPossibs = function(){
           let keys = ['P', 'L'];
           let tab0 = [];
           let tab1 = [];
@@ -72,7 +33,40 @@ class Tools extends Controller {
           this.model.layoutDescriptor = [ tab0, tab1, tab2, tab3, tab4 ];
      }
 
-     getLayoutIndex(coll){
+     this.loadLocalDocument = function(){
+          this.model.doc = new MockModel().model;
+          this.initDocument();
+     }
+
+     this.initDocument = function(){
+          switch(SpreadViewerConfig.mode){
+               case SpreadViewerConfig.WEB_CLIENT:
+                    this.setupNavigation();
+                    break;
+               case SpreadViewerConfig.SPREAD_CLIENT:
+                    this.setupTools();
+                    this.setupLibrary();
+                    break;
+               case SpreadViewerConfig.LAYOUT_CLIENT:
+                    this.setupTools();
+                    this.setupLibrary();
+                    break;
+          }
+          this.selectLibraryItem(null);
+          this.notify(new Message('document::inited', this.model.doc));
+          jQuery('.select_ppi select').val(this.model.doc.ppi);
+     }
+
+     this.setupNavigation = function(){
+          jQuery('.layout-pages').html(__tool__991__tmpl);
+     }
+
+     this.bindImportedLayouts = function(msg){
+ console.log('bindImportedLayouts(): ', msg);
+          jQuery('.layout-messages').html(msg.model.rules.join('; '));
+     }
+
+     this.getLayoutIndex = function(coll){
           let ldx = coll.length;
           if(ldx < 0 || ldx >= this.model.layoutDescriptor.length -1){
               return null;
@@ -87,7 +81,7 @@ class Tools extends Controller {
           return null;
      }
 
-     bindUnit(msg){
+     this.bindUnit = function(msg){
           if(null == this.model.selectedLibraryItem){
                return;
           }
@@ -105,30 +99,30 @@ class Tools extends Controller {
           this.updateEditor();
      }
 
-     loadSession(){
+     this.loadSession = function(){
           let coll = window.location.href.split('/');
           if(coll.length >= 4){
                this.notify(new Message('thread::requested', { threadId: coll[4] } ));
           }
      }
 
-     lockControlKeys(msg){
+     this.lockControlKeys = function(msg){
           this.model.controlKeysLocked = true;
      }
 
-     unlockControlKeys(msg){
+     this.unlockControlKeys = function(msg){
           this.model.controlKeysLocked = false;
      }
 
-     bindModifier(key){
+     this.bindModifier = function(key){
           this.model.modifierKey = key;
      }
 
-     releaseModifier(key ){
+     this.releaseModifier = function(key){
           this.model.modifierKey = null;
      }
 
-     selectAsset(key){
+     this.selectAsset = function(key){
           let idx = parseInt(parseInt(key) -1);
           if(null != this.model.doc.assets[idx]){
                let indx = this.model.doc.assets[idx].indx;
@@ -137,7 +131,7 @@ class Tools extends Controller {
           };
      }
 
-     handleArrowKeydown(key){
+     this.handleArrowKeydown = function(key){
           switch(key){
 
                case 'ArrowLeft':
@@ -168,7 +162,7 @@ class Tools extends Controller {
           this.notify(new Message('arrowkey::pressed', this.model.doc));
      }
 
-     transformSelectedItem(xpos, ypos, width, height){
+     this.transformSelectedItem = function(xpos, ypos, width, height){
           if(null == this.model.selectedLibraryItem){
                return;
           }
@@ -195,7 +189,7 @@ class Tools extends Controller {
           this.model.selectedLibraryItem.conf.height += parseFloat(height) *r;
      }
 
-     setupMouseControls(){
+     this.setupMouseControls = function(){
 
           let ref = this;
           jQuery(document).off('mouseup');
@@ -267,7 +261,7 @@ class Tools extends Controller {
           });
      }
 
-     selectLibraryItemByMouse(mx, my){
+     this.selectLibraryItemByMouse = function(mx, my){
           if(null != this.model.selectedLibraryItem){
                return this.model.selectedLibraryItem;
           }
@@ -306,7 +300,7 @@ class Tools extends Controller {
           }
      }
 
-     setupKeyControls(){
+     this.setupKeyControls = function(){
           let ref = this;
           jQuery(document).off('keydown');
           jQuery(document).keydown(function(e){
@@ -359,18 +353,13 @@ class Tools extends Controller {
           });
      }
 
-     loadLocalDocument(){
-          this.model.doc = new MockModel().model;
-          this.initDocument();
-     }
-
-     bindPageSize(msg){
+     this.bindPageSize = function(msg){
           this.model.doc.pageSize = parseInt(msg.model.pageSize);
           jQuery('.select_page select').val(this.model.doc.pageSize);
           this.notify(new Message('pagesize::updated', this.model.doc.pageSize));
      }
 
-     bindRenderedImageAsset(msg){
+     this.bindRenderedImageAsset = function(msg){
           for(let idx in this.model.doc.assets){
                if(msg.model.ref == this.model.doc.assets[idx].indx){
                     this.model.doc.assets[idx].locator = this.model.doc.assets[idx].src;
@@ -379,13 +368,13 @@ class Tools extends Controller {
           }
      }
 
-     bindImageAsset(msg){
+     this.bindImageAsset = function(msg){
           this.model.doc.assets.push(msg.model);
           this.selectedLibraryItemByIndx(msg.model.indx);
           this.notify(new Message('asset::updated', this.model.doc));
      }
 
-     bindBook(msg){
+     this.bindBook = function(msg){
 
           if(null == msg.model.book){
 console.log('bindBook(): no book');
@@ -424,7 +413,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.loadSpread();
      }
 
-     nextSpread(){
+     this.nextSpread = function(){
           if(null == this.model.spreads){ return; }
           this.model.spidx +=1
           if(this.model.spidx >= this.model.toc.post_content.spread_refs.length){
@@ -433,14 +422,14 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.loadSpread();
      }
 
-     prevSpread(){
+     this.prevSpread = function(){
           if(null == this.model.spreads){ return; }
           this.model.spidx -=1;
           if(this.model.spidx <= 0){ this.model.spidx = 0; }
           this.loadSpread();
      }
     
-     evalSpread(pos){
+     this.evalSpread = function(pos){
           if(null == this.model.spreads){ return; }
           let ref = this.model.toc.post_content.spread_refs[pos];
           let res = null;
@@ -452,7 +441,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           return null;
      }
  
-     loadSpread(){
+     this.loadSpread = function(){
           if(null == this.model.spreads){ return; }
 
           this.model.spread = this.evalSpread(this.model.spidx);
@@ -476,17 +465,17 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.initDocument();
      }
 
-     initAsset(asset){
+     this.initAsset = function(asset){
      }
 
-     saveDocument(msg){
+     this.saveDocument = function(msg){
           let model = {
                doc: this.model.doc
           }
           this.notify(new Message('save::document', model));
      }
 
-     saveLayout(msg){
+     this.saveLayout = function(msg){
           let rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
           if(null == rule){ return false; };
               rule = rule.join('');
@@ -498,7 +487,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.notify(new Message('save::layout', model));
      }
 
-     bindLayoutGroup(msg){
+     this.bindLayoutGroup = function(msg){
           this.model.selectedLayoutGroupName = 'default';
           let model = {
                group: this.model.selectedLayoutGroupName
@@ -506,14 +495,14 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.notify(new Message('load::layoutgroup', model));
      }
 
-     bindLoadedLayoutGroup(msg){
+     this.bindLoadedLayoutGroup = function(msg){
           this.model.loadedLayoutGroup = msg.model;
           for(let idx in this.model.loadedLayoutGroup){
                this.model.loadedLayoutGroup[idx].post_content = LayoutUtil.pagpick(this.model.loadedLayoutGroup[idx].post_content);
           }
      }
 
-     bindLoadedLayoutPresets(msg){
+     this.bindLoadedLayoutPresets = function(msg){
           this.model.loadedLayoutPresets = msg.model;
           if(null == this.model.loadedLayoutPresets){ return false; }
           if(null == this.model.loadedLayoutPresets[0]){
@@ -525,7 +514,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.initDocument();
      }
 
-     switchUnit(asset, unit){
+     this.switchUnit = function(asset, unit){
           asset.conf.xpos = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.xpos, asset.conf.unit);
           asset.conf.ypos = LayoutUtil.unitToPx(this.model.doc.ppi, asset.conf.ypos, asset.conf.unit);
           asset.conf.xpos = LayoutUtil.pxToUnit(this.model.doc.ppi, asset.conf.xpos, unit);
@@ -546,7 +535,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           return asset;
      }
 
-     setPpi(msg){
+     this.setPpi = function(msg){
 
           if(null == this.model.doc){
                return;
@@ -595,7 +584,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.notify(new Message('ppi::updated', this.model.doc));
      }
 
-     setPrintSize(msg){
+     this.setPrintSize = function(msg){
 
           if(null == this.model.doc){
                return;
@@ -619,7 +608,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
           this.notify(new Message('printsize::updated', this.model.doc));
      }
 
-     getPrintSize(idx){
+     this.getPrintSize = function(idx){
           let res = this.printSizes.A4;
 
 console.log('getPrintSize(): ', res);
@@ -630,12 +619,12 @@ console.log('getPrintSize(): ', res);
           return res;
      }
 
-     bindFontSelection(msg){
+     this.bindFontSelection = function(msg){
           this.model.doc.assets[msg.model.indx].conf.font.family = msg.model.font;
           this.notify(new Message('font::updated', this.model.doc));
      }
 
-     bindFontSetting(msg){
+     this.bindFontSetting = function(msg){
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           switch(msg.model.arguments[2]){     
                case 'left':
@@ -648,7 +637,7 @@ console.log('getPrintSize(): ', res);
           this.notify(new Message('font::updated', this.model.doc));     
      }
 
-     bindAssetInput(msg){
+     this.bindAssetInput = function(msg){
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           if(null == this.model.doc.assets[idx]){
                return;
@@ -687,7 +676,7 @@ console.log('getPrintSize(): ', res);
           this.notify(new Message('asset::updated', this.model.doc));
      }
 
-     bindTextInput(msg){
+     this.bindTextInput = function(msg){
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           if(null == this.model.doc.assets[idx]){
                return;
@@ -743,14 +732,14 @@ console.log('getPrintSize(): ', res);
           this.notify(new Message('text::updated', this.model.doc));
      }
 
-     update(msg){
+     this.update = function(msg){
      }
 
-     bindMouseDrag(msg){
+     this.bindMouseDrag = function(msg){
           this.updateEditor();
      }
 
-     updateEditor(msg){
+     this.updateEditor = function(msg){
           if(null == this.model.selectedLibraryItem){
                return;
           }
@@ -765,27 +754,8 @@ console.log('getPrintSize(): ', res);
           jQuery('.space').val(LayoutUtil.formatSettingFloat(this.model.selectedLibraryItem.conf.font.space));
      }
 
-     initDocument(){
-          switch(SpreadViewerConfig.mode){
-               case SpreadViewerConfig.WEB_CLIENT:
-                    this.setupNavigation();
-                    break;
-               case SpreadViewerConfig.SPREAD_CLIENT:
-                    this.setupTools();
-                    this.setupLibrary();
-                    break;
-               case SpreadViewerConfig.LAYOUT_CLIENT:
-                    this.setupTools();
-                    this.setupLibrary();
-                    break;
-          }
-          this.selectLibraryItem(null);
-          this.notify(new Message('document::inited', this.model.doc));
-          jQuery('.select_ppi select').val(this.model.doc.ppi);
-     }
-
      // toolbar is not inited by the document
-     setupToolbar(){
+     this.setupToolbar = function(){
           let ref = this;
           jQuery('.layout-toolbar').html(__tool__bar__tmpl);
           jQuery('.layout-controlbar').html(__control__bar__tmpl);
@@ -812,8 +782,7 @@ console.log('getPrintSize(): ', res);
           jQuery('.select_group select').val(0);
      }
 
-
-     loadLayoutPresets(){
+     this.loadLayoutPresets = function(){
           let ref = this;
           let rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
           if(null == rule){
@@ -827,7 +796,7 @@ console.log('getPrintSize(): ', res);
           ref.notify(new Message('load::layoutpresets', model));
      }
 
-     buildLayoutPreset(){
+     this.buildLayoutPreset = function(){
           let rule = null;
           if(0 != this.model.selectedImageSize){
                rule = this.model.layoutDescriptor[this.model.selectedLayoutImageSize][this.model.selectedLayoutRule];
@@ -864,11 +833,7 @@ console.log('getPrintSize(): ', res);
           this.initDocument();
      }
 
-     setupNavigation(){
-          jQuery('.layout-pages').html(__tool__991__tmpl);
-     }
-
-     setupTools(msg){
+     this.setupTools = function(msg){
           let ref = this;
           jQuery('.layout-tools').empty();
           jQuery('.layout-tools').html(__tool__001__tmpl);
@@ -902,7 +867,7 @@ console.log('getPrintSize(): ', res);
           jQuery('.select_pagesize select').val(this.model.doc.pageSize);
      }
 
-     setupLibrary(){
+     this.setupLibrary = function(){
           jQuery('.layout-library').empty();
           jQuery('.layout-library').append(__lib__003__tmpl);
           for(let idx in this.model.doc.assets){
@@ -920,7 +885,7 @@ console.log('getPrintSize(): ', res);
           jQuery('.layout-actions').append(this.fillTemplate(__lib__007__tmpl, model));
      }
 
-     getIndexOfAssetBy(indx){
+     this.getIndexOfAssetBy = function(indx){
           let res = 0;
           for(let idx in this.model.doc.assets){
                if(indx == this.model.doc.assets[idx].indx){
@@ -930,13 +895,13 @@ console.log('getPrintSize(): ', res);
           return res;
      }
 
-     renderLayoutEditor(msg){
+     this.renderLayoutEditor = function(msg){
           let ref = this;
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           this.selectLibraryItem(this.model.doc.assets[idx])
      }
 
-     setupEditor(msg){
+     this.setupEditor = function(msg){
 
           let ref = this;
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
@@ -1067,7 +1032,7 @@ console.log('getPrintSize(): ', res);
           this.selectLibraryItem(this.model.doc.assets[idx])
      }
 
-     selectedLibraryItemByIndx(indx){
+     this.selectedLibraryItemByIndx = function(indx){
           for(let idx in this.model.doc.assets){
                if(indx == this.model.doc.assets[idx].indx){
                     this.selectLibraryItem(this.model.doc.assets[idx]);
@@ -1076,7 +1041,7 @@ console.log('getPrintSize(): ', res);
           }
      }
 
-     selectLibraryItem(item){
+     this.selectLibraryItem = function(item){
           this.model.selectedLibraryItem = item;
           for(let idx in this.model.doc.assets){
                this.model.doc.assets[idx].selected = false;
@@ -1087,13 +1052,13 @@ console.log('getPrintSize(): ', res);
           this.notify(new Message('item::selected'));
      }
 
-     closeEditor(msg){
+     this.closeEditor = function(msg){
           jQuery('.textedit').empty();
           jQuery('.assetedit').empty();
           this.model.selectedLibraryItem = null;
      }
 
-     addTextAsset(indx, xpos, ypos, text){
+     this.addTextAsset = function(indx, xpos, ypos, text){
           if(null == indx){ indx = 'T_' +parseInt(Math.random() *1000); }
           let model = {
                "indx": indx,
@@ -1123,7 +1088,7 @@ console.log('getPrintSize(): ', res);
           this.model.doc.assets.push(model);
      }
 
-     addImageAsset(indx, xpos, ypos, width, height, src){
+     this.addImageAsset = function(indx, xpos, ypos, width, height, src){
           let asset = {
                "indx": indx,
                "type": "image",
@@ -1143,7 +1108,7 @@ console.log('getPrintSize(): ', res);
           this.notify(new Message('image::targeted', model ));
      }
 
-     splitModels(){
+     this.splitModels = function(){
           if(null == this.model.doc){
                return null;
           }
@@ -1166,6 +1131,43 @@ console.log('getPrintSize(): ', res);
           }
           return models;
      }
+
+// init
+     this.model = new ToolsModel();
+     let ref = this;
+     jQuery('.layout-messages').html(__msg__001__tmpl);
+     // control sequences
+     this.register(new Subscription(      'fontbtn::released', this.bindFontSetting));
+     this.register(new Subscription(     'textinput::updated', this.bindTextInput));
+     this.register(new Subscription(    'assetinput::updated', this.bindAssetInput));
+     this.register(new Subscription(          'select::asset', this.setupEditor));
+     this.register(new Subscription(         'font::selected', this.bindFontSelection));
+     this.register(new Subscription(       'ppibtn::released', this.setPpi))
+     this.register(new Subscription(    'printsize::selected', this.setPrintSize))
+     this.register(new Subscription(  'nextsectbtn::released', this.nextSpread));
+     this.register(new Subscription(  'prevsectbtn::released', this.prevSpread));
+     this.register(new Subscription(      'savebtn::released', this.saveDocument));
+     this.register(new Subscription(     'pagesize::selected', this.bindPageSize));
+     this.register(new Subscription('savelayoutbtn::released', this.saveLayout));
+     this.register(new Subscription(  'layoutgroup::selected', this.bindLayoutGroup));
+      // event messages
+     this.register(new Subscription(    'mousedrag::released', this.bindMouseDrag));
+     this.register(new Subscription(         'layout::loaded', this.bindLayout));
+     this.register(new Subscription(       'document::loaded', this.initDocument));
+     this.register(new Subscription(     'textinput::focused', this.lockControlKeys));
+     this.register(new Subscription(        'textinput::done', this.unlockControlKeys));
+     this.register(new Subscription(          'image::loaded', this.bindImageAsset));
+     this.register(new Subscription(           'book::loaded', this.bindBook));
+     this.register(new Subscription(      'unitbtn::released', this.bindUnit));
+     this.register(new Subscription(    'layoutgroup::loaded', this.bindLoadedLayoutGroup));
+     this.register(new Subscription(  'layoutpresets::loaded', this.bindLoadedLayoutPresets));
+     this.register(new Subscription(      'layouts::imported', this.bindImportedLayouts));
+     //
+     this.setupAssetPossibs();
+     if(SpreadViewerConfig.mouseControls){ this.setupMouseControls(); }
+     this.loadLocalDocument();
+     this.setupToolbar();
+     this.notify(new Message('spread-iewer::inited', this.model));
 }
 
 let __msg__001__tmpl = `
@@ -1507,148 +1509,136 @@ let __lib__009__tmpl = `
 
 
 
-class ToolsModel extends Model {
-     constructor(){
-          super();
-          this.spidx = 0;
-          this.tocidx = 0;
-          this.spreads;
-          this.spread;
-          this.printSizes = new PrintSizes().sizes;
-          this.fonts = new Font().fonts;
-          this.doc;
-          this.selectedLibraryItem;
-          this.selectedEditor;
-          this.surveys;
-          this.env;
-          this.modifierKey;
-          this.controlKeysLocked;
-          this.deeplink;
-          this.collection;
-          this.section;
-          this.selectedLayouts;
-          this.layoutDescriptor;
-          this.selectedLayoutRule = 'x';
-          this.selectedLayoutImageSize = 'x';
-          this.selectedLayoutGroupName = 'default';
-          this.loadedLayoutGroup;
-          this.loadedLayoutPresets;
-          this.mockText1st = 'Local punk Kyla Waters has spent the past 24 hours trying to decide if her roommate’s new tattoo either looks nothing like Jack…';
-          this.mockText2nd = 'Local anarcho-punk Noah Wallin claimed today that he is prepared to take the lives of Scottish indie-rock…';
-     }
+let ToolsModel = function() {
+     this.spidx = 0;
+     this.tocidx = 0;
+     this.spreads;
+     this.spread;
+     this.printSizes = new PrintSizes().sizes;
+     this.fonts = new Font().fonts;
+     this.doc;
+     this.selectedLibraryItem;
+     this.selectedEditor;
+     this.surveys;
+     this.env;
+     this.modifierKey;
+     this.controlKeysLocked;
+     this.deeplink;
+     this.collection;
+     this.section;
+     this.selectedLayouts;
+     this.layoutDescriptor;
+     this.selectedLayoutRule = 'x';
+     this.selectedLayoutImageSize = 'x';
+     this.selectedLayoutGroupName = 'default';
+     this.loadedLayoutGroup;
+     this.loadedLayoutPresets;
+     this.mockText1st = 'Local punk Kyla Waters has spent the past 24 hours trying to decide if her roommate’s new tattoo either looks nothing like Jack…';
+     this.mockText2nd = 'Local anarcho-punk Noah Wallin claimed today that he is prepared to take the lives of Scottish indie-rock…';
 }
 
 // https://papersizes.io/a/a4
-class PrintSizes extends Model {
-     constructor(){
-          super();
-          this.sizes = {
-               "A4": {
-                    "inch": { "width": "8.3", "height": "11.7" },
-                    "mm": { "width": "210", "height": "297" },
-                    "px": {
-                         "ppi300": { "width": "2480", "height": "3508" }
-                    }
+let PrintSizes = function(){
+     this.sizes = {
+          "A4": {
+               "inch": { "width": "8.3", "height": "11.7" },
+               "mm": { "width": "210", "height": "297" },
+               "px": {
+                    "ppi300": { "width": "2480", "height": "3508" }
                }
           }
      }
 }
 
-class Font extends Model {
-     constructor(){
-          super();
-          this.fonts = [
-               { family: "Georgia" },
-               { family: "Helvetica" },
-               { family: "American Typewriter" },
-               { family: "Arial" },
-               { family: "Arial Black" },
-               { family: "Andale Mono" },
-               { family: "American Typewriter" },
-               { family: "Times New Roman" },
-               { family: "Trebuchet MS" },
-               { family: "Courier" },
-          ]
-     }
+let Font = function(){ 
+     this.fonts = [
+          { family: "Georgia" },
+          { family: "Helvetica" },
+          { family: "American Typewriter" },
+          { family: "Arial" },
+          { family: "Arial Black" },
+          { family: "Andale Mono" },
+          { family: "American Typewriter" },
+          { family: "Times New Roman" },
+          { family: "Trebuchet MS" },
+          { family: "Courier" }
+    ] 
 }
 
-class MockModel extends Model {
-     constructor(){
-          super();
-          this.model = {
-               "uuid": "",
-               "surveyId": "",
-               "questionId": "",
-               "pageSize": "2",
-               "unit": "mm",
-               "ppi": "300",
-               "printSize": { "idx": "xX", "width": "210", "height": "148" },
-               "layout": {
-                    "frame": {
-                         "x": "5",
-                         "y": "10"
+let MockModel = function(){
+     this.model = {
+          "uuid": "",
+          "surveyId": "",
+          "questionId": "",
+          "pageSize": "2",
+          "unit": "mm",
+          "ppi": "300",
+          "printSize": { "idx": "xX", "width": "210", "height": "148" },
+          "layout": {
+               "frame": {
+                    "x": "5",
+                    "y": "10"
+               }
+          },
+          "opt": "",
+          "assets": [
+               { 
+                    "indx": "question",
+                    "type": "text",
+                    "text": [
+                         "Default Question"
+                    ],
+                    "selected": "false",
+                    "conf": {
+                         "unit": "mm",
+                         "font": {
+                              "family": "American Typewriter", 
+                              "size": "9.5",
+                              "space": "1",
+                              "weight": "300",
+                              "lineHeight": "11",
+                              "align": "left"
+                         },
+                         "color": {
+                              "cmyk": { "c": "0.05", "m": "0.75", "y": "1", "k": "0" }
+                         },
+                         "xpos": "20",
+                         "ypos": "35",
+                         "width": "170",
+                         "height": "300",
+                         "opacity": "1.0",
+                         "depth": "10"
                     }
                },
-               "opt": "",
-               "assets": [
-                    { 
-                         "indx": "question",
-                         "type": "text",
-                         "text": [
-                              "Default Question"
-                         ],
-                         "selected": "false",
-                         "conf": {
-                              "unit": "mm",
-                              "font": {
-                                   "family": "American Typewriter", 
-                                   "size": "9.5",
-                                   "space": "1",
-                                   "weight": "300",
-                                   "lineHeight": "11",
-                                   "align": "left"
-                              },
-                              "color": {
-                                   "cmyk": { "c": "0.05", "m": "0.75", "y": "1", "k": "0" }
-                              },
-                              "xpos": "20",
-                              "ypos": "35",
-                              "width": "170",
-                              "height": "300",
-                              "opacity": "1.0",
-                              "depth": "10"
-                         }
+               {
+                    "indx": "answer",
+                    "type": "text",
+                    "text": [
+                         "Default Answer"
+                    ],
+                    "selected": "false",
+                    "conf": {
+                         "unit": "mm",
+                         "font": {
+                              "family": "American Typewriter",
+                              "size": "19.0",
+                              "space": "0.05",
+                              "weight": "300",
+                              "lineHeight": "18",
+                              "align": "right"
+                         },
+                         "color": { 
+                              "cmyk": { "c": "1", "m": "0.35", "y": "0.1", "k": "0" }
+                         },
+                         "xpos": "25",
+                         "ypos": "70",
+                         "width": "170",
+                         "height": "300",
+                         "opacity": "1.0",
+                         "depth": "20"
                     },
-                    {
-                         "indx": "answer",
-                         "type": "text",
-                         "text": [
-                              "Default Answer"
-                         ],
-                         "selected": "false",
-                         "conf": {
-                              "unit": "mm",
-                              "font": {
-                                   "family": "American Typewriter",
-                                   "size": "19.0",
-                                   "space": "0.05",
-                                   "weight": "300",
-                                   "lineHeight": "18",
-                                   "align": "right"
-                              },
-                              "color": { 
-                                   "cmyk": { "c": "1", "m": "0.35", "y": "0.1", "k": "0" }
-                              },
-                              "xpos": "25",
-                              "ypos": "70",
-                              "width": "170",
-                              "height": "300",
-                              "opacity": "1.0",
-                              "depth": "20"
-                         }, 
-                    }
-               ]
-          };
-     }
+               }
+          ]
+     };
 }
 

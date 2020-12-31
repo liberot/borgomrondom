@@ -1,21 +1,20 @@
-class SurveyNet extends Controller {
+let SurveyNet  = function(controller){
 
-     constructor(queue){
-          super(queue);
-          // events
-          this.register(new Subscription(         'save::panel', this.savePanel));
-          this.register(new Subscription(           'save::toc', this.saveToc));
-          this.register(new Subscription(        'save::thread', this.saveThread));
-          // controls 
-          this.register(new Subscription(        'init::thread', this.initThread));
-          this.register(new Subscription(      'select::thread', this.loadThread));
-          this.register(new Subscription(    'download::assets', this.downloadAssets));
-          this.register(new Subscription(       'upload::asset', this.uploadAsset));
-          this.register(new Subscription(         'load::panel', this.loadPanel));
-          this.register(new Subscription(   'load::nextsection', this.loadNextSection));
+     this.controller = controller;
+
+     this.fillTemplate = function(template, model){
+         return this.controller.fillTemplate(template, model);
      }
 
-     loadNextSection(msg){
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
+
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
+
+     this.loadNextSection = function(msg){
           let ref = this;
           let data = { 
                'action': 'exec_get_next_section'
@@ -26,7 +25,7 @@ class SurveyNet extends Controller {
           this.postData(data, cb);
      }
 
-     loadPanel(msg){
+     this.loadPanel = function(msg){
           let ref = this;
           let data = {
                'action': 'exec_get_panel_by_ref',
@@ -40,7 +39,7 @@ class SurveyNet extends Controller {
           this.postData(data, cb);
      }
 
-     uploadAsset(msg){
+     this.uploadAsset = function(msg){
           let ref = this;
           let data = {
                'action': 'exec_init_asset_by_panel_ref',
@@ -55,7 +54,7 @@ class SurveyNet extends Controller {
           this.postData(data, cb);
      }
 
-     loadThread(msg){
+     this.loadThread = function(msg){
           let ref = this;
           let data = {
                'action': 'exec_get_thread_by_id',
@@ -67,14 +66,14 @@ class SurveyNet extends Controller {
           this.postData(data, cb);
      }
 
-     initThread(msg){
+     this.initThread = function(msg){
           let ref = this;
           let data = { 'action': 'exec_init_thread' }
           let cb = function(e){ ref.notify(new Message('thread::inited', { e })); }
           this.postData(data, cb);
      }
 
-     savePanel(msg){
+     this.savePanel = function(msg){
           let ref = this;
           let data = {
                action: 'exec_init_panel',
@@ -90,7 +89,7 @@ class SurveyNet extends Controller {
           this.postData(data, cb);
      }
 
-     saveThread(msg){
+     this.saveThread = function(msg){
 
           let ref = this;
 
@@ -129,18 +128,13 @@ console.log('saveThread(): hiddenFields: ', hiddenFields);
           this.postData(data, cb);
      }
 
-     postData(data, suc, err){
+     this.postData = function(data, suc, err){
 
           let ref = this;
-
           jQuery('.survey-messages').html(__survey.__('wait'));
-
           jQuery.post(SurveyConfig.serviceURL, data, function(e){
-
                e = jQuery.parseJSON(e);
-
                switch(e.res){
-
                     case 'success':
                          console.log('postData(): success: ', e);
                          jQuery('.survey-messages').html(e.message);
@@ -157,7 +151,7 @@ console.log('saveThread(): hiddenFields: ', hiddenFields);
           });
      }
 
-     downloadAssets(msg){
+     this.downloadAssets = function(msg){
           let ref = this;
           let data = {
                action: 'exec_get_assets_by_panel_ref',
@@ -170,4 +164,17 @@ console.log('saveThread(): hiddenFields: ', hiddenFields);
           }
           this.postData(data, cb);
      }
+
+     // events
+     this.register(new Subscription(         'save::panel', 'savePanel',       this));
+     this.register(new Subscription(           'save::toc', 'saveToc',         this));
+     this.register(new Subscription(        'save::thread', 'saveThread',      this));
+     // controls
+     this.register(new Subscription(        'init::thread', 'initThread',      this));
+     this.register(new Subscription(      'select::thread', 'loadThread',      this));
+     this.register(new Subscription(    'download::assets', 'downloadAssets',  this));
+     this.register(new Subscription(       'upload::asset', 'uploadAsset',     this));
+     this.register(new Subscription(         'load::panel', 'loadPanel',       this));
+     this.register(new Subscription(   'load::nextsection', 'loadNextSection', this));
+
 }

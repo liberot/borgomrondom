@@ -1,59 +1,20 @@
-class Survey extends Controller {
+let Survey = function(controller) {
 
-     constructor(queue) {
-          super(queue);
-          let ref = this;
-          this.model = new SurveyModel();
-          jQuery('.survey-messages').html(this.fillTemplate(__srv_msg_001_tmpl__, {msg: __survey.__('welcome')}));
-          // controls
-          this.register(new Subscription(         'parse::assets', this.parseAssets));
-          this.register(new Subscription(         'select::yesno', this.bindYesNoInput));
-          this.register(new Subscription(     'confirm::multiple', this.bindMultipleChoiceInput));
-          this.register(new Subscription(        'confirm::image', this.bindMultipleChoiceInput));
-          this.register(new Subscription(        'confirm::input', this.bindTextInput));
-          this.register(new Subscription(       'confirm::upload', this.bindUploadInput));
-          this.register(new Subscription(        'confirm::group', this.bindGroupInput));
-          this.register(new Subscription( 'fieldings::downloaded', this.bindFieldingQuestions));
-          this.register(new Subscription(     'select::statement', this.bindSelectStatement));
-          this.register(new Subscription(             'nav::back', this.evalPrevPanel));
-          this.register(new Subscription(          'set::opinion', this.bindOpinion));
-          // events
-          this.register(new Subscription(          'thread::next', this.loadNextPanel));
-          this.register(new Subscription(          'thread::prev', this.evalPrevPanel));
-          this.register(new Subscription(        'thread::loaded', this.bindThread));
-          this.register(new Subscription(        'thread::inited', this.bindThread));
-          this.register(new Subscription(      'assets::uploaded', this.bindAssets));
-          this.register(new Subscription(    'assets::downloaded', this.bindAssets));
-          this.register(new Subscription(         'spreads::init', this.initSpreads));
-          this.register(new Subscription(        'asset::scanned', this.bindScan));
-          this.register(new Subscription(           'scans::done', this.uploadAssets));
-          this.register(new Subscription(           'scans::done', this.renderAssetCopies));
-          this.register(new Subscription(         'assets::bound', this.renderAssetCopies));
-          this.register(new Subscription(         'panel::loaded', this.bindPanel));
-          this.register(new Subscription(           'input::done', this.saveThread));
-          this.register(new Subscription(          'panel::saved', this.bindSavedPanel));
-          this.register(new Subscription(        'input::corrupt', this.showValidationError));
-          this.register(new Subscription(   'nextsection::loaded', this.bindSection));
-          this.register(new Subscription(  'bottompanel::reached', this.bindBottomPanel));
-          this.register(new Subscription(     'toppanel::reached', this.bindTopPanel));
+     this.controller = controller;
 
-          // ------
-          window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
-          // ------
-          history.pushState(null, null, window.location.href);
-          window.onpopstate = function(e){
-               history.pushState(null, null, window.location.href);
-               if('undefined' == typeof(surveyQueue)){ 
-                     return false; 
-               }
-               surveyQueue.route('nav::back');
-          };
-          // ------
-          // this.notify(new Message('download::fieldings', this.model));
-          this.notify(new Message('init::thread', this.model));
+     this.fillTemplate = function(template, model){
+         return this.controller.fillTemplate(template, model);
      }
 
-     bindSection(msg){
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
+
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
+
+     this.bindSection = function(msg){
      
           if(null == msg.model.e.coll.section){
                console.log('bindSection(): no section');
@@ -74,7 +35,7 @@ console.log('bindSection(): this.model.section: ', this.model.section);
           this.loadPanel(sectionId, panelRef);
      }
 
-     evalHiddenFields(){
+     this.evalHiddenFields = function(){
 
           this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
 console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
@@ -118,7 +79,7 @@ console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
           }
      }
 
-     recSection(){
+     this.recSection = function(){
           if(null == this.model.sections) { this.model.sections = []; }
           if(-1 == this.model.sections.indexOf(this.model.section)){
                this.model.sections.push(this.model.section);
@@ -127,33 +88,33 @@ console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
 console.log('recSection(): ', this.model.sections);
      }
 
-     showValidationError(msg){
+     this.showValidationError = function(msg){
          alert(__survey.__('invalid', 'bookbuilder'));
      }
 
-     bindSavedPanel(msg){
+     this.bindSavedPanel = function(msg){
           this.evalNextPanel();
      }
  
-     saveThread(msg){
+     this.saveThread = function(msg){
 console.log('saveThread(): ', msg);
           this.notify(new Message('save::panel', this.model));
 // fixdiss
           this.notify(new Message('save::thread', this.model));
      }
 
-     bindHashChange(e){
+     this.bindHashChange = function(e){
      }
 
-     navDeeplink(){
+     this.navDeeplink = function(){
           let lnk = window.location.hash.substr(1);
           let ref = this;
      }
 
-     setLink(){
+     this.setLink = function(){
      }
 
-     bindThread(msg){
+     this.bindThread = function(msg){
 
 // thread
           if(null == msg.model.e.coll.thread){
@@ -217,7 +178,7 @@ console.log('bindThread(): ', this.model.thread);
 
      }
 
-     checkIfRequired(validation){
+     this.checkIfRequired = function(validation){
           let res = false;
           let rVals = ['true', '1', true, 1 ];
           for(let idx in rVals){
@@ -228,11 +189,11 @@ console.log('bindThread(): ', this.model.thread);
           return res;
      }
 
-     bindGroupInput(msg){
+     this.bindGroupInput = function(msg){
           this.evalNextPanel();
      }
 
-     bindUploadInput(msg){
+     this.bindUploadInput = function(msg){
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
@@ -255,7 +216,7 @@ console.log('bindThread(): ', this.model.thread);
           this.bindInput(sectionId, panelRef, ref, val);
      }
 
-     bindSelectStatement(msg){
+     this.bindSelectStatement = function(msg){
 
           // let section = this.model.section.post_excerpt;
           let section = this.model.section.ID;
@@ -267,12 +228,12 @@ console.log('bindThread(): ', this.model.thread);
           this.bindInput(section, panel, ref, val);
      }
 
-     bindOpinion(msg){
+     this.bindOpinion = function(msg){
 console.log('bindOpinion: ', msg);
           this.evalNextPanel();
      }
 
-     bindTextInput(msg){
+     this.bindTextInput = function(msg){
 
           // let section = this.model.section.post_excerpt;
           let section = this.model.section.ID;
@@ -298,7 +259,7 @@ console.log('bindOpinion: ', msg);
           this.bindInput(section, panel, ref, val);
      }
 
-     bindMultipleChoiceInput(msg){
+     this.bindMultipleChoiceInput = function(msg){
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
@@ -318,7 +279,7 @@ console.log('bindOpinion: ', msg);
           this.bindInput(sectionId, panelRef, ref, val);
      }
 
-     bindYesNoInput(msg){
+     this.bindYesNoInput = function(msg){
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
@@ -329,7 +290,7 @@ console.log('bindOpinion: ', msg);
           this.bindInput(sectionId, panelRef, ref, val);
      }
 
-     clearInput(sectionId, panelRef, ref, val){
+     this.clearInput = function(sectionId, panelRef, ref, val){
 
           let target = this.model.thread.post_content.conditions;
           let copy = [];
@@ -346,7 +307,7 @@ console.log('bindOpinion: ', msg);
           this.model.thread.post_content.conditions = copy;
      }
 
-     bindInput(sectionId, panelRef, key, val){
+     this.bindInput = function(sectionId, panelRef, key, val){
 
           if('undefined' == typeof(val)){ val = ''; }
           let answer = SurveyUtil.trimIncomingString(val);
@@ -363,7 +324,7 @@ console.log('bindOpinion: ', msg);
           this.notify(new Message('input::done', this.model));
      }
 
-     setCondition(sectionId, panelRef, key, val){
+     this.setCondition = function(sectionId, panelRef, key, val){
 
           let target = this.model.thread.post_content.conditions;
 
@@ -391,7 +352,7 @@ console.log('setCondition(): ', target);
 
      }
 
-     getCondition(sectionId, panelRef, key){
+     this.getCondition = function(sectionId, panelRef, key){
 
           let res = null;
 
@@ -411,7 +372,7 @@ console.log('setCondition(): ', target);
           return res;
      }
 
-     getStoredAnswer(key){
+     this.getStoredAnswer = function(key){
 
 console.log('getStoredAnswer(): key: ', key);
           let res = null;
@@ -427,7 +388,7 @@ console.log('getStoredAnswer(): target: ', target);
           return res;
      }
 
-     corrQuestion(question){
+     this.corrQuestion = function(question){
 
 console.log('corrQuestion(): question: ', question);
           let mtch = question.match(/{{(.{1,128}?)}}/g);
@@ -472,7 +433,7 @@ console.log('corrQuestion(): mtch: ', mtch);
      }
 
 // adds an entry to the book table of contents
-     pushBook(){
+     this.pushBook = function(){
 
           if(null == this.model.panel){ return false; }
 
@@ -497,7 +458,7 @@ console.log('corrQuestion(): mtch: ', mtch);
 console.log('pushBook(): ', target.book);
      }
 
-     pushHiddenField(sectionId, panelRef, fieldRef, fieldTitle){
+     this.pushHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
 
           let target = this.model.thread.post_content.hidden_fields;
 
@@ -517,7 +478,7 @@ console.log('pushBook(): ', target.book);
 console.log('pushHiddenField(): ', target);
      }
 
-     getHiddenField(sectionId, panelRef, fieldRef, fieldTitle){
+     this.getHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
 
           let target = this.model.thread.post_content.hidden_fields;
 
@@ -541,7 +502,7 @@ console.log('pushHiddenField(): ', target);
           return null;
      }
 
-     getHiddenFieldValue(fieldTitle){
+     this.getHiddenFieldValue = function(fieldTitle){
 
 console.log('getHiddenFieldValue(): fieldTitle: ', fieldTitle);
 
@@ -571,7 +532,7 @@ console.log('getHiddenFieldValue(): res: ', res);
 // todo
 // book toc is semantic linear
 // history is wild steps from field to field
-     pushHistory(){
+     this.pushHistory = function(){
 
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
@@ -585,7 +546,7 @@ console.log('getHiddenFieldValue(): res: ', res);
 console.log('pushHistory(): ', target.history);
      }
 
-     loadPanel(sectionId, panelRef){
+     this.loadPanel = function(sectionId, panelRef){
 
 console.log('loadPanel(): ', sectionId, panelRef);
 
@@ -604,7 +565,7 @@ console.log('loadPanel(): ', sectionId, panelRef);
           this.notify(new Message('load::panel', { threadId: this.model.thread.ID, sectionId: sectionId, panelRef: panelRef } ));
      }
 
-     bindPanel(msg){
+     this.bindPanel = function(msg){
 console.log('bindPanel(): ', msg);
 
           if(null == msg.model.e.coll['panel']){ 
@@ -620,7 +581,7 @@ console.log('bindPanel(): ', msg);
           this.initPanel();
      }
 
-     selectSection(sectionId){
+     this.selectSection = function(sectionId){
 
           let section;
           for(let idx in this.model.sections){
@@ -640,7 +601,7 @@ console.log('selectSection(): ', this.model.section);
      }
 
 // initpanel sets up the panel . the field 
-     initPanel(){
+     this.initPanel = function(){
 
           let ref = this;
 
@@ -817,7 +778,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           this.setLink();
      }
 
-     isBottomPanel(){
+     this.isBottomPanel = function(){
           let res = false;
           let target = this.model.section.post_content.toc;
 console.log('isBottomPanel(): ', this.model.section.post_content);
@@ -827,7 +788,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
           return res;
      }
 
-     isTopPanel(){
+     this.isTopPanel = function(){
           let res = false;
           let target = this.model.section.post_content.toc;
           if(this.model.panel.post_content.ref == target.refs[0]){
@@ -836,15 +797,15 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
           return res;
      }
 
-     bindTopPanel(msg){
+     this.bindTopPanel = function(msg){
          console.log('bindTopPanel(): ', msg);
      }
 
-     bindBottomPanel(msg){
+     this.bindBottomPanel = function(msg){
          console.log('bindBottomPanel(): ', msg);
      }
 
-     renderFileupload(){
+     this.renderFileupload = function(){
 
           let ref = this;
 
@@ -885,7 +846,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
           });
      }
 
-     initImageUpload(files){
+     this.initImageUpload = function(files){
 
           let formdata = new FormData();
           let max = 10;
@@ -902,7 +863,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
           return formdata;
      }
 
-     evalCondition(condition){
+     this.evalCondition = function(condition){
 
           // condition = new MockLogic().logic.condition;
           let res = null;
@@ -913,7 +874,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
           return res;
      }
 
-     evalGroup(condition){
+     this.evalGroup = function(condition){
 
           condition.result = null;
 
@@ -953,7 +914,7 @@ console.log('evalGroup(): condition: "always" found');
           }
      }
 
-     evalRuleR(rule){
+     this.evalRuleR = function(rule){
 
 // evaluates condition groups
           if(null == rule.vars){ 
@@ -994,7 +955,7 @@ console.log('evalGroup(): condition: "always" found');
           }
      }
 
-     evalPrevPanel(){
+     this.evalPrevPanel = function(){
 
           let target = this.model.thread.post_content;
 
@@ -1011,7 +972,7 @@ console.log('evalGroup(): condition: "always" found');
           return true;
      }
 
-     evalNextPanel(){
+     this.evalNextPanel = function(){
 // evaluates whether or not this panel is the last one in the section
           if(this.isBottomPanel()){
                this.loadNextSection();
@@ -1035,7 +996,7 @@ console.log('evalGroup(): condition: "always" found');
           return true;
      }
 
-     evalLogicAction(toc){
+     this.evalLogicAction = function(toc){
 
 // evaluatess the conditions of logic jummps
 
@@ -1065,7 +1026,7 @@ console.log('evalLogicAction(): actionpack: ', actionpack);
           return links[0];
      }
 
-     loadNextSection(){
+     this.loadNextSection = function(){
 
 console.log('loadNextSection(): this.model.sections: ', this.model.sections);
 
@@ -1091,7 +1052,7 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
           return true;
      }
 
-     loadNextPanel(){
+     this.loadNextPanel = function(){
 
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
@@ -1117,7 +1078,7 @@ console.log('loadNextPanel(): next link from default: ', sectionId, panelRef);
           return true;
      }
 
-     loadPrevPanel(){
+     this.loadPrevPanel = function(){
 
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
@@ -1137,7 +1098,7 @@ console.log('loadPrevPanel(): prev link from default: ', sectionId, panelRef);
           return true;
      }
 
-     selectPanel(pos){
+     this.selectPanel = function(pos){
 
           let target = this.model.section.post_content.toc;
           let sectionId = this.model.section.ID;
@@ -1152,7 +1113,7 @@ console.log('loadPrevPanel(): prev link from default: ', sectionId, panelRef);
           return true;
      }
 
-     initSpreads(msg){
+     this.initSpreads = function(msg){
 console.log('initSpreads(): layoutQueue: ', layoutQueue)
 console.log('initSpreads(): msg: ', msg);
 
@@ -1160,7 +1121,7 @@ console.log('initSpreads(): msg: ', msg);
           layoutQueue.route('init::book', { threadId: this.model.thread.ID });
      }
 
-     parseAssets(msg){
+     this.parseAssets = function(msg){
           let ref = this;
           this.model.parseProc = [];
           this.model.panel.assetCopies = [];
@@ -1183,7 +1144,7 @@ console.log('initSpreads(): msg: ', msg);
           }
      }
 
-     scanAsset(indx, base, proc, upload){
+     this.scanAsset = function(indx, base, proc, upload){
          let ref = this;
          let scaleR = 1;
          let img = new Image();
@@ -1214,7 +1175,7 @@ console.log('initSpreads(): msg: ', msg);
              img.src = base;
      }
 
-     bindScan(msg){
+     this.bindScan = function(msg){
           this.model.panel.assetCopies.push(msg.model);
           let done = false;
           let cnt = 0;
@@ -1232,14 +1193,14 @@ console.log('initSpreads(): msg: ', msg);
           }
      }
 
-     bindAssets(msg){
+     this.bindAssets = function(msg){
           if(null == this.model.panel){ return false; }
           this.model.panel.assetCopies = msg.model.e.coll;
           this.model.panel.assetCopies.sort(function(asset){ return asset.post_excerpt > asset.post_excerpt; });
           this.notify(new Message('assets::bound'));
      }
 
-     uploadAssets(msg){
+     this.uploadAssets = function(msg){
           for(let idx in this.model.panel.assetCopies){
                if(true != this.model.panel.assetCopies[idx].upload){ continue; }
                let model = {
@@ -1252,7 +1213,7 @@ console.log('initSpreads(): msg: ', msg);
           }
      }
 
-     evalRsLoc(rsloc){
+     this.evalRsLoc = function(rsloc){
 // rsloc as in resource locator
           if(null == rsloc){ return rsloc; }
           let mtch = rsloc.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
@@ -1265,7 +1226,7 @@ console.log('initSpreads(): msg: ', msg);
           return rsloc;
      }
 
-     renderAssetCopies(){
+     this.renderAssetCopies = function(){
           if(null == this.model.panel.assetCopies){ return; }
           let buf = '';
           for(let idx in this.model.panel.assetCopies){
@@ -1277,6 +1238,57 @@ console.log('initSpreads(): msg: ', msg);
           }
           jQuery('.survey-assets').html(buf);
      }
+
+     let ref = this;
+     this.model = new SurveyModel();
+     jQuery('.survey-messages').html(this.fillTemplate(__srv_msg_001_tmpl__, {msg: __survey.__('welcome')}));
+     // controls
+
+     this.register(new Subscription(         'parse::assets', 'parseAssets', this));
+     this.register(new Subscription(         'select::yesno', 'bindYesNoInput', this));
+     this.register(new Subscription(     'confirm::multiple', 'bindMultipleChoiceInput', this));
+     this.register(new Subscription(        'confirm::image', 'bindMultipleChoiceInput', this));
+     this.register(new Subscription(        'confirm::input', 'bindTextInput', this));
+     this.register(new Subscription(       'confirm::upload', 'bindUploadInput', this));
+     this.register(new Subscription(        'confirm::group', 'bindGroupInput', this));
+     this.register(new Subscription( 'fieldings::downloaded', 'bindFieldingQuestions', this));
+     this.register(new Subscription(     'select::statement', 'bindSelectStatement', this));
+     this.register(new Subscription(             'nav::back', 'evalPrevPanel', this));
+     this.register(new Subscription(          'set::opinion', 'bindOpinion', this));
+     // events
+     this.register(new Subscription(          'thread::next', 'loadNextPanel', this));
+     this.register(new Subscription(          'thread::prev', 'evalPrevPanel', this));
+     this.register(new Subscription(        'thread::loaded', 'bindThread', this));
+     this.register(new Subscription(        'thread::inited', 'bindThread', this));
+     this.register(new Subscription(      'assets::uploaded', 'bindAssets', this));
+     this.register(new Subscription(    'assets::downloaded', 'bindAssets', this));
+     this.register(new Subscription(         'spreads::init', 'initSpreads', this));
+     this.register(new Subscription(        'asset::scanned', 'bindScan', this));
+     this.register(new Subscription(           'scans::done', 'uploadAssets', this));
+     this.register(new Subscription(           'scans::done', 'renderAssetCopies', this));
+     this.register(new Subscription(         'assets::bound', 'renderAssetCopies', this));
+     this.register(new Subscription(         'panel::loaded', 'bindPanel', this));
+     this.register(new Subscription(           'input::done', 'saveThread', this));
+     this.register(new Subscription(          'panel::saved', 'bindSavedPanel', this));
+     this.register(new Subscription(        'input::corrupt', 'showValidationError', this));
+     this.register(new Subscription(   'nextsection::loaded', 'bindSection', this));
+     this.register(new Subscription(  'bottompanel::reached', 'bindBottomPanel', this));
+     this.register(new Subscription(     'toppanel::reached', 'bindTopPanel', this));
+
+     // ------
+     window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
+     // ------
+     history.pushState(null, null, window.location.href);
+     window.onpopstate = function(e){
+          history.pushState(null, null, window.location.href);
+          if('undefined' == typeof(surveyQueue)){ 
+                return false; 
+          }
+          surveyQueue.route('nav::back');
+     };
+     // ------
+     // this.notify(new Message('download::fieldings', this.model));
+     this.notify(new Message('init::thread', this.model));
 }
 
 let __upload_tmpl_002__ = `
@@ -1376,69 +1388,62 @@ let __dropdown_cell_tmpl__ = `
 <option class='dropdown-cell' value='{ref}'>{label}</option>
 `
 
-class SurveyModel extends Model {
-     constructor(){
-          super();
-// --------------------------------------
-          this.thread;
-          this.section;
-          this.panels;
-          this.panel;
-          this.maxImageAssets;
+let SurveyModel = function(){
+     this.thread;
+     this.section;
+     this.panels;
+     this.panel;
+     this.maxImageAssets;
 // deeplink -----------------------------
-          this.requestedThread;
-          this.requestedSectionId;
-          this.requestedPanelRef;
+     this.requestedThread;
+     this.requestedSectionId;
+     this.requestedPanelRef;
 // hidden fields ------------------------
-          this.hiddenFields;
-          this.redirect;
+     this.hiddenFields;
+     this.redirect;
 // --------------------------------------
-          this.parseProc;
-          this.layoutGroup;
+     this.parseProc;
+     this.layoutGroup;
 // --------------------------------------
-     }
 }
 
-class MockLogic extends Model {
-     constructor(){
-          super();
-          this.logic = {
-               action: 'jump',
-               condition: {
-                    // op: 'and',
-                    op: 'always',
+let MockLogic = function(){
+     this.logic = {
+          action: 'jump',
+          condition: {
+               // op: 'and',
+               op: 'always',
+               vars: [
+               {
+                    op: 'answered',
                     vars: [
-                    {
-                         op: 'answered',
-                         vars: [
-                              { type: 'field', value: '1223' },
-                              { type: 'content', value: true }
-                         ]
-                    },
-                    {
-                         op: 'is',
-                         vars: [
+                         { type: 'field', value: '1223' },
+                         { type: 'content', value: true }
+                    ]
+               },
+               {
+                    op: 'is',
+                    vars: [
+                         { type: 'field', value: '1223' },
+                         { type: 'choice', value: '1223' }
+                    ]
+               },
+               {
+                    op: 'and',
+                    vars: {
+                         'op':'is',
+                         'vars': [
                               { type: 'field', value: '1223' },
                               { type: 'choice', value: '1223' }
                          ]
-                    },
-                    {
-                         op: 'and',
-                         vars: {
-                              'op':'is',
-                              'vars': [
-                                   { type: 'field', value: '1223' },
-                                   { type: 'choice', value: '1223' }
-                              ]
-                         }
                     }
-                    ]
-               },
-               details: {
-                    to: {
-                        type: 'field',
-                        value: '489ed355-35b8-47c4-9a08-28fcc5b94c88'
-                    }
+               }
+               ]
+          },
+          details: {
+               to: {
+                   type: 'field',
+                   value: '489ed355-35b8-47c4-9a08-28fcc5b94c88'
                }
           }
       }

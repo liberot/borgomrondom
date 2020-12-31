@@ -1,41 +1,36 @@
-class Screen extends Controller {
+let Screen = function(queue){ 
 
-     constructor(queue){
+     this.register = function(subscription){}
+     this.notify = function(messag){}
 
-          super(queue);
+     this.queue = queue;
 
-          this.model = new ScreenModel();
-          this.model.screen = SVG().addTo('.screen');
-          this.model.printScreen = SVG().addTo('.printscreen');
-          this.model.currentScreen = this.model.screen;
+     this.register(new Subscription(   'exportbtn::released', this.print));
+     this.register(new Subscription(      'document::inited', this.initScreen));
+     this.register(new Subscription(     'pagesize::updated', this.updateScreen));
+     this.register(new Subscription(   'recalcbtn::released', this.updateScreen));
+     this.register(new Subscription(         'text::updated', this.updateScreen));
+     this.register(new Subscription(          'ppi::updated', this.updateScreen));
+     this.register(new Subscription(    'printsize::updated', this.updateScreen));
+     this.register(new Subscription(     'arrowkey::pressed', this.updateScreen));
+     this.register(new Subscription(     'document::updated', this.updateScreen));
+     this.register(new Subscription('adaptclayout::released', this.updateScreen));
+     this.register(new Subscription(         'font::updated', this.updateScreen));
+     this.register(new Subscription(           'text::moved', this.updateScreen));
+     this.register(new Subscription(   'mousedrag::released', this.updateScreen));
+     this.register(new Subscription(        'asset::updated', this.updateScreen));
+     this.register(new Subscription(          'image::moved', this.updateScreen));
+     this.register(new Subscription(        'item::selected', this.updateScreen));
+     this.register(new Subscription(      'asset::corrected', this.updateScreen));
 
-          this.register(new Subscription(   'exportbtn::released', this.print));
-          this.register(new Subscription(      'document::inited', this.initScreen));
-          this.register(new Subscription(     'pagesize::updated', this.updateScreen));
-          this.register(new Subscription(   'recalcbtn::released', this.updateScreen));
-          this.register(new Subscription(         'text::updated', this.updateScreen));
-          this.register(new Subscription(          'ppi::updated', this.updateScreen));
-          this.register(new Subscription(    'printsize::updated', this.updateScreen));
-          this.register(new Subscription(     'arrowkey::pressed', this.updateScreen));
-          this.register(new Subscription(     'document::updated', this.updateScreen));
-          this.register(new Subscription('adaptclayout::released', this.updateScreen));
-          this.register(new Subscription(         'font::updated', this.updateScreen));
-          this.register(new Subscription(           'text::moved', this.updateScreen));
-          this.register(new Subscription(   'mousedrag::released', this.updateScreen));
-          this.register(new Subscription(        'asset::updated', this.updateScreen));
-          this.register(new Subscription(          'image::moved', this.updateScreen));
-          this.register(new Subscription(        'item::selected', this.updateScreen));
-          this.register(new Subscription(      'asset::corrected', this.updateScreen));
-     }
-
-     initScreen(msg){
+     this.initScreen = function(msg){
           this.model.doc = msg.model;
           this.setViewSize();
           this.initLayers();
           this.render();
      }
 
-     initLayers(){
+     this.initLayers = function(){
            let temp = [];
            for(let idx in this.model.doc.assets){
                 if(null == this.model.doc.assets[idx].conf.depth){
@@ -49,13 +44,13 @@ class Screen extends Controller {
            this.model.layers = temp;
      }
 
-     updateScreen(msg){
+     this.updateScreen = function(msg){
           if(null == this.model.doc){ return false; }
           this.setViewSize();
           this.render();
      }
 
-     print(){
+     this.print = function(){
 
           let prints = [];
           this.model.currentScreen = this.model.printScreen;
@@ -128,7 +123,7 @@ class Screen extends Controller {
           this.model.currentScreen = this.model.screen;
      }
 
-     setViewSize(){
+     this.setViewSize = function(){
           let width = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)));
               width*= parseInt(this.model.doc.pageSize);
           let height = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)));
@@ -149,27 +144,27 @@ class Screen extends Controller {
                jQuery('.layout-messages').html(msg);
      }
 
-     getPenX(){
+     this.getPenX = function(){
           return this.model.penX;
      }
 
-     getPenY(){
+     this.getPenY = function(){
           return this.model.penY;
      }
 
-     resetPenY(){
+     this.resetPenY = function(){
           this.model.penY = 0;
      }
 
-     setPenStepY(size){
+     this.setPenStepY = function(size){
           this.model.penStepY = size;
      }
 
-     stepY(){
+     this.stepY = function(){
           this.model.penY += this.model.penStepY;
      }
 
-     render(){
+     this.render = function(){
           this.model.currentScreen.clear();
           // for(let idx in this.model.doc.assets){
           for(let idx in this.model.layers){
@@ -196,19 +191,19 @@ class Screen extends Controller {
           this.renderSelection();
      }
 
-     bindImagePos(msg){
+     this.bindImagePos = function(msg){
           this.model.currentScreen.clear();
           this.renderFrame();
           this.renderImage(msg.model);
      }
 
-     bindTextPos(msg){
+     this.bindTextPos = function(msg){
           this.model.currentScreen.clear();
           this.renderFrame();
           this.renderText(msg.model);
      }
 
-     renderFrame() {
+     this.renderFrame = function() {
           if(true != this.model.printFrame){ 
                return;
           }
@@ -233,7 +228,7 @@ class Screen extends Controller {
           }
      }
 
-     renderCircle(target){
+     this.renderCircle = function(target){
           let diam = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.diam), target.conf.unit);
           let xpos = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.xpos), target.conf.unit);
           let ypos = LayoutUtil.unitToPx(this.model.doc.ppi, parseFloat(target.conf.ypos), target.conf.unit);
@@ -243,7 +238,7 @@ class Screen extends Controller {
               c.fill(colr);
      }
 
-     renderPath(target){
+     this.renderPath = function(target){
           let tmp = target.path.split(' ');
           let out = '';
           let chunk = '';
@@ -260,7 +255,7 @@ class Screen extends Controller {
               p.fill(colr);
      }
 
-     renderPoly(target){
+     this.renderPoly = function(target){
           let ref = this;
           let tmp = target.points.split(' ');
           let out = '';
@@ -275,7 +270,7 @@ class Screen extends Controller {
               p.fill(colr);
      }
 
-     renderSelection(){
+     this.renderSelection = function(){
           for(var idx in this.model.doc.assets){
                let target = this.model.doc.assets[idx];
 
@@ -299,7 +294,7 @@ class Screen extends Controller {
           }
      }
 
-     renderImage(target){
+     this.renderImage = function(target){
           let ref = this;
 
           let xpos = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
@@ -336,7 +331,7 @@ class Screen extends Controller {
           // img.on('mouseover', function(e){ console.log(e); })
      }
 
-     renderCircles(){
+     this.renderCircles = function(){
           for(var idx in this.model.doc.assets){
                if('circle' != this.model.doc.assets[idx].type){ continue; }
                let target = this.model.doc.assets[idx];
@@ -344,7 +339,7 @@ class Screen extends Controller {
           }
      }
 
-     renderPolys(){
+     this.renderPolys = function(){
           for(var idx in this.model.doc.assets){
                if('poly' != this.model.doc.assets[idx].type){ continue; }
                let target = this.model.doc.assets[idx];
@@ -352,7 +347,7 @@ class Screen extends Controller {
           }
      }
 
-     renderImages() {
+     this.renderImages = function() {
           for(var idx in this.model.doc.assets){
                if('image' != this.model.doc.assets[idx].type){ continue; }
                let target = this.model.doc.assets[idx];
@@ -360,7 +355,7 @@ class Screen extends Controller {
           }
      }
 
-     renderTexts() {
+     this.renderTexts = function() {
           for(let idx in this.model.doc.assets){
                if('text' != this.model.doc.assets[idx].type){
                     continue;
@@ -369,7 +364,7 @@ class Screen extends Controller {
           }
      }
 
-     fetchColor(target){
+     this.fetchColor = function(target){
           let colr = '#000';
           if(null != target.conf.color){
           if(null != target.conf.color['cmyk']){
@@ -382,7 +377,7 @@ class Screen extends Controller {
           return colr;
      }
 
-     renderText(target){
+     this.renderText = function(target){
 
           this.setPenStepY(LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.size, target.conf.unit));
 
@@ -448,17 +443,14 @@ class Screen extends Controller {
      }
 }
 
-class ScreenModel extends Model {
-     constructor() {
-          super();
-          this.currentScreen;
-          this.penX = 0;
-          this.penY = 0;
-          this.penStepY = 0;
-          this.doc;
-          this.layout;
-          this.survey;
-          this.layers;
-          this.printFrame = true;
-     }
+let ScreenModel = function(){
+     this.currentScreen;
+     this.penX = 0;
+     this.penY = 0;
+     this.penStepY = 0;
+     this.doc;
+     this.layout;
+     this.survey;
+     this.layers;
+     this.printFrame = true;
 }

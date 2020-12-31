@@ -1,35 +1,26 @@
-class Model {
-}
-
-class View {
-}
-
-class Controller {
-
-     constructor ( queue ) {
-          this.queue = queue;
+let Controller = function(queue){
+     this.queue = queue;
+     this.notify = function(message){
+          this.queue.notify(message);
      }
-     notify( message ) {
-          this.queue.notify ( message );
-     }
-     register( subscription ) {
+     this.register = function(subscription){
           subscription.ref = this;
-          this.queue.register ( subscription );
+          this.queue.register(subscription);
      }
-     release( subscription ) {
+     this.release = function(subscription){
           subscription.ref = this;
-          this.queue.release ( subscription );
+          this.queue.release (subscription);
      }
-     releaseAllSubscriptions () {
-          this.queue.releaseAllSubscriptions ( this );
+     this.releaseAllSubscriptions = function(){
+          this.queue.releaseAllSubscriptions(this);
      }
-     facMessage ( title, model ) {
-          return new Message( title, model );
+     this.facMessage = function(title, model){
+          return new Message(title, model);
      }
-     facSubscription ( title, callback ) {
-          return new Subscription( title, callback );
+     this.facSubscription = function(title, callback){
+          return new Subscription(title, callback);
      }
-     fillTemplate ( template, model ) {
+     this.fillTemplate = function(template, model){
           let vars = template.match(/\{(.{1,32}?)\}/g);
           let view = template;
           for( var idx in vars ){
@@ -42,7 +33,7 @@ class Controller {
           }
           return view;
      }
-     sync ( model ) {
+     this.sync = function(model){
           let ref = this;
           let service = '';
           let req = new XMLHttpRequest();
@@ -56,16 +47,9 @@ class Controller {
           req.send( model );
      }
 }
-
-class Queue {
-
-     constructor () { 
-          this.subscriptions = [];
-     }
-
-     notify ( message ) {
-          // console.log(message);
-
+let Queue = function(){
+     this.subscriptions = [];
+     this.notify = function(message){
           for( let idx in this.subscriptions ) {
                if( message.title == this.subscriptions[ idx ].title ) {
                     // let method = this.subscriptions[ idx ].callback.match(/^f\s+(.{1,64})\(/); 
@@ -76,57 +60,44 @@ class Queue {
                }
           }
      }
-
-     register( subscription ) {
-          this.subscriptions.push( subscription );
+     this.register = function(subscription){
+          this.subscriptions.push(subscription);
      }
-
-     release( subscription ) {
+     this.release = function(subscription){
           let tmp = [];
-          for( var idx in this.subscriptions ) {
-               if ( subscription.ref == this.subscriptions[ idx ].ref && 
-                         subscription.title == this.subscriptions[ idx ].title && 
-                         subscription.callback == this.subscriptions[ idx ].callback  
-                    ) {
+          for(let idx in this.subscriptions) {
+               if (subscription.ref == this.subscriptions[idx].ref &&
+                         subscription.title == this.subscriptions[idx].title &&
+                         subscription.callback == this.subscriptions[idx].callback
+                    ){
                          continue;
                }
-               tmp.push( this.subscriptions[ idx ] );
+               tmp.push(this.subscriptions[idx]);
           }
           this.subscriptions = tmp;
      }
-
-     releaseAllSubscriptions ( ref ) {
+     this.releaseAllSubscriptions = function(ref){
           let tmp = [];
-          for( var idx in this.subscriptions ) {
-               if ( ref == this.subscriptions[ idx ].ref ) {
+          for(let idx in this.subscriptions){
+               if (ref == this.subscriptions[idx].ref){
                          continue;
                }
-               tmp.push( this.subscriptions[ idx ] );
+               tmp.push(this.subscriptions[idx]);
           }
           this.subscriptions = tmp;
 
      }
-
-     route( title ) {
+     this.route = function(title){
           let model = { date: new Date(), arguments: arguments };
-          // ...
-          this.notify( new Message( title, model ) );
+          this.notify(new Message(title, model));
      }
 }
-
-class Message {
-
-     constructor ( title, model ) {
-          this.title = title; 
-          this.model = model;
-     } 
+let Message = function(title, model){
+     this.title = title; 
+     this.model = model;
 }
-
-class Subscription {
-
-     constructor ( title, callback ) {
-          this.title = title; 
-          this.callback = callback;
-     }      
+let Subscription = function(title, callback){
+     this.title = title; 
+     this.callback = callback;
 }
 

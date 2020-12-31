@@ -1,4 +1,4 @@
-SurveyConfig = {
+let SurveyConfig = {
      maxInputLength: 1024,
      serviceURL: '/wp-content/plugins/bookbuilder/survey/include/services/post.php',
      LINEAR_HISTORY: 0x00,

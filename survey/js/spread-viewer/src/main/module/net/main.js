@@ -1,21 +1,21 @@
-class Net extends Controller {
+let Net = function(){
 
-     constructor(queue){
-          super(queue);
-          // controls (wirks) (from the queue)
-          this.register(new Subscription(            'init::book', this.initBook));
-          this.register(new Subscription(          'save::layout', this.saveLayout));
-          this.register(new Subscription(     'load::layoutgroup', this.loadLayoutGroup));
-          this.register(new Subscription(   'load::layoutpresets', this.loadLayouts));
-          this.register(new Subscription(       'import::layouts', this.importLayouts));
-          // events
-          this.register(new Subscription(      'prints::gathered', this.exportPrint));
-          this.register(new Subscription(  'delmockbtn::released', this.deleteMockData));
-          this.register(new Subscription('writemockbtn::released', this.writeMockSurvey));
-          this.register(new Subscription(       'image::selected', this.uploadImage));
-     }
+     this.register = function(subscription){}
+     this.notify = function(message){}
 
-     importLayouts(msg){
+     // controls (wirks) (from the queue)
+     this.register(new Subscription(            'init::book', this.initBook));
+     this.register(new Subscription(          'save::layout', this.saveLayout));
+     this.register(new Subscription(     'load::layoutgroup', this.loadLayoutGroup));
+     this.register(new Subscription(   'load::layoutpresets', this.loadLayouts));
+     this.register(new Subscription(       'import::layouts', this.importLayouts));
+     // events
+     this.register(new Subscription(      'prints::gathered', this.exportPrint));
+     this.register(new Subscription(  'delmockbtn::released', this.deleteMockData));
+     this.register(new Subscription('writemockbtn::released', this.writeMockSurvey));
+     this.register(new Subscription(       'image::selected', this.uploadImage));
+
+     this.importLayouts = function(msg){
           let ref = this;
           let data = {
                action: 'exec_import_layouts'
@@ -26,7 +26,7 @@ class Net extends Controller {
           this.postData(data, cb);
      }
 
-     loadLayouts(msg){
+     this.loadLayouts = function(msg){
           let ref = this;
           let data = {
                action: 'exec_get_layout_by_group_and_rule',
@@ -39,7 +39,7 @@ class Net extends Controller {
           this.postData(data, cb);
      }
 
-     loadLayoutGroup(msg){
+     this.loadLayoutGroup = function(msg){
           let ref = this;
           let data = {
                action: 'exec_get_layouts_by_group',
@@ -51,7 +51,7 @@ class Net extends Controller {
           this.postData(data, cb);
      }
 
-     saveLayout(msg){
+     this.saveLayout = function(msg){
           let ref = this;
           let data = {
                action: 'exec_init_layout',
@@ -65,7 +65,7 @@ class Net extends Controller {
           this.postData(data);
      }
 
-     initBook(msg){
+     this.initBook = function(msg){
          let ref = this;
          let data = {
               'action': 'exec_init_book_by_thread_id',
@@ -77,7 +77,7 @@ class Net extends Controller {
          this.postData(data, cb);
      }
 
-     loadBook(msg){
+     this.loadBook = function(msg){
           let ref = this;
           let data = {
                action: 'exec_get_book_by_id',
@@ -89,7 +89,7 @@ class Net extends Controller {
           this.postData(data, cb);
      }
 
-     exportPrint(msg){
+     this.exportPrint = function(msg){
           let ref = this;
           for(let idx in msg.model.prints){
                let data = {
@@ -113,7 +113,7 @@ class Net extends Controller {
           }
      }
 
-     exportSeps(msg){
+     this.exportSeps = function(msg){
           let ref = this;
           let data = {
                'action': 'exec_export_separations',
@@ -125,7 +125,7 @@ class Net extends Controller {
           this.postData(data, cb);
      }
 
-     postData(data, suc, err){
+     this.postData = function(data, suc, err){
           let ref = this;
           jQuery('.layout-messages').html('wait...');
           jQuery.post(SpreadViewerConfig.serviceURL, data, function(e){
@@ -146,7 +146,7 @@ console.log('postData(): error e: ', e);
           });
      }
 
-     uploadImage(msg){
+     this.uploadImage = function(msg){
           let ref = this;
           jQuery('.layout-messages').html('wait...');
           jQuery.post({

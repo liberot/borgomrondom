@@ -1,4 +1,4 @@
-SpreadViewerConfig = {
+let SpreadViewerConfig = {
      serviceURL: '/wp-content/plugins/bookbuilder/survey/include/services/post.php',
      WEB_CLIENT: 0x00,
      SPREAD_CLIENT: 0x01,

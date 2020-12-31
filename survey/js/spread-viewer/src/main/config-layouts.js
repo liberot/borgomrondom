@@ -1,4 +1,4 @@
-SpreadViewerConfig = {
+let SpreadViewerConfig = {
      WEB_CLIENT: 0x00,
      SPREAD_CLIENT: 0x01,
      LAYOUT_CLIENT: 0x02,

@@ -1,16 +1,16 @@
-class Bitmap extends Controller {
+let Bitmap = function(){
 
-     constructor(queue){
-          super(queue);
-          this.model = new BitmapModel();
-          this.register(new Subscription('image::targeted', this.renderImage));
-          this.model.images = [];
+     this.register = function(subscription){}
+     this.notify = function(message){}
+
+     this.model = new BitmapModel();
+     this.register(new Subscription('image::targeted', this.renderImage));
+     this.model.images = [];
+
+     this.initImage = function(msg){
      }
 
-     initImage(msg){
-     }
-
-     getImage(index, tag){
+     this.getImage = function(index, tag){
           let res = null;
           if(null != this.model.images[index]){
                if(null != this.model.images[index][tag]){
@@ -20,7 +20,7 @@ class Bitmap extends Controller {
           return res;
      }
 
-     renderImage(msg){
+     this.renderImage = function(msg){
           let src = msg.model.src;
           let scale = msg.model.scale;
           let iref = msg.model.ref;
@@ -46,9 +46,6 @@ class Bitmap extends Controller {
      }
 }
 
-class BitmapModel extends Model {
-     constructor(){
-          super();
-          this.images = null;
-     }
+let BitmapModel = function(){
+     this.images = null;
 }
