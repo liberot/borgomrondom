@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Book Builder
  * Plugin URI: http://127.0.0.1:8083
- * Description: Book Builder Plugin as for to build Print Spreads from generic Quesionnaire Resultsets
+ * Description: Book Builder Plugin as for to build Print Spreads from generic Questionnaire Resultsets
  * Version: 0.0.0.0.1
  * Author: Book Builder
  *
