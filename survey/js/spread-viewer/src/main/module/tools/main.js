@@ -1,9 +1,18 @@
-let Tools = function(queue){
+let Tools = function(controller){
 
-     this.register = function(subscription){}
-     this.notify = function(message){}
+     this.controller = controller;
 
-     this.queue = queue;
+     this.fillTemplate = function(template, model){
+         return this.controller.fillTemplate(template, model);
+     }
+
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
+
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
 
      this.setupAssetPossibs = function(){
           let keys = ['P', 'L'];
@@ -1136,32 +1145,33 @@ console.log('getPrintSize(): ', res);
      this.model = new ToolsModel();
      let ref = this;
      jQuery('.layout-messages').html(__msg__001__tmpl);
+
      // control sequences
-     this.register(new Subscription(      'fontbtn::released', this.bindFontSetting));
-     this.register(new Subscription(     'textinput::updated', this.bindTextInput));
-     this.register(new Subscription(    'assetinput::updated', this.bindAssetInput));
-     this.register(new Subscription(          'select::asset', this.setupEditor));
-     this.register(new Subscription(         'font::selected', this.bindFontSelection));
-     this.register(new Subscription(       'ppibtn::released', this.setPpi))
-     this.register(new Subscription(    'printsize::selected', this.setPrintSize))
-     this.register(new Subscription(  'nextsectbtn::released', this.nextSpread));
-     this.register(new Subscription(  'prevsectbtn::released', this.prevSpread));
-     this.register(new Subscription(      'savebtn::released', this.saveDocument));
-     this.register(new Subscription(     'pagesize::selected', this.bindPageSize));
-     this.register(new Subscription('savelayoutbtn::released', this.saveLayout));
-     this.register(new Subscription(  'layoutgroup::selected', this.bindLayoutGroup));
+     this.register(new Subscription(      'fontbtn::released', 'bindFontSetting', this));
+     this.register(new Subscription(     'textinput::updated', 'bindTextInput', this));
+     this.register(new Subscription(    'assetinput::updated', 'bindAssetInput', this));
+     this.register(new Subscription(          'select::asset', 'setupEditor', this));
+     this.register(new Subscription(         'font::selected', 'bindFontSelection', this));
+     this.register(new Subscription(       'ppibtn::released', 'setPpi', this));
+     this.register(new Subscription(    'printsize::selected', 'setPrintSize', this))
+     this.register(new Subscription(  'nextsectbtn::released', 'nextSpread', this));
+     this.register(new Subscription(  'prevsectbtn::released', 'prevSpread', this));
+     this.register(new Subscription(      'savebtn::released', 'saveDocument', this));
+     this.register(new Subscription(     'pagesize::selected', 'bindPageSize', this));
+     this.register(new Subscription('savelayoutbtn::released', 'saveLayout', this));
+     this.register(new Subscription(  'layoutgroup::selected', 'bindLayoutGroup', this));
       // event messages
-     this.register(new Subscription(    'mousedrag::released', this.bindMouseDrag));
-     this.register(new Subscription(         'layout::loaded', this.bindLayout));
-     this.register(new Subscription(       'document::loaded', this.initDocument));
-     this.register(new Subscription(     'textinput::focused', this.lockControlKeys));
-     this.register(new Subscription(        'textinput::done', this.unlockControlKeys));
-     this.register(new Subscription(          'image::loaded', this.bindImageAsset));
-     this.register(new Subscription(           'book::loaded', this.bindBook));
-     this.register(new Subscription(      'unitbtn::released', this.bindUnit));
-     this.register(new Subscription(    'layoutgroup::loaded', this.bindLoadedLayoutGroup));
-     this.register(new Subscription(  'layoutpresets::loaded', this.bindLoadedLayoutPresets));
-     this.register(new Subscription(      'layouts::imported', this.bindImportedLayouts));
+     this.register(new Subscription(    'mousedrag::released', 'bindMouseDrag', this));
+     this.register(new Subscription(         'layout::loaded', 'bindLayout', this));
+     this.register(new Subscription(       'document::loaded', 'initDocument', this));
+     this.register(new Subscription(     'textinput::focused', 'lockControlKeys', this));
+     this.register(new Subscription(        'textinput::done', 'unlockControlKeys', this));
+     this.register(new Subscription(          'image::loaded', 'bindImageAsset', this));
+     this.register(new Subscription(           'book::loaded', 'bindBook', this));
+     this.register(new Subscription(      'unitbtn::released', 'bindUnit', this));
+     this.register(new Subscription(    'layoutgroup::loaded', 'bindLoadedLayoutGroup', this));
+     this.register(new Subscription(  'layoutpresets::loaded', 'bindLoadedLayoutPresets', this));
+     this.register(new Subscription(      'layouts::imported', 'bindImportedLayouts', this));
      //
      this.setupAssetPossibs();
      if(SpreadViewerConfig.mouseControls){ this.setupMouseControls(); }

@@ -1,16 +1,18 @@
-let Correct = function() {
+let Correct = function(controller) {
 
-     this.register = function(subscription){}
-     this.notify = function(message){}
+     this.controller = controller;
 
-     this.model = new CorrectModel();
-     this.model.offScreen = SVG().addTo('.offscreen'); 
-     this.register(new Subscription('document::inited', this.initWorker));
-     this.register(new Subscription('asset::iloaded', this.corrAssetSize));
-     this.register(new Subscription('ppi::updated', this.splitRowspans));
-     this.register(new Subscription('text::updated', this.splitRowspans));
-     this.register(new Subscription('recalcbtn::released', this.splitRowspans));
-     this.register(new Subscription('adaptclayout::released', this.implementLayout));
+     this.fillTemplate = function(template, model){
+         return this.controller.fillTemplate(template, model);
+     }
+
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
+
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
 
      this.initWorker = function(msg){
           this.model.doc = msg.model;
@@ -184,6 +186,16 @@ let Correct = function() {
                target.spans = res;
           }
      }
+
+     this.model = new CorrectModel();
+     this.model.offScreen = SVG().addTo('.offscreen'); 
+
+     this.register(new Subscription('document::inited', 'initWorker', this));
+     this.register(new Subscription('asset::iloaded', 'corrAssetSize', this));
+     this.register(new Subscription('ppi::updated', 'splitRowspans', this));
+     this.register(new Subscription('text::updated', 'splitRowspans', this));
+     this.register(new Subscription('recalcbtn::released', 'splitRowspans', this));
+     this.register(new Subscription('adaptclayout::released', 'implementLayout', this));
 }
 
 let CorrectModel = function(){

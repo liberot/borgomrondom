@@ -49,9 +49,7 @@ let Queue = function(){
      this.subscriptions = [];
      this.notify = function(message){
           for(let idx in this.subscriptions) {
-console.log('>', message.title, 'x', this.subscriptions[idx].title);
                if(message.title == this.subscriptions[idx].title){
-console.log('-->', this.subscriptions[idx]);
                     // let method = this.subscriptions[ idx ].callback.match(/^f\s+(.{1,64})\(/); 
                     // ref[method] = this.subscriptions[idx].callback;
                     // this.subscriptions[idx].callback(message);

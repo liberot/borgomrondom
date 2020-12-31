@@ -1,10 +1,21 @@
-let Bitmap = function(){
+let Bitmap = function(controller){
 
-     this.register = function(subscription){}
-     this.notify = function(message){}
+     this.controller = controller;
+
+     this.fillTemplate = function(template, model){
+         return this.controller.fillTemplate(template, model);
+     }
+
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
+
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
 
      this.model = new BitmapModel();
-     this.register(new Subscription('image::targeted', this.renderImage));
+     this.register(new Subscription('image::targeted', 'renderImage', this));
      this.model.images = [];
 
      this.initImage = function(msg){

@@ -4,11 +4,9 @@ let Controller = function(queue){
           this.queue.notify(message);
      }
      this.register = function(subscription){
-          subscription.ref = this;
           this.queue.register(subscription);
      }
      this.release = function(subscription){
-          subscription.ref = this;
           this.queue.release (subscription);
      }
      this.releaseAllSubscriptions = function(){
@@ -50,13 +48,14 @@ let Controller = function(queue){
 let Queue = function(){
      this.subscriptions = [];
      this.notify = function(message){
-          for( let idx in this.subscriptions ) {
-               if( message.title == this.subscriptions[ idx ].title ) {
+          for(let idx in this.subscriptions) {
+               if(message.title == this.subscriptions[idx].title){
                     // let method = this.subscriptions[ idx ].callback.match(/^f\s+(.{1,64})\(/); 
-                    let ref = this.subscriptions[ idx ].ref;
-                    let method = this.subscriptions[ idx ].callback.name;
-                    // ref[ method ] = this.subscriptions[ idx ].callback;
-                    ref[ method ]( message );
+                    // ref[method] = this.subscriptions[idx].callback;
+                    // this.subscriptions[idx].callback(message);
+                    let ref = this.subscriptions[idx].ref;
+                    let method = this.subscriptions[idx].callback;
+                    ref[method](message);
                }
           }
      }
@@ -96,8 +95,9 @@ let Message = function(title, model){
      this.title = title; 
      this.model = model;
 }
-let Subscription = function(title, callback){
+let Subscription = function(title, callback, ref){
      this.title = title; 
      this.callback = callback;
+     this.ref = ref;
 }
 

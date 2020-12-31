@@ -1,19 +1,18 @@
-let Net = function(){
+let Net = function(controller){
 
-     this.register = function(subscription){}
-     this.notify = function(message){}
+     this.controller = controller;
 
-     // controls (wirks) (from the queue)
-     this.register(new Subscription(            'init::book', this.initBook));
-     this.register(new Subscription(          'save::layout', this.saveLayout));
-     this.register(new Subscription(     'load::layoutgroup', this.loadLayoutGroup));
-     this.register(new Subscription(   'load::layoutpresets', this.loadLayouts));
-     this.register(new Subscription(       'import::layouts', this.importLayouts));
-     // events
-     this.register(new Subscription(      'prints::gathered', this.exportPrint));
-     this.register(new Subscription(  'delmockbtn::released', this.deleteMockData));
-     this.register(new Subscription('writemockbtn::released', this.writeMockSurvey));
-     this.register(new Subscription(       'image::selected', this.uploadImage));
+     this.fillTemplate = function(template, model){
+         return this.controller.fillTemplate(template, model);
+     }
+
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
+
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
 
      this.importLayouts = function(msg){
           let ref = this;
@@ -182,4 +181,17 @@ console.log('postData(): error e: ', e);
                }
           });
      }
+     
+     // controls
+     this.register(new Subscription(            'init::book', 'initBook', this));
+     this.register(new Subscription(          'save::layout', 'saveLayout', this));
+     this.register(new Subscription(     'load::layoutgroup', 'loadLayoutGroup', this));
+     this.register(new Subscription(   'load::layoutpresets', 'loadLayouts', this));
+     this.register(new Subscription(       'import::layouts', 'importLayouts', this));
+     // events
+     this.register(new Subscription(      'prints::gathered', 'exportPrint', this));
+     this.register(new Subscription(  'delmockbtn::released', 'deleteMockData', this));
+     this.register(new Subscription('writemockbtn::released', 'writeMockSurvey', this));
+     this.register(new Subscription(       'image::selected', 'uploadImage', this));
+
 }

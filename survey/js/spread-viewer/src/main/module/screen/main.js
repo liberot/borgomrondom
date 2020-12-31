@@ -1,27 +1,14 @@
-let Screen = function(queue){ 
+let Screen = function(controller){ 
 
-     this.register = function(subscription){}
-     this.notify = function(messag){}
+     this.controller = controller;
 
-     this.queue = queue;
+     this.register = function(subscription){
+          this.controller.register(subscription);
+     }
 
-     this.register(new Subscription(   'exportbtn::released', this.print));
-     this.register(new Subscription(      'document::inited', this.initScreen));
-     this.register(new Subscription(     'pagesize::updated', this.updateScreen));
-     this.register(new Subscription(   'recalcbtn::released', this.updateScreen));
-     this.register(new Subscription(         'text::updated', this.updateScreen));
-     this.register(new Subscription(          'ppi::updated', this.updateScreen));
-     this.register(new Subscription(    'printsize::updated', this.updateScreen));
-     this.register(new Subscription(     'arrowkey::pressed', this.updateScreen));
-     this.register(new Subscription(     'document::updated', this.updateScreen));
-     this.register(new Subscription('adaptclayout::released', this.updateScreen));
-     this.register(new Subscription(         'font::updated', this.updateScreen));
-     this.register(new Subscription(           'text::moved', this.updateScreen));
-     this.register(new Subscription(   'mousedrag::released', this.updateScreen));
-     this.register(new Subscription(        'asset::updated', this.updateScreen));
-     this.register(new Subscription(          'image::moved', this.updateScreen));
-     this.register(new Subscription(        'item::selected', this.updateScreen));
-     this.register(new Subscription(      'asset::corrected', this.updateScreen));
+     this.notify = function(message){
+          this.controller.notify(message);
+     }
 
      this.initScreen = function(msg){
           this.model.doc = msg.model;
@@ -124,10 +111,14 @@ let Screen = function(queue){
      }
 
      this.setViewSize = function(){
+
           let width = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.width, this.model.doc.unit)));
               width*= parseInt(this.model.doc.pageSize);
+
           let height = Math.ceil(parseFloat(LayoutUtil.unitToPx(this.model.doc.ppi, this.model.doc.printSize.height, this.model.doc.unit)));
+
           this.model.screen.viewbox(0, 0, width, height); 
+
           let msg = '';
                msg+= this.model.doc.printSize.idx;
                msg+= ' ';
@@ -166,7 +157,6 @@ let Screen = function(queue){
 
      this.render = function(){
           this.model.currentScreen.clear();
-          // for(let idx in this.model.doc.assets){
           for(let idx in this.model.layers){
                if(null == this.model.doc.assets[this.model.layers[idx].i]){ continue; }
                let target = this.model.doc.assets[this.model.layers[idx].i];
@@ -441,6 +431,31 @@ let Screen = function(queue){
                this.stepY();
           }
      }
+
+
+     this.model = new ScreenModel();
+     this.model.screen = SVG().addTo('.screen');
+     this.model.printScreen = SVG().addTo('.printscreen');
+     this.model.currentScreen = this.model.screen;
+
+     this.register(new Subscription(   'exportbtn::released', 'print', this));
+     this.register(new Subscription(      'document::inited', 'initScreen', this));
+     this.register(new Subscription(     'pagesize::updated', 'updateScreen', this));
+     this.register(new Subscription(   'recalcbtn::released', 'updateScreen', this));
+     this.register(new Subscription(         'text::updated', 'updateScreen', this));
+     this.register(new Subscription(          'ppi::updated', 'updateScreen', this));
+     this.register(new Subscription(    'printsize::updated', 'updateScreen', this));
+     this.register(new Subscription(     'arrowkey::pressed', 'updateScreen', this));
+     this.register(new Subscription(     'document::updated', 'updateScreen', this));
+     this.register(new Subscription('adaptclayout::released', 'updateScreen', this));
+     this.register(new Subscription(         'font::updated', 'updateScreen', this));
+     this.register(new Subscription(           'text::moved', 'updateScreen', this));
+     this.register(new Subscription(   'mousedrag::released', 'updateScreen', this));
+     this.register(new Subscription(        'asset::updated', 'updateScreen', this));
+     this.register(new Subscription(          'image::moved', 'updateScreen', this));
+     this.register(new Subscription(        'item::selected', 'updateScreen', this));
+     this.register(new Subscription(      'asset::corrected', 'updateScreen', this));
+
 }
 
 let ScreenModel = function(){
