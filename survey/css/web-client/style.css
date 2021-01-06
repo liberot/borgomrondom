@@ -82,6 +82,14 @@ html {
      text-align: justify !important;
 }
 
+.description-output {
+     font-size: 1.15em;
+     line-height: 1.575 !important;
+     margin-bottom: 5px;
+     width: 100% !important;
+     text-align: justify !important;
+}
+
 .choice-output img {
      height: 5em;
 }

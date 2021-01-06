@@ -34,6 +34,7 @@ let Correct = function(controller) {
           let r = 1;
 
           switch(target.conf.scaleType){
+
           case 'cut_into_slot':
                let xr = slotW /width;
                let yr = slotH /height;

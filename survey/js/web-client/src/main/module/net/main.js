@@ -20,7 +20,7 @@ let SurveyNet  = function(controller){
                'action': 'exec_get_next_section'
           }
           let cb = function(e){ 
-               ref.notify(new Message('nextsection::loaded', { e })); 
+               ref.notify(new Message('nextsection::loaded', { e: e })); 
           }
           this.postData(data, cb);
      }
@@ -34,7 +34,7 @@ let SurveyNet  = function(controller){
                'panel_ref': msg.model.panelRef
           }
           let cb = function(e){
-               ref.notify(new Message('panel::loaded', { e }));
+               ref.notify(new Message('panel::loaded', {e: e}));
           }
           this.postData(data, cb);
      }
@@ -49,7 +49,7 @@ let SurveyNet  = function(controller){
                'base': msg.model.base
           }
           let cb = function(e){
-               ref.notify(new Message('asset::uploaded', { e }));
+               ref.notify(new Message('asset::uploaded', { e: e }));
           }
           this.postData(data, cb);
      }
@@ -61,7 +61,7 @@ let SurveyNet  = function(controller){
                'thread_id': msg.model.arguments[1]
           }
           let cb = function(e){
-               ref.notify(new Message('thread::loaded', { e }));
+               ref.notify(new Message('thread::loaded', { e: e }));
           }
           this.postData(data, cb);
      }
@@ -69,7 +69,7 @@ let SurveyNet  = function(controller){
      this.initThread = function(msg){
           let ref = this;
           let data = { 'action': 'exec_init_thread' }
-          let cb = function(e){ ref.notify(new Message('thread::inited', { e })); }
+          let cb = function(e){ ref.notify(new Message('thread::inited', { e: e })); }
           this.postData(data, cb);
      }
 
@@ -84,7 +84,7 @@ let SurveyNet  = function(controller){
                answer: msg.model.panel.post_content.answer
           }
           let cb = function(e){
-               ref.notify(new Message('panel::saved', { e }));
+               ref.notify(new Message('panel::saved', { e: e }));
           }
           this.postData(data, cb);
      }
@@ -123,7 +123,7 @@ console.log('saveThread(): hiddenFields: ', hiddenFields);
                hidden_fields: hiddenFields
           }
           let cb = function(e){
-               ref.notify(new Message('thread::saved', { e }));
+               ref.notify(new Message('thread::saved', { e: e }));
           }
           this.postData(data, cb);
      }
@@ -160,7 +160,7 @@ console.log('saveThread(): hiddenFields: ', hiddenFields);
                panel_ref: msg.model.panel.post_excerpt
           }
           let cb = function(e){
-               ref.notify(new Message('assets::downloaded', { e }));
+               ref.notify(new Message('assets::downloaded', { e: e }));
           }
           this.postData(data, cb);
      }
