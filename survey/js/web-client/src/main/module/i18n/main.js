@@ -16,7 +16,8 @@ let __str = {
      'yes': 'Yes',
      'no': 'No',
      'spreads': 'I would like to see the spreads now',
-     'invalid': 'Incomplete Rule Violation ERR',
+     'input incomplete': 'Incomplete Rule Violation ERR',
+     'asset type invalid': 'Asset Type Rule Violation ERR',
      '':''
 };
 

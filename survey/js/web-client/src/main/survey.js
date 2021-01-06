@@ -88,8 +88,12 @@ console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
 console.log('recSection(): ', this.model.sections);
      }
 
+     this.raiseErrorMessage = function(errorMessage){
+         alert(errorMessage);
+     }
+
      this.showValidationError = function(msg){
-         alert(__survey.__('invalid', 'bookbuilder'));
+         this.raiseErrorMessage(__survey.__('input incomplete', 'bookbuilder'));
      }
 
      this.bindSavedPanel = function(msg){
@@ -685,8 +689,6 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           buf1st = this.fillTemplate(__section_title_tmpl__, { section: section });
           jQuery('.survey-controls6th').html(buf1st);
 
-console.log('this.model.panel.post_content: ', this.model.panel.post_content);
-
           let target;
           switch(this.model.panel.post_content.type){
 
@@ -881,8 +883,6 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
 
           jQuery('.file-upload').html(__upload_tmpl_002__);
 
-          let files = null;
-          let slots = parseInt(this.model.panel.post_content.conf.image);
           let form = document.querySelector('.files');
           let fake = document.querySelector('.fake');
 
@@ -913,6 +913,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
      }
 
      this.initImageUpload = function(files){
+console.log('this.initImageUpload(): ', files);
 
           let formdata = new FormData();
           let max = 10;
@@ -1188,6 +1189,8 @@ console.log('initSpreads(): msg: ', msg);
      }
 
      this.parseAssets = function(msg){
+console.log('parseAssets(): ', msg);
+
           let ref = this;
           this.model.parseProc = [];
           this.model.panel.assetCopies = [];
@@ -1211,6 +1214,8 @@ console.log('initSpreads(): msg: ', msg);
      }
 
      this.scanAsset = function(indx, base, proc, upload){
+console.log('scanAsset(): ', indx, base, proc, upload);
+
          let ref = this;
          let scaleR = 1;
          let img = new Image();
@@ -1236,8 +1241,21 @@ console.log('initSpreads(): msg: ', msg);
                    }
                    ref.notify(new Message('asset::scanned', res));
              }
-             base = base.replace('data:image/png;base64,', '');
-             base = 'data:image/png;base64,' +base;
+             let acceptedAssetType = false;
+             if(null != base.match(/^data:image\/png;base64/)){
+                  base = base.replace('data:image/png;base64,', '');
+                  base = 'data:image/png;base64,' +base;
+                  acceptedAssetType = true;
+             }
+             if(null != base.match(/^data:image\/jpeg;base64/)){
+                  base = base.replace('data:image/jpeg;base64,', '');
+                  base = 'data:image/jpeg;base64,' +base;
+                  acceptedAssetType = true;
+             }
+             if(false == acceptedAssetType){
+                  this.raiseErrorMessage(__survey.__('asset type invalid', 'bookbuilder'));
+                  return false;
+             }
              img.src = base;
      }
 
@@ -1359,7 +1377,7 @@ console.log('initSpreads(): msg: ', msg);
 
 let __upload_tmpl_002__= ""+
 "<form>"+
-     "<input type='file' class='files' name='filename' multiple='multiple'></inpupt>"+
+     "<input type='file' class='files' name='filename' multiple='multiple' accept='image/jpeg, image/png'></input>"+
      "<div class='fake'>Drop Files Here</div>"+
 "</form>";
 
