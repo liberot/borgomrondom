@@ -15,7 +15,7 @@ let Survey = function(controller) {
      }
 
      this.bindSection = function(msg){
-     
+
           if(null == msg.model.e.coll.section){
                console.log('bindSection(): no section');
                return false;
@@ -103,7 +103,6 @@ console.log('recSection(): ', this.model.sections);
      this.saveThread = function(msg){
 console.log('saveThread(): ', msg);
           this.notify(new Message('save::panel', this.model));
-// fixdiss
           this.notify(new Message('save::thread', this.model));
      }
 
@@ -285,6 +284,8 @@ console.log('bindOpinion: ', msg);
 
      this.bindYesNoInput = function(msg){
 
+console.log('bindYesNoInput(): ', msg);
+
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
 
@@ -313,15 +314,17 @@ console.log('bindOpinion: ', msg);
 
      this.bindInput = function(sectionId, panelRef, key, val){
 
-          if('undefined' == typeof(val)){ val = ''; }
-          let answer = SurveyUtil.trimIncomingString(val);
+console.log('bindInput(): ', sectionId, panelRef, key, val);
 
+          if('undefined' == typeof(val)){ val = ''; }
+
+          let answer = SurveyUtil.trimIncomingString(val);
           let question = this.corrQuestion(this.model.panel.post_content.title);
               question = SurveyUtil.trimIncomingString(question);
 
           this.model.panel.post_content.question = question;
-          this.model.panel.post_content.condition_ref = key;
           this.model.panel.post_content.answer = answer;
+          this.model.panel.post_content.condition_ref = key;
 
           this.setCondition(sectionId, panelRef, key, val);
 
@@ -330,30 +333,35 @@ console.log('bindOpinion: ', msg);
 
      this.setCondition = function(sectionId, panelRef, key, val){
 
+console.log('setCondition(): ', sectionId, panelRef, key, val);
+
+// list of conditions
           let target = this.model.thread.post_content.conditions;
 
+// rec of the condition
           let conditionRec = false;
 
           for(let idx in target){
 
+// updates the condition
                if(sectionId == target[idx].sectionId){
-
                     if(panelRef == target[idx].panelRef){
-
                          if(key == target[idx].key){
+console.log('found the condition at: ', idx);
                               target[idx].val = val;
-                              conditionRec = 0x01;
+                              conditionRec = true;
                          }
                     }
                }
           }
 
+// writes condition
           if(false == conditionRec){
+console.log('about to write condition: ');
                target.push({sectionId: sectionId, panelRef: panelRef, key: key, val: val});
           }
 
-console.log('setCondition(): ', target);
-
+          console.log('setCondition(): ', target);
      }
 
      this.getCondition = function(sectionId, panelRef, key){
@@ -653,8 +661,8 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           if(null != this.model.panel.post_content.title){
                question = this.model.panel.post_content.title;
           }
-          question = SurveyUtil.trimIncomingString(question);
           question = this.corrQuestion(question);
+          question = SurveyUtil.trimIncomingString(question);
 
 // answer might or not be set
           let answer = '';
@@ -670,6 +678,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
                     description = this.model.panel.post_content.properties.description;
                }
           }
+          description = this.corrQuestion(description);
           description = SurveyUtil.trimIncomingString(description);
 
 // setup of the view components
@@ -932,10 +941,16 @@ console.log('this.initImageUpload(): ', files);
 
      this.evalCondition = function(condition){
 
-          // condition = new MockLogic().logic.condition;
+// condition = new MockLogic().logic.condition;
           let res = null;
+
+// evaluation of the rules by one each 
               res = this.evalRuleR(condition);
+
+// evaluation of the 'and' 'or' groups
               res = this.evalGroup(condition);
+
+// 
               res = condition.result;
 
           return res;
@@ -1007,16 +1022,31 @@ console.log('evalGroup(): condition: "always" found');
                               rule.vars[idx].value == this.model.panel.post_content.ref;
                          break;
 
-// evals input condition of the rule
                     case 'choice':
                     case 'constant':
 
                          let sectionId = this.model.section.ID;
-                         let condition = this.model.panel.post_content.condition_ref;
                          let panelRef = this.model.panel.post_content.ref;
-                         let key = rule.vars[idx].value;
+                         let key = this.model.panel.post_content.condition_ref;
+                         let storedAnswer = this.getStoredAnswer(key);
 
-                         rule.vars[idx].result = condition == this.getCondition(sectionId, panelRef, key);
+// yes no type
+// there is other stored answer types
+                         if(true == storedAnswer || 'true' == storedAnswer){
+                              storedAnswer = '1';
+                         }
+                         if(false == storedAnswer || 'false' == storedAnswer){
+                              storedAnswer = '0';
+                         }
+
+
+                         rule.vars[idx].result = rule.vars[idx].value == storedAnswer;
+
+console.log('evalRuleR(): init: ', rule.vars[idx]);
+console.log('evalRuleR(): key: ', key);
+console.log('evalRuleR(): stored answer: ', storedAnswer);
+console.log('evalRuleR(): result: ', rule.vars[idx]);
+
                          break;
                }
           }
@@ -1040,19 +1070,20 @@ console.log('evalGroup(): condition: "always" found');
      }
 
      this.evalNextPanel = function(){
+
 // evaluates whether or not this panel is the last one in the section
           if(this.isBottomPanel()){
                this.loadNextSection();
                return true;
           }
-// the next panel (field) to be displayed
-          let settings = this.model.section.post_content.survey.settings;
 
+// the next panel (field) to be displayed
+          // let settings = this.model.section.post_content.survey.settings;
           let toc = this.model.section.post_content.toc;
           let sectionId = this.model.section.ID;
 
 // loads panel from logic
-          let panelRef = this.evalLogicAction(toc);
+          let panelRef = this.evalLogicJump(toc);
           if(null != panelRef){
                this.loadPanel(sectionId, panelRef);
                return true;
@@ -1063,9 +1094,9 @@ console.log('evalGroup(): condition: "always" found');
           return true;
      }
 
-     this.evalLogicAction = function(toc){
+     this.evalLogicJump = function(toc){
 
-// evaluatess the conditions of logic jummps
+// evaluates the conditions of the logic action jumps
 
           let ref = this;
           let links = [];
@@ -1075,14 +1106,14 @@ console.log('evalGroup(): condition: "always" found');
                let rule = toc.rulez[idx];
                if(panel.post_content.ref != rule.ref){ continue; }
 
-console.log('evalLogicAction(): rule: ', rule);
+console.log('evalLogicJump(): rule: ', rule);
                rule.actions.forEach(function(actionpack){
                     if(false != ref.evalCondition(actionpack.condition)){
                          switch(actionpack.action){
                               case 'jump':
 
-console.log('evalLogicAction(): link from logic: ', actionpack.details.to.value);
-console.log('evalLogicAction(): actionpack: ', actionpack);
+console.log('evalLogicJump(): link from logic: ', actionpack.details.to.value);
+console.log('evalLogicJump(): actionpack: ', actionpack);
                                    links.push(actionpack.details.to.value);
                                    break;
                          }

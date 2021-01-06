@@ -96,19 +96,19 @@ let SurveyNet  = function(controller){
 // --------------------------------------------------------------------------------
 // fixdiss :: history and book getz elephant size :: send less ysfck
           let book = JSON.stringify(msg.model.thread.post_content.book);
-console.log('saveThread(): book: ', book);
+// console.log('saveThread(): book: ', book);
               book = SurveyUtil.pigpack(book);
 
           let history = JSON.stringify(msg.model.thread.post_content.history);
-console.log('saveThread(): history: ', history);
+// console.log('saveThread(): history: ', history);
               history = SurveyUtil.pigpack(history);
 
           let conditions = JSON.stringify(msg.model.thread.post_content.conditions);
-console.log('saveThread(): conditions: ', conditions);
+// console.log('saveThread(): conditions: ', conditions);
               conditions = SurveyUtil.pigpack(conditions);
 
           let hiddenFields = JSON.stringify(msg.model.thread.post_content.hidden_fields);
-console.log('saveThread(): hiddenFields: ', hiddenFields);
+// console.log('saveThread(): hiddenFields: ', hiddenFields);
               hiddenFields = SurveyUtil.pigpack(hiddenFields);
 // ---------------------------------------------------------------------------------
 
@@ -122,9 +122,11 @@ console.log('saveThread(): hiddenFields: ', hiddenFields);
                conditions: conditions,
                hidden_fields: hiddenFields
           }
+
           let cb = function(e){
                ref.notify(new Message('thread::saved', { e: e }));
           }
+
           this.postData(data, cb);
      }
 
