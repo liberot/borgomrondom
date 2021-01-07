@@ -933,19 +933,11 @@ console.log('this.initImageUpload(): ', files);
      }
 
      this.evalCondition = function(condition){
-
-// condition = new MockLogic().logic.condition;
+          // condition = new MockLogic().logic.condition;
           let res = null;
-
-// evaluation of the rules by one each 
               res = this.evalRuleR(condition);
-
-// evaluation of the 'and' 'or' groups
               res = this.evalGroup(condition);
-
-// 
-              res = condition.result;
-
+              res = condition;
           return res;
      }
 
@@ -954,6 +946,7 @@ console.log('this.initImageUpload(): ', files);
           condition.result = null;
 
           switch(condition.op){
+
                case 'is':
                case 'and':
                case 'answered':
@@ -963,6 +956,7 @@ console.log('this.initImageUpload(): ', files);
                          else{ condition.result &= val; }
                     }
                     break;
+
                case 'or':
                     condition.result = null;
                     for(let idx in condition.vars){
@@ -971,34 +965,35 @@ console.log('this.initImageUpload(): ', files);
                          else{ condition.result |= val; };
                     }
                     break;
+
                case 'always':
-// this i don't know  i guess always evaluates always to true
-console.log('evalGroup(): condition: "always" found');
-                    condition.result = true;
-                    // condition.result = false;
+                    condition.result = 1;
                     break;
+
           }
+
           condition.result = 1 == condition.result ? true : false;
+
+// groups might be trees also
           if(null != condition.vars){
                for(let idx in condition.vars){
                     if(null != condition.vars[idx].op){
                          this.evalGroup(condition.vars[idx]);
                     }
                }
-               return;
           }
      }
 
      this.evalRuleR = function(rule){
 
-// evaluates condition groups
+// evaluates condition rules
           if(null == rule.vars){ 
                return false; 
           }
 
           for(let idx in rule.vars){
 
-// does the cycle until all condition groups is evaluated
+// does the cycle until all condition rules is evaluated
                if(null != rule.vars[idx].op){ 
                     this.evalRuleR(rule.vars[idx]);
                     continue;
@@ -1086,7 +1081,15 @@ console.log('evalNextPanel(): ');
           let sectionId = this.model.section.ID;
 
 // loads panel from logic
-          let panelRef = this.evalLogicJump(toc);
+          let panelRef;
+          let coll = this.evalLogicJump(toc);
+          if(null != coll.firstPriorityLink){
+               panelRef = coll.firstPriorityLink;
+console.log('there is a condition flagged :always');
+          }
+          else if(null != coll.links[0]){
+               panelRef = coll.links[0];
+          }
           if(null != panelRef){
                this.loadPanel(sectionId, panelRef);
                return true;
@@ -1103,29 +1106,42 @@ console.log('evalLogicJump(): ', toc);
 // evaluates the conditions of the logic action jumps
 
           let ref = this;
-          let links = [];
+          let res = {
+               firtPriorityLink: null,
+               links: [
+               ]
+          };
+
           let panel = this.model.panel;
 
           for(let idx in toc.rulez){
                let rule = toc.rulez[idx];
-               if(panel.post_content.ref != rule.ref){ continue; }
+
+// actions that are missing this field
+               if(panel.post_content.ref != rule.ref){ 
+                    continue; 
+               }
 
 console.log('evalLogicJump(): rule: ', rule);
                rule.actions.forEach(function(actionpack){
-                    if(false != ref.evalCondition(actionpack.condition)){
+                    let c = ref.evalCondition(actionpack.condition);
+                    if(false != c.result){
                          switch(actionpack.action){
                               case 'jump':
-
-console.log('evalLogicJump(): link from logic: ', actionpack.details.to.value);
 console.log('evalLogicJump(): actionpack: ', actionpack);
-                                   links.push(actionpack.details.to.value);
+                                   if('always' == c.op){
+                                        res.firstPriorityLink = actionpack.details.to.value;
+                                   }
+                                   else{
+                                        res.links.push(actionpack.details.to.value);
+                                   }
                                    break;
                          }
                     }
                });
           }
 
-          return links[0];
+          return res;
      }
 
      this.loadNextSection = function(){
