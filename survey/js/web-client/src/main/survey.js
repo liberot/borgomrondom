@@ -23,7 +23,6 @@ let Survey = function(controller) {
 
           this.model.section = msg.model.e.coll.section;
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
-
 console.log('bindSection(): this.model.section: ', this.model.section);
 
           this.evalHiddenFields();
@@ -1083,13 +1082,15 @@ console.log('evalNextPanel(): ');
 // loads panel from logic
           let panelRef;
           let coll = this.evalLogicJump(toc);
-          if(null != coll.firstPriorityLink){
-               panelRef = coll.firstPriorityLink;
-console.log('there is a condition flagged :always');
-          }
-          else if(null != coll.links[0]){
+console.log('evalNextPanle(): evalutated logic jumps: ', coll);
+
+          if(null != coll.links[0]){
                panelRef = coll.links[0];
           }
+          else if(null != coll.defaultLink){
+               panelRef = coll.defaultLink;
+          }
+
           if(null != panelRef){
                this.loadPanel(sectionId, panelRef);
                return true;
@@ -1107,7 +1108,7 @@ console.log('evalLogicJump(): ', toc);
 
           let ref = this;
           let res = {
-               firtPriorityLink: null,
+               defaultLink: null,
                links: [
                ]
           };
@@ -1130,7 +1131,7 @@ console.log('evalLogicJump(): rule: ', rule);
                               case 'jump':
 console.log('evalLogicJump(): actionpack: ', actionpack);
                                    if('always' == c.op){
-                                        res.firstPriorityLink = actionpack.details.to.value;
+                                        res.defaultLink = actionpack.details.to.value;
                                    }
                                    else{
                                         res.links.push(actionpack.details.to.value);
