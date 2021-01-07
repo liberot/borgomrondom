@@ -263,23 +263,25 @@ console.log('bindOpinion: ', msg);
      }
 
      this.bindMultipleChoiceInput = function(msg){
+console.log('bindMultipleChoiceInput(): ', msg);
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
 
-          let ref = msg.model.arguments[1];
+          let key = msg.model.arguments[1];
           let val = '';
-          let choice = null;
 
+          let choice;
           for(let idx in this.model.panel.post_content.properties.choices){
                choice = this.model.panel.post_content.properties.choices[idx]; 
-               if(ref == choice.ref){
+               if(key == choice.ref){
                    val = choice.label;
                }
           };
 
-          this.clearInput(sectionId, panelRef, ref, val);
-          this.bindInput(sectionId, panelRef, ref, val);
+console.log('bindMultipleChoiceInput(): ', sectionId, panelRef, key, val);
+          this.clearInput(sectionId, panelRef, key, val);
+          this.bindInput(sectionId, panelRef, key, val);
      }
 
      this.bindYesNoInput = function(msg){
@@ -357,25 +359,22 @@ console.log('found the condition at: ', idx);
 
 // writes condition
           if(false == conditionRec){
-console.log('about to write condition: ');
                target.push({sectionId: sectionId, panelRef: panelRef, key: key, val: val});
           }
 
-          console.log('setCondition(): ', target);
+          console.log('setCondition(): target: ', target);
      }
 
-     this.getCondition = function(sectionId, panelRef, key){
+// returns whether or not a given answer ref is stored
+     this.isStoredAnswerRef = function(sectionId, panelRef, key){
 
-          let res = null;
-
+          let res = false;
           let target = this.model.thread.post_content.conditions;
-
           for(let idx in target){
-
                if(sectionId == target[idx].sectionId){
                     if(panelRef == target[idx].panelRef){
                          if(key == target[idx].key){
-                             res = target[idx].key;
+                             res = true;
                          }
                     }
                }
@@ -384,8 +383,8 @@ console.log('about to write condition: ');
           return res;
      }
 
+// returns the value of a referenced answer
      this.getStoredAnswer = function(key){
-
 console.log('getStoredAnswer(): key: ', key);
           let res = null;
           let target = this.model.thread.post_content.conditions;
@@ -432,12 +431,13 @@ console.log('corrQuestion(): mtch: ', mtch);
                    val = '';
                }
 
-               question = question.replace(/_/g, '');
-               question = question.replace(/\*/g, '');
-               question = question.replace(/\*/g, '');
-               question = question.replace(/\n\r/g, '');
-               question = question.replace(/\n/g, '');
+               // question = question.replace(/_/g, '');
+               // question = question.replace(/\*/g, '');
+               // question = question.replace(/\*/g, '');
+               // question = question.replace(/\n\r/g, '');
+               // question = question.replace(/\n/g, '');
 
+               val += ' ';
                question = question.replace(mtch[idx], val);
           }
 
@@ -491,19 +491,13 @@ console.log('pushHiddenField(): ', target);
      }
 
      this.getHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
-
+console.log('getHiddenField(): ', sectionId, panelRef, fieldRef, fieldTitle);
           let target = this.model.thread.post_content.hidden_fields;
-
           for(let idx in target){
-
                if(sectionId == target[idx].sectionId){
-
                     if(panelRef == target[idx].panelRef){
-
                          if(fieldRef == target[idx].fieldRef){
-
                               if(fieldTitle == target[idx].fieldTitle){
-
                                    return { idx: idx, val: target[idx] };
                               }
                          }
@@ -559,7 +553,6 @@ console.log('pushHistory(): ', target.history);
      }
 
      this.loadPanel = function(sectionId, panelRef){
-
 console.log('loadPanel(): ', sectionId, panelRef);
 
           if(null == sectionId){ return false; }
@@ -1014,31 +1007,40 @@ console.log('evalGroup(): condition: "always" found');
 // evals the condition of a *leaf
                rule.vars[idx].result = false;
 
+// 
+               let sectionId = this.model.section.ID;
+               let panelRef = this.model.panel.post_content.ref;
+               let key = this.model.panel.post_content.condition_ref;
+               let isStoredAnswerRef = this.isStoredAnswerRef(sectionId, panelRef, key);
+               let storedAnswer = this.getStoredAnswer(key);
                switch(rule.vars[idx].type){
 
-// evals field of index of the rule 
+// evals field reference and the index of the rule
+// as in does the logic action refer to this field
                     case 'field':
-                         rule.vars[idx].result =
-                              rule.vars[idx].value == this.model.panel.post_content.ref;
+                         rule.vars[idx].result = rule.vars[idx].value == this.model.panel.post_content.ref;
                          break;
 
+// evals a multiple choice field
+// as in is the logic action condition selected in this field
                     case 'choice':
+                         rule.vars[idx].result = isStoredAnswerRef;
+
+console.log('evalRuleR(): init: ', rule.vars[idx]);
+console.log('evalRuleR(): key: ', key);
+console.log('evalRuleR(): is stored answer ref: ', key, isStoredAnswerRef);
+
+                         break;
+
+// evals a yes no type
+// as in is the answer in this field yes or no
                     case 'constant':
-
-                         let sectionId = this.model.section.ID;
-                         let panelRef = this.model.panel.post_content.ref;
-                         let key = this.model.panel.post_content.condition_ref;
-                         let storedAnswer = this.getStoredAnswer(key);
-
-// yes no type
-// there is other stored answer types
                          if(true == storedAnswer || 'true' == storedAnswer){
                               storedAnswer = '1';
                          }
                          if(false == storedAnswer || 'false' == storedAnswer){
                               storedAnswer = '0';
                          }
-
 
                          rule.vars[idx].result = rule.vars[idx].value == storedAnswer;
 
@@ -1070,6 +1072,7 @@ console.log('evalRuleR(): result: ', rule.vars[idx]);
      }
 
      this.evalNextPanel = function(){
+console.log('evalNextPanel(): ');
 
 // evaluates whether or not this panel is the last one in the section
           if(this.isBottomPanel()){
@@ -1095,6 +1098,7 @@ console.log('evalRuleR(): result: ', rule.vars[idx]);
      }
 
      this.evalLogicJump = function(toc){
+console.log('evalLogicJump(): ', toc);
 
 // evaluates the conditions of the logic action jumps
 
@@ -1125,7 +1129,6 @@ console.log('evalLogicJump(): actionpack: ', actionpack);
      }
 
      this.loadNextSection = function(){
-
 console.log('loadNextSection(): this.model.sections: ', this.model.sections);
 
           let pos = null;
@@ -1454,7 +1457,7 @@ let __yes_no_tmpl__ = ""+
      "<div class='description-output'>{description}</div>"+
      "<div class='question-output'>{question}</div>"+
      "<div class='yesno-input'>"+
-          "<a href='javascript:surveyQueue.route(\"select::yesno\", \"{ref}\", \"true\");'>{yes}</a>"+
+          "<a href='javascript:surveyQueue.route(\"select::yesno\", \"{ref}\", \"true\");'>{yes}&nbsp;</a>"+
           "<a href='javascript:surveyQueue.route(\"select::yesno\", \"{ref}\", \"false\");'>{no}</a>"+
      "</div>";
 
