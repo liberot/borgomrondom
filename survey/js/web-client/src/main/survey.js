@@ -460,7 +460,7 @@ console.log('pushBook(): not going to compute any further since of irrelefant in
           }
           // imprint = this.initStringOutput(imprint);
 
-console.log('pushBook(): relevant information found: ', imprint);
+console.log('pushBook(): gathered information of relevance: ', imprint);
 console.log('pushBook(): todo: image assets of the current group');
 
           let target = this.model.thread.post_content;
@@ -660,20 +660,16 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           let parent = this.model.panel.post_content.conf.parent;
           let section = this.model.section.ID;
 
-// question might or not be set
-          let question = '';
-          if(null != this.model.panel.post_content.question){
-               question = this.model.panel.post_content.question;
-          }
-          question = SurveyUtil.trimIncomingString(question);
-          question = this.initStringOutput(question);
+// title does not change
+          let question = this.model.panel.post_content.title;
+              question = SurveyUtil.trimIncomingString(question);
+              question = this.initStringOutput(question);
+
+          this.model.panel.post_content.question = question;
 
 // answer might or not be set
-          let answer = '';
-          if(null != this.model.panel.post_content.answer){
-               answer = this.model.panel.post_content.answer;
-          }
-          answer = SurveyUtil.trimIncomingString(answer);
+          let answer = this.model.panel.post_content.answer;
+              answer = SurveyUtil.trimIncomingString(answer);
 
 // description might or not be set
           let description = '';

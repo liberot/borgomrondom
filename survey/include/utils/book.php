@@ -423,8 +423,8 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
      $uuid = psuuid();
      $doc['uuid'] = $uuid;
 
-// answer
-     $text = trim_for_print($panel->post_content['imprint']);
+// imprint
+     $text = trim_for_print($panel->post_content['question']);
 
      $doc['assets'][0]['text'] = [$text];
      $doc['assets'][1]['text'] = [];
