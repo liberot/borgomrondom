@@ -394,7 +394,9 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
 // groups is going to gather differnt spreads in a semantic way
 // as the uploaded images of three sisters and such
      $panel = get_panel_by_ref($section_id, $panel_ref)[0];
-     if(null == $panel){ return false; }
+     if(null == $panel){ 
+          return false; 
+     }
      $panel->post_content = pagpick($panel->post_content);
 
 // a panel might or not be tagged by a layout preference
@@ -425,7 +427,6 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
 
 // imprint
      $text = trim_for_print($panel->post_content['question']);
-
      $doc['assets'][0]['text'] = [$text];
      $doc['assets'][1]['text'] = [];
 

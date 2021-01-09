@@ -131,6 +131,7 @@ function exec_init_book_by_thread_id(){
 
 // ---------------------------- pages
      $temp_section_id = null;
+
      foreach($thread->post_content['book'] as $toc_entry){
           $section_id = $toc_entry['sectionId'];
           if(is_null($section_id)){ continue; }

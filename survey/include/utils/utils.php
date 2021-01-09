@@ -114,15 +114,18 @@ function trim_incoming_book($toc){
      $res = [];
      foreach($toc as $item){
 
-          $temp = [];
+          $section_id = $item['sectionId'];
+          $section_id = substr($section_id, 0, 128);
+          $section_id = preg_replace('/[^A-Za-z0-9-]/', '', $section_id);
 
-          $temp['sectionId'] = substr($temp['sectionId'], 0, 128);
-          $temp['sectionId'] = preg_replace('/[^A-Za-z0-9-]/', '', $temp['section_id']);
+          $panel_ref = $item['panelRef'];
+          $panel_ref = substr($panel_ref, 0, 128);
+          $panel_ref = preg_replace('/[^A-Za-z0-9-]/', '', $panel_ref);
 
-          $temp['panelRef'] = substr($temp['panelRef'], 0, 128);
-          $temp['panelRef'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-
-          $res[]= $temp;
+          $res[]= [
+               'sectionId'=>$section_id,
+               'panelRef'=>$panel_ref
+          ];
      }
 
      return $res;
@@ -139,20 +142,24 @@ function trim_incoming_conditions($coll){
      $res = [];
      foreach($coll as $item){
 
-          $sectionId = substr($item['sectionId'], 0, 128);
-          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $sectionId);
+          $section_id = substr($item['sectionId'], 0, 128);
+          $section_id = preg_replace('/[^A-Za-z0-9-]/', '', $section_id);
 
-          $panelRef = substr($item['panelRef'], 0, 128);
-          $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $panelRef);
+          $panel_ref = substr($item['panelRef'], 0, 128);
+          $panel_ref = preg_replace('/[^A-Za-z0-9-]/', '', $panel_ref);
 
           $key = substr($item['key'], 0, 128);
           $key = preg_replace('/[^A-Za-z0-9-]/', '', $key);
 
-// todo
           $val = substr($item['key'], 0, 1024);
-          $val = $item['val'];
+          $val = trim_incoming_string($item['val']);
 
-          $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'key'=>$key, 'val'=>$val];
+          $res[]= [
+               'sectionId'=>$section_id, 
+               'panelRef'=>$panel_ref, 
+               'key'=>$key, 
+               'val'=>$val
+          ];
      }
 
      return $res;
@@ -169,14 +176,15 @@ function trim_incoming_history($coll){
      $res = [];
      foreach($coll as $item){
 
-          $sectionId = substr($item['sectionId'], 0, 128);
-          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $sectionId);
+          $section_id = substr($item['sectionId'], 0, 128);
+          $section_id = preg_replace('/[^A-Za-z0-9-]/', '', $section_id);
 
-          $panelRef = substr($item['panelRef'], 0, 128);
-          $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $panelRef);
+          $panel_ref = substr($item['panelRef'], 0, 128);
+          $panel_ref = preg_replace('/[^A-Za-z0-9-]/', '', $panel_ref);
 
-          $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef];
+          $res[]= ['sectionId'=>$section_id, 'panelRef'=>$panel_ref];
      }
+
      return $res;
 }
 
@@ -191,19 +199,24 @@ function trim_incoming_hidden_fields($coll){
      $res = [];
      foreach($coll as $item){
 
-          $sectionId = substr($item['sectionId'], 0, 128);
-          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $sectionId);
+          $section_id = substr($item['sectionId'], 0, 128);
+          $section_id = preg_replace('/[^A-Za-z0-9-]/', '', $section_id);
 
-          $panelRef = substr($item['sectionId'], 0, 128);
-          $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $panelRef);
+          $panel_ref = substr($item['panelRef'], 0, 128);
+          $panel_ref = preg_replace('/[^A-Za-z0-9-]/', '', $panel_ref);
 
-          $fieldRef = substr($item['fieldRef'], 0, 128);
-          $fieldRef = preg_replace('/[^A-Za-z0-9-\s]/', '', $fieldRef);
+          $field_ref = substr($item['fieldRef'], 0, 128);
+          $field_ref = preg_replace('/[^A-Za-z0-9-\s]/', '', $field_ref);
 
-          $fieldTitle = substr($item['fieldTitle'], 0, 128);
-          $fieldTitle = preg_replace('/[^A-Za-z0-9-]/', '', $fieldTitle);
+          $field_title = substr($item['fieldTitle'], 0, 128);
+          $field_title = preg_replace('/[^A-Za-z0-9-]/', '', $field_title);
 
-          $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'fieldRef'=>$fieldRef, 'fieldTitle'=>$fieldTitle];
+          $res[]= [
+               'sectionId'=>$section_id, 
+               'panelRef'=>$panel_ref, 
+               'fieldRef'=>$field_ref, 
+               'fieldTitle'=>$field_title
+          ];
      }
 
      return $res;
