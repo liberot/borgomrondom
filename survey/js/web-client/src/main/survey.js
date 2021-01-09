@@ -320,7 +320,7 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
           if('undefined' == typeof(val)){ val = ''; }
 
           let answer = SurveyUtil.trimIncomingString(val);
-          let question = this.corrQuestion(this.model.panel.post_content.title);
+          let question = this.initStringOutput(this.model.panel.post_content.title);
               question = SurveyUtil.trimIncomingString(question);
 
           this.model.panel.post_content.question = question;
@@ -398,12 +398,12 @@ console.log('getStoredAnswer(): target: ', target);
           return res;
      }
 
-     this.corrQuestion = function(question){
+     this.initStringOutput = function(question){
 
-console.log('corrQuestion(): question: ', question);
+console.log('initStringOutput(): question: ', question);
           let mtch = question.match(/{{(.{1,128}?)}}/g);
 
-console.log('corrQuestion(): mtch: ', mtch);
+console.log('initStringOutput(): mtch: ', mtch);
           for(let idx in mtch){
 
                let temp = mtch[idx]; 
@@ -432,11 +432,8 @@ console.log('corrQuestion(): mtch: ', mtch);
 
                // question = question.replace(/_/g, '');
                // question = question.replace(/\*/g, '');
-               // question = question.replace(/\*/g, '');
-               // question = question.replace(/\n\r/g, '');
-               // question = question.replace(/\n/g, '');
 
-               val += ' ';
+               // val += ' ';
                question = question.replace(mtch[idx], val);
           }
 
@@ -446,12 +443,28 @@ console.log('corrQuestion(): mtch: ', mtch);
 // adds an entry to the book table of contents
      this.pushBook = function(){
 
-          if(null == this.model.panel){ return false; }
+          if(null == this.model.panel){ 
+               return false; 
+          }
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
 
+          let imprint = this.model.panel.post_content.question;
+          if(null == imprint
+               || '' == imprint
+               || -1 == imprint.indexOf('is going to read')){
+console.log('pushBook(): not going to compute any further since of irrelefant information: ', imprint);
+               return false;
+          }
+          imprint = this.initStringOutput(imprint);
+
+console.log('pushBook(): relevant information found: ', imprint);
+console.log('pushBook(): todo: image assets of the current group');
+
           let target = this.model.thread.post_content;
+
+// fills the list of information that is relevant for the book print spreads
           let panelRec = false;
 
           for(let idx in target.book){
@@ -462,7 +475,7 @@ console.log('corrQuestion(): mtch: ', mtch);
                }
           }
 
-          if(!panelRec){
+          if(false == panelRec){
               target.book.push({sectionId: sectionId, panelRef: panelRef });
           }
 
@@ -653,7 +666,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           if(null != this.model.panel.post_content.title){
                question = this.model.panel.post_content.title;
           }
-          question = this.corrQuestion(question);
+          question = this.initStringOutput(question);
           question = SurveyUtil.trimIncomingString(question);
 
 // answer might or not be set
@@ -670,7 +683,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
                     description = this.model.panel.post_content.properties.description;
                }
           }
-          description = this.corrQuestion(description);
+          description = this.initStringOutput(description);
           description = SurveyUtil.trimIncomingString(description);
 
 // setup of the view components
@@ -844,7 +857,6 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           this.pushHistory();
           this.setLink();
 
-          this.setupInputKeys();
      }
 
      this.isBottomPanel = function(){
