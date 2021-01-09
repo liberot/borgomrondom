@@ -314,10 +314,11 @@ console.log('bindYesNoInput(): ', msg);
      }
 
      this.bindInput = function(sectionId, panelRef, key, val){
-
 console.log('bindInput(): ', sectionId, panelRef, key, val);
 
-          if('undefined' == typeof(val)){ val = ''; }
+          if('undefined' == typeof(val)){ 
+               val = ''; 
+          }
 
           let answer = SurveyUtil.trimIncomingString(val);
 
@@ -457,7 +458,7 @@ console.log('istring: ', istring);
 console.log('pushBook(): not going to compute any further since of irrelefant information: ', imprint);
                return false;
           }
-          imprint = this.initStringOutput(imprint);
+          // imprint = this.initStringOutput(imprint);
 
 console.log('pushBook(): relevant information found: ', imprint);
 console.log('pushBook(): todo: image assets of the current group');
@@ -661,8 +662,8 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
 
 // question might or not be set
           let question = '';
-          if(null != this.model.panel.post_content.title){
-               question = this.model.panel.post_content.title;
+          if(null != this.model.panel.post_content.question){
+               question = this.model.panel.post_content.question;
           }
           question = SurveyUtil.trimIncomingString(question);
           question = this.initStringOutput(question);
