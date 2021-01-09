@@ -95,6 +95,8 @@ let SurveyNet  = function(controller){
 
 // --------------------------------------------------------------------------------
 // fixdiss :: history and book getz elephant size :: send less ysfck
+// there is records of the history and the book on the server
+
           let book = JSON.stringify(msg.model.thread.post_content.book);
 // console.log('saveThread(): book: ', book);
               book = SurveyUtil.pigpack(book);

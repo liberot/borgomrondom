@@ -49,7 +49,7 @@ function exec_save_question(){
 
      $question_id = trim_incoming_numeric($_POST['id']);
      $max = trim_incoming_numeric($_POST['max']);
-     $group = trim_incoming_string($_POST['group']);
+     $group = trim_incoming_filename($_POST['group']);
 
      init_log('exec_save_question', ['question_id'=>$question_id, 'max'=>$max, 'group'=>$group]);
 

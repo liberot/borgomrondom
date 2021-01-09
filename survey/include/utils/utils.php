@@ -74,6 +74,18 @@ function blank_username_password($user, $username, $password) {
      }
 }
 
+function trim_incoming_string($val, $max=null){
+     if(is_null($val)){ 
+          $val = ''; 
+     }
+     if(is_null($max)){
+          $max = 1024;
+     }
+     $val = substr($val, 0, 1024);
+     $val = sanitize_text_field($val);
+     return $val;
+}
+
 function trim_incoming_numeric($val){
      if(is_null($val)){ $val = 0; }
      $val = substr($val, 0, 15);
@@ -91,63 +103,109 @@ function trim_incoming_filename($val){
      return $val;
 }
 
-function trim_incoming_string($val){
-     if(is_null($val)){ $val = ''; }
-     $val = substr($val, 0, 1024 *8);
-     $val = sanitize_textarea_field($val);
-     return $val;
-}
-
 function trim_incoming_book($toc){
+
      $res = null;
-     if(false == is_array($toc)){ return $res; }
+
+     if(false == is_array($toc)){ 
+          return $res; 
+     }
+
      $res = [];
      foreach($toc as $item){
+
           $temp = [];
-          $temp['sectionId'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
-           $temp['panelRef'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-                       $res[]= $temp;
+
+          $temp['sectionId'] = substr($temp['sectionId'], 0, 128);
+          $temp['sectionId'] = preg_replace('/[^A-Za-z0-9-]/', '', $temp['section_id']);
+
+          $temp['panelRef'] = substr($temp['panelRef'], 0, 128);
+          $temp['panelRef'] = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
+
+          $res[]= $temp;
      }
+
      return $res;
 }
 
 function trim_incoming_conditions($coll){
+
      $res = null;
-     if(false == is_array($coll)){ return $res; }
+
+     if(false == is_array($coll)){ 
+          return $res; 
+     }
+
      $res = [];
      foreach($coll as $item){
-        $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
-         $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-              $key = preg_replace('/[^A-Za-z0-9-]/', '', $item['key']);
-              $val = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['val']);
-             $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'key'=>$key, 'val'=>$val];
+
+          $sectionId = substr($item['sectionId'], 0, 128);
+          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $sectionId);
+
+          $panelRef = substr($item['panelRef'], 0, 128);
+          $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $panelRef);
+
+          $key = substr($item['key'], 0, 128);
+          $key = preg_replace('/[^A-Za-z0-9-]/', '', $key);
+
+// todo
+          $val = substr($item['key'], 0, 1024);
+          $val = $item['val'];
+
+          $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'key'=>$key, 'val'=>$val];
      }
+
      return $res;
 }
 
 function trim_incoming_history($coll){
+
      $res = null;
-     if(false == is_array($coll)){ return $res; }
+
+     if(false == is_array($coll)){ 
+          return $res; 
+     }
+
      $res = [];
      foreach($coll as $item){
-          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
-           $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-               $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef];
+
+          $sectionId = substr($item['sectionId'], 0, 128);
+          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $sectionId);
+
+          $panelRef = substr($item['panelRef'], 0, 128);
+          $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $panelRef);
+
+          $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef];
      }
      return $res;
 }
 
 function trim_incoming_hidden_fields($coll){
+
      $res = null;
-     if(false == is_array($coll)){ return $res; }
+
+     if(false == is_array($coll)){ 
+          return $res; 
+     }
+
      $res = [];
      foreach($coll as $item){
-          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $item['sectionId']);
-           $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $item['panelRef']);
-           $fieldRef = preg_replace('/[^A-Za-z0-9-\s]/', '', $item['fieldRef']);
-         $fieldTitle = preg_replace('/[^A-Za-z0-9-]/', '', $item['fieldTitle']);
-               $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'fieldRef'=>$fieldRef, 'fieldTitle'=>$fieldTitle];
+
+          $sectionId = substr($item['sectionId'], 0, 128);
+          $sectionId = preg_replace('/[^A-Za-z0-9-]/', '', $sectionId);
+
+          $panelRef = substr($item['sectionId'], 0, 128);
+          $panelRef = preg_replace('/[^A-Za-z0-9-]/', '', $panelRef);
+
+          $fieldRef = substr($item['fieldRef'], 0, 128);
+          $fieldRef = preg_replace('/[^A-Za-z0-9-\s]/', '', $fieldRef);
+
+          $fieldTitle = substr($item['fieldTitle'], 0, 128);
+          $fieldTitle = preg_replace('/[^A-Za-z0-9-]/', '', $fieldTitle);
+
+          $res[]= ['sectionId'=>$sectionId, 'panelRef'=>$panelRef, 'fieldRef'=>$fieldRef, 'fieldTitle'=>$fieldTitle];
      }
+
      return $res;
 }
 

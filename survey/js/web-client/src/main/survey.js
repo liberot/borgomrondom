@@ -639,17 +639,13 @@ console.log('selectSection(): ', this.model.section);
 
 // initpanel sets up the panel . the field 
      this.initPanel = function(){
-
+console.log('initPanel(): this.model.panel: ', this.model.panel);
           let ref = this;
 
           if(null == this.model.panel){
                console.log('initPanel(): no panel');
                return false;
           }
-
-console.log('initPanel(): this.model.panel: ', this.model.panel);
-console.log('initPanel(): this.model.panel.post_content.type: ', this.model.panel.post_content.type);
-console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post_content.conf.parent);
 
           this.model.maxImageAssets = 1;
 

@@ -11,7 +11,7 @@ function exec_edit_typeform_survey(){
 
      init_log('admin_post_exec_edit_typeform_survey', []);
 
-     $ref = trim_incoming_string($_POST['bucket']); 
+     $ref = trim_incoming_filename($_POST['bucket']); 
      $coll = get_typeform_surveys_by_ref($ref);
 
      $message = esc_html(__('edit', 'bookbuilder'));
@@ -116,7 +116,7 @@ function exec_download_typeform_survey(){
 
      $typeform_base = 'https://api.typeform.com/forms';
 
-     $auth_token = trim_incoming_string($_POST['auth_token']);
+     $auth_token = trim_incoming_filename($_POST['auth_token']);
      $bucket = trim_incoming_filename($_POST['bucket']);
      $type = trim_incoming_filename($_POST['type']);
 

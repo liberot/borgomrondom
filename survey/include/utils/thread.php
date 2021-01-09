@@ -331,7 +331,7 @@ function delete_thread_by_id($thread_id, $client_id=null){
      $prefix = $wpdb->prefix;
 
      $sql = <<<EOD
-          delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+          delete from {$prefix}posts where id = '{$post_id}' and post_author = '{$client_id}'
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
@@ -344,7 +344,7 @@ EOD;
      foreach($sections as $section){
           $post_id = $section->ID;
           $sql = <<<EOD
-               delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+               delete from {$prefix}posts where id = '{$post_id}' and post_author = '{$client_id}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->query($sql);
@@ -358,7 +358,7 @@ EOD;
      foreach($panels as $panel){
           $post_id = esc_sql($panel->ID);
           $sql = <<<EOD
-               delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+               delete from {$prefix}posts where id = '{$post_id}' and post_author = '{$client_id}'
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->query($sql);
@@ -368,7 +368,7 @@ EOD;
           $assets = get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=null);
           foreach($assets as $asset){
                $sql = <<<EOD
-                    delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+                    delete from {$prefix}posts where id = '{$post_id}' and post_author = '{$client_id}'
 EOD;
                $sql = debug_sql($sql);
                $res = $wpdb->query($sql);

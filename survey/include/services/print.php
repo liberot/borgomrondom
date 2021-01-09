@@ -65,8 +65,7 @@ function exec_export_separations(){
      }
 
      $dpi = trim_incoming_numeric($_POST['ppi']);
-     // $input_pdf = trim_incoming_filename($_POST['input_pdf']);
-     $input_pdf = trim_incoming_string($_POST['input_pdf']);
+     $input_pdf = trim_incoming_filename($_POST['input_pdf']);
      $input_pdf = preg_replace('/\s+/', '_', $input_pdf);
      $output_pdf = preg_replace('/(\..{1,10})$/', '_cmyk.pdf', $input_pdf);
 
