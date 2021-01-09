@@ -320,8 +320,9 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
           if('undefined' == typeof(val)){ val = ''; }
 
           let answer = SurveyUtil.trimIncomingString(val);
-          let question = this.initStringOutput(this.model.panel.post_content.title);
-              question = SurveyUtil.trimIncomingString(question);
+
+          let question = SurveyUtil.trimIncomingString(question);
+              question = this.initStringOutput(question);
 
           this.model.panel.post_content.question = question;
           this.model.panel.post_content.answer = answer;
@@ -398,10 +399,10 @@ console.log('getStoredAnswer(): target: ', target);
           return res;
      }
 
-     this.initStringOutput = function(question){
+     this.initStringOutput = function(string){
 
-console.log('initStringOutput(): question: ', question);
-          let mtch = question.match(/{{(.{1,128}?)}}/g);
+console.log('initStringOutput(): string: ', string);
+          let mtch = string.match(/{{(.{1,128}?)}}/g);
 
 console.log('initStringOutput(): mtch: ', mtch);
           for(let idx in mtch){
@@ -425,19 +426,14 @@ console.log('initStringOutput(): mtch: ', mtch);
                         break;
                }
 
-               if(null == val){ 
-                   val = 'Could not find ref: ' +key;
-                   val = '';
-               }
+               val = null == val ? '' : val;
 
-               // question = question.replace(/_/g, '');
-               // question = question.replace(/\*/g, '');
-
-               // val += ' ';
-               question = question.replace(mtch[idx], val);
+               string = string.replace(mtch[idx], val);
           }
 
-          return question;
+console.log('>', string);
+
+          return string;
      }
 
 // adds an entry to the book table of contents
@@ -658,16 +654,14 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
 
           let parent = this.model.panel.post_content.conf.parent;
           let section = this.model.section.ID;
-          // let section = this.model.section.post_excerpt;
-          // let section = this.model.section.post_content.title;
 
 // question might or not be set
           let question = '';
           if(null != this.model.panel.post_content.title){
-               question = this.model.panel.post_content.title;
+               question = this.model.panel.post_content.question;
           }
-          question = this.initStringOutput(question);
           question = SurveyUtil.trimIncomingString(question);
+          question = this.initStringOutput(question);
 
 // answer might or not be set
           let answer = '';
@@ -683,8 +677,8 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
                     description = this.model.panel.post_content.properties.description;
                }
           }
-          description = this.initStringOutput(description);
           description = SurveyUtil.trimIncomingString(description);
+          description = this.initStringOutput(description);
 
 // setup of the view components
           jQuery('.survey-controls2nd').html('');
