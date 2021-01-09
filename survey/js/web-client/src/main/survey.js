@@ -321,7 +321,8 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
 
           let answer = SurveyUtil.trimIncomingString(val);
 
-          let question = SurveyUtil.trimIncomingString(question);
+          let question = this.model.panel.post_content.question;
+              question = SurveyUtil.trimIncomingString(question);
               question = this.initStringOutput(question);
 
           this.model.panel.post_content.question = question;
@@ -399,10 +400,13 @@ console.log('getStoredAnswer(): target: ', target);
           return res;
      }
 
-     this.initStringOutput = function(string){
+     this.initStringOutput = function(istring){
+console.log('initStringOutput(): istring: ', istring);
+          if(null == istring){
+               return;
+          }
 
-console.log('initStringOutput(): string: ', string);
-          let mtch = string.match(/{{(.{1,128}?)}}/g);
+          let mtch = istring.match(/{{(.{1,128}?)}}/g);
 
 console.log('initStringOutput(): mtch: ', mtch);
           for(let idx in mtch){
@@ -428,12 +432,12 @@ console.log('initStringOutput(): mtch: ', mtch);
 
                val = null == val ? '' : val;
 
-               string = string.replace(mtch[idx], val);
+               istring = istring.replace(mtch[idx], val);
           }
 
-console.log('>', string);
+console.log('istring: ', istring);
 
-          return string;
+          return istring;
      }
 
 // adds an entry to the book table of contents
@@ -658,7 +662,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
 // question might or not be set
           let question = '';
           if(null != this.model.panel.post_content.title){
-               question = this.model.panel.post_content.question;
+               question = this.model.panel.post_content.title;
           }
           question = SurveyUtil.trimIncomingString(question);
           question = this.initStringOutput(question);
@@ -851,6 +855,7 @@ console.log('initPanel(): this.model.panel.conf.parent: ', this.model.panel.post
           this.pushHistory();
           this.setLink();
 
+          this.setupInputKeys();
      }
 
      this.isBottomPanel = function(){

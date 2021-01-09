@@ -158,10 +158,21 @@ EOD;
 add_shortcode('thread_view', 'build_thread_view');
 function build_thread_view(){
 
+     switch($_REQUEST['delete']){
+
+          case 'entries':
+               $thread_id = $_REQUEST['thread_id'];
+               $client_id = $_REQUEST['client_id'];
+               delete_thread_by_id($thread_id, $client_id);
+               break;
+     }
+
      switch($_REQUEST['edit']){
+
           case 'entries':
                build_thread_entries_view();
                break; 
+
           default:
                build_thread_list_view();
                break;
@@ -171,7 +182,7 @@ function build_thread_view(){
 add_shortcode('thread_list_view', 'build_thread_list_view');
 function build_thread_list_view(){
 
-     $headline = esc_html(__('List of the Threads of some Client', 'bookbuilder'));
+     $headline = esc_html(__('List of the Threads', 'bookbuilder'));
      $welcome = esc_html(__('Todo', 'bookbuilder'));
 
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
@@ -183,7 +194,8 @@ function build_thread_list_view(){
      $excerpt = esc_html(__('Type', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
      $author_id = esc_html(__('Author', 'bookbuilder'));
-     $action = esc_html(__('Action', 'bookbuilder'));
+     $edit = esc_html(__('Edit', 'bookbuilder'));
+     $delete = esc_html(__('Delete', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -198,7 +210,8 @@ function build_thread_list_view(){
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
                     <th>{$author_id}</th>
-                    <th>{$action}</th>
+                    <th>{$edit}</th>
+                    <th>{$delete}</th>
                </tr>
                </thead>
 EOD;
@@ -208,7 +221,8 @@ EOD;
      $coll = get_threads();
      if(!is_null($coll[0])){
           foreach($coll as $thread){
-               $href = sprintf('%s?page=threads&edit=entries&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
+               $href1st = sprintf('%s?page=threads&edit=entries&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
+               $href2nd = sprintf('%s?page=threads&delete=entries&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
                $d = date_create($thread->post_date);
                $d = date_format($d, 'd-m-Y H:i:s');
                echo '<tr>';
@@ -217,7 +231,8 @@ EOD;
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_excerpt));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($d));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_author));
-                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href, $edit);
+                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href1st, $edit);
+                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href2nd, $delete);
                echo '</tr>';
           }
      };
@@ -230,7 +245,8 @@ EOD;
                          <th>{$excerpt}</th>
                          <th>{$date}</th>
                          <th>{$author_id}</th>
-                         <th>{$action}</th>
+                         <th>{$edit}</th>
+                         <th>{$delete}</th>
                     </tr>
                </tfoot>
                </table>

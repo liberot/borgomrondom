@@ -304,3 +304,76 @@ function init_panels_from_survey($section_id, $survey_id){
 
      return $coll;
 }
+
+function delete_thread_by_id($thread_id, $client_id=null){
+
+     $thread_id = esc_sql($thread_id);
+
+     if(null == $client_id){
+          $client_id = esc_sql(get_author_id());
+     }
+     else {
+          $client_id = esc_sql($client_id);
+     }
+
+     $post = get_thread_by_id($thread_id, $client_id)[0];
+
+     if(null == $post){
+          return false;
+     }
+     $post_id = $post->ID;
+
+     if(null == $post){
+          return false;
+     }
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     $sections = get_sections_by_thread_id($thread_id, $client_id);
+     if(null == $sections){
+         return false;
+     }
+     
+     foreach($sections as $section){
+          $post_id = $section->ID;
+          $sql = <<<EOD
+               delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+EOD;
+          $sql = debug_sql($sql);
+          $res = $wpdb->query($sql);
+     }
+
+     $panels = get_panels_by_thread_id($thread_id, $client_id);
+     if(null == $panels){
+          return false;
+     }
+
+     foreach($panels as $panel){
+          $post_id = esc_sql($panel->ID);
+          $sql = <<<EOD
+               delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+EOD;
+          $sql = debug_sql($sql);
+          $res = $wpdb->query($sql);
+
+          $section_id = $panel->post_parent;
+          $panel_ref = $panel->post_excerpt;
+          $assets = get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=null);
+          foreach($assets as $asset){
+               $sql = <<<EOD
+                    delete from wp_posts where id = '{$post_id}' and post_author = '{$client_id}'
+EOD;
+               $sql = debug_sql($sql);
+               $res = $wpdb->query($sql);
+          }
+
+          return true;
+     }
+}
