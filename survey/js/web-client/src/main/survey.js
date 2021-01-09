@@ -1082,13 +1082,13 @@ console.log('evalNextPanel(): ');
 // loads panel from logic
           let panelRef;
           let coll = this.evalLogicJump(toc);
-console.log('evalNextPanle(): evalutated logic jumps: ', coll);
+console.log('evalNextPanel(): evalutated logic jumps: ', coll);
 
           if(null != coll.links[0]){
                panelRef = coll.links[0];
           }
           else if(null != coll.defaultLink){
-               panelRef = coll.defaultLink;
+               // panelRef = coll.defaultLink;
           }
 
           if(null != panelRef){
