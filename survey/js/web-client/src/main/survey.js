@@ -52,8 +52,10 @@ console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
           let panelRef = this.model.section.post_content.toc.refs[0];
 
           let hash = this.model.redirect.match(/\#(.{1,256})/);
-          if(null == hash){ return false; }
-          if(null == hash[1]){ return false; }
+
+          if(null == hash || null == hash[1]){ 
+               return false; 
+          }
 
           hash = hash[1];
           hash = hash.split('&');
@@ -462,12 +464,10 @@ console.log('pushBook(): not going to compute any further since of irrelefant in
 
 console.log('pushBook(): gathered information of relevance: ', imprint);
 console.log('pushBook(): todo: image assets of the current group');
-
           let target = this.model.thread.post_content;
 
-// fills the list of information that is relevant for the book print spreads
+// fills the list of information that is of relevance while generating the spreads
           let panelRec = false;
-
           for(let idx in target.book){
                if(sectionId == target.book[idx].sectionId){
                     if(panelRef == target.book[idx].panelRef){
@@ -1176,12 +1176,18 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
 
      this.loadNextPanel = function(){
 
-          if(null == this.model.section){ return false; }
-          if(null == this.model.panel){ return false; }
+          if(null == this.model.section){ 
+               return false; 
+          }
+
+          if(null == this.model.panel){ 
+               return false; 
+          }
+
+          let sectionId = this.model.section.ID;
 
           let target = this.model.section.post_content.toc;
 
-          let sectionId = this.model.section.ID;
 
 console.log('loadNextPanel(): ', target);
 

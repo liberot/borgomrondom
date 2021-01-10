@@ -44,7 +44,7 @@ function init_survey_thread(){
 // reads resources
      $toc = $coll['toc'][0];
      $toc->post_content = pagpick($toc->post_content); 
-     $panel_ref = $toc->post_content['init_refs'][0];
+     $panel_ref = $toc->post_content['refs'][0];
 
      $thread = $coll['thread'][0];
      $section = $coll['sections'][0];
@@ -143,10 +143,10 @@ print PHP_EOL;
 // reads link from toc
           if(null == $link){
                $toc->post_content['navstep'] = intval($toc->post_content['navstep']) +1;
-               if($stoc->post_content['navstep'] >= count($toc->post_content['init_refs']) -1){
-                    $toc->post_content['navstep'] = count($toc->post_content['init_refs']) -1;
+               if($stoc->post_content['navstep'] >= count($toc->post_content['refs']) -1){
+                    $toc->post_content['navstep'] = count($toc->post_content['refs']) -1;
                }
-               $link = $toc->post_content['init_refs'][$toc->post_content['navstep']];
+               $link = $toc->post_content['refs'][$toc->post_content['navstep']];
           }
      }
 
@@ -311,20 +311,20 @@ function build_thread_web_view($thread_id){
      if(null == $thread){ return false; }
      if(null == $toc){ return false; }
      $toc->post_content = pagpick($toc->post_content);
-     $init_refs = $toc->post_content['init_refs'];
-     if(is_null($init_refs)){ return false; }
+     $refs = $toc->post_content['refs'];
+     if(is_null($refs)){ return false; }
      $pos = 0;
      $question_ref = $_REQUEST['question_ref'];
-     if(is_null($question_ref)){ $question_ref = $init_refs[$pos]; }
+     if(is_null($question_ref)){ $question_ref = $refs[$pos]; }
      else {
-          $pos = array_search($question_ref, $init_refs);
+          $pos = array_search($question_ref, $refs);
           $pos+= 1;
-          $question_ref = $init_refs[$pos];
+          $question_ref = $refs[$pos];
           if(is_null($question_ref)){ 
-               $question_ref = $init_refs[0]; 
+               $question_ref = $refs[0]; 
           }
      }
-     $panel = get_panel_by_ref($thread_id, $init_refs[$pos])[0];
+     $panel = get_panel_by_ref($thread_id, $refs[$pos])[0];
      if(is_null($panel)){ return false; }
      $panel->post_content = pagpick($panel->post_content);
      echo sprintf('<p><span class="question-out">%s</span></p>', $panel->post_content['question']);

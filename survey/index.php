@@ -11,6 +11,7 @@ require_once('include/utils/utils.php');
 require_once('include/utils/book.php');
 require_once('include/utils/survey.php');
 require_once('include/utils/thread.php');
+require_once('include/utils/section.php');
 require_once('include/utils/panel.php');
 require_once('include/utils/upload.php');
 require_once('include/utils/toc.php');

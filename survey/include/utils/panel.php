@@ -121,4 +121,29 @@ EOD;
 */
 }
 
+function init_panels_from_survey($section_id, $survey_id){
+
+     $section_id = esc_sql($section_id);
+     $survey_id = esc_sql($survey_id);
+
+     $questions = get_questions_by_survey_id($survey_id);
+
+     $coll = [];
+     foreach($questions as $question){
+          $surveyprint_uuid = psuuid();
+          $conf = [
+               'post_type'=>'surveyprint_panel',
+               'post_author'=>$author_id,
+               'post_title'=>$question->post_title,
+               'post_excerpt'=>$question->post_excerpt,
+               'post_name'=>$surveyprint_uuid,
+               'post_content'=>$question->post_content,
+               'post_parent'=>$section_id
+         ];
+         $panel_id = init_panel($conf);
+         $coll[]= $panel_id;
+     }
+
+     return $coll;
+}
 
