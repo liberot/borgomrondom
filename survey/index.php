@@ -23,6 +23,7 @@ require_once('include/utils/utils.php');
 require_once('include/services/book.php');
 require_once('include/services/survey.php');
 require_once('include/services/thread.php');
+require_once('include/services/section.php');
 require_once('include/services/panel.php');
 require_once('include/services/typeform.php');
 require_once('include/services/upload.php');

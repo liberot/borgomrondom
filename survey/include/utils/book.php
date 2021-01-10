@@ -400,8 +400,14 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
      $panel->post_content = pagpick($panel->post_content);
 
 // a panel might or not be tagged by a layout preference
+/*
      $layout_group = $panel->post_content['conf']['layout_group'];
      $layout_group = is_null($layout_group) ? 'default' : $layout_group;
+*/
+
+// a panel might or not be in a group
+     $parent_group = $panel->post_content['conf']['parent'];
+     $assets = get_assets_by_group_ref($section_id, $parent_group);
 
 // todo: debug: layout_code is
      $layout_code = 'U';
@@ -431,6 +437,7 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
      $doc['assets'][1]['text'] = [];
 
 // assets
+/*
      $maxx = 1;
      $indx = 0;
      $asis = [];
@@ -453,6 +460,7 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
           $asis[]= $asset;
      }
      $doc['assets'] = $asis;
+*/
 
      $doc['panelId'] = $panel->ID;
      $doc['conf'] = $panel->post_content['conf'];

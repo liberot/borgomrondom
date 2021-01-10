@@ -114,16 +114,26 @@ function trim_incoming_book($toc){
      $res = [];
      foreach($toc as $item){
 
+          $thread_id = $item['threadId'];
+          $thread_id = substr($thread_id, 0, 128);
+          $thread_id = preg_replace('/[^A-Za-z0-9-]/', '', $thread_id);
+
           $section_id = $item['sectionId'];
           $section_id = substr($section_id, 0, 128);
           $section_id = preg_replace('/[^A-Za-z0-9-]/', '', $section_id);
+
+          $group_ref = $item['groupRef'];
+          $group_ref = substr($group_ref, 0, 128);
+          $group_ref = preg_replace('/[^A-Za-z0-9-]/', '', $group_ref);
 
           $panel_ref = $item['panelRef'];
           $panel_ref = substr($panel_ref, 0, 128);
           $panel_ref = preg_replace('/[^A-Za-z0-9-]/', '', $panel_ref);
 
           $res[]= [
+               'threadId'=>$thread_id,
                'sectionId'=>$section_id,
+               'groupRef'=>$group_ref,
                'panelRef'=>$panel_ref
           ];
      }
@@ -372,9 +382,9 @@ function get_session_ticket($key){
 }
 
 function debug_sql($sql){
-     // $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
-     // $sql.= "\n"; 
-     // file_put_contents('/tmp/sql', $sql, FILE_APPEND);
+     $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
+     $sql.= "\n"; 
+     file_put_contents('/tmp/sql', $sql, FILE_APPEND);
      return $sql;
 }
 

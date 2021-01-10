@@ -40,14 +40,19 @@ let SurveyNet  = function(controller){
      }
 
      this.uploadAsset = function(msg){
+
           let ref = this;
+
           let data = {
+
                'action': 'exec_init_asset_by_panel_ref',
                'section_id': msg.model.sectionId,
-               'panel_ref': msg.model.panel_ref,
+               'panel_ref': msg.model.panelRef,
+               'group_ref': msg.model.groupRef,
                'layout_code': msg.model.layoutCode,
                'base': msg.model.base
           }
+
           let cb = function(e){
                ref.notify(new Message('asset::uploaded', { e: e }));
           }

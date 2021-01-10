@@ -18,7 +18,14 @@ function exec_init_asset_by_panel_ref(){
      $panel_ref = trim_incoming_filename($_POST['panel_ref']);
      $panel_ref = get_session_ticket('panel_ref');
 
-     init_log('admin_post_exec_init_asset_by_panel_ref', ['thread_id'=>$thread_id, 'section_id'=>$section_id, 'panel_ref'=>$panel_ref]);
+     $group_ref = trim_incoming_filename($_POST['group_ref']);
+
+     init_log('admin_post_exec_init_asset_by_panel_ref', [
+          'thread_id'=>$thread_id, 
+          'section_id'=>$section_id, 
+          'panel_ref'=>$panel_ref,
+          'group_ref'=>$group_ref
+     ]);
 
      $image = $_POST['base'];
      $image = remove_base_from_chunk($image);
@@ -50,6 +57,7 @@ function exec_init_asset_by_panel_ref(){
      $layout_code = trim_incoming_filename($_POST['layout_code']);
 
      if(Proc::EVAL_UPLOADED_ASSET_SIZE){
+
           $image = add_base_to_chunk($image);
           $size = getimagesize('data://'.$image);
           if(null != $size){
@@ -57,24 +65,24 @@ function exec_init_asset_by_panel_ref(){
                     $layout_code = 'L';
                }
           }
+
           $image = remove_base_from_chunk($image);
      }
-
-     $indx = trim_incoming_filename($_POST['indx']);
-
 
      switch(Proc::MEDIA_UPLOAD_PROC){
 
           case Proc::BASE64_UPLOAD:
+
                $conf = [
                     'post_type'=>'surveyprint_asset',
                     'post_author'=>get_author_id(),
-                    'post_title'=>$indx,
+                    'post_title'=>$group_ref,
                     'post_excerpt'=>$panel_ref,
                     'post_name'=>$layout_code,
                     'post_parent'=>$section_id,
                     'post_content'=>$image
                ];
+
                if(Proc::UPDATE_ON_PERSIST){
                     $asset = get_assets_by_panel_ref($section_id, $panel_ref, 1)[0];
                     if(!is_null($asset)){ $conf['ID'] = $asset->ID; }
@@ -118,7 +126,7 @@ function exec_init_asset_by_panel_ref(){
                $conf = [
                     'post_type'=>'surveyprint_asset',
                     'post_author'=>get_author_id(),
-                    'post_title'=>$indx,
+                    'post_title'=>$group_ref,
                     'post_excerpt'=>$panel_ref,
                     'post_name'=>$layout_code,
                     'post_parent'=>$section_id,

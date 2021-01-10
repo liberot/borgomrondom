@@ -450,7 +450,9 @@ console.log('istring: ', istring);
                return false; 
           }
 
+          let threadId = this.model.thread.ID;
           let sectionId = this.model.section.ID;
+          let groupRef = this.model.panel.post_content.conf.parent;
           let panelRef = this.model.panel.post_content.ref;
 
           let imprint = this.model.panel.post_content.question;
@@ -477,7 +479,12 @@ console.log('pushBook(): todo: image assets of the current group');
           }
 
           if(false == panelRec){
-              target.book.push({sectionId: sectionId, panelRef: panelRef });
+              target.book.push({
+                   threadId: threadId,
+                   sectionId: sectionId,
+                   groupRef: groupRef,
+                   panelRef: panelRef
+              });
           }
 
 console.log('pushBook(): ', target.book);
@@ -660,12 +667,14 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
           let question = this.model.panel.post_content.title;
               question = SurveyUtil.trimIncomingString(question);
               question = this.initStringOutput(question);
+              question = null == question ? '' : question;
 
           this.model.panel.post_content.question = question;
 
 // answer might or not be set
           let answer = this.model.panel.post_content.answer;
               answer = SurveyUtil.trimIncomingString(answer);
+              answer = null == answer ? '' : answer;
 
 // description might or not be set
           let description = '';
@@ -1346,14 +1355,21 @@ console.log('scanAsset(): ', indx, base, proc, upload);
      }
 
      this.uploadAssets = function(msg){
+
           for(let idx in this.model.panel.assetCopies){
-               if(true != this.model.panel.assetCopies[idx].upload){ continue; }
+
+               if(true != this.model.panel.assetCopies[idx].upload){ 
+                    continue; 
+               }
+
                let model = {
                     sectionId: this.model.section.ID,
-                    panel_ref: this.model.panel.post_content.ref,
-                    layout_code: this.model.panel.assetCopies[idx].layoutCode,
+                    panelRef: this.model.panel.post_content.ref,
+                    groupRef: this.model.panel.post_content.conf.parent,
+                    layoutCode: this.model.panel.assetCopies[idx].layoutCode,
                     base: this.model.panel.assetCopies[idx].post_content,
                }
+
                this.notify(new Message('upload::asset', model));
           }
      }

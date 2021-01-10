@@ -52,7 +52,9 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
      $limit = esc_sql($limit);
      $author_id = esc_sql(get_author_id());
 
-     if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
+     if(!is_null($client_id)){ 
+          $author_id = esc_sql($client_id); 
+     }
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -84,4 +86,32 @@ EOD;
 */
 }
 
+function get_assets_by_group_ref($section_id, $group_ref, $limit=10, $client_id=null){
 
+     $group_ref = esc_sql($group_ref);
+     $section_id = esc_sql($section_id);
+     $author_id = esc_sql(get_author_id());
+     $limit = esc_sql($limit);
+
+     if(!is_null($client_id)){ 
+          $author_id = esc_sql($client_id); 
+     }
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select {$prefix}posts.* from {$prefix}posts
+               where post_type = 'surveyprint_asset'
+               and post_author = '{$author_id}'
+               and post_parent = '{$section_id}'
+               and post_title = '{$group_ref}'
+               order by ID desc
+               limit {$limit};
+EOD;
+
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
