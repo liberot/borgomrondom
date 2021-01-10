@@ -96,6 +96,8 @@ function exec_init_book_by_thread_id(){
      $thread_id = trim_incoming_filename($_POST['thread_id']);
      $thread_id = get_session_ticket('thread_id');
 
+     $section_id = 0;
+
      init_log('admin_post_exec_init_book_by_thread_id', ['thread_id'=>$thread_id]);
 
      $thread = get_thread_by_id($thread_id)[0];
@@ -106,8 +108,6 @@ function exec_init_book_by_thread_id(){
      }
      $thread->post_content = pagpick($thread->post_content);
 
-// todo: fixdiss
-     $spread_ids = [];
      $spread_refs = [];
 
 // ---------------------------- book
@@ -115,59 +115,63 @@ function exec_init_book_by_thread_id(){
 
 // ---------------------------- chapter ZERO
 // ---------------------------- descriptional chapter
-     $chapter_id = add_chapter($book_id, 'legal_issues');
+     $chapter_id = add_chapter($thread_id, $section_id, $book_id);
 
 // ---------------------------- cover
-     $spread_ids[]= add_cover($book_id, $chapter_id);
+     $spread_ids[]= add_cover($thread_id, $section_id, $book_id, $chapter_id);
      $spread_refs[]= 'cover';
 
 // ---------------------------- inside cover
-     $spread_ids[]= add_inside_cover($book_id, $chapter_id);
+     $spread_ids[]= add_inside_cover($thread_id, $section_id, $book_id, $chapter_id);
      $spread_refs[]= 'inside_cover';
 
 // ---------------------------- intro 
-     $spread_ids[]= add_intro($book_id, $chapter_id);
+     $spread_ids[]= add_intro($thread_id, $section_id, $book_id, $chapter_id);
      $spread_refs[]= 'intro';
 
 // ---------------------------- pages
      $temp_section_id = null;
-
+     $temp_group_ref = null;
      foreach($thread->post_content['book'] as $toc_entry){
+
+          $thread_id = $toc_entry['threadId'];
           $section_id = $toc_entry['sectionId'];
-          if(is_null($section_id)){ continue; }
+          $group_ref = $toc_entry['groupRef'];
+          $panel_ref = $toc_entry['panelRef'];
+
+          if(is_null($section_id)){ 
+               continue; 
+          }
 
 // ---------------------------- chapter
           if($temp_section_id != $section_id){
-               $chapter_id = add_chapter($book_id, $section_id);
+               $chapter_id = add_chapter($thread_id, $section_id, $book_id);
                $temp_section_id = $section_id;
           }
 
-// ---------------------------- spread
-          $panel_ref = $toc_entry['panelRef'];
-          if(is_null($panel_ref)){ continue; }
-
-          $res = add_spread($book_id, $section_id, $chapter_id, $panel_ref);
-          if(false != $res){
-               $spread_ids[]= $res['spread_id'];
-               $spread_refs[]= $res['spread_ref'];
+// ---------------------------- groups
+          if($temp_group_ref != $group_ref){
+               $res = add_spreads_of_group($thread_id, $section_id, $book_id, $chapter_id, $group_ref, $panel_refs);
+               $spread_refs = array_merge($spread_refs, $res);
+               $panel_refs = [];
+               $temp_group_ref = $group_ref;
           }
-
      }
 
 // ---------------------------- toc
      $toc = [];
-     $toc['book'] = $thread->post_content['book'];
-     $toc['spread_ids'] = $spread_ids;
-     $toc['spread_refs'] = $spread_refs;
-     $toc['post_excerpt'] = $thread->post_excerpt;
 
-     $toc_id = add_toc($book_id, $toc);
+     $toc['book'] = $thread->post_content['book'];
+     $toc['post_excerpt'] = $thread->post_excerpt;
+     $toc['spread_refs'] = $spread_refs;
+
+     $toc_id = add_toc($thread_id, $section_id, $book_id, $toc);
 
      $coll['book'] = get_book_by_id($book_id);
      $coll['toc'] = get_toc_by_book_id($book_id);
      $coll['chapter'] = get_chapter_by_book_id($book_id);
 
-// fixdiss
+//??
      if(!is_null($coll['chapter'])){
           foreach($coll['chapter'] as $chapter){
                $chapter->spreads = get_spreads_by_chapter_id($chapter->ID);

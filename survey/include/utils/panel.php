@@ -92,7 +92,9 @@ function get_panel_by_ref($section_id, $panel_ref, $client_id=null){
      $section_id = esc_sql($section_id);
      $panel_ref = esc_sql($panel_ref);
      $author_id = esc_sql(get_author_id());
-     if(!is_null($client_id)){ $author_id = esc_sql($client_id); }
+     if(!is_null($client_id)){ 
+          $author_id = esc_sql($client_id); 
+     }
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -119,6 +121,43 @@ EOD;
      $res = query_posts($conf);
      return $res;
 */
+}
+
+function get_panels_by_group_ref($section_id, $group_ref, $client_id=null){
+
+     $section_id = esc_sql($section_id);
+     $group_ref = esc_sql($group_ref);
+     $author_id = esc_sql(get_author_id());
+     if(!is_null($client_id)){
+          $author_id = esc_sql($client_id);
+     }
+     $res = get_panels_by_section_id($section_id, $client_id);
+     return $res;
+}
+
+function get_panels_by_section_id($section_id, $client_id=null, $limit=250){
+
+     $section_id = esc_sql($section_id);
+     $author_id = esc_sql(get_author_id());
+     if(!is_null($client_id)){
+          $author_id = esc_sql($client_id);
+     }
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select {$prefix}posts.*
+               from {$prefix}posts
+               where post_type = 'surveyprint_panel'
+               and post_author = '{$author_id}'
+               and post_parent = '{$section_id}'
+               order by ID desc
+               limit {$limit} 
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
 }
 
 function init_panels_from_survey($section_id, $survey_id){

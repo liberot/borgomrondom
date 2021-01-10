@@ -204,16 +204,18 @@ function setup_new_book($title){
      return $book_id;
 }
 
-function add_chapter($book_id, $section_id){
+function add_chapter($thread_id, $section_id, $book_id){
 
      $author_id = esc_sql(get_author_id());
-     $book_id = esc_sql($book_id);
+
+     $thread_id = esc_sql($thread_id);
      $section_id = esc_sql($section_id);
+     $book_id = esc_sql($book_id);
 
      $uuid = psuuid();
 
-     $title = esc_sql('No Title so far');
-     $description = esc_sql('No Description so far');
+     $title = esc_sql('no title so far');
+     $description = esc_sql('no description so far');
 
      $uuid = psuuid();
      $conf = [
@@ -231,12 +233,14 @@ function add_chapter($book_id, $section_id){
      return $chapter_id;
 }
 
-function add_cover($book_id, $chapter_id){
+function add_cover($thread_id, $section_id, $book_id, $chapter_id){
 
+     $thread_id = esc_sql($thread_id);
+     $section_id = esc_sql($section_id);
      $chapter_id = esc_sql($chapter_id);
      $author_id = esc_sql(get_author_id());
 
-     $title = esc_sql('No Title so far');
+     $title = esc_sql('no title so far');
      $uuid = psuuid();
 
      $path = Path::get_mock_dir().'/mock-spread.json';
@@ -270,13 +274,15 @@ function add_cover($book_id, $chapter_id){
      return $spread_id;
 }
 
-function add_inside_cover($book_id, $chapter_id){
+function add_inside_cover($thread_id, $section_id, $book_id, $chapter_id){
 
+     $thread_id = esc_sql($thread_id);
+     $section_id = esc_sql($section_id);
      $book_id = esc_sql($book_id);
      $chapter_id = esc_sql($chapter_id);
 
      $author_id = esc_sql(get_author_id());
-     $title = esc_sql('No Title so far');
+     $title = esc_sql('no title so far');
      $uuid = psuuid();
 
      $path = Path::get_mock_dir().'/mock-spread.json';
@@ -311,12 +317,16 @@ function add_inside_cover($book_id, $chapter_id){
      return $spread_id;
 }
 
-function add_intro($book_id, $chapter_id){
+function add_intro($thread_id, $section_id, $book_id, $chapter_id){
 
+     $thread_id = esc_sql($thread_id);
+     $section_id = esc_sql($section_id);
      $book_id = esc_sql($book_id);
      $chapter_id = esc_sql($chapter_id);
+
      $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
+
      $uuid = psuuid();
 
      $path = Path::get_mock_dir().'/mock-spread.json';
@@ -351,10 +361,13 @@ function add_intro($book_id, $chapter_id){
      return $spread_id;
 }
 
-function add_toc($book_id, $toc){
+function add_toc($thread_id, $section_id, $book_id, $toc){
 
      $title = esc_sql(trim_for_print($title));
      $author_id = esc_sql(get_author_id());
+
+     $thread_id = esc_sql($thread_id);
+     $section_id = esc_sql($section_id);
      $book_id = esc_sql($book_id);
 
      $conf = [
@@ -372,27 +385,47 @@ function add_toc($book_id, $toc){
      return $toc_id;
 }
 
-function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
+function add_spreads_of_group($thread_id, $section_id, $book_id, $chapter_id, $group_ref){
 
+     $res = [];
+     
+     $title = 'no title so far';
      $author_id = get_author_id();
 
-// https://www.php.net/manual/en/function.imageloadfont.php
-// https://www.php.net/manual/en/function.imagettftext.php
-// https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6fmtx.html
-// https://www.php.net/manual/en/imagick.queryfontmetrics.php
-// https://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html
-// https://github.com/RazrFalcon/ttf-parser
-// https://github.com/Pomax/PHP-Font-Parser
-// https://github.com/qdsang/ttf2svg
-// https://stackoverflow.com/questions/4190667/how-to-get-width-of-a-truetype-font-character-in-1200ths-of-an-inch-with-python
-// https://stackoverflow.com/questions/2480183/get-width-of-a-single-character-from-ttf-font-in-php
-// https://www.php.net/imagettfbbox
+// assets of the group
+// evals layout_code of the group defined by uploaded assets
+     $uploaded_assets = get_assets_by_group_ref($section_id, $group_ref);
+     $layout_code = '';
+     foreach($uploaded_assets as $uploaded_asset){
+          $layout_code = sprintf('%s%s', $layout_code, $uploaded_asset->post_name);
+     }
 
-     $title = 'No Title so far';
+// panels of the group
+     $panels = get_panels_by_group_ref($section_id, $group_ref);
+     foreach($panels as $panel){
 
-// panel might have a group as 'cover' with three panels
-// groups is going to gather differnt spreads in a semantic way
-// as the uploaded images of three sisters and such
+          $panel->post_content = pagpick($panel->post_content);
+
+          if($group_ref != $panel->post_content['conf']['parent']){
+               continue;
+          }
+
+          if(false == preg_match('/.{0,128}is going to read/', $panel->post_content['question'], $mtch)){
+               continue;
+          }
+
+          $panel_ref = $panel->post_excerpt;
+          $res[]= add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, $panel_ref);
+     }
+
+     return $res;
+}
+
+function add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, $panel_ref){
+
+     $author_id = get_author_id();
+     $title = 'no title so far';
+
      $panel = get_panel_by_ref($section_id, $panel_ref)[0];
      if(null == $panel){ 
           return false; 
@@ -400,10 +433,8 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
      $panel->post_content = pagpick($panel->post_content);
 
 // a panel might or not be tagged by a layout preference
-/*
      $layout_group = $panel->post_content['conf']['layout_group'];
      $layout_group = is_null($layout_group) ? 'default' : $layout_group;
-*/
 
 // a panel might or not be in a group
      $parent_group = $panel->post_content['conf']['parent'];
@@ -437,7 +468,6 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
      $doc['assets'][1]['text'] = [];
 
 // assets
-/*
      $maxx = 1;
      $indx = 0;
      $asis = [];
@@ -460,7 +490,6 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
           $asis[]= $asset;
      }
      $doc['assets'] = $asis;
-*/
 
      $doc['panelId'] = $panel->ID;
      $doc['conf'] = $panel->post_content['conf'];
@@ -476,11 +505,9 @@ function add_spread($book_id, $section_id, $chapter_id, $panel_ref){
           'post_content'=>pigpack($doc)
      ];
 
-     $res = [];
-     $res['spread_id'] = init_spread($conf);
-     $res['spread_ref'] = $panel_ref;
+     $res = init_spread($conf);
 
-     return $res;
+     return $panel_ref;
 }
 
 function eval_asset_src($asset){

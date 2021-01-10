@@ -71,40 +71,6 @@ function exec_construct_typeform_survey(){
      return true;
 }
 
-function insert_question_groups($nodes, $survey_id, $parent=null, $res=null){
-
-     if(is_null($res)){ $res = []; }
-     if(is_null($parent)){ $parent = 'root'; }
-     if(is_null($nodes)){ return $res; }
-
-     foreach($nodes as $node){
-// writes toc reference of the insert
-          $res = insert_into_toc($res, $parent, $node['ref']);
-// writes a post of type question
-          $node['conf'] = [];
-          $node['conf']['max_asset'] = '1';
-          $node['conf']['layout_group'] = 'default';
-          $node['conf']['parent'] = $parent;
-          $surveyprint_uuid = psuuid();
-          $conf = [ 
-               'post_type'=>'surveyprint_question',
-               'post_title'=>$node['title'],
-               'post_excerpt'=>$node['ref'],
-               'post_name'=>$surveyprint_uuid,
-               'post_parent'=>$survey_id,
-               'post_content'=>pigpack($node)
-          ];
-          $question_id = wp_insert_post($conf);
-          if(!is_null($node['properties']['fields'])){
-// writes all groups of groups of groups
-               $res = insert_question_groups($node['properties']['fields'], $survey_id, $node['ref'], $res);
-               continue;
-          }
-     }
-
-     return $res;
-}
-
 add_action('admin_post_exec_download_typeform_survey', 'exec_download_typeform_survey');
 function exec_download_typeform_survey(){
 
