@@ -212,7 +212,11 @@ function add_chapter($thread_id, $section_id, $book_id){
      $section_id = esc_sql($section_id);
      $book_id = esc_sql($book_id);
 
-     $uuid = psuuid();
+     $chapter = get_chapter_by_section_id($book_id, $section_id)[0];
+     if(!is_null($chapter)){
+          $chapter_id = $chapter->ID;
+          return $chapter_id;
+     }
 
      $title = esc_sql('no title so far');
      $description = esc_sql('no description so far');
@@ -385,44 +389,7 @@ function add_toc($thread_id, $section_id, $book_id, $toc){
      return $toc_id;
 }
 
-function add_spreads_of_group($thread_id, $section_id, $book_id, $chapter_id, $group_ref){
-
-     $res = [];
-     
-     $title = 'no title so far';
-     $author_id = get_author_id();
-
-// assets of the group
-// evals layout_code of the group defined by uploaded assets
-     $uploaded_assets = get_assets_by_group_ref($section_id, $group_ref);
-     $layout_code = '';
-     foreach($uploaded_assets as $uploaded_asset){
-          $layout_code = sprintf('%s%s', $layout_code, $uploaded_asset->post_name);
-     }
-
-// panels of the group
-     $panels = get_panels_by_group_ref($section_id, $group_ref);
-     foreach($panels as $panel){
-
-          $panel->post_content = pagpick($panel->post_content);
-
-          if($group_ref != $panel->post_content['conf']['parent']){
-               continue;
-          }
-
-// fixdiss
-          if(false == preg_match('/.{0,128}is going to read/', $panel->post_content['question'], $mtch)){
-               continue;
-          }
-
-          $panel_ref = $panel->post_excerpt;
-          $res[]= add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, $panel_ref);
-     }
-
-     return $res;
-}
-
-function add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, $panel_ref){
+function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
 
      $author_id = get_author_id();
      $title = 'no title so far';
@@ -458,14 +425,16 @@ function add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, 
           $doc = walk_the_doc($doc);
      }
 
-     if(null == $doc){ return false; }
+     if(null == $doc){ 
+          return false; 
+     }
 
      $uuid = psuuid();
      $doc['uuid'] = $uuid;
 
 // imprint
      $text = $panel->post_content['question'];
-     if(false != preg_match('/.{0,128}is going to read/', $text, $mtch)){
+     if(false != preg_match('/^.{0,128}is going to read/', $text, $mtch)){
           $text = str_replace($mtch[0], '', $text);
      }
      $text = trim_for_print($text);
@@ -473,33 +442,39 @@ function add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, 
      $doc['assets'][0]['text'] = [$text];
      $doc['assets'][1]['text'] = [];
 
-// assets
+// image assets
      $maxx = 1;
      $indx = 0;
-     $asis = [];
+     $imgs = [];
      foreach($doc['assets'] as $asset){
+
           if('image' != $asset['type']){ 
-               $asis[]= $asset;
+               $imgs[]= $asset;
                continue; 
           }
+
           $asset['src'] = '';
           $asset['locator'] = '';
           $asset['conf']['ow'] = '';
           $asset['conf']['oh'] = '';
-          $uploaded_asset = get_assets_by_panel_ref($section_id, $panel->post_excerpt, $maxx)[0];
+
+          $uploaded_asset = get_assets_by_panel_ref($section_id, $panel_ref, $maxx)[0];
 
           if(null != $uploaded_asset){
                $asset['src'] = eval_asset_src($uploaded_asset);
                $asset = fit_image_asset_into_slot($doc, $asset);
           }
 
-          $asis[]= $asset;
+          $imgs[]= $asset;
      }
-     $doc['assets'] = $asis;
+
+     $doc['assets'] = $imgs;
 
      $doc['panelId'] = $panel->ID;
      $doc['conf'] = $panel->post_content['conf'];
+
      $panel_ref = $panel->post_excerpt;
+
      $uuid = psuuid();
      $conf = [
           'post_type'=>'surveyprint_spread',
@@ -527,5 +502,30 @@ function eval_asset_src($asset){
      else {
           $res = add_base_to_chunk($asset->post_content);
      }
+     return $res;
+}
+
+// wild wild wild wild...
+// ne chapter von der section vom thread der nur mitm bucch...
+function get_chapter_by_section_id($book_id, $section_id){
+
+     $section_id = esc_sql($section_id);
+     $author_id = esc_sql(get_author_id());
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+$sql = <<<EOD
+          select {$prefix}posts.*
+               from {$prefix}posts
+               where post_type = 'surveyprint_chapter' 
+               and post_author = '{$author_id}' 
+               and post_parent = '{$book_id}' 
+               and post_excerpt = '{$section_id}'
+               order by ID desc
+               limit 1
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
      return $res;
 }
