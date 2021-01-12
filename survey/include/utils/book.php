@@ -407,9 +407,18 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
 // a panel might or not be in a group
      $parent_group = $panel->post_content['conf']['parent'];
      $assets = get_assets_by_group_ref($section_id, $parent_group);
+/*
+print ">";
+print_r($section_id);
+print_r($parent_group);
+print_r($assets);
+print "\n";
+print "\n";
+*/
 
 // todo: debug: layout_code is
-     $layout_code = 'U';
+     $layout_code = 'LLP';
+     // $layout_code = 'L';
 
 // loads layout document
      $doc = get_layout_by_group_and_rule($layout_group, $layout_code)[0];
@@ -443,32 +452,42 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      $doc['assets'][1]['text'] = [];
 
 // image assets
-     $maxx = 1;
+     $maxx = 10;
      $indx = 0;
-     $imgs = [];
+     $uploaded_assets = get_assets_by_panel_ref($section_id, $panel_ref, $maxx);
+     $assets_of_document = [];
+
+     $idx = 0;
      foreach($doc['assets'] as $asset){
 
           if('image' != $asset['type']){ 
-               $imgs[]= $asset;
+               $assets_of_document[]= $asset;
                continue; 
           }
 
-          $asset['src'] = '';
-          $asset['locator'] = '';
-          $asset['conf']['ow'] = '';
-          $asset['conf']['oh'] = '';
+          if(is_null($uploaded_assets[$idx])){
+               $assets_of_document[]= $asset;
+               continue; 
+          }
 
-          $uploaded_asset = get_assets_by_panel_ref($section_id, $panel_ref, $maxx)[0];
+          $current_asset = $uploaded_assets[$idx];
 
-          if(null != $uploaded_asset){
-               $asset['src'] = eval_asset_src($uploaded_asset);
+          $asset = [];
+          if(null != $current_asset){
+               $asset['src'] = eval_asset_src($current_asset);
                $asset = fit_image_asset_into_slot($doc, $asset);
           }
 
-          $imgs[]= $asset;
+/*
+print ">>>";
+print_r($asset['conf']);
+print "\n";
+print "\n";
+*/
+          $assets_of_document[]= $asset;
      }
 
-     $doc['assets'] = $imgs;
+     $doc['assets'] = $assets_of_document;
 
      $doc['panelId'] = $panel->ID;
      $doc['conf'] = $panel->post_content['conf'];
@@ -487,6 +506,8 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      ];
 
      $res = init_spread($conf);
+
+     $idx++;
 
      return $panel_ref;
 }
