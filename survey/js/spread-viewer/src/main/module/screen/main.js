@@ -12,6 +12,7 @@ let Screen = function(controller){
 
      this.initScreen = function(msg){
           this.model.doc = msg.model;
+console.log('initScreen(): ', this.model.doc);
           this.setViewSize();
           this.initLayers();
           this.render();
@@ -314,10 +315,8 @@ let Screen = function(controller){
           let slotW = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotW, target.conf.unit);
           let slotH = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotH, target.conf.unit);
 
-          let rect = this.model.currentScreen.rect(slotW, slotH).move(slotX, slotY);
-
-          img.clipWith(rect);
-
+          // let rect = this.model.currentScreen.rect(slotW, slotH).move(slotX, slotY);
+          // img.clipWith(rect);
           // img.on('mouseover', function(e){ console.log(e); })
      }
 

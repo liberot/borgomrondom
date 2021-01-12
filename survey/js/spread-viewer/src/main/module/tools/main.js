@@ -48,6 +48,11 @@ let Tools = function(controller){
      }
 
      this.initDocument = function(){
+
+
+
+console.log('initDocument(): ', this.model.doc);
+
           switch(SpreadViewerConfig.mode){
                case SpreadViewerConfig.WEB_CLIENT:
                     this.setupNavigation();
@@ -107,14 +112,14 @@ let Tools = function(controller){
           }
           this.updateEditor();
      }
-
-     this.loadSession = function(){
+/*
+     this.loadThread = function(){
           let coll = window.location.href.split('/');
           if(coll.length >= 4){
                this.notify(new Message('thread::requested', { threadId: coll[4] } ));
           }
      }
-
+*/
      this.lockControlKeys = function(msg){
           this.model.controlKeysLocked = true;
      }
@@ -452,9 +457,7 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
  
      this.loadSpread = function(){
           if(null == this.model.spreads){ return; }
-
           this.model.spread = this.evalSpread(this.model.spidx);
-
           if(null == this.model.spread){ return; }
           this.model.doc = this.model.spread.post_content;
           for(let idx in this.model.doc.assets){

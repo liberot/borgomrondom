@@ -472,18 +472,11 @@ print "\n";
 
           $current_asset = $uploaded_assets[$idx];
 
-          $asset = [];
           if(null != $current_asset){
                $asset['src'] = eval_asset_src($current_asset);
                $asset = fit_image_asset_into_slot($doc, $asset);
           }
 
-/*
-print ">>>";
-print_r($asset['conf']);
-print "\n";
-print "\n";
-*/
           $assets_of_document[]= $asset;
      }
 
