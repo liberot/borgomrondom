@@ -12,7 +12,6 @@ let Screen = function(controller){
 
      this.initScreen = function(msg){
           this.model.doc = msg.model;
-console.log('initScreen(): ', this.model.doc);
           this.setViewSize();
           this.initLayers();
           this.render();

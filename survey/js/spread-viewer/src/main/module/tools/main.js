@@ -49,8 +49,6 @@ let Tools = function(controller){
 
      this.initDocument = function(){
 
-
-
 console.log('initDocument(): ', this.model.doc);
 
           switch(SpreadViewerConfig.mode){

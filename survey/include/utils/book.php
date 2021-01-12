@@ -405,16 +405,7 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      $layout_group = is_null($layout_group) ? 'default' : $layout_group;
 
 // a panel might or not be in a group
-     $parent_group = $panel->post_content['conf']['parent'];
-     $assets = get_assets_by_group_ref($section_id, $parent_group);
-/*
-print ">";
-print_r($section_id);
-print_r($parent_group);
-print_r($assets);
-print "\n";
-print "\n";
-*/
+     $group_ref = $panel->post_content['conf']['parent'];
 
 // todo: debug: layout_code is
      $layout_code = 'LLP';
@@ -454,7 +445,8 @@ print "\n";
 // image assets
      $maxx = 10;
      $indx = 0;
-     $uploaded_assets = get_assets_by_panel_ref($section_id, $panel_ref, $maxx);
+     $uploaded_assets = get_assets_by_group($section_id, $panel_ref, $group_ref, $maxx);
+
      $assets_of_document = [];
 
      $idx = 0;

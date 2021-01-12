@@ -86,10 +86,10 @@ EOD;
 */
 }
 
-function get_assets_by_group_ref($section_id, $group_ref, $limit=10, $client_id=null){
+function get_assets_by_group($section_id, $panel_ref, $group_ref, $limit=10, $client_id=null){
 
-     $group_ref = esc_sql($group_ref);
      $section_id = esc_sql($section_id);
+     $group_ref = esc_sql($group_ref);
      $author_id = esc_sql(get_author_id());
      $limit = esc_sql($limit);
 

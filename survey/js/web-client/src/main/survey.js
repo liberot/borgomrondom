@@ -122,7 +122,7 @@ console.log('saveThread(): ', msg);
 
 // thread
           if(null == msg.model.e.coll.thread){
-               console.log('bindThread: no thread');
+console.log('bindThread: no thread');
                return false;
           }
 
@@ -136,7 +136,7 @@ console.log('saveThread(): ', msg);
 
 // sections
           if(null == msg.model.e.coll.sections[0]){
-               console.log('bindThread: no sections');
+console.log('bindThread: no sections');
                return false;
           }
 
