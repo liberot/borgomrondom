@@ -410,6 +410,7 @@ function add_spreads_of_group($thread_id, $section_id, $book_id, $chapter_id, $g
                continue;
           }
 
+// fixdiss
           if(false == preg_match('/.{0,128}is going to read/', $panel->post_content['question'], $mtch)){
                continue;
           }
@@ -463,7 +464,12 @@ function add_spread($thread_id, $section_id, $book_id, $chapter_id, $group_ref, 
      $doc['uuid'] = $uuid;
 
 // imprint
-     $text = trim_for_print($panel->post_content['question']);
+     $text = $panel->post_content['question'];
+     if(false != preg_match('/.{0,128}is going to read/', $text, $mtch)){
+          $text = str_replace($mtch[0], '', $text);
+     }
+     $text = trim_for_print($text);
+
      $doc['assets'][0]['text'] = [$text];
      $doc['assets'][1]['text'] = [];
 

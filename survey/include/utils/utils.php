@@ -382,9 +382,11 @@ function get_session_ticket($key){
 }
 
 function debug_sql($sql){
+/*
      $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
      $sql.= "\n"; 
-     file_put_contents('/tmp/sql', $sql, FILE_APPEND);
+     @file_put_contents('/tmp/sql', $sql, FILE_APPEND);
+*/
      return $sql;
 }
 

@@ -1,6 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-define ('BOOKBUILDER_VERSION', 'lenny.boockmackrr.0.1');
+define ('BOOKBUILDER_VERSION', 'ninx.kilinx.0.1');
 define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'bookbuilder', DIRECTORY_SEPARATOR, 'survey'));
 
 require_once('include/config/config.php');
