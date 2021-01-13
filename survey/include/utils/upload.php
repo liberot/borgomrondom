@@ -69,6 +69,8 @@ function get_assets_by_panel_ref($section_id, $panel_ref, $limit=10, $client_id=
                limit {$limit};
 EOD;
      $sql = debug_sql($sql);
+
+
      $res = $wpdb->get_results($sql);
      return $res;
 /*
@@ -109,6 +111,8 @@ function get_assets_by_group($section_id, $panel_ref, $group_ref, $limit=10, $cl
                order by ID desc
                limit {$limit};
 EOD;
+
+// print_r($sql);
 
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);

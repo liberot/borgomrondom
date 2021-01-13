@@ -155,11 +155,23 @@ function clean_survey_page(){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+
      $sql = <<<EOD
-          delete from {$prefix}posts where post_name like '%__survey__thread__view__%' and post_type = 'page'
+          delete from {$prefix}posts 
+               where post_type = 'page' 
+               and post_name like '%__survey__thread__view__%' 
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     $sql = <<<EOD
+          delete from {$prefix}posts 
+               where post_type = 'page' 
+               where post_name = 'bookbuilder'
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+
      return $res;
 
 /*
@@ -198,7 +210,7 @@ EOD;
           'post_status'=>'publish',
           'comment_status'=>'closed',
           'ping_status'=>'closed',
-          'post_name'=>'__survey__thread__view__',
+          'post_name'=>'bookbuilder',
           'post_type'=>'page',
           'comment_count'=>0
      ]);

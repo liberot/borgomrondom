@@ -409,7 +409,7 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
 
 // todo: debug: layout_code is
      $layout_code = 'LLP';
-     // $layout_code = 'L';
+     $layout_code = 'L';
 
 // loads layout document
      $doc = get_layout_by_group_and_rule($layout_group, $layout_code)[0];
@@ -446,6 +446,7 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      $maxx = 10;
      $indx = 0;
      $uploaded_assets = get_assets_by_group($section_id, $panel_ref, $group_ref, $maxx);
+// print_r($uploaded_assets);
 
      $assets_of_document = [];
 
@@ -463,11 +464,11 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
           }
 
           $current_asset = $uploaded_assets[$idx];
+// print_r($current_asset);
 
-          if(null != $current_asset){
-               $asset['src'] = eval_asset_src($current_asset);
-               $asset = fit_image_asset_into_slot($doc, $asset);
-          }
+          $asset['src'] = eval_asset_src($current_asset);
+          $asset = fit_image_asset_into_slot($doc, $asset);
+          $idx++;
 
           $assets_of_document[]= $asset;
      }
@@ -491,8 +492,6 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      ];
 
      $res = init_spread($conf);
-
-     $idx++;
 
      return $panel_ref;
 }

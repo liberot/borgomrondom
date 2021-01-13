@@ -10,7 +10,7 @@ function build_survey_view(){
       wp_enqueue_script('config');
 
      if(!is_user_logged_in()){
-          echo '<p>View runs dev ProfileBuilder authentication procedere<br/>u: surveyprint <br/>p: surveyprint</p>';
+          echo '<p>Mandatory ProfileBuilder Authentication Procedere</p>';
           echo do_shortcode('[wppb-login]');
           echo do_shortcode('[wppb-register]');
           echo do_shortcode('[wppb-recover-password]');
