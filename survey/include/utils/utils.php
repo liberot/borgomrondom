@@ -383,6 +383,10 @@ function get_session_ticket($key){
 
 function debug_sql($sql){
 
+     if(true != Proc::TMP_WRITE_SQL){
+          return $sql;
+     }
+
      $sql = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $sql);
      $sql.= "\n"; 
      @file_put_contents('/tmp/sql', $sql, FILE_APPEND);

@@ -80,6 +80,7 @@ class Proc {
      const              FILE_UPLOAD = 'file_upload';
      const     KICKOFF_SURVEY_TITLE = 'BBC0 Cover and Preface';
 //   const     KICKOFF_SURVEY_TITLE = '201204 Cover and Preface';
+     const            TMP_WRITE_SQL = false;
 }
 
 
