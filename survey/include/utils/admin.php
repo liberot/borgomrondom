@@ -1,6 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-function clean_layouts(){
+function delete_layouts(){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -33,7 +33,7 @@ EOD;
 */
 }
 
-function clean_surveys(){
+function delete_surveys(){
 
      $tables = [
           'surveyprint_question',
@@ -68,7 +68,7 @@ EOD;
 */
 }
 
-function clean_client_threads(){
+function delete_client_threads(){
 
      $tables = [
           'surveyprint_book',
@@ -106,7 +106,7 @@ EOD;
 */
 }
 
-function clean_bookbuilder_db(){
+function delete_bookbuilder_db(){
 
      $tables = [
           'surveyprint_asset',
@@ -151,7 +151,7 @@ EOD;
 */
 }
 
-function clean_survey_page(){
+function delete_survey_page(){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -186,9 +186,23 @@ EOD;
 */
 }
 
+function delete_survey_by_id($survey_id){
+     $survey_id = esc_sql($survey_id);
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          delete from {$prefix}posts
+               where post_type = 'surveyprint_survey'
+               and ID = '{$survey_id}'
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+}
+
 function init_survey_page(){
 
-     clean_survey_page();
+     delete_survey_page();
 
      $conti = <<<EOD
         <p>[survey_view]</p>

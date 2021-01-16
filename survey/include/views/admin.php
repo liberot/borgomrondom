@@ -85,11 +85,11 @@ function build_surveyprint_utils_view(){
 
      $actions = esc_html(__('Actions:', 'bookbuilder'));
      $init_survey_page = esc_html(__('Insert of the BookBuilder Webpage', 'bookbuilder'));
-     $clean_survey_page = esc_html(__('Remove of the BookBuilder Webpage', 'bookbuilder'));
-     $clean_surveys = esc_html(__('Remove of all stored Questionnaire', 'bookbuilder'));
-     $clean_client_threads = esc_html(__('Remove of all Client Threads', 'bookbuilder'));
-     $clean_bookbuilder_db = esc_html(__('Remove of all BookBuilder DB Entries', 'bookbuilder'));
-     $clean_layouts = esc_html(__('Remove of all parsed Layout Records', 'bookbuilder'));
+     $delete_survey_page = esc_html(__('Remove of the BookBuilder Webpage', 'bookbuilder'));
+     $delete_surveys = esc_html(__('Remove of all stored Questionnaire', 'bookbuilder'));
+     $delete_client_threads = esc_html(__('Remove of all Client Threads', 'bookbuilder'));
+     $delete_bookbuilder_db = esc_html(__('Remove of all BookBuilder DB Entries', 'bookbuilder'));
+     $delete_layouts = esc_html(__('Remove of all parsed Layout Records', 'bookbuilder'));
      $dump_surveys = esc_html(__('Dump of Stored Surveys', 'bookbuilder'));
      $dump_threads = esc_html(__('Dump of Client Threads', 'bookbuilder'));
      $edit = esc_html(__('Edit of a Questionnaire', 'bookbuilder'));
@@ -97,13 +97,13 @@ function build_surveyprint_utils_view(){
      <div class='edit'>
           <div class='unit'>{$actions}</div>
           <div><a href='javascript:initSurveyPage();'>{$init_survey_page}</a></div>
-          <div><a href='javascript:cleanSurveyPage();'>{$clean_survey_page}</a></div>
+          <div><a href='javascript:deleteSurveyPage();'>{$delete_survey_page}</a></div>
           <div><a href='javascript:dumpSurveys();'>{$dump_surveys}</a></div>
           <div><a href='javascript:dumpClientThreads();'>{$dump_threads}</a></div>
-          <div><a href='javascript:cleanSurveys();'>{$clean_surveys}</a></div>
-          <div><a href='javascript:cleanClientThreads();'>{$clean_client_threads}</a></div>
-          <div><a href='javascript:cleanLayouts();'>{$clean_layouts}</a></div>
-          <div><a href='javascript:cleanSurveyDB();'>{$clean_bookbuilder_db}</a></div>
+          <div><a href='javascript:deleteSurveys();'>{$delete_surveys}</a></div>
+          <div><a href='javascript:deleteClientThreads();'>{$delete_client_threads}</a></div>
+          <div><a href='javascript:deleteLayouts();'>{$delete_layouts}</a></div>
+          <div><a href='javascript:deleteSurveyDB();'>{$delete_bookbuilder_db}</a></div>
      </div>
 EOD;
 
@@ -165,20 +165,20 @@ EOD;
 add_shortcode('thread_view', 'build_thread_view');
 function build_thread_view(){
 
-     switch($_REQUEST['delete']){
+     switch($_REQUEST['action']){
 
-          case 'entries':
-               $thread_id = $_REQUEST['thread_id'];
-               $client_id = $_REQUEST['client_id'];
-               delete_thread_by_id($thread_id, $client_id);
-               break;
-     }
-
-     switch($_REQUEST['edit']){
-
-          case 'entries':
+          case 'edit':
                build_thread_entries_view();
                break; 
+
+          case 'delete':
+               $thread_id = $_REQUEST['thread_id'];
+               $survey_id = $_REQUEST['survey_id'];
+               $client_id = $_REQUEST['client_id'];
+               if(!is_null($thread_id) && !is_null($thread_id)){
+                    delete_thread_by_id($thread_id, $client_id);
+               }
+               break;
 
           default:
                build_thread_list_view();
@@ -223,13 +223,12 @@ function build_thread_list_view(){
                </thead>
 EOD;
 
-     $edit = esc_html(__('Entries', 'bookbuilder'));
      $style = 'column-primary';
      $coll = get_threads();
      if(!is_null($coll[0])){
           foreach($coll as $thread){
-               $href1st = sprintf('%s?page=threads&edit=entries&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
-               $href2nd = sprintf('%s?page=threads&delete=entries&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
+               $href1st = sprintf('%s?page=threads&action=edit&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
+               $href2nd = sprintf('%s?page=threads&action=delete&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
                $d = date_create($thread->post_date);
                $d = date_format($d, 'd-m-Y H:i:s');
                echo '<tr>';
@@ -373,27 +372,28 @@ EOD;
 add_shortcode('questionnaire_view', 'build_questionnaire_view');
 function build_questionnaire_view(){
 
-     switch($_REQUEST['edit']){
+     switch($_REQUEST['action']){
 
-          case 'questions':
-               build_question_view();
+          case 'delete':
+               $survey_id = $_REQUEST['survey_id'];
+               if(!is_null($survey_id)){
+                    delete_survey_by_id($survey_id);
+               }
+               build_questionnaire_list_view();
+               break;
+
+          case 'edit':
+               build_questionnaire_edit_view();
                break;
  
-          case 'survey_printrules':
-               if(false == empty($_POST)){ 
-                    print_r(sprintf("<textarea>%s</textarea>", json_encode($_POST, JSON_PRETTY_PRINT)));
-               };
-               build_question_view();
-               break;
-
           default:
                build_questionnaire_list_view();
                break;
      }
 }
 
-add_shortcode('question_view', 'build_question_view');
-function build_question_view(){
+add_shortcode('questionnaire_edit_view', 'build_questionnaire_edit_view');
+function build_questionnaire_edit_view(){
 
      $survey_id = $_REQUEST['survey_id'];
      $coll = get_questions_by_survey_id($survey_id);
@@ -551,25 +551,30 @@ function build_questionnaire_list_view(){
      $excerpt = esc_html(__('Reference', 'bookbuilder'));
      $title = esc_html(__('Title', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
-     $action = esc_html(__('Action', 'bookbuilder'));
-     $edit = esc_html(__('Edit Fields', 'bookbuilder'));
+     $edit = esc_html(__('Edit', 'bookbuilder'));
+     $edit_fields = esc_html(__('Edit Fields', 'bookbuilder'));
+     $delete = esc_html(__('Delete', 'bookbuilder'));
+     $delete_survey = esc_html(__('Delete Survey', 'bookbuilder'));
      $headline = esc_html(__('Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__('Welcome', 'bookbuilder'));
 
      echo <<<EOD
+
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
                <div class='page-title-action messages'><span>{$welcome}</span></div>
                <hr class='wp-header-end'>
 
           <table class="wp-list-table widefat striped table-view-list posts">
+
           <thead>
                <tr>
                     <th>{$id}</th>
                     <th>{$title}</th>
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
-                    <th>{$action}</th>
+                    <th>{$edit}</th>
+                    <th>{$delete}</th>
                </tr>
           </thead>
 EOD;
@@ -577,7 +582,8 @@ EOD;
      $style = 'column-primary';
      if(!is_null($coll[0])){
           foreach($coll as $survey){
-               $href = sprintf('%s?page=questionnaire&edit=questions&survey_id=%s', Path::SERVICE_BASE, $survey->ID);
+               $edit_link = sprintf('%s?page=questionnaire&action=edit&survey_id=%s', Path::SERVICE_BASE, $survey->ID);
+               $delete_link = sprintf('%s?page=questionnaire&action=delete&survey_id=%s', Path::SERVICE_BASE, $survey->ID);
                $d = date_create($survey->post_date);
                $d = date_format($d, 'd-m-Y H:i:s');
                echo '<tr>';
@@ -585,7 +591,8 @@ EOD;
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($survey->post_title));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($survey->post_name));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($d));
-                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href, $edit);
+                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $edit_link, $edit_fields);
+                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $delete_link, $delete_survey);
                echo '</tr>';
           }
      };
@@ -597,7 +604,8 @@ EOD;
                     <th>{$title}</th>
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
-                    <th>{$action}</th>
+                    <th>{$edit}</th>
+                    <th>{$delete}</th>
                </tr>
           </tfoot>
 EOD;

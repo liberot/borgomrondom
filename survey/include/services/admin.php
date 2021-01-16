@@ -1,66 +1,66 @@
 <?php defined('ABSPATH') || exit;
 
-add_action('admin_post_exec_clean_surveys', 'exec_clean_surveys');
-function exec_clean_surveys(){
+add_action('admin_post_exec_delete_surveys', 'exec_delete_surveys');
+function exec_delete_surveys(){
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     init_log('admin_post_exec_clean_surveys', []);
-     $res = clean_surveys();
+     init_log('admin_post_exec_delete_surveys', []);
+     $res = delete_surveys();
      $message = esc_html(__('surveys deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
 }
 
-add_action('admin_post_exec_clean_client_threads', 'exec_clean_client_threads');
-function exec_clean_client_threads(){
+add_action('admin_post_exec_delete_client_threads', 'exec_delete_client_threads');
+function exec_delete_client_threads(){
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     init_log('admin_post_exec_clean_client_threads', []);
-     $res = clean_client_threads();
+     init_log('admin_post_exec_delete_client_threads', []);
+     $res = delete_client_threads();
      $message = esc_html(__('client threads deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
 }
 
-add_action('admin_post_exec_clean_bookbuilder_db', 'exec_clean_bookbuilder_db');
-function exec_clean_bookbuilder_db(){
+add_action('admin_post_exec_delete_bookbuilder_db', 'exec_delete_bookbuilder_db');
+function exec_delete_bookbuilder_db(){
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     init_log('admin_post_exec_clean_bookbuilder_db', []);
-     $res = clean_bookbuilder_db();
+     init_log('admin_post_exec_delete_bookbuilder_db', []);
+     $res = delete_bookbuilder_db();
      $message = esc_html(__('bookbuilder db deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
 }
 
-add_action('admin_post_exec_clean_layouts', 'exec_clean_layouts');
-function exec_clean_layouts(){
+add_action('admin_post_exec_delete_layouts', 'exec_delete_layouts');
+function exec_delete_layouts(){
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     init_log('admin_post_exec_clean_layouts', []);
-     $res = clean_layouts();
+     init_log('admin_post_exec_delete_layouts', []);
+     $res = delete_layouts();
      $message = esc_html(__('layouts deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
 }
 
-add_action('admin_post_exec_clean_survey_page', 'exec_clean_survey_page');
-function exec_clean_survey_page(){
+add_action('admin_post_exec_delete_survey_page', 'exec_delete_survey_page');
+function exec_delete_survey_page(){
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
-     init_log('admin_post_exec_clean_survey_page', []);
-     $res = clean_survey_page();
+     init_log('admin_post_exec_delete_survey_page', []);
+     $res = delete_survey_page();
      $message = esc_html(__('survey page deleted', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'res'=>$res));
 }

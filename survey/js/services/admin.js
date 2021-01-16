@@ -13,16 +13,16 @@ function setRedirect(ref){
      }
      this.postCommand(data);
 }
-function cleanSurveyPage(){
+function deleteSurveyPage(){
      let data = { 
-          action: 'exec_clean_survey_page'
+          action: 'exec_delete_survey_page'
      };
      this.postCommand(data);
 }
 
-function cleanLayouts(){
+function deleteLayouts(){
      let data = { 
-          action: 'exec_clean_layouts'
+          action: 'exec_delete_layouts'
      };
      this.postCommand(data);
 }
@@ -41,16 +41,16 @@ function dumpSurveys(){
      this.postCommand(data);
 }
 
-function cleanSurveys(){
+function deleteSurveys(){
      let data = { 
-          action: 'exec_clean_surveys'
+          action: 'exec_delete_surveys'
      };
      this.postCommand(data);
 }
 
-function cleanClientThreads(){
+function deleteClientThreads(){
      let data = { 
-          action: 'exec_clean_client_threads'
+          action: 'exec_delete_client_threads'
      };
      this.postCommand(data);
 }
@@ -62,9 +62,9 @@ function initSurveyPage(){
      this.postCommand(data);
 }
 
-function cleanSurveyDB(){
+function deleteSurveyDB(){
      let data = { 
-          action: 'exec_clean_bookbuilder_db'
+          action: 'exec_delete_bookbuilder_db'
      };
      this.postCommand(data);
 }
