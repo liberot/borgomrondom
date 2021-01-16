@@ -486,7 +486,7 @@ EOD;
           foreach($survey_titles as $item){
                $buf.= sprintf('<option value="%s">%s</option>', esc_html($item->ID), esc_html($item->post_title));
           }
-          $link_input.= sprintf('<select name="" class="">%s</select>', $buf);
+          $link_input = sprintf('<select name="" class="">%s</select>', $buf);
 
 // parent group of the question
           $parent = '';
