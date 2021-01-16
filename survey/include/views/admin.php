@@ -465,6 +465,7 @@ EOD;
           <option value='default3rd'>Default Layout Group 5th</option>
 EOD;
 
+// list of surveys
      $survey_titles = get_survey_titles();
      array_unshift($survey_titles, (object)['ID'=>'no_link', 'post_title'=>$no_link]);
 
@@ -484,9 +485,17 @@ EOD;
 // link reference
           $buf = '';
           foreach($survey_titles as $item){
-               $buf.= sprintf('<option value="%s">%s</option>', esc_html($item->ID), esc_html($item->post_title));
+               $selected = '';
+// print_r($item);
+// print_r($question->post_content);
+
+               if($item->ID == $question->post_content['redirect_survey_id']){
+                    $selected = 'selected';
+               }
+               $buf.= sprintf('<option name="redirect" value="%s" %s>%s</option>', esc_html($item->ID), esc_html($selected), esc_html($item->post_title));
           }
-          $link_input = sprintf('<select name="" class="">%s</select>', $buf);
+          $js = 'javascript:setRedirect(this);';
+          $link_input = sprintf('<select class="select-redirect question-%s" onchange="%s">%s</select>', $question->ID, $js, $buf);
 
 // parent group of the question
           $parent = '';

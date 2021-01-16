@@ -252,3 +252,38 @@ EOD;
 
      return $res;
 }
+
+function init_redirect($question_id, $survey_id){
+
+     $question_id = esc_sql($question_id);
+     $survey_id = esc_sql($survey_id);
+     $author_id = esc_sql(get_author_id());
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select 
+               {$prefix}posts.*  
+               from {$prefix}posts 
+               where post_type = 'surveyprint_question'
+               and ID = '{$question_id}'
+               order by ID
+               limit 1
+EOD;
+     $sql = debug_sql($sql);
+     $question = $wpdb->get_results($sql)[0];
+     if(is_null($question)){
+          return false;
+     }
+
+     $question->post_author = $author_id;
+
+     $question->post_content = pagpick($question->post_content);
+     $question->post_content['redirect_survey_id'] = $survey_id;
+     $question->post_content = pigpack($question->post_content);
+
+     $res = wp_insert_post($question);
+
+     return $res;
+}

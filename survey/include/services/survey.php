@@ -76,4 +76,25 @@ function exec_save_question(){
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
+add_action('admin_post_exec_init_redirect', 'exec_init_redirect');
+function exec_init_redirect(){
 
+     $question_id = trim_incoming_filename($_POST['question_id']);
+     $survey_id = trim_incoming_filename($_POST['survey_id']);
+
+     $rec = init_redirect($question_id, $survey_id);
+
+     $message = esc_html(__('redirect is set', 'bookbuilder'));
+     $res = 'success';
+     switch($rec){
+          case false:
+               $message = esc_html(__('redirect is not set', 'bookbuilder'));
+               $res = 'failed';
+               break;
+     }
+
+     $coll = [];
+     $coll['rec'] = $rec;
+
+     echo json_encode(array('res'=>$res, 'message'=>$message, 'coll'=>$coll));
+}
