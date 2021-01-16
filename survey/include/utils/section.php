@@ -139,7 +139,9 @@ EOD;
 */
 }
 
-function init_section_from_survey($thread_id, $survey_ref){
+function init_section_from_survey_ref($thread_id, $survey_ref){
+
+// eval of the ids
      $thread_id = esc_sql($thread_id);
      $survey_ref = esc_sql($survey_ref);
 
@@ -170,3 +172,42 @@ function init_section_from_survey($thread_id, $survey_ref){
      return $section_id;
 }
 
+// todo: this is ugly...
+function init_section_from_survey_id($thread_id, $survey_id){
+
+// eval of the ids
+     $thread_id = esc_sql($thread_id);
+     $survey_id = esc_sql($survey_id);
+
+// survey
+     $survey = get_survey_by_id($survey_id)[0];
+
+     if(is_null($survey)){ 
+          return null; 
+     }
+
+// toc
+     $toc = get_toc_by_survey_id($survey->ID)[0];
+     if(is_null($toc)){ 
+          return null; 
+     }
+
+// post of he section
+     $post = [];
+     $post['survey'] = pagpick($survey->post_content);
+     $post['toc'] = pagpick($toc->post_content);
+     $post = pigpack($post);
+     $conf = [
+          'post_type'=>'surveyprint_section',
+          'post_author'=>$author_id,
+          'post_title'=>$unique_quest,
+          'post_excerpt'=>$survey->post_excerpt,
+          'post_name'=>$surveyprint_uuid,
+          'post_parent'=>$thread_id,
+          'post_content'=>$post
+     ];
+
+// res
+     $section_id = init_section($conf);
+     return $section_id;
+}

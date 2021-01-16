@@ -25,6 +25,18 @@ let SurveyNet  = function(controller){
           this.postData(data, cb);
      }
 
+     this.loadSection = function(msg){
+          let ref = this;
+          let data = { 
+               'action': 'exec_get_section_by_survey_id',
+               'survey_id': msg.model.surveyId 
+          }
+          let cb = function(e){ 
+               ref.notify(new Message('section::loaded', { e: e })); 
+          }
+          this.postData(data, cb);
+     }
+
      this.loadPanel = function(msg){
           let ref = this;
           let data = {
@@ -185,5 +197,5 @@ let SurveyNet  = function(controller){
      this.register(new Subscription(       'upload::asset', 'uploadAsset',     this));
      this.register(new Subscription(         'load::panel', 'loadPanel',       this));
      this.register(new Subscription(   'load::nextsection', 'loadNextSection', this));
-
+     this.register(new Subscription(       'load::section', 'loadSection',     this));
 }

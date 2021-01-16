@@ -593,7 +593,7 @@ console.log('loadPanel(): ', sectionId, panelRef);
      this.bindPanel = function(msg){
 console.log('bindPanel(): ', msg);
 
-          if(null == msg.model.e.coll['panel']){ 
+          if(null == msg.model.e.coll['panel'][0]){ 
                console.log('bindPanel(): no panel');
                return false; 
           }
@@ -663,7 +663,7 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
           let parent = this.model.panel.post_content.conf.parent;
           let section = this.model.section.ID;
 
-// title does not change
+// the question stored in the title field will not be written
           let question = this.model.panel.post_content.title;
               question = SurveyUtil.trimIncomingString(question);
               question = this.initStringOutput(question);
@@ -883,6 +883,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
          console.log('bindTopPanel(): ', msg);
      }
 
+// bottom panel as in the last panel of the survey
      this.bindBottomPanel = function(msg){
          console.log('bindBottomPanel(): ', msg);
      }
@@ -1079,7 +1080,12 @@ console.log('evalRuleR(): result: ', rule.vars[idx]);
      }
 
      this.evalNextPanel = function(){
-console.log('evalNextPanel(): ');
+console.log('evalNextPanel(): ', this.model.panel);
+          let redirectSurveyId = this.model.panel.post_content.redirect_survey_id;
+          if(null != redirectSurveyId){
+               this.loadSectionBySurveyId(redirectSurveyId)
+               return true;
+          }
 
 // evaluates whether or not this panel is the last one in the section
           if(this.isBottomPanel()){
@@ -1088,15 +1094,15 @@ console.log('evalNextPanel(): ');
           }
 
 // the next panel (field) to be displayed
-          // let settings = this.model.section.post_content.survey.settings;
           let toc = this.model.section.post_content.toc;
           let sectionId = this.model.section.ID;
 
-// loads panel from logic
+// loads panel from logic (jump)
           let panelRef;
           let coll = this.evalLogicJump(toc);
 console.log('evalNextPanel(): evalutated logic jumps: ', coll);
 
+// evaluates the reference of the next panel to be loaded
           if(null != coll.links[0]){
                panelRef = coll.links[0];
           }
@@ -1105,12 +1111,14 @@ console.log('evalNextPanel(): evalutated logic jumps: ', coll);
           }
 
           if(null != panelRef){
+// loads the next panel by its reference index
                this.loadPanel(sectionId, panelRef);
                return true;
           }
 
 // loads panel from default list
           this.loadNextPanel();
+
           return true;
      }
 
@@ -1158,6 +1166,14 @@ console.log('evalLogicJump(): actionpack: ', actionpack);
           return res;
      }
 
+     this.loadSectionBySurveyId = function(surveyId){
+console.log('loadSectionBySurveyId(): ', surveyId);
+          let model = {
+               surveyId: surveyId,
+          }
+          this.notify(new Message('load::section', model));
+     }
+
      this.loadNextSection = function(){
 console.log('loadNextSection(): this.model.sections: ', this.model.sections);
 
@@ -1173,7 +1189,6 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
                    if(null != nextSection){
                         this.model.section = nextSection;
                         this.notify(new Message('nextsection::loaded', { e: { coll: { section: this.model.section }}}));
-                        // this.evalNextPanel();
                         return true;
                    }
                }
@@ -1433,6 +1448,7 @@ console.log('scanAsset(): ', indx, base, proc, upload);
      this.register(new Subscription(          'panel::saved', 'bindSavedPanel', this));
      this.register(new Subscription(        'input::corrupt', 'showValidationError', this));
      this.register(new Subscription(   'nextsection::loaded', 'bindSection', this));
+     this.register(new Subscription(       'section::loaded', 'bindSection', this));
      this.register(new Subscription(  'bottompanel::reached', 'bindBottomPanel', this));
      this.register(new Subscription(     'toppanel::reached', 'bindTopPanel', this));
 

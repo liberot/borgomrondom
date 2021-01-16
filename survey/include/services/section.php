@@ -64,7 +64,7 @@ function exec_get_next_section(){
 
 // todo... whether or not section is already written
 // setup of a section
-     $section_id = init_section_from_survey($thread_id, $ref);
+     $section_id = init_section_from_survey_ref($thread_id, $ref);
      if(empty($section_id)){
           $message = esc_html(__('could not init section', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -86,3 +86,52 @@ function exec_get_next_section(){
      return true;
 }
 
+add_action('admin_post_exec_get_section_by_survey_id', 'exec_get_section_by_survey_id');
+function exec_get_section_by_survey_id(){
+
+// policy
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+// evall of the ids
+     $thread_id = get_session_ticket('thread_id');
+     $survey_id = trim_incoming_filename($_POST['survey_id']);
+
+// 
+     $coll = [];
+//
+     init_log('admin_post_exec_get_section_by_survey_id', ['survey_id'=>$survey_id]);
+
+// load of the section
+     $section = get_section_by_id($thread_id, $section_id)[0];
+     if(!is_null($section)){
+          $message = esc_html(__('cached section loaded', 'bookbuilder'));
+          $res = 'succss';
+          echo json_encode(array('res'=>$res, 'message'=>$message, 'coll'=>$coll));
+          return true;
+     }
+
+// init of the section
+     $section_id = init_section_from_survey_id($thread_id, $survey_id);
+     $section = get_section_by_id($thread_id, $section_id)[0];
+
+     $panels = init_panels_from_survey($section_id, $survey_id);
+
+     set_session_ticket('section_id', $section_id, true);
+
+// result
+     $message = esc_html(__('section not inited', 'bookbuilder'));
+     $res = 'failed';
+     if(!is_null($section)){
+          $message = esc_html(__('section inited', 'bookbuilder'));
+          $res = 'success';
+     }
+
+     $coll['section'] = $section;
+     $coll['panels'] = $panels;
+
+     echo json_encode(array('res'=>$res, 'message'=>$message, 'coll'=>$coll));
+}

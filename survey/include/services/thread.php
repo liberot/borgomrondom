@@ -97,7 +97,7 @@ function exec_init_thread(){
      }
 
 // generation of a section
-     $section_id = init_section_from_survey($thread_id, $survey->post_excerpt);
+     $section_id = init_section_from_survey_ref($thread_id, $survey->post_excerpt);
      if(is_null($section_id)){
           $message = esc_html(__('no section', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
