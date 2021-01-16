@@ -135,8 +135,14 @@ function build_typeform_utils_view(){
      $download_resultset = esc_html(__('Download of a Typeform Resultset', 'bookbuilder'));
      $construction = esc_html(__('Construciton of a Questionnaire', 'bookbuilder'));
      $edit = esc_html(__('Edit of a Questionnaire', 'bookbuilder'));
-     // $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'bookbuilder'));
-     $construct_fielding_questions = esc_html(__('Construction of the Fielding Questions from "./asset/typeform/BBC0-Cover-and-Prefa--FvSIczF7.json"', 'bookbuilder'));
+/*
+     $construct_fielding_questions = esc_html(
+          __('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'bookbuilder')
+     );
+*/
+     $construct_fielding_questions = esc_html(
+          __('Construction of the Fielding Questions from "./asset/typeform/BBC0-Cover-and-Prefa--FvSIczF7.json"', 'bookbuilder')
+     );
      $construct_surveys_from_folder = esc_html(__('Construction of all Surveys from "./asset/typeform/*.json"', 'bookbuilder'));
      echo <<<EOD
      <div class='edit'>
@@ -409,9 +415,10 @@ function build_question_view(){
      $excerpt = esc_html(__('Reference', 'bookbuilder'));
      $parent = esc_html(__('Group', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
-     $rulez = esc_html(__('Spread Rulez', 'bookbuilder'));
+     $link = esc_html(__('Link', 'bookbuilder'));
      $save_input = esc_html(__('Save', 'bookbuilder'));
      $apply = esc_html(__('Apply', 'bookbuilder'));
+     $no_link = esc_html(__('No Link', 'bookbuilder'));
 
      $href = sprintf('%s?page=questionnaire&edit=survey_printrules&survey_id=%s', Path::SERVICE_BASE, $survey_id);
      echo <<<EOD
@@ -432,7 +439,7 @@ function build_question_view(){
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
-                    <th>{$rulez}</th>
+                    <th>{$link}</th>
                </tr>
           </thead>
 EOD;
@@ -458,36 +465,47 @@ EOD;
           <option value='default3rd'>Default Layout Group 5th</option>
 EOD;
 
+     $survey_titles = get_survey_titles();
+     array_unshift($survey_titles, (object)['ID'=>'no_link', 'post_title'=>$no_link]);
 
      foreach($coll as $question){
+
+// the question
           $question->post_content = pagpick($question->post_content);
           $question_id = $question->ID;
 
+// group type question
           $node_style = '';
           $rule_input = '';
           if('group' == $question->post_content['type']){
                $node_style = 'group-title';
           }
 
-          $rule_input = <<<EOD
-     <textarea name='layout_rule_of_question_{$question_id}_is'></textarea>
-EOD;
+// link reference
+          $buf = '';
+          foreach($survey_titles as $item){
+               $buf.= sprintf('<option value="%s">%s</option>', esc_html($item->ID), esc_html($item->post_title));
+          }
+          $link_input.= sprintf('<select name="" class="">%s</select>', $buf);
 
+// parent group of the question
           $parent = '';
           if(!is_null($question->post_content['conf']['parent'])){
                $parent = $question->post_content['conf']['parent'];
           }
 
+// post date
           $d = date_create($question->post_date);
           $d = date_format($d, 'd.m.Y H:i:s');
 
+// output
           echo '<tr>';
           echo sprintf('<td>%s</td>', esc_html($question->ID));
           echo sprintf('<td>%s</td>', esc_html($question->post_excerpt));
           echo sprintf('<td>%s</td>', esc_html($d));
           echo sprintf('<td>%s</td>', esc_html($parent));
           echo sprintf('<td class="%s">%s</td>', $node_style, esc_html($question->post_content['title']));
-          echo sprintf('<td>%s</td>', $rule_input);
+          echo sprintf('<td>%s</td>', $link_input);
           echo '</tr>';
      }
 
@@ -499,7 +517,7 @@ EOD;
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
-                    <th>{$rulez}</th>
+                    <th>{$link}</th>
                </tr>
           </tfoot>
           </table>

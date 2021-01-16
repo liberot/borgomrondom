@@ -233,3 +233,22 @@ EOD;
 */
 }
 
+
+function get_survey_titles(){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select 
+               {$prefix}posts.ID,  
+               {$prefix}posts.post_title  
+               from {$prefix}posts 
+               where post_type = 'surveyprint_survey' 
+               order by ID 
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
