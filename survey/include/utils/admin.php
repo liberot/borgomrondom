@@ -159,15 +159,7 @@ function clean_survey_page(){
      $sql = <<<EOD
           delete from {$prefix}posts 
                where post_type = 'page' 
-               and post_name like '%__survey__thread__view__%' 
-EOD;
-     $sql = debug_sql($sql);
-     $res = $wpdb->query($sql);
-
-     $sql = <<<EOD
-          delete from {$prefix}posts 
-               where post_type = 'page' 
-               where post_name = 'bookbuilder'
+               and post_title = 'Questionnaire' 
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
@@ -180,8 +172,8 @@ EOD;
           'posts_per_page'=>-1,
           'meta_query'=>[
                'relation'=>'and', [
-                    'key'=>'post_name',
-                    'value'=>'%__survey__thread__view__%',
+                    'key'=>'post_title',
+                    'value'=>'%Questionnaire%',
                     'compare'=>'like'
                ]
           ]

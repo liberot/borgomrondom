@@ -1,0 +1,2039 @@
+{
+  "id": "cMsCFF9a",
+  "type": "form",
+  "title": "201204 Cover and Preface",
+  "workspace": {
+    "href": "https://api.typeform.com/workspaces/RLzBQQ"
+  },
+  "theme": {
+    "href": "https://api.typeform.com/themes/TSYAuE"
+  },
+  "settings": {
+    "language": "en",
+    "progress_bar": "percentage",
+    "meta": {
+      "allow_indexing": false
+    },
+    "hide_navigation": false,
+    "is_public": true,
+    "is_trial": false,
+    "show_progress_bar": true,
+    "show_typeform_branding": true,
+    "are_uploads_public": false,
+    "show_time_to_complete": true,
+    "redirect_after_submit_url": "https://thisstory.typeform.com/to/T0cqROwa#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}&partner={{field:c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d}}&child={{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}"
+  },
+  "thankyou_screens": [
+    {
+      "id": "vpXtIzzFwZRW",
+      "ref": "f8ec8584-d41d-42e1-99bc-0f8f393f4243",
+      "title": "Many thanks! We'll now put together your personalised questionnaire and email you as soon as it's ready",
+      "properties": {
+        "show_button": false,
+        "share_icons": false,
+        "button_mode": "reload",
+        "button_text": "again"
+      }
+    },
+    {
+      "id": "DefaultTyScreen",
+      "ref": "default_tys",
+      "title": "Done! Your information was sent perfectly.",
+      "properties": {
+        "show_button": false,
+        "share_icons": false
+      }
+    }
+  ],
+  "welcome_screens": [
+    {
+      "id": "NIPmfodF9fT0",
+      "ref": "9b487b8c-6347-4cc4-9c7a-99e1f98ffa8d",
+      "title": "*Welcome to This Story!*\n",
+      "properties": {
+        "show_button": true,
+        "button_text": "Start"
+      },
+      "attachment": {
+        "type": "image",
+        "href": "https://images.typeform.com/images/DCq9ntvZz8Jk",
+        "properties": {}
+      }
+    }
+  ],
+  "fields": [
+    {
+      "id": "4UtSSEieyOkT",
+      "title": "Our family books tell the story of your child at the heart of your family. \n\nThis is the first part of the book, in which you will build the cover and answer some initial questions, that’ll help us to put your questionnaires together. It should only take about 10 minutes. \n\nOnce we receive the answer to this questionnaire, we’ll send you links to the personalised surveys. These will take you through the eight chapters of the book, asking you straight-forward questions and to upload images as you go along. If you have the photos handy, it should take about an hour, or so.\n\nWe have gone through the questionnaires many times and hope there aren't any glitches - if there are, please keep in mind that we're still at the testing stage. \n\n*If there are any problems, please email us at soniaklug01@gmail.com* ",
+      "ref": "4baff887-61e1-40b5-ae84-344bfd9f6883",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "WnzGFmSZIBXh",
+      "title": "Cover",
+      "ref": "354ed6c2-871b-4ce5-88b9-9da4a76f30b4",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "7BKgc8CWtZfO",
+            "title": "Let's start with the cover",
+            "ref": "b2be5075-8e82-4b85-a79f-fffb5339feea",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "XJIqAZAtwle3",
+            "title": "What is your child's name? ",
+            "ref": "efd45ed6-1275-47b6-9a8b-30ab0dda2b41",
+            "properties": {
+              "description": "This will appear in the title on the cover"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "doWzjvfQ6WU5",
+            "title": "Which title would you like on the cover? \n\nOption A\n_*All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*_\n\nOption B\n*This is* *{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}**'s family* \n\nOption C\n_*The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family*_",
+            "ref": "c8436a01-7c36-454b-aa67-a6c96f786555",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "BwHuSOVOEdH4",
+                  "ref": "646c0dac-10f5-48d8-bcf1-66991e91acb7",
+                  "label": "All the people who love ..."
+                },
+                {
+                  "id": "bk33cyTtdIwJ",
+                  "ref": "fc1aa2ec-c7de-4cc8-8582-ad4687298ce4",
+                  "label": "This is [...]'s family"
+                },
+                {
+                  "id": "i7wL9YwuHXBy",
+                  "ref": "2eafbcc5-445a-45e8-9465-0c911733dbbd",
+                  "label": "The fabulous story of ..."
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "uZyRBH2MOqKq",
+            "title": "You can choose from three design options. Please click through all designs and then choose the one you prefer.\n\nTitle: All the people who love {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}\n\n*Option A: Orange*",
+            "ref": "13afc69f-6f18-435c-ad36-43bfbe4302b4",
+            "properties": {
+              "button_text": "Second design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/6wuGibLZs62U"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/6wuGibLZs62U",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "kyeReCyo1Qon",
+            "title": "Title: All the people who love {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}\n\n*Option B: Green*",
+            "ref": "1fc95454-1675-4f03-9578-13ee36d992cd",
+            "properties": {
+              "button_text": "Third design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/3EfWNrA62qhE"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/3EfWNrA62qhE",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Ugao0DzTxYSj",
+            "title": "Title\n_*'All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'*_\n\nOption C: Blue",
+            "ref": "f0f2d2e8-cb58-45d5-a4ef-961c78387d45",
+            "properties": {
+              "button_text": "See all three choices",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/vTw6P5rLfMd2"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/vTw6P5rLfMd2",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "MEQwsEmBV0Tk",
+            "title": "Title\n_*'All the people who love you'*_",
+            "ref": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4",
+            "properties": {
+              "description": "Please make your final choice of your preferred style, font and colour scheme, or scroll back up to see the options again",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "supersized": false,
+              "show_labels": true,
+              "choices": [
+                {
+                  "id": "1llgMQbS00kj",
+                  "ref": "d0884de5-148f-4767-a82f-e94daed4ccc1",
+                  "label": "Orange",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/kzQsL2MF7Djz",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "fj7tn6tSlxH8",
+                  "ref": "eae312c2-cd1a-4d04-a2fd-6535db0f1770",
+                  "label": "Green",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/5W8xdqyChRRD",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "m31Oqjt2r5bb",
+                  "ref": "dfabf311-5187-475d-bf6c-9df82abadc55",
+                  "label": "Blue",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/LpLSskQVuahq",
+                    "properties": {}
+                  }
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "picture_choice"
+          },
+          {
+            "id": "uvi0b49aO6BC",
+            "title": "You can choose from three design options. Please click through all designs and then choose the one you prefer.\n\nTitle\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\n\nOption A: Orange",
+            "ref": "b0489d1e-e0d7-450a-9dfb-7fefc7f2251e",
+            "properties": {
+              "button_text": "Second design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/wpRVHX8irHbx"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/wpRVHX8irHbx",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Rl6bfwxUM2mI",
+            "title": "Title\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption B: Green",
+            "ref": "b30ff125-0860-47b4-8da8-1993d8d6769a",
+            "properties": {
+              "button_text": "Third design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/BmJfd8Zv8iVA"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/BmJfd8Zv8iVA",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "UDuwQPAw4wKa",
+            "title": "Title\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption C: Blue",
+            "ref": "d757ad8c-8c22-4228-9235-ac24693aeccc",
+            "properties": {
+              "button_text": "See all three choices",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/55MGT7HerfyQ"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/55MGT7HerfyQ",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "5r7drH73nZTV",
+            "title": "Title\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_ ",
+            "ref": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e",
+            "properties": {
+              "description": "Please make your final choice of your preferred style, font and colour scheme, or scroll back up to see the options again",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "supersized": false,
+              "show_labels": true,
+              "choices": [
+                {
+                  "id": "PhZZkhfhXs0O",
+                  "ref": "1bf8cd28-b4b7-490a-9ebb-5b20e2eab6e9",
+                  "label": "Orange",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/DVLMpX9VGeD7",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "lvJjv57xY6zr",
+                  "ref": "5393addc-260a-4874-8d4e-14181cdfaca4",
+                  "label": "Green",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/jgRUFXgg2nBJ",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "2RYRY70XQRho",
+                  "ref": "b31c17ef-8ef4-466a-ae0e-fcf2e27429fb",
+                  "label": "Blue",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/DwcuPwPh6rgM",
+                    "properties": {}
+                  }
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "picture_choice"
+          },
+          {
+            "id": "4yBK8h4Uhm5I",
+            "title": "You can choose from three design options. Please click through all designs and then choose the one you prefer.\n\nTitle\n_*'The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption A: Orange",
+            "ref": "50218ed7-d75f-420a-aea3-8b0b060db830",
+            "properties": {
+              "button_text": "Second design option",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/nDrvSUduE22c"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/nDrvSUduE22c",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Dc7Bp1Jg6Nqh",
+            "title": "Title\n_*'The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption B: Green",
+            "ref": "119cebe2-409b-46e9-868e-8da77a2fc534",
+            "properties": {
+              "button_text": "Third design option",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/R5hbWU3Ry2Ep"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/R5hbWU3Ry2Ep",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "nly82tFZbcjI",
+            "title": "Title\n_*'The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption C: Blue",
+            "ref": "780c8dc7-9c04-49bb-8aa3-f6cafb99a81e",
+            "properties": {
+              "button_text": "See all three choices",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/jiXH3PCVSL6X"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/jiXH3PCVSL6X",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "k4f5VT6fZowE",
+            "title": "Title\n_*'The fabulous story of how*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__* came into this world'*_ ",
+            "ref": "e755035c-7f91-4c0f-bebc-544e68313f7f",
+            "properties": {
+              "description": "Please make your final choice of your preferred style, font and colour scheme, or scroll back up to see the options again",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "supersized": false,
+              "show_labels": true,
+              "choices": [
+                {
+                  "id": "Mw0caOdA7lkZ",
+                  "ref": "bd8503da-db20-4d8d-8b3d-89a98d31533d",
+                  "label": "Orange",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/bVt6FX3XNGvs",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "Wu0lXwlYzZfp",
+                  "ref": "31d1e171-6a33-4e16-a3f2-e1038816e2c6",
+                  "label": "Green",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/eBZyq5nXC24H",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "uGgGAi8m2wG8",
+                  "ref": "6dcc0b56-2a30-47bf-a746-4975ce6888ce",
+                  "label": "Blue",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/MacVhSrN8pRN",
+                    "properties": {}
+                  }
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "picture_choice"
+          },
+          {
+            "id": "e7j5eKQjXJ4r",
+            "title": "Please upload a photo of {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} for the cover. ",
+            "ref": "58462893-b6ec-45b5-b4c2-3346ff15c601",
+            "properties": {},
+            "validations": {
+              "required": true
+            },
+            "type": "file_upload"
+          },
+          {
+            "id": "q4lmXVOXb8XK",
+            "title": "In our automated book builder version you will be able to see the cover at this point and able to enlarge and position the image",
+            "ref": "b3c41bad-7ba6-4ae9-a179-b6aafb0cf441",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "WiRIfEqSfrDr",
+      "title": "Dedication",
+      "ref": "9021ec30-8c67-44f3-86e7-65e3ec431b13",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "mmX091yjDcI2",
+            "title": "Would you like the following dedication at the beginning of the book?",
+            "ref": "107c90e9-606b-4e50-a0f1-346e5b60beb7",
+            "properties": {
+              "description": "_*'Dear*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*_\n_*Like every person, every family has its own story, which shapes who we are. This book is for you, and tells the story of how our family came to be.'*_\n"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "yes_no"
+          },
+          {
+            "id": "D68pirSIbNvR",
+            "title": "Is the book a birthday present for {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}? And would you like to include this in the dedication? ",
+            "ref": "e2fd4852-fadc-430b-a498-dbbd86748897",
+            "properties": {},
+            "validations": {
+              "required": true
+            },
+            "type": "yes_no"
+          },
+          {
+            "id": "WsHYIdcZRRVw",
+            "title": "For which birthday is it? ",
+            "ref": "4261f244-ea55-4302-b62a-b4f1c6772875",
+            "properties": {
+              "description": "Please bear in mind that the book is written with preschoolers in mind",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "MBx4ElCinBF9",
+                  "ref": "48cba852-191e-4b79-a53b-ee66f1e45996",
+                  "label": "first birthday"
+                },
+                {
+                  "id": "mzFAu0eptGqW",
+                  "ref": "000e3d93-5253-44e1-8d42-ce8bb6f6cb99",
+                  "label": "second birthday"
+                },
+                {
+                  "id": "wFPEZMimKgig",
+                  "ref": "de806c92-d931-4bfe-800d-6c7ea20eced6",
+                  "label": "third birthday"
+                },
+                {
+                  "id": "e0snKIFcgVGn",
+                  "ref": "842f904e-690d-49dc-afd9-61bb12edc859",
+                  "label": "fourth birthday"
+                },
+                {
+                  "id": "RjhZNT9nV0LQ",
+                  "ref": "31bc9216-1bd8-45f2-8fc5-0e75bb3b86f6",
+                  "label": "fifth birthday"
+                },
+                {
+                  "id": "jgnEwIkeBZnj",
+                  "ref": "830f20fe-5cd5-4b4c-acaa-4b4800e5fc07",
+                  "label": "sixth birthday"
+                },
+                {
+                  "id": "u41JLgVeY8Jj",
+                  "ref": "45601f7a-00dd-4df9-87e6-72a46aa1716c",
+                  "label": "seventh birthday"
+                },
+                {
+                  "id": "MTEY6DGGo8tE",
+                  "ref": "413e3c63-7774-4e61-97ff-ed5d96317edc",
+                  "label": "eighth birthday"
+                },
+                {
+                  "id": "1zNNyluzESbS",
+                  "ref": "e5fc072b-b716-4302-b558-031616b880a0",
+                  "label": "ninth birthday"
+                },
+                {
+                  "id": "6YdRVmLwG0nX",
+                  "ref": "375f9c04-b1d0-4d93-8756-cbd05832a1fa",
+                  "label": "tenth birthday"
+                },
+                {
+                  "id": "JTOMJ3NrzvUB",
+                  "ref": "c1cef3af-9ea1-471e-9126-3bfadf593526",
+                  "label": "eleventh birthday"
+                },
+                {
+                  "id": "GPmYoMwQ6b39",
+                  "ref": "73d0972f-4e03-444e-9538-d75e8e7c1e8f",
+                  "label": "twelfth birthday"
+                },
+                {
+                  "id": "UoHI9ZDyQLlb",
+                  "ref": "6a8edf42-117a-4491-97b6-9ec44a7834b6",
+                  "label": "thirteenth birthday"
+                },
+                {
+                  "id": "OhhW0M8VBwlJ",
+                  "ref": "6c1bf444-f98d-4f8e-a14d-51beffcfdd41",
+                  "label": "fourteenth birthday"
+                },
+                {
+                  "id": "ju3xBqv5UBfi",
+                  "ref": "7ccaed05-df4f-4f17-b211-d921f021248f",
+                  "label": "fiftheenth birthday"
+                },
+                {
+                  "id": "AmglY26tt5U3",
+                  "ref": "ef9fe284-d21b-4943-9ba4-6677735641b0",
+                  "label": "sixteenth birthday"
+                },
+                {
+                  "id": "Y0nsTJ1s3JNA",
+                  "ref": "bce7f250-611f-40f0-a042-d5ade635975d",
+                  "label": "seventeenth birthday"
+                },
+                {
+                  "id": "B5O6LGkHmITp",
+                  "ref": "740d4309-7f5d-4038-bb4e-1dfa1b75cd11",
+                  "label": "eighteenth birthday"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "IoQi6sGCitON",
+            "title": "How would you like to sign the dedication? ",
+            "ref": "ded50810-68c8-473f-84a6-b7baa86b5b9c",
+            "properties": {
+              "description": "For example: 'Your Mummy and Daddy', 'Your Mom', 'Your loving parents', or 'Sam and Simon'\n\nPlease note that you can add your full names in the next question"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "FY6LzrGHrjcT",
+            "title": "Would you like to include your (and your partner's if you have one) given and/or full names under the dedication?",
+            "ref": "44d8bd1e-2308-463d-b279-348a88a1a176",
+            "properties": {},
+            "validations": {
+              "required": true
+            },
+            "type": "yes_no"
+          },
+          {
+            "id": "IYHnLc8RK9w0",
+            "title": "Please add your (and your partner's if you have one) given/full names, here",
+            "ref": "9ec5e110-7054-4f43-acf2-69b15106727a",
+            "properties": {
+              "description": "For example: 'Jonathan Williams and Aamaal Williams-Morad', or 'Celeste and Tracy'"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "2GmvFnhMAjW5",
+            "title": "Please let us know your location in a way {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} would understand",
+            "ref": "854211df-d25c-4be5-9bcf-4e18734f4a1a",
+            "properties": {
+              "description": "For example 'Winchester', 'Hackney', or 'Twinkle Cottage'"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "hheM7VVt3zJ1",
+            "title": "Which month would you like to put? ",
+            "ref": "c10c27d1-3119-49be-96ee-79e8c6fb38e0",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "fJyOpEeGHBEL",
+                  "ref": "eaea182a-3068-4d09-beab-af47d7f0fc14",
+                  "label": "January"
+                },
+                {
+                  "id": "130daiyYR22L",
+                  "ref": "c4add783-1421-4d73-b97f-eff1951a5e50",
+                  "label": "February"
+                },
+                {
+                  "id": "fei5wjLaYD4U",
+                  "ref": "fb871478-2abe-4178-bda8-cc2e09adf8b6",
+                  "label": "March"
+                },
+                {
+                  "id": "w24W2NxNAnVV",
+                  "ref": "09642a37-b878-4b58-ba27-5cee87648c9f",
+                  "label": "April"
+                },
+                {
+                  "id": "v09ZkM4n4o4C",
+                  "ref": "37bc3c37-6f82-457e-a735-fd6adc44e716",
+                  "label": "May"
+                },
+                {
+                  "id": "arl43SrZHwi6",
+                  "ref": "efa150c6-1005-49d5-90f9-95d5618a8e90",
+                  "label": "June"
+                },
+                {
+                  "id": "lAZPApPBJO4N",
+                  "ref": "17572eaf-180c-43d8-bc83-2d3ec5f6ced7",
+                  "label": "July"
+                },
+                {
+                  "id": "jMxwUOENRgFK",
+                  "ref": "4a75e98b-f1da-4aa5-b559-cddcf1f592d4",
+                  "label": "August"
+                },
+                {
+                  "id": "vlMoIVk5yYkw",
+                  "ref": "b3d9748b-cbeb-449c-83e8-4334c3a8df1f",
+                  "label": "September"
+                },
+                {
+                  "id": "cvKppmC2hcBr",
+                  "ref": "09df35f6-a953-4890-bf69-43173f179263",
+                  "label": "October"
+                },
+                {
+                  "id": "kFYY1hVfv8VG",
+                  "ref": "2c0b59d2-4039-41cd-9b9a-98cb9567df75",
+                  "label": "November"
+                },
+                {
+                  "id": "gbWEAX0zvfk7",
+                  "ref": "d6df941d-25ba-4220-8656-ec4ab403b422",
+                  "label": "December"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "qzinn6NEyShS",
+            "title": "And which year? ",
+            "ref": "7d4d326e-bb3e-4fec-8fa3-1e15278dc076",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "LEBMQipAqaKC",
+                  "ref": "4f94a177-b0e5-44fe-9b5a-f6d83d992b40",
+                  "label": "2020"
+                },
+                {
+                  "id": "4VRlaajxGBaY",
+                  "ref": "47935211-a6f8-44d0-bbeb-0403f0fbd3c2",
+                  "label": "2021"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "lH1ZZr1LF160",
+            "title": "The dedication is going to read \n\n_*'Dear*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*,*_\n\n_*Like every person, every family has its own story, which shapes who we are. This book is for you, and tells the story of how our family came to be.'*_\n\n_*{{field:ded50810-68c8-473f-84a6-b7baa86b5b9c}}*__*,*_\n_*{{field:9ec5e110-7054-4f43-acf2-69b15106727a}}*__*,*_ _*{{field:854211df-d25c-4be5-9bcf-4e18734f4a1a}}*__*,*_ _*{{field:c10c27d1-3119-49be-96ee-79e8c6fb38e0}}*_ _*{{field:7d4d326e-bb3e-4fec-8fa3-1e15278dc076}}*__*'*_\n",
+            "ref": "49affcf4-a20c-40c6-9888-9b3a33e8ecd6",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "NuwcXTAk7Nh5",
+                  "ref": "38aae509-9813-49c3-9fef-e27f8783dc93",
+                  "label": "That's right"
+                },
+                {
+                  "id": "SXnyiU8z0C4b",
+                  "ref": "062fb784-f273-4a75-8a38-62932fc22e8b",
+                  "label": "Click here or type 'B' to correct"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "Nk6Q2AvzGYvd",
+            "title": "The dedication is going to read \n\n_*'Dear*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*,*_\n\n_*Like every person, every family has its own story, which shapes who we are. This book is for you, on your*_ _*{{field:4261f244-ea55-4302-b62a-b4f1c6772875}}*__*, and tells the story of how our family came to be.*_\n\n_*{{field:ded50810-68c8-473f-84a6-b7baa86b5b9c}}*__*,*_\n_*{{field:9ec5e110-7054-4f43-acf2-69b15106727a}}*__*,*_ _*{{field:854211df-d25c-4be5-9bcf-4e18734f4a1a}}*__*,*_ _*{{field:c10c27d1-3119-49be-96ee-79e8c6fb38e0}}*_ _*{{field:7d4d326e-bb3e-4fec-8fa3-1e15278dc076}}*__*'*_\n",
+            "ref": "1441c9c4-684a-441d-bd28-daa973788aa8",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "wo6hredYCMQ7",
+                  "ref": "895b29f3-a974-45cf-a7e1-4da7b49391d2",
+                  "label": "That's right"
+                },
+                {
+                  "id": "fDYlLlraD89G",
+                  "ref": "ed0553de-645a-454e-9fb1-f661f1bb4b46",
+                  "label": "Click here or type 'B' to correct"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "DGo9HjmEXy2Q",
+      "title": "Fielding questions",
+      "ref": "08f7bc41-2ffa-4b90-9f0c-6860e4c5f50a",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "VSyWvI7v2jZy",
+            "title": "Families come in all shapes and sizes, so we'll now ask you a few questions that will allow us to put a questionnaire together that suits your family",
+            "ref": "518e5cef-0441-42cc-9080-7130a8529ebf",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "7wqSWyjFPuAJ",
+            "title": "What is your family set up? ",
+            "ref": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "o5N54IjdW9YB",
+                  "ref": "c979af4e-f9b8-43de-85b3-229d0fa950ec",
+                  "label": "Two-parent family with same partner, then and now (we planned to have this child together and are still together)"
+                },
+                {
+                  "id": "hGgUI9y12syu",
+                  "ref": "0aacdb37-70a8-4ee4-b7ca-388eb634c24a",
+                  "label": "One-parent family "
+                },
+                {
+                  "id": "3iXT4xU2A47k",
+                  "ref": "42757d78-2a1d-4b87-9969-18183db4154f",
+                  "label": "Any other constellation, including co-parenting set-ups (please also choose this option if a gamete donor, surrogate, ex- or new partner is involved in the parenting)"
+                },
+                {
+                  "id": "DbsEXqszYPdR",
+                  "ref": "62ee1f66-6582-4b58-b2c9-27fff4398dca",
+                  "label": "I'm not sure"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "AFN4DeabVXAv",
+            "title": "*What is a 'two-parent family with the same partner then and now'?*\n\nIt means that the child, whose book it is, was conceived with your current partner and you are the only people the child considers your parents. You can include children from previous relationships though.\n\nThe book gives some background of both parents, including siblings and grandparents (if you so wish), and tells a linear story of how you met, wished for a child and how your child came to be. It then continues with the child's first few years and the family's life.\n\nIf, for example, a donor or surrogate is also considered by the child as a parent, please choose 'any other constellation'\n",
+            "ref": "fa92a3ef-3ca2-40cc-953e-c72ff63c4cac",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "Xk3lWpIU1aN0",
+            "title": "*What do we mean by one-parent family?*\n\nThis version is designed for one-parent families, regardless if they were planned as such, or if there was a partner who is now completely out of the picture. \n\nIt also tells your family's story in a linear way, starting with your parents if you so wish, work and hobbies. It moves onto how the child came to be, as well as the child's first few years and the family's life.\n\nPlease choose the 'any other constellation' if another parent and/or donor is involved in the parenting - even if the contact is sporadic and/or short, another parent is an important piece of the child's identity and psychologists unanimous that honouring this is in the best interest of the child.",
+            "ref": "a435a608-ee23-42ac-bd72-957aaf052c61",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "8QcDTUZYwIQt",
+            "title": "*When should I choose any other constellation?*\n\nThis version celebrates that families come in all shapes and sizes. It's for you if for example a donor is involved in the parenting, if you don't live with the partner you conceived your child with and/or if have met somebody new, or if grandparents regularly care for the child. This version is the most flexible and also works if you're making this book for a step or grand child. \n\nRather than telling your story in a linear way, it focusses on the child and the people who are close to them, and works more like a cast list, choosing to focus on the people who shape the child's life.",
+            "ref": "53d67787-926b-456a-a80d-2ae968457346",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "VtZFC6DTNasN",
+            "title": "How did {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} come into this world?",
+            "ref": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "Hb64NBmvhNil",
+                  "ref": "1ff6804b-b688-4b85-b0d1-1f4eca11a3af",
+                  "label": "Carried by one of the people who are parenting them now"
+                },
+                {
+                  "id": "1nq49VlXtBrM",
+                  "ref": "2afd7161-1fdc-4174-a20d-b5d01fccc06f",
+                  "label": "Carried by a surrogate (and adopted at birth)"
+                },
+                {
+                  "id": "FrI6qQK7In7A",
+                  "ref": "72ab9942-6984-44cb-a2a4-05946aee7c8f",
+                  "label": "Adopted"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "SpasFdnz3PRj",
+            "title": "We would love to work with you, but please be aware that our book would be in addition to, and not instead of, an adoption life book. Creating an adoption life book is an ongoing and important process, involving adopters, foster parents, social worker and the adopted child. \n\n*For more information and help with an adoption life book, you can visit*\n*https://ccsadoption.org/sharing-stories/*",
+            "ref": "d41b1b65-f94d-458d-a179-25b06d779d37",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "hrhXYSz08lxc",
+            "title": "Our questionnaires come in two versions - conventional and genderless language. \n\n• The conventional version uses words like 'mother', sister/brother, and aunt.\n\n• The genderless version replaces these with words, such as 'birthing parent', 'sibling', and auncle.\n\nPlease choose genderless language if either of you, your child, or close family members are non-binary",
+            "ref": "61fcce41-d798-4477-927f-80376057b1be",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "mN12wvXaSpwI",
+            "title": "Would you like to use conventional or genderless language?",
+            "ref": "bd8e6a4c-8e89-4159-a8d2-e8f83d102c55",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "hIL2bmab5R2c",
+                  "ref": "978776d6-1fcf-442e-89c8-87ca574ff005",
+                  "label": "Conventional language (mother, brother/sister, he/she, aunt, etc)"
+                },
+                {
+                  "id": "8f2AAuZbmv06",
+                  "ref": "53835604-9b1e-4b9d-9a20-59e287302d11",
+                  "label": "Genderless language (birthing parent, sibling, auncle, they/them, etc)"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "OAfzvFjn5OgT",
+            "title": "We're really sorry, but we're currently still working on our genderless versions, which we hope will be up and running soon. Please choose either conventional language, or check back soon.",
+            "ref": "ca1c3819-a313-4abe-bc24-150fe214cfe2",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "pfrjfwsxCVlh",
+      "title": "A few more details",
+      "ref": "ed753085-fa95-45dc-a0aa-40b5798f37b8",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "NVaWq2wF6AmF",
+            "title": "Before you can move onto the first chapter, we'll just need a few more details about you and your family so that we can personalise the questionnaire",
+            "ref": "3525b856-af00-4134-a4cb-947391d74266",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "Z8p6s1NGsfSv",
+            "title": "What is your first name?",
+            "ref": "f9b233e2-8036-4d0a-a249-ee28b99c11d0",
+            "properties": {},
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "kYqKaRjMVnoU",
+            "title": "What pronouns do you use? ",
+            "ref": "249912f9-0f65-4602-b146-1000ff270a6b",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "qRLi0B6pOXKH",
+                  "ref": "6ff8b69f-a96e-4ad0-9e03-b56077cfd0cb",
+                  "label": "she/her/hers"
+                },
+                {
+                  "id": "p4ZjD5nyKkaX",
+                  "ref": "fdcfc5e9-8c8c-4229-9f1f-07cfe24478dd",
+                  "label": "he/his/him"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "5GPbZ0fmcwdF",
+            "title": "And what does {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} call you, or how would you like to be called?",
+            "ref": "593ab6c7-6873-4201-9dff-3cec92022b96",
+            "properties": {
+              "description": "For example: 'Mummy', 'Dad', or 'Mom'"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "iFDCz3PJM95h",
+            "title": "And what's your partner's first name?",
+            "ref": "c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d",
+            "properties": {},
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "rXltumb6MBa3",
+            "title": "What pronouns do they use?",
+            "ref": "186903a3-0e02-4cc9-8cde-a9d2aac5b0a2",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "SkhzajS5Mn18",
+                  "ref": "57c90cfe-4fe9-476e-80c4-a1834df10b9a",
+                  "label": "she/her/hers"
+                },
+                {
+                  "id": "bhccupxsjQpm",
+                  "ref": "f1d0dabd-1ac7-43de-b79c-4751c77c99c3",
+                  "label": "he/his/him"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "vNQlP0AG9j9u",
+            "title": "And what does {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} call {{field:c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d}}?",
+            "ref": "54ae5ff6-c464-4f88-af22-18b821a8e717",
+            "properties": {
+              "description": "For example 'Daddy', 'Mama', or 'Dad'"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "Qymc54NqbkGH",
+      "title": "Would you like to check the answers once more by using the *little arrow buttons* on the right below? When you're finished, just click the submit button\n",
+      "ref": "a0fd03da-5026-46f0-b3fc-301aa108c458",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": true
+      },
+      "type": "statement"
+    }
+  ],
+  "logic": [
+    {
+      "type": "field",
+      "ref": "c8436a01-7c36-454b-aa67-a6c96f786555",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "13afc69f-6f18-435c-ad36-43bfbe4302b4"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "c8436a01-7c36-454b-aa67-a6c96f786555"
+              },
+              {
+                "type": "choice",
+                "value": "646c0dac-10f5-48d8-bcf1-66991e91acb7"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "b0489d1e-e0d7-450a-9dfb-7fefc7f2251e"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "c8436a01-7c36-454b-aa67-a6c96f786555"
+              },
+              {
+                "type": "choice",
+                "value": "fc1aa2ec-c7de-4cc8-8582-ad4687298ce4"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "50218ed7-d75f-420a-aea3-8b0b060db830"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "c8436a01-7c36-454b-aa67-a6c96f786555"
+              },
+              {
+                "type": "choice",
+                "value": "2eafbcc5-445a-45e8-9465-0c911733dbbd"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "e2fd4852-fadc-430b-a498-dbbd86748897",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "4261f244-ea55-4302-b62a-b4f1c6772875"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "e2fd4852-fadc-430b-a498-dbbd86748897"
+              },
+              {
+                "type": "constant",
+                "value": true
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "ded50810-68c8-473f-84a6-b7baa86b5b9c"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "54ae5ff6-c464-4f88-af22-18b821a8e717"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "bd8e6a4c-8e89-4159-a8d2-e8f83d102c55"
+              },
+              {
+                "type": "choice",
+                "value": "53835604-9b1e-4b9d-9a20-59e287302d11"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "186903a3-0e02-4cc9-8cde-a9d2aac5b0a2"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "44d8bd1e-2308-463d-b279-348a88a1a176",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "9ec5e110-7054-4f43-acf2-69b15106727a"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "44d8bd1e-2308-463d-b279-348a88a1a176"
+              },
+              {
+                "type": "constant",
+                "value": true
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "854211df-d25c-4be5-9bcf-4e18734f4a1a"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "7d4d326e-bb3e-4fec-8fa3-1e15278dc076",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "49affcf4-a20c-40c6-9888-9b3a33e8ecd6"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "e2fd4852-fadc-430b-a498-dbbd86748897"
+              },
+              {
+                "type": "constant",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "1441c9c4-684a-441d-bd28-daa973788aa8"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "1441c9c4-684a-441d-bd28-daa973788aa8",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "1441c9c4-684a-441d-bd28-daa973788aa8"
+              },
+              {
+                "type": "choice",
+                "value": "895b29f3-a974-45cf-a7e1-4da7b49391d2"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "107c90e9-606b-4e50-a0f1-346e5b60beb7"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "f9b233e2-8036-4d0a-a249-ee28b99c11d0",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "593ab6c7-6873-4201-9dff-3cec92022b96"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "bd8e6a4c-8e89-4159-a8d2-e8f83d102c55"
+              },
+              {
+                "type": "choice",
+                "value": "53835604-9b1e-4b9d-9a20-59e287302d11"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "249912f9-0f65-4602-b146-1000ff270a6b"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "593ab6c7-6873-4201-9dff-3cec92022b96",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+              },
+              {
+                "type": "choice",
+                "value": "c979af4e-f9b8-43de-85b3-229d0fa950ec"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "a0fd03da-5026-46f0-b3fc-301aa108c458"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+              },
+              {
+                "type": "choice",
+                "value": "0aacdb37-70a8-4ee4-b7ca-388eb634c24a"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "a0fd03da-5026-46f0-b3fc-301aa108c458"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+              },
+              {
+                "type": "choice",
+                "value": "42757d78-2a1d-4b87-9969-18183db4154f"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "107c90e9-606b-4e50-a0f1-346e5b60beb7",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "e2fd4852-fadc-430b-a498-dbbd86748897"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "107c90e9-606b-4e50-a0f1-346e5b60beb7"
+              },
+              {
+                "type": "constant",
+                "value": true
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "61fcce41-d798-4477-927f-80376057b1be"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc"
+              },
+              {
+                "type": "choice",
+                "value": "1ff6804b-b688-4b85-b0d1-1f4eca11a3af"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "61fcce41-d798-4477-927f-80376057b1be"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc"
+              },
+              {
+                "type": "choice",
+                "value": "2afd7161-1fdc-4174-a20d-b5d01fccc06f"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "d41b1b65-f94d-458d-a179-25b06d779d37"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc"
+              },
+              {
+                "type": "choice",
+                "value": "72ab9942-6984-44cb-a2a4-05946aee7c8f"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "49affcf4-a20c-40c6-9888-9b3a33e8ecd6",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "49affcf4-a20c-40c6-9888-9b3a33e8ecd6"
+              },
+              {
+                "type": "choice",
+                "value": "38aae509-9813-49c3-9fef-e27f8783dc93"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "107c90e9-606b-4e50-a0f1-346e5b60beb7"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+              },
+              {
+                "type": "choice",
+                "value": "c979af4e-f9b8-43de-85b3-229d0fa950ec"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+              },
+              {
+                "type": "choice",
+                "value": "0aacdb37-70a8-4ee4-b7ca-388eb634c24a"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "779e9f1f-245d-4e9b-aa13-67e18ecf84dc"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+              },
+              {
+                "type": "choice",
+                "value": "42757d78-2a1d-4b87-9969-18183db4154f"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "bd8e6a4c-8e89-4159-a8d2-e8f83d102c55",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "ca1c3819-a313-4abe-bc24-150fe214cfe2"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "bd8e6a4c-8e89-4159-a8d2-e8f83d102c55"
+              },
+              {
+                "type": "choice",
+                "value": "53835604-9b1e-4b9d-9a20-59e287302d11"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "3525b856-af00-4134-a4cb-947391d74266"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "e755035c-7f91-4c0f-bebc-544e68313f7f",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "4baff887-61e1-40b5-ae84-344bfd9f6883",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "b2be5075-8e82-4b85-a79f-fffb5339feea"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "b3c41bad-7ba6-4ae9-a179-b6aafb0cf441",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "107c90e9-606b-4e50-a0f1-346e5b60beb7"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "d41b1b65-f94d-458d-a179-25b06d779d37",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "61fcce41-d798-4477-927f-80376057b1be"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "54ae5ff6-c464-4f88-af22-18b821a8e717",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "a0fd03da-5026-46f0-b3fc-301aa108c458"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "53d67787-926b-456a-a80d-2ae968457346",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "3568f1c7-c59b-43a5-ae26-cb92e33a2a25"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "ca1c3819-a313-4abe-bc24-150fe214cfe2",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "bd8e6a4c-8e89-4159-a8d2-e8f83d102c55"
+            }
+          },
+          "condition": {
+            "op": "always",
+            "vars": []
+          }
+        }
+      ]
+    }
+  ],
+  "_links": {
+    "display": "https://thisstory.typeform.com/to/cMsCFF9a"
+  }
+}

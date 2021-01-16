@@ -58,8 +58,7 @@ function exec_init_thread(){
 // no thread so far
 // load of the survey 'Cover and Preface'
 // the kickoff of the survey
-
-     $survey = get_survey_by_title(Proc::KICKOFF_SURVEY)[0];
+     $survey = get_survey_by_title(Proc::KICKOFF_SURVEY_TITLE)[0];
      if(is_null($survey)){
           $message = esc_html(__('no cover and preface survey', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));

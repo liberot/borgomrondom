@@ -10,7 +10,7 @@ $res = init_log('cli-test', []);
 print_r($res);
 print PHP_EOL;
 
-print_r(add_base_to_chunk(base64_encode(' stock in po :: mexico ')));
+print_r(add_base_to_chunk(base64_encode(' here we go eazy go lucky :: around the world ')));
 print PHP_EOL;
 
 print_r('bye');
