@@ -11,7 +11,6 @@ function setRedirect(ref){
           question_id: quid,
           survey_id: suid
      }
-     console.log(quid, suid);
      this.postCommand(data);
 }
 function cleanSurveyPage(){

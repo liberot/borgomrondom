@@ -415,10 +415,10 @@ function build_question_view(){
      $excerpt = esc_html(__('Reference', 'bookbuilder'));
      $parent = esc_html(__('Group', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
-     $link = esc_html(__('Link', 'bookbuilder'));
+     $redirect = esc_html(__('Redirect', 'bookbuilder'));
      $save_input = esc_html(__('Save', 'bookbuilder'));
      $apply = esc_html(__('Apply', 'bookbuilder'));
-     $no_link = esc_html(__('No Link', 'bookbuilder'));
+     $no_redirect = esc_html(__('No Redirect', 'bookbuilder'));
 
      $href = sprintf('%s?page=questionnaire&edit=survey_printrules&survey_id=%s', Path::SERVICE_BASE, $survey_id);
      echo <<<EOD
@@ -439,7 +439,7 @@ function build_question_view(){
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
-                    <th>{$link}</th>
+                    <th>{$redirect}</th>
                </tr>
           </thead>
 EOD;
@@ -467,7 +467,7 @@ EOD;
 
 // list of surveys
      $survey_titles = get_survey_titles();
-     array_unshift($survey_titles, (object)['ID'=>'no_link', 'post_title'=>$no_link]);
+     array_unshift($survey_titles, (object)['ID'=>'no_redirect', 'post_title'=>$no_redirect]);
 
      foreach($coll as $question){
 
@@ -526,7 +526,7 @@ EOD;
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
-                    <th>{$link}</th>
+                    <th>{$redirect}</th>
                </tr>
           </tfoot>
           </table>
