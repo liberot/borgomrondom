@@ -1112,11 +1112,12 @@ console.log('evalNextPanel(): evalutated logic jumps: ', coll);
                panelRef = coll.links[0];
           }
           else if(null != coll.defaultLink){
-               // panelRef = coll.defaultLink;
+               panelRef = coll.defaultLink;
+console.log('evalNextPanel(): link of type "in all other cses jump to: "', panelRef);
           }
 
-          if(null != panelRef){
 // loads the next panel by its reference index
+          if(null != panelRef){
                this.loadPanel(sectionId, panelRef);
                return true;
           }
