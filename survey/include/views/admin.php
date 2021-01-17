@@ -173,11 +173,11 @@ function build_thread_view(){
 
           case 'delete':
                $thread_id = $_REQUEST['thread_id'];
-               $survey_id = $_REQUEST['survey_id'];
                $client_id = $_REQUEST['client_id'];
                if(!is_null($thread_id) && !is_null($thread_id)){
                     delete_thread_by_id($thread_id, $client_id);
                }
+               build_thread_list_view();
                break;
 
           default:

@@ -36,22 +36,24 @@ console.log('bindSection(): this.model.section: ', this.model.section);
 
      this.evalHiddenFields = function(){
 
-          this.model.redirect = this.model.section.post_content.survey.settings.redirect_after_submit_url;
-console.log('evalHiddenFields(): this.model.redirect: ', this.model.redirect);
+          this.model.linkedSurveyRef = this.model.section.post_content.survey.settings.redirect_after_submit_url;
+console.log('evalHiddenFields(): this.model.linkedSurveyRef: ', this.model.linkedSurveyRef);
 
-          if(null == this.model.redirect){ return false; }
+          if(null == this.model.linkedSurveyRef){ 
+               return false; 
+          }
 
 // mock
-// this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}&partner={{field:c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d}}}}';
-// this.model.redirect = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}';
-// this.model.redirect = '#';
+// this.model.linkedSurveyRef = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}&partner={{field:c7c6ea2f-bc5f-4a13-ab02-ebd6d0e82d8d}}}}';
+// this.model.linkedSurveyRef = '#respondent={{field:f9b233e2-8036-4d0a-a249-ee28b99c11d0}}';
+// this.model.linkedSurveyRef = '#';
 // 
           let temp;
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.section.post_content.toc.refs[0];
 
-          let hash = this.model.redirect.match(/\#(.{1,256})/);
+          let hash = this.model.linkedSurveyRef.match(/\#(.{1,256})/);
 
           if(null == hash || null == hash[1]){ 
                return false; 
@@ -1081,8 +1083,11 @@ console.log('evalRuleR(): result: ', rule.vars[idx]);
 
      this.evalNextPanel = function(){
 console.log('evalNextPanel(): ', this.model.panel);
+
           let redirectSurveyId = this.model.panel.post_content.redirect_survey_id;
-          if(null != redirectSurveyId){
+console.log('evalNextPanel(): redirectSurveyId: ', redirectSurveyId);
+
+          if(null != redirectSurveyId && 'no_redirect' != redirectSurveyId){
                this.loadSectionBySurveyId(redirectSurveyId)
                return true;
           }
@@ -1560,7 +1565,7 @@ let SurveyModel = function(){
      this.requestedPanelRef;
 // hidden fields ------------------------
      this.hiddenFields;
-     this.redirect;
+     this.linkedSurveyRef;
 // --------------------------------------
      this.parseProc;
      this.layoutGroup;
