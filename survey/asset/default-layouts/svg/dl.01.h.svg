@@ -8,7 +8,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:version="1.0 (4035a4f, 2020-05-01)"
-   sodipodi:docname="test-layout.svg"
+   sodipodi:docname="dl.01.h.svg"
    width="1512"
    height="945"
    viewBox="0 0 1512 945"
@@ -19,9 +19,9 @@
      inkscape:window-maximized="0"
      inkscape:window-y="23"
      inkscape:window-x="0"
-     inkscape:cy="472.5"
-     inkscape:cx="756"
-     inkscape:zoom="0.29857056"
+     inkscape:cy="473.72039"
+     inkscape:cx="1101.8093"
+     inkscape:zoom="0.42426407"
      showgrid="false"
      id="namedview4658"
      inkscape:window-height="562"
@@ -60,27 +60,15 @@
     <inkscape:date>2020-12-05</inkscape:date>
   </inkscape:templateinfo>
   <path
-     d="m 258.26799,789.45333 -98.74666,-98.74666 -98.746265,98.74666 98.746265,98.7464 98.74666,-98.7464"
-     style="fill:#b6b0df;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
+     d="M 1095.1186,133.22668 V 687.872 h 132.2827 V 133.22668 h -132.2827"
+     style="fill:#fff880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
      id="path14" />
   <path
-     d="M 157.48,538.64 V 822.10546 H 550.55065 V 538.64 H 157.48"
-     style="fill:#e9e9e9;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
+     d="M 0,-0.00132 V 944.87999 H 755.90531 V -0.00132 H 0"
+     style="fill:#fddecd;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
      id="path16" />
   <path
-     d="m 1243.8947,215.69068 c 49.164,0 89.0186,-39.85467 89.0186,-89.01867 0,-49.163994 -39.8546,-89.01866 -89.0186,-89.01866 -49.164,0 -89.0187,39.854666 -89.0187,89.01866 0,49.164 39.8547,89.01867 89.0187,89.01867"
-     style="fill:#fff880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
-     id="path18" />
-  <path
-     d="M 1062.0467,538.64 V 822.10546 H 1455.12 V 538.64 h -393.0733"
+     d="M 919.37063,225.35334 V 595.74666 H 1403.1466 V 225.35334 H 919.37063"
      style="fill:#e9e9e9;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
-     id="path20" />
-  <path
-     d="M 970.70798,126.67201 V 519.74267 H 1254.1733 V 126.67201 H 970.70798"
-     style="fill:#e9e9e9;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
-     id="path22" />
-  <path
-     d="M 1039.988,732.34133 960.91998,869.2904 h 158.13472 z"
-     style="fill:#ccebae;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.133333"
-     id="path24" />
+     id="path40" />
 </svg>

@@ -247,9 +247,9 @@ function add_cover($thread_id, $section_id, $book_id, $chapter_id){
      $title = esc_sql('no title so far');
      $uuid = psuuid();
 
-     $path = Path::get_mock_dir().'/mock-spread.json';
+     $pth = Path::get_mock_dir().'/mock-spread.json';
 
-     $doc = @file_get_contents($path);
+     $doc = @file_get_contents($pth);
      $doc = json_decode($doc);
      $doc = walk_the_doc($doc);
 
@@ -289,8 +289,8 @@ function add_inside_cover($thread_id, $section_id, $book_id, $chapter_id){
      $title = esc_sql('no title so far');
      $uuid = psuuid();
 
-     $path = Path::get_mock_dir().'/mock-spread.json';
-     $doc = @file_get_contents($path);
+     $pth = Path::get_mock_dir().'/mock-spread.json';
+     $doc = @file_get_contents($pth);
      $doc = json_decode($doc);
      $doc = walk_the_doc($doc);
 
@@ -333,8 +333,8 @@ function add_intro($thread_id, $section_id, $book_id, $chapter_id){
 
      $uuid = psuuid();
 
-     $path = Path::get_mock_dir().'/mock-spread.json';
-     $doc = @file_get_contents($path);
+     $pth = Path::get_mock_dir().'/mock-spread.json';
+     $doc = @file_get_contents($pth);
      $doc = json_decode($doc);
      $doc = walk_the_doc($doc);
 
@@ -407,23 +407,34 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
 // a panel might or not be in a group
      $group_ref = $panel->post_content['conf']['parent'];
 
-// todo: debug: layout_code is
-     $layout_code = 'LLP';
-     $layout_code = 'L';
+// image assets
+     $maxx = 10;
+     $uploaded_assets = get_assets_by_group($section_id, $panel_ref, $group_ref, $maxx);
+
+// layout code :: fix diss
+     $layout_code = '';
+     foreach($uploaded_assets as $asset){
+          $current_layout_code = $asset->post_name;
+          $layout_code = strtoupper(sprintf('%s%s', $layout_code, $current_layout_code));
+     }
+
+// fixdiss :: what are we going to do once there is no assets in the group?
+     if(is_null($layout_code)){ $layout_code = 'L'; }
+     if('' === ($layout_code)){ $layout_code = 'L'; }
 
 // loads layout document
      $doc = get_layout_by_group_and_rule($layout_group, $layout_code)[0];
 
+// loads mock layout document
      if(null == $doc){
-          $path = Path::get_mock_dir().'/mock-spread.json';
-          $doc = @file_get_contents($path);
+          $pth = Path::get_mock_dir().'/mock-spread.json';
+          $doc = @file_get_contents($pth);
           $doc = json_decode($doc);
-          $doc = walk_the_doc($doc);
      }
      else {
           $doc = pagpick($doc->post_content);
-          $doc = walk_the_doc($doc);
      }
+     $doc = walk_the_doc($doc);
 
      if(null == $doc){ 
           return false; 
@@ -442,12 +453,6 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      $doc['assets'][0]['text'] = [$text];
      $doc['assets'][1]['text'] = [];
 
-// image assets
-     $maxx = 10;
-     $indx = 0;
-     $uploaded_assets = get_assets_by_group($section_id, $panel_ref, $group_ref, $maxx);
-// print_r($uploaded_assets);
-
      $assets_of_document = [];
 
      $idx = 0;
@@ -464,7 +469,6 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
           }
 
           $current_asset = $uploaded_assets[$idx];
-// print_r($current_asset);
 
           $asset['src'] = eval_asset_src($current_asset);
           $asset = fit_image_asset_into_slot($doc, $asset);
