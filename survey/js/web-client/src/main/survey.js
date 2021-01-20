@@ -811,7 +811,7 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
 
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
-                        buf2nd+= this.fillTemplate(__mutliple_choice_tmpl__, { 
+                        buf2nd+= this.fillTemplate(__multiple_choice_tmpl__, { 
                              choice: choice, 
                              ref: target[idx].ref 
                         });
@@ -1612,10 +1612,16 @@ let __yes_no_tmpl__ = ""+
           "<a href='javascript:surveyQueue.route(\"select::yesno\", \"{ref}\", \"false\");'>{no}</a>"+
      "</div>";
 
-let __mutliple_choice_tmpl__ = ""+
+
+
+let __multiple_choice_tmpl__ = ""+
      "<div class='choice-output'>"+
-          "<span><a href='javascript:surveyQueue.route(\"confirm::multiple\", \"{ref}\");'>{choice}</a></span>"+
+          "<span class='choice-output-cell'>"+
+               "<a href='javascript:surveyQueue.route(\"confirm::multiple\", \"{ref}\");'>{choice}</a>"+
+          "</span>"+
      "</div>";
+
+
 
 let __picture_choice_tmpl__ = ""+
      "<div class='picture-choice block'>"+
