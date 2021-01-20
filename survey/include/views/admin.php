@@ -419,6 +419,9 @@ function build_questionnaire_edit_view(){
      $save_input = esc_html(__('Save', 'bookbuilder'));
      $apply = esc_html(__('Apply', 'bookbuilder'));
      $no_redirect = esc_html(__('No Redirect', 'bookbuilder'));
+     $spread_view = esc_html(__('Spreads', 'bookbuilder'));
+     $yes = esc_html(__('Yes', 'bookbuilder'));
+     $no = esc_html(__('No', 'bookbuilder'));
 
      $href = sprintf('%s?page=questionnaire&edit=survey_printrules&survey_id=%s', Path::SERVICE_BASE, $survey_id);
      echo <<<EOD
@@ -435,11 +438,12 @@ function build_questionnaire_edit_view(){
           <thead>
                <tr>
                     <th>{$id}</th>
-                    <th>{$excerpt}</th>
+                    <!-- <th>{$excerpt}</th> -->
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
                     <th>{$redirect}</th>
+                    <th>{$spread_view}</th>
                </tr>
           </thead>
 EOD;
@@ -462,7 +466,8 @@ EOD;
           <option value='default1st'>Default Layout Group 1st</option>
           <option value='default2nd'>Default Layout Group 2nd</option>
           <option value='default3rd'>Default Layout Group 3rd</option>
-          <option value='default3rd'>Default Layout Group 5th</option>
+          <option value='default4th'>Default Layout Group 4th</option>
+          <option value='default5th'>Default Layout Group 5th</option>
 EOD;
 
 // list of surveys
@@ -482,13 +487,10 @@ EOD;
                $node_style = 'group-title';
           }
 
-// link reference
+// redirect reference
           $buf = '';
           foreach($survey_titles as $item){
                $selected = '';
-// print_r($item);
-// print_r($question->post_content);
-
                if($item->ID == $question->post_content['redirect_survey_id']){
                     $selected = 'selected';
                }
@@ -496,6 +498,17 @@ EOD;
           }
           $js = 'javascript:setRedirect(this);';
           $link_input = sprintf('<select class="select-redirect question-%s" onchange="%s">%s</select>', $question->ID, $js, $buf);
+
+// spread view
+          $buf = '';
+          $selected = '';
+          if('true' == $question->post_content['show_spread_view']){
+               $selected = 'selected';
+          }
+          $buf.= sprintf('<option name="spread_view" value="%s" %s>%s</option>', 'false', esc_html($selected), esc_html($no));
+          $buf.= sprintf('<option name="spread_view" value="%s" %s>%s</option>', 'true', esc_html($selected), esc_html($yes));
+          $js = 'javascript:setShowSpreadState(this);';
+          $spread_input = sprintf('<select class="select-spread_view question-%s" onchange="%s">%s</select>', $question->ID, $js, $buf);
 
 // parent group of the question
           $parent = '';
@@ -510,11 +523,12 @@ EOD;
 // output
           echo '<tr>';
           echo sprintf('<td>%s</td>', esc_html($question->ID));
-          echo sprintf('<td>%s</td>', esc_html($question->post_excerpt));
+          // echo sprintf('<td>%s</td>', esc_html($question->post_excerpt));
           echo sprintf('<td>%s</td>', esc_html($d));
           echo sprintf('<td>%s</td>', esc_html($parent));
           echo sprintf('<td class="%s">%s</td>', $node_style, esc_html($question->post_content['title']));
           echo sprintf('<td>%s</td>', $link_input);
+          echo sprintf('<td>%s</td>', $spread_input);
           echo '</tr>';
      }
 
@@ -522,11 +536,12 @@ EOD;
           <tfoot>
                <tr>
                     <th>{$id}</th>
-                    <th>{$excerpt}</th>
+                    <!-- <th>{$excerpt}</th> //-->
                     <th>{$date}</th>
                     <th>{$parent}</th>
                     <th>{$title}</th>
                     <th>{$redirect}</th>
+                    <th>{$spread_view}</th>
                </tr>
           </tfoot>
           </table>

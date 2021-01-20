@@ -1,3 +1,20 @@
+function setShowSpreadState(ref){
+     let valu = jQuery(ref).val();
+     let stmp = jQuery(ref).attr('class');
+     let mtch = stmp.match(/question\-(.{1,128})/);
+     if(null == mtch || null == mtch[1]){
+          return false;
+     }
+     let quid = mtch[1];
+     let data = {
+          action: 'exec_set_show_spread_state',
+          question_id: quid,
+          state: valu
+     }
+     console.log(data);
+     // this.postCommand(data);
+}
+
 function setRedirect(ref){
      let suid = jQuery(ref).val();
      let stmp = jQuery(ref).attr('class');

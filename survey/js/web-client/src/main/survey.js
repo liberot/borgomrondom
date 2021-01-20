@@ -717,12 +717,9 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
 
 // the question stored in the title field will not be written
           let question = this.model.panel.post_content.title;
-console.log('question1st:', question);
 
               question = SurveyUtil.trimIncomingString(question);
               question = this.initStringOutput(question);
-console.log('question2nd:', question);
-
               question = null == question ? '' : question;
 
           this.model.panel.post_content.question = question;
@@ -770,6 +767,7 @@ console.log('question2nd:', question);
                case 'email':
                case 'date':
                case 'number':
+
                    buf1st = this.fillTemplate(__short_text_tmpl__, { 
                         description: description,
                         question: question,
@@ -782,16 +780,20 @@ console.log('question2nd:', question);
                    break;
 
                case 'file_upload':
+
                    buf1st = this.fillTemplate(__question_text_tmpl__, { 
                         description: description,
                         question: question
                    });
+
                    buf2nd = this.fillTemplate(__ctrl_tmpl_upload__, { 
                         ref: this.model.panel.post_content.ref, 
                         msg: __survey.__('done') 
                    });
+
                    this.renderFileupload();
                    this.renderAssetCopies();
+
                    if(null == this.model.panel.assetCopies){
                         this.model.panel.assetCopies = [];
                         this.notify(new Message('download::assets', this.model ));
@@ -799,11 +801,14 @@ console.log('question2nd:', question);
                    break;
 
                case 'multiple_choice':
+
                    buf1st = this.fillTemplate(__question_text_tmpl__, { 
                         description: description,
                         question: question
                    });
+
                    target = this.model.panel.post_content.properties.choices;
+
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
                         buf2nd+= this.fillTemplate(__mutliple_choice_tmpl__, { 
@@ -811,15 +816,19 @@ console.log('question2nd:', question);
                              ref: target[idx].ref 
                         });
                    }
+
                    break;
 
                case 'picture_choice':
+
                    buf1st = this.fillTemplate(__question_text_tmpl__, { 
                         description: description,
                         question: question
                    });
+
                    buf2nd = "<div class='row'>";
                    target = this.model.panel.post_content.properties.choices;
+
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
                         let src = target[idx].attachment.href;
@@ -833,6 +842,7 @@ console.log('question2nd:', question);
                    break;
 
                case 'yes_no':
+
                    buf1st = this.fillTemplate(__yes_no_tmpl__, { 
                         description: description,
                         question: question,
@@ -843,59 +853,73 @@ console.log('question2nd:', question);
                    break;
 
                case 'group':
+
                    buf1st = this.fillTemplate(__group_tmpl__, { 
                         description: description,
                         question: question
                    });
+
                    buf2nd = this.fillTemplate(__ctrl_tmpl_group__, { 
                         ref: this.model.panel.post_content.ref, 
                         msg: __survey.__('done') 
                    });
+
                    break;
 
                case 'statement':
+
                    buf1st = this.fillTemplate(__statement_tmpl__, {
                         description: description,
                         question: question,
                         msg: this.model.panel.post_content.properties.button_text,
                         ref: this.model.panel.post_content.ref,
                    })
+
                    break;
 
                case 'question_group':
                case 'website':
                case 'payment':
                case 'legal':
+
                     buf1st = 'No view: ' +this.model.panel.post_content.type;
                     break;
 
                case 'dropdown':
+
                     buf1st = this.fillTemplate(__question_text_tmpl__, { 
                          description: description,
                          question: question
                     });
+
                     buf2nd = this.fillTemplate(__dropdown_row_tmpl__, {});
+
                     for(let idx in this.model.panel.post_content.properties.choices){
                           let label = this.model.panel.post_content.properties.choices[idx].label;
                           let ref = this.model.panel.post_content.properties.choices[idx].ref;
                           buf2nd+= this.fillTemplate(__dropdown_cell_tmpl__, { label: label, ref: ref });
                     }
+
                     break;
 
                case 'opinion_scale':
                case 'rating':
+
                     buf1st = this.fillTemplate(__question_text_tmpl__, { 
                          description: description,
                          question: question 
                     });
+
                     buf2nd = '<div class="opinion-row">';
                     for(let idx = 0; idx < 10; idx++){
                          buf2nd+= this.fillTemplate(__opinion_cell_tmpl__, { idx: idx }); 
                     }
                     buf2nd+= '</div>';
+
                     break;
 
                default:
+
                    buf1st = 'Unknown type: ' +this.model.panel.post_content.type;
           }
 
@@ -903,7 +927,6 @@ console.log('question2nd:', question);
           jQuery('.survey-controls1st').html(__ctrl_tmpl_002__);
           jQuery('.survey-controls2nd').html(buf2nd);
           jQuery('.survey-controls3rd').html(buf3rd);
-          // jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
 
           if(this.isBottomPanel()){
                ref.notify(new Message('bottompanel::reached', this.model.panel ));
@@ -921,25 +944,32 @@ console.log('question2nd:', question);
      }
 
      this.isBottomPanel = function(){
+console.log('isBottomPanel(): ', this.model.section.post_content);
+
           let res = false;
           let target = this.model.section.post_content.toc;
-console.log('isBottomPanel(): ', this.model.section.post_content);
+
           if(this.model.panel.post_content.ref == target.refs[parseInt(target.refs.length -1)]){
                res = true;
           }
+
           return res;
      }
 
      this.isTopPanel = function(){
+
           let res = false;
           let target = this.model.section.post_content.toc;
+
           if(this.model.panel.post_content.ref == target.refs[0]){
                res = true;
           }
+
           return res;
      }
 
      this.bindTopPanel = function(msg){
+
          console.log('bindTopPanel(): ', msg);
      }
 
@@ -1025,8 +1055,12 @@ console.log('this.initImageUpload(): ', files);
                case 'answered':
                     for(let idx in condition.vars){
                          let val = true == condition.vars[idx].result ? 1 : 0;
-                         if(null == condition.result){ condition.result = val; }
-                         else{ condition.result &= val; }
+                         if(null == condition.result){ 
+                              condition.result = val; 
+                         }
+                         else{
+                              condition.result &= val; 
+                         }
                     }
                     break;
 
@@ -1034,8 +1068,12 @@ console.log('this.initImageUpload(): ', files);
                     condition.result = null;
                     for(let idx in condition.vars){
                          let val = true == condition.vars[idx].result ? 1 : 0;
-                         if(null == condition.result){ condition.result = val; }
-                         else{ condition.result |= val; };
+                         if(null == condition.result){
+                              condition.result = val; 
+                         }
+                         else{ 
+                              condition.result |= val; 
+                         };
                     }
                     break;
 
@@ -1179,7 +1217,6 @@ console.log('evalNextPanel(): link of type "in all other cses jump to: "', panel
 console.log('evalLogicJump(): ', toc);
 
 // evaluates the conditions of the logic action jumps
-
           let ref = this;
           let res = {
                defaultLink: null,
@@ -1216,6 +1253,7 @@ console.log('evalLogicJump(): actionpack: ', actionpack);
                });
           }
 
+console.log('evalLogicJump(): res: ', res);
           return res;
      }
 
@@ -1264,8 +1302,6 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
           let sectionId = this.model.section.ID;
 
           let target = this.model.section.post_content.toc;
-
-
 console.log('loadNextPanel(): ', target);
 
           let pos = target.refs.indexOf(this.model.panel.post_content.ref);
@@ -1319,8 +1355,8 @@ console.log('loadPrevPanel(): prev link from default: ', sectionId, panelRef);
      }
 
      this.initSpreads = function(msg){
-console.log('initSpreads(): layoutQueue: ', layoutQueue)
 console.log('initSpreads(): msg: ', msg);
+console.log('initSpreads(): layoutQueue: ', layoutQueue)
 
           if('undefined' == typeof(layoutQueue)){ return false; }
           layoutQueue.route('init::book', { threadId: this.model.thread.ID });
