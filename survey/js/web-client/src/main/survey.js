@@ -692,7 +692,6 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
 // setup of the view components
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
-          jQuery('.survey-controls4th').html('');
           jQuery('.survey-controls5th').html('');
           jQuery('.survey-controls6th').html('');
           jQuery('.survey-assets').html('');
@@ -849,7 +848,7 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
           jQuery('.survey-controls1st').html(__ctrl_tmpl_002__);
           jQuery('.survey-controls2nd').html(buf2nd);
           jQuery('.survey-controls3rd').html(buf3rd);
-          jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
+          // jQuery('.survey-controls4th').html(this.fillTemplate(__ctlr_tmpl_init_spreads__,{init:__survey.__('spreads')})); 
 
           if(this.isBottomPanel()){
                ref.notify(new Message('bottompanel::reached', this.model.panel ));
@@ -1549,8 +1548,10 @@ let __srv_msg_001_tmpl__ = ""+
 let __src_img_011_tmpl__ = ""+
      "<img class='uploaded-asset {indx}' src='{data}'></img>";
 
+/*
 let __ctlr_tmpl_init_spreads__ = ""+
      "<a href='javascript:surveyQueue.route(\"spreads::init\");'>{init}</a>";
+*/
 
 let __opinion_cell_tmpl__ = ""+
      "<div class='opinion-cell'><a href='javascript:surveyQueue.route(\"set::opinion\", \"{idx}\");'>{idx}</a></div>";

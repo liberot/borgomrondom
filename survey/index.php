@@ -1,6 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-define ('BOOKBUILDER_VERSION', 'ronda.fitzko.0.1');
+define ('BOOKBUILDER_VERSION', 'eddmeg.shalomi.0.1');
 define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'bookbuilder', DIRECTORY_SEPARATOR, 'survey'));
 
 require_once('include/config/config.php');

@@ -45,7 +45,6 @@ function build_survey_view(){
                <div class='file-upload'></div>
                <div class='survey-controls2nd'></div>
                <div class='survey-controls3rd'></div>
-               <div class='survey-controls4th'></div>
                <div class='survey-assets'></div>
           </div>
      </div>

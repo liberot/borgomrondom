@@ -419,8 +419,8 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      }
 
 // fixdiss :: what are we going to do once there is no assets in the group?
-     if(is_null($layout_code)){ $layout_code = 'L'; }
-     if('' === ($layout_code)){ $layout_code = 'L'; }
+     if(is_null($layout_code)){ $layout_code = 'X'; }
+     if('' === ($layout_code)){ $layout_code = 'X'; }
 
 // loads layout document
      $doc = get_layout_by_group_and_rule($layout_group, $layout_code)[0];
