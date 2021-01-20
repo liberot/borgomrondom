@@ -99,7 +99,7 @@ body {
      width: 100%;
      display: flex;
      flex-direction: row;
-     justify-conent: center;
+     justify-content: center;
 }
 
 .block {

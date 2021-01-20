@@ -282,7 +282,7 @@ console.log('bindMultipleChoiceInput(): ', msg);
                }
           };
 
-console.log('bindMultipleChoiceInput(): ', sectionId, panelRef, key, val);
+console.log('bindMultipleChoiceInput(): ', 'sectionId: ', sectionId, 'panelRef:', panelRef, 'key: ', key, 'val: ', val);
           this.clearInput(sectionId, panelRef, key, val);
           this.bindInput(sectionId, panelRef, key, val);
      }
@@ -389,28 +389,72 @@ console.log('found the condition at: ', idx);
           return res;
      }
 
+// guess this be obsolette soon
 // returns the value of a referenced answer
-     this.getStoredAnswer = function(key){
-console.log('getStoredAnswer(): key: ', key);
+     this.getStoredAnswer = function(sectionId, panelRef, key){
+console.log('getStoredAnswer(): sectionId: ', sectionId, 'panelRef: ', panelRef, 'key: ', key);
+
           let res = null;
           let target = this.model.thread.post_content.conditions;
 
 console.log('getStoredAnswer(): target: ', target);
           for(let idx in target){
-               if(key == target[idx].key){
+               if(sectionId == target[idx].sectionId){
+                    if(panelRef == target[idx].panelRef){
+                         if(key == target[idx].key){
+                             res = target[idx].val;
+                         }
+                    }
+               }
+          }
+
+console.log('getStoredAnswer(): res: ', res);
+          return res;
+     }
+
+     this.getStoredAnswerByPanelRef = function(ref){
+console.log('getStoredAnswerByPanelRef(): ref: ', ref);
+
+          res = null;
+          let target = this.model.thread.post_content.conditions;
+
+          for(let idx in target){
+               if(ref == target[idx].panelRef){
                    res = target[idx].val;
                }
           }
 
+console.log('getStoredAnswerByPanelRef(): res: ', res);
           return res;
      }
 
+     this.getStoredAnswerByKey = function(key){
+console.log('getStoredAnswerByKey(): key: ', key);
+
+          res = null;
+          let target = this.model.thread.post_content.conditions;
+          for(let idx in target){
+               if(key == target[idx].key){
+                    res = target[idx].val;
+               }
+          }
+
+console.log('getStoredAnswerByKey(): res: ', res);
+          return res;
+     }
+
+
+// sets up: inits: the strings of a 'field or call it 'panel
+// it is mainly questions that consist of previously answered questions
+
      this.initStringOutput = function(istring){
 console.log('initStringOutput(): istring: ', istring);
+
           if(null == istring){
                return;
           }
 
+// evals the fields as {{field:hokuspokus12345}}
           let mtch = istring.match(/{{(.{1,128}?)}}/g);
 
 console.log('initStringOutput(): mtch: ', mtch);
@@ -427,11 +471,12 @@ console.log('initStringOutput(): mtch: ', mtch);
                switch(type){
 
                    case 'field':
-                        val = this.getStoredAnswer(key);
+                        // val = this.getStoredAnswerByKey(key);
+                        val = this.getStoredAnswerByPanelRef(key);
                         break;
 
                    case 'hidden':
-                        val = this.getHiddenFieldValue(key);
+                        val = this.getHiddenFieldVal(key);
                         break;
                }
 
@@ -530,29 +575,33 @@ console.log('getHiddenField(): ', sectionId, panelRef, fieldRef, fieldTitle);
           return null;
      }
 
-     this.getHiddenFieldValue = function(fieldTitle){
+     this.getHiddenFieldVal = function(key){
 
-console.log('getHiddenFieldValue(): fieldTitle: ', fieldTitle);
+console.log('getHiddenFieldVal(): key: ', key);
 
           let target = this.model.thread.post_content.hidden_fields;
-console.log('getHiddenFieldValue(): target: ', target);
+console.log('getHiddenFieldVal(): target: ', target);
 
           let res;
-          let field;
+          let ref;
 
           for(let idx in target){
+
                // there is forwarded reference names within the hidden field names
                //     like {{child::child}}
-               // and then {{chid::ae123}}
+               // and then {{child::ae123}}
+
                if(target[idx].fieldTitle == target[idx].fieldRef){
                     continue;
                }
-               if(fieldTitle == target[idx].fieldTitle){
-                    res = this.getStoredAnswer(target[idx].fieldRef);
+
+               if(key == target[idx].fieldTitle){
+                    ref = target[idx].fieldRef;
+                    res = this.getStoredAnswerByKey(ref);
                }
           }
 
-console.log('getHiddenFieldValue(): res: ', res);
+console.log('getHiddenFieldVal(): res: ', res);
 
           return res;
      }
@@ -668,8 +717,12 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
 
 // the question stored in the title field will not be written
           let question = this.model.panel.post_content.title;
+console.log('question1st:', question);
+
               question = SurveyUtil.trimIncomingString(question);
               question = this.initStringOutput(question);
+console.log('question2nd:', question);
+
               question = null == question ? '' : question;
 
           this.model.panel.post_content.question = question;
@@ -765,6 +818,7 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
                         description: description,
                         question: question
                    });
+                   buf2nd = "<div class='row'>";
                    target = this.model.panel.post_content.properties.choices;
                    for(let idx in target){
                         let choice = SurveyUtil.trimIncomingString(target[idx].label);
@@ -775,6 +829,7 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
                              ref: target[idx].ref 
                         });
                    }
+                   buf2nd+= '<div>';
                    break;
 
                case 'yes_no':
@@ -1020,47 +1075,36 @@ console.log('this.initImageUpload(): ', files);
 // evals the condition of a *leaf
                rule.vars[idx].result = false;
 
-// 
                let sectionId = this.model.section.ID;
                let panelRef = this.model.panel.post_content.ref;
                let key = this.model.panel.post_content.condition_ref;
-               let isStoredAnswerRef = this.isStoredAnswerRef(sectionId, panelRef, key);
-               let storedAnswer = this.getStoredAnswer(key);
+
+               let queriedPanelRef = '';
+               let storedAnswerVal = '';
+
                switch(rule.vars[idx].type){
 
 // evals field reference and the index of the rule
 // as in does the logic action refer to this field
                     case 'field':
-                         rule.vars[idx].result = rule.vars[idx].value == this.model.panel.post_content.ref;
+                         queriedPanelRef = rule.vars[idx].value;
+                         rule.vars[idx].result = rule.vars[idx].value == panelRef;
                          break;
 
 // evals a multiple choice field
-// as in is the logic action condition selected in this field
+// in terms of is the selected value of the condition the stored value of the runtime
                     case 'choice':
-                         rule.vars[idx].result = isStoredAnswerRef;
-
-console.log('evalRuleR(): init: ', rule.vars[idx]);
-console.log('evalRuleR(): key: ', key);
-console.log('evalRuleR(): is stored answer ref: ', key, isStoredAnswerRef);
-
+                         rule.vars[idx].result = rule.vars[idx].value == this.getStoredAnswerByKey(key);
                          break;
 
 // evals a yes no type
 // as in is the answer in this field yes or no
                     case 'constant':
-                         if(true == storedAnswer || 'true' == storedAnswer){
-                              storedAnswer = '1';
-                         }
-                         if(false == storedAnswer || 'false' == storedAnswer){
-                              storedAnswer = '0';
-                         }
+                         storedAnswerVal = this.getStoredAnswerByKey(key);
+                         if(false == storedAnswerVal || 'false' == storedAnswerVal ){ storedAnswerVal = '0'; }
+                         if( true == storedAnswerVal ||  'true' == storedAnswerVal ){ storedAnswerVal = '1'; }
 
-                         rule.vars[idx].result = rule.vars[idx].value == storedAnswer;
-
-console.log('evalRuleR(): init: ', rule.vars[idx]);
-console.log('evalRuleR(): key: ', key);
-console.log('evalRuleR(): stored answer: ', storedAnswer);
-console.log('evalRuleR(): result: ', rule.vars[idx]);
+                         rule.vars[idx].result = rule.vars[idx].value == storedAnswerVal;
 
                          break;
                }
@@ -1538,7 +1582,7 @@ let __mutliple_choice_tmpl__ = ""+
      "</div>";
 
 let __picture_choice_tmpl__ = ""+
-     "<div class='picture-choice'>"+
+     "<div class='picture-choice block'>"+
           "<span><a href='javascript:surveyQueue.route(\"confirm::image\", \"{ref}\");'><img src=\"{src}\"></span>"+
      "</div>";
 
