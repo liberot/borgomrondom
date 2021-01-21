@@ -1132,7 +1132,7 @@ console.log('this.initImageUpload(): ', files);
 // evals a multiple choice field
 // in terms of is the selected value of the condition the stored value of the runtime
                     case 'choice':
-                         rule.vars[idx].result = rule.vars[idx].value == this.getStoredAnswerByKey(key);
+                         rule.vars[idx].result = rule.vars[idx].value == key;
                          break;
 
 // evals a yes no type
