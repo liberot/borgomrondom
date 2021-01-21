@@ -1050,6 +1050,7 @@ console.log('this.initImageUpload(): ', files);
 
           switch(condition.op){
 
+               case 'equal':
                case 'is':
                case 'and':
                case 'answered':
@@ -1192,6 +1193,14 @@ console.log('evalNextPanel(): redirectSurveyId: ', redirectSurveyId);
           let coll = this.evalLogicJump(toc);
 console.log('evalNextPanel(): evalutated logic jumps: ', coll);
 
+          if(null != coll.additions[0]){
+console.log('evalNextPanel(): additions: ', coll.additions);
+console.log('evalNextPanel(): additions: ', coll.additions);
+console.log('evalNextPanel(): additions: ', coll.additions);
+console.log('evalNextPanel(): additions: ', coll.additions);
+console.log('evalNextPanel(): additions: ', coll.additions);
+          }
+
 // evaluates the reference of the next panel to be loaded
           if(null != coll.links[0]){
                panelRef = coll.links[0];
@@ -1220,8 +1229,8 @@ console.log('evalLogicJump(): ', toc);
           let ref = this;
           let res = {
                defaultLink: null,
-               links: [
-               ]
+               links: [],
+               additions: []
           };
 
           let panel = this.model.panel;
@@ -1238,15 +1247,28 @@ console.log('evalLogicJump(): rule: ', rule);
                rule.actions.forEach(function(actionpack){
                     let c = ref.evalCondition(actionpack.condition);
                     if(false != c.result){
-                         switch(actionpack.action){
-                              case 'jump':
 console.log('evalLogicJump(): actionpack: ', actionpack);
+
+                         switch(actionpack.action){
+
+                              case 'jump':
+
                                    if('always' == c.op){
                                         res.defaultLink = actionpack.details.to.value;
                                    }
                                    else{
                                         res.links.push(actionpack.details.to.value);
                                    }
+
+                                   break;
+
+                              case 'add':
+
+                                   res.additions.push({ 
+                                        key: actionpack.details.target.value,
+                                        val: actionpack.details.value.value
+                                   });
+
                                    break;
                          }
                     }
