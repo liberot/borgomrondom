@@ -1199,6 +1199,7 @@ console.log('evalNextPanel(): additions: ', coll.additions);
 console.log('evalNextPanel(): additions: ', coll.additions);
 console.log('evalNextPanel(): additions: ', coll.additions);
 console.log('evalNextPanel(): additions: ', coll.additions);
+alert('todo: addition: '+ coll.additions[0].key +' : ' +coll.additions[0].val);
           }
 
 // evaluates the reference of the next panel to be loaded
