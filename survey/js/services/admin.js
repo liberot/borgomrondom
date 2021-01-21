@@ -1,5 +1,5 @@
 function setShowSpreadState(ref){
-     let valu = jQuery(ref).val();
+     let vlue = jQuery(ref).val();
      let stmp = jQuery(ref).attr('class');
      let mtch = stmp.match(/question\-(.{1,128})/);
      if(null == mtch || null == mtch[1]){
@@ -9,10 +9,9 @@ function setShowSpreadState(ref){
      let data = {
           action: 'exec_set_show_spread_state',
           question_id: quid,
-          state: valu
+          show_spread_state: vlue
      }
-     console.log(data);
-     // this.postCommand(data);
+     this.postCommand(data);
 }
 
 function setRedirect(ref){

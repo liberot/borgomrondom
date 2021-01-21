@@ -144,3 +144,59 @@ function exec_dump_threads(){
 
      echo json_encode(array('res'=>'success', 'message'=>$message, 'dumps'=>$dumps));
 }
+
+add_action('admin_post_exec_init_redirect', 'exec_init_redirect');
+function exec_init_redirect(){
+
+     if(!policy_match([Role::ADMIN])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $question_id = trim_incoming_filename($_POST['question_id']);
+     $survey_id = trim_incoming_filename($_POST['survey_id']);
+
+     $coll = [];
+
+     $coll['rec'] = init_redirect($question_id, $survey_id);
+
+     $message = esc_html(__('redirect is set', 'bookbuilder'));
+     $res = 'success';
+     switch($coll['rec']){
+          case false:
+               $message = esc_html(__('redirect is not set', 'bookbuilder'));
+               $res = 'failed';
+               break;
+     }
+
+     echo json_encode(array('res'=>$res, 'message'=>$message, 'coll'=>$coll));
+}
+
+add_action('admin_post_exec_set_show_spread_state', 'exec_set_show_spread_state');
+function exec_set_show_spread_state(){
+
+     if(!policy_match([Role::ADMIN])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $question_id = trim_incoming_filename($_POST['question_id']);
+     $show_spread_state = trim_incoming_filename($_POST['show_spread_state']);
+
+     $coll = [];
+
+     $coll['rec'] = init_spread_state($question_id, $show_spread_state);
+
+     $res = 'success';
+     $message = esc_html(__('show spread state is set', 'bookbuilder'));
+     switch($coll['rec']){
+          case false:
+               $message = esc_html(__('show spread state is not set', 'bookbuilder'));
+               $res = 'failed';
+               break;
+     }
+
+     echo json_encode(array('res'=>$res, 'message'=>$message, 'coll'=>$coll));
+}

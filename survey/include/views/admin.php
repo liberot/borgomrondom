@@ -502,9 +502,11 @@ EOD;
 // spread view
           $buf = '';
           $selected = '';
-          if('true' == $question->post_content['show_spread_view']){
+
+          if('true' == $question->post_content['show_spread_state']){
                $selected = 'selected';
           }
+
           $buf.= sprintf('<option name="spread_view" value="%s" %s>%s</option>', 'false', esc_html($selected), esc_html($no));
           $buf.= sprintf('<option name="spread_view" value="%s" %s>%s</option>', 'true', esc_html($selected), esc_html($yes));
           $js = 'javascript:setShowSpreadState(this);';
