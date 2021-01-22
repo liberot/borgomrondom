@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="dl-21-01-2021-01.svg"
+   version="1.1"
+   viewBox="0 0 1142.37 737.01"
+   data-name="Layer 1"
+   id="Layer_1">
+  <metadata
+     id="metadata2033">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:current-layer="Layer_1"
+     inkscape:window-maximized="0"
+     inkscape:window-y="23"
+     inkscape:window-x="0"
+     inkscape:cy="368.505"
+     inkscape:cx="571.185"
+     inkscape:zoom="0.53182881"
+     showgrid="false"
+     id="namedview1187"
+     inkscape:window-height="704"
+     inkscape:window-width="1080"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     inkscape:document-rotation="0" />
+  <defs
+     id="defs1120">
+    <style
+       id="style1115">.cls-1,.cls-9{fill:none;}.cls-2{fill:#fff;}.cls-3{fill:#c0bee0;}.cls-4{fill:#fde7da;}.cls-5{fill:#009640;}.cls-6,.cls-7{font-size:18px;fill:#e74310;font-family:AmericanTypewriter-Light, American Typewriter;font-weight:300;}.cls-7{letter-spacing:-0.07em;}.cls-8{clip-path:url(#clip-path);}.cls-9{stroke:#1d1d1b;stroke-width:0.5px;}.cls-10{fill:#ededed;}</style>
+  </defs>
+  <polygon
+     id="polygon1925"
+     points="0,14.17 0,722.83 566.93,722.83 566.93,14.17 "
+     class="cls-2"
+     style="fill:#ffffff" />
+  <path
+     id="path1927"
+     d="M 230.93,478.85 A 174.93,174.93 0 0 0 405.86,303.91 174.93,174.93 0 0 0 230.93,128.98 174.93,174.93 0 0 0 55.99,303.91 174.94,174.94 0 0 0 230.93,478.85 Z"
+     class="cls-3"
+     style="fill:#c0bee0" />
+  <polygon
+     id="polygon1929"
+     points="566.93,5.67 566.93,731.34 1142.37,731.34 1142.37,5.67 "
+     class="cls-4"
+     style="fill:#fde7da" />
+  <polygon
+     id="polygon1931"
+     points="727.56,324.57 727.56,591.73 1091.34,591.73 1091.34,324.57 "
+     class="cls-5"
+     style="fill:#009640" />
+  <polygon
+     id="polygon1987"
+     points="176.07,215.43 176.07,578.27 453.87,578.27 453.87,215.43 "
+     class="cls-10"
+     style="fill:#ededed" />
+</svg>

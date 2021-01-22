@@ -260,6 +260,7 @@ function corr_path_d($d, $doc){
      $d = sprintf('%sx', $d);
 
      preg_match_all('/([a-zA-Z])(.*?)(?=[a-zA-Z])/', $d, $temp);
+
      $buf = '';
      for($idx = 0; $idx < count($temp[1]); $idx++){
           $command = $temp[1][$idx];
@@ -267,6 +268,9 @@ function corr_path_d($d, $doc){
 // 1,2-3 which is 1,2,-3
           $chunk = str_replace(',-', '-', $temp[2][$idx]);
           $chunk = str_replace('-', ',-', $chunk);
+
+          $chunk = str_replace(',', ' ', $chunk);
+          $chunk = str_replace(' ', ',', $chunk);
 
 // M 1,2 V 1,2 c 1,2...
           switch($command){
@@ -292,6 +296,7 @@ function corr_path_d($d, $doc){
 // arc
                case 'a': case 'A':
                     $ary = explode(',', $chunk);
+// print_r($ary);
                     $r = [];
                     $c = 0;
                     foreach($ary as $i){
@@ -361,117 +366,119 @@ function eval_path_fields($svg_doc, $doc){
                          $style = get_style_coll_from_attribute($css);
                          $color = $style['fill'];
                          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-
-// assume asset is a grey
                          if(is_grey_hex($color)){;
-
                               $asset['slot'] = true;
-
-
-// relative and absolut v and h values
-                              $asset['path'] = preg_replace('/^m/', 'M', $asset['path']);
-                              preg_match(
-                                   '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s/i',
-                                        $asset['path'],
-                                        $mtch
-                              );
-
-                              if(!empty($mtch)){
-
-                                   if('v' == $mtch[4]){
-                                        $mtch[4] = 'V';
-                                        $mtch[5] = floatval($mtch[3]) +floatval($mtch[5]);
-                                   }
-                                   if('v' == $mtch[6]){
-                                        $mtch[6] = 'V';
-                                        $mtch[7] = floatval($mtch[3]) +floatval($mtch[7]);
-                                   }
-                                   if('v' == $mtch[8]){
-                                        $mtch[8] = 'V';
-                                        $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
-                                   }
-                                   if('v' == $mtch[10]){
-                                        $mtch[10] = 'V';
-                                        $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
-                                   }
-
-                                   if('h' == $mtch[4]){
-                                        $mtch[4] = 'H';
-                                        $mtch[5] = floatval($mtch[2]) +floatval($mtch[5]);
-                                   }
-                                   if('h' == $mtch[6]){
-                                        $mtch[6] = 'H';
-                                        $mtch[7] = floatval($mtch[2]) +floatval($mtch[7]);
-                                   }
-                                   if('h' == $mtch[8]){
-                                        $mtch[8] = 'H';
-                                        $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
-                                   }
-                                   if('h' == $mtch[10]){
-                                        $mtch[10] = 'H';
-                                        $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
-                                   }
-
-                                   array_shift($mtch);
-                                   $asset['path'] = implode(' ', $mtch);
-                              }
-
-                              preg_match(
-                                   '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)$/i',
-                                        $asset['path'], 
-                                        $mtch
-                              );
-
-                              if(!empty($mtch)){
-
-                                   if('H' == $mtch[4]){
-
-                                        $xs = [ floatval($mtch[2]), floatval($mtch[5]), floatval($mtch[9]) ];
-                                         sort($xs); $xmin = floatval($xs[0]);
-                                        rsort($xs); $xmax = floatval($xs[0]);
-
-                                        $ys = [ floatval($mtch[3]), floatval($mtch[7]), floatval($mtch[11]) ];
-                                         sort($ys); $ymin = floatval($ys[0]);
-                                        rsort($ys); $ymax = floatval($ys[0]);
-                                   
-                                        $asset['conf']['xpos'] = $xmin;
-                                        $asset['conf']['ypos'] = $ymin;
-                                        $asset['conf']['width'] = $xmax -$xmin;
-                                        $asset['conf']['height'] = $ymax -$ymin;
-
-                                        $asset['layout_code'] = 'P';
-                                        if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
-                                             $asset['layout_code'] = 'L';
-                                        }
-
-                                   }
-
-                                   if('V' == $mtch[4]){
-                                        $xs = [ floatval($mtch[2]), floatval($mtch[7]), floatval($mtch[11]) ];
-                                         sort($xs); $xmin = $xs[0];
-                                        rsort($xs); $xmax = $xs[0];
-
-                                        $ys = [ floatval($mtch[3]), floatval($mtch[5]), floatval($mtch[9]) ];
-                                         sort($ys); $ymin = $ys[0];
-                                        rsort($ys); $ymax = $ys[0];
-
-                                        $asset['conf']['xpos'] = $xmin;
-                                        $asset['conf']['ypos'] = $ymin;
-                                        $asset['conf']['width'] = $xmax -$xmin;
-                                        $asset['conf']['height'] = $ymax -$ymin;
-
-                                        $asset['layout_code'] = 'P';
-                                        if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
-                                             $asset['layout_code'] = 'L';
-                                        }
-                                   }
-                              }
                          }
                     }
-// push
-                    $res[]= $asset;
-                    $idx++;
-                    break;
+
+// relative and absolut v and h values
+                    $asset['path'] = preg_replace('/^m/', 'M', $asset['path']);
+                    preg_match(
+                         '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s/i',
+                              $asset['path'],
+                              $mtch
+                    );
+
+                    if(!empty($mtch)){
+
+                         if('v' == $mtch[4]){
+                              $mtch[4] = 'V';
+                              $mtch[5] = floatval($mtch[3]) +floatval($mtch[5]);
+                         }
+
+                         if('v' == $mtch[6]){
+                              $mtch[6] = 'V';
+                              $mtch[7] = floatval($mtch[3]) +floatval($mtch[7]);
+                         }
+
+                         if('v' == $mtch[8]){
+                              $mtch[8] = 'V';
+                              $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
+                         }
+
+                         if('v' == $mtch[10]){
+                              $mtch[10] = 'V';
+                              $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
+                         }
+
+                         if('h' == $mtch[4]){
+                              $mtch[4] = 'H';
+                              $mtch[5] = floatval($mtch[2]) +floatval($mtch[5]);
+                         }
+
+                         if('h' == $mtch[6]){
+                              $mtch[6] = 'H';
+                              $mtch[7] = floatval($mtch[2]) +floatval($mtch[7]);
+                         }
+
+                         if('h' == $mtch[8]){
+                              $mtch[8] = 'H';
+                              $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
+                         }
+
+                         if('h' == $mtch[10]){
+                              $mtch[10] = 'H';
+                              $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
+                         }
+
+                         array_shift($mtch);
+                         $asset['path'] = implode(' ', $mtch);
+                   }
+
+                   preg_match(
+                         '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)$/i',
+                             $asset['path'], 
+                             $mtch
+                   );
+
+                   if(!empty($mtch)){
+
+                        if('H' == $mtch[4]){
+
+                             $xs = [ floatval($mtch[2]), floatval($mtch[5]), floatval($mtch[9]) ];
+                              sort($xs); $xmin = floatval($xs[0]);
+                             rsort($xs); $xmax = floatval($xs[0]);
+
+                             $ys = [ floatval($mtch[3]), floatval($mtch[7]), floatval($mtch[11]) ];
+                              sort($ys); $ymin = floatval($ys[0]);
+                             rsort($ys); $ymax = floatval($ys[0]);
+                                   
+                             $asset['conf']['xpos'] = $xmin;
+                             $asset['conf']['ypos'] = $ymin;
+                             $asset['conf']['width'] = $xmax -$xmin;
+                             $asset['conf']['height'] = $ymax -$ymin;
+
+                             $asset['layout_code'] = 'P';
+                             if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                                  $asset['layout_code'] = 'L';
+                             }
+
+                        }
+
+                        if('V' == $mtch[4]){
+                             $xs = [ floatval($mtch[2]), floatval($mtch[7]), floatval($mtch[11]) ];
+                             sort($xs); $xmin = $xs[0];
+                             rsort($xs); $xmax = $xs[0];
+
+                             $ys = [ floatval($mtch[3]), floatval($mtch[5]), floatval($mtch[9]) ];
+                             sort($ys); $ymin = $ys[0];
+                             rsort($ys); $ymax = $ys[0];
+
+                             $asset['conf']['xpos'] = $xmin;
+                             $asset['conf']['ypos'] = $ymin;
+                             $asset['conf']['width'] = $xmax -$xmin;
+                             $asset['conf']['height'] = $ymax -$ymin;
+
+                             $asset['layout_code'] = 'P';
+                             if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                                  $asset['layout_code'] = 'L';
+                             }
+                        }
+                   }
+
+                   $res[]= $asset;
+                   $idx++;
+                   break;
           }
 
           $d += Layout::Y_STEP;
@@ -561,13 +568,14 @@ function eval_polygon_fields($svg_doc, $doc){
                          if(is_grey_hex($color)){;
 
                               $asset['slot'] = true;
+
                               $asset['conf']['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
                               $asset['conf']['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
                               $asset['conf']['width'] = $xmax -$xmin;
                               $asset['conf']['height'] = $ymax -$ymin;
 
                               $asset['layout_code'] = 'P';
-                              if(floatval($asset['width']) >= floatval($asset['height'])){ 
+                              if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
                                    $asset['layout_code'] = 'L';
                               }
                          }
