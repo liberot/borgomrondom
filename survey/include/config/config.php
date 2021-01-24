@@ -2,7 +2,7 @@
 
 class Role {
      const         GUEST = 'surveyprint_guest';
-    const      CUSTOMER = 'surveyprint_customer';
+     const      CUSTOMER = 'surveyprint_customer';
      const    SUBSCRIBER = 'subscriber';
      const         ADMIN = 'administrator';
 }
@@ -68,8 +68,10 @@ class Layout {
      const                    NO_SCALE = 'no_scale';
      const               CUT_INTO_SLOT = 'cut_into_slot';
      const            IMAGE_SCALE_TYPE = 'cut_into_slot';
+     const     INSERT_MOCK_IMAGE_ASSET = false;
 // --------------------------------------------------------
      const                      Y_STEP = 13;
+// --------------------------------------------------------
 }
 
 class Proc {
