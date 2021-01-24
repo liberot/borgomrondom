@@ -144,11 +144,13 @@ function exec_save_thread(){
      $history = pagpick($_POST['history']);
      $conditions = pagpick($_POST['conditions']);
      $hidden_fields = pagpick($_POST['hidden_fields']);
+     $variables = pagpick($_POST['variables']);
 
      $book = trim_incoming_book($book);
      $history = trim_incoming_history($history);
      $conditions = trim_incoming_conditions($conditions);
      $hidden_fields = trim_incoming_hidden_fields($hidden_fields);
+     $variables = trim_incoming_variables($variables);
 
      $thread = get_thread_by_id($thread_id)[0];
      if(is_null($thread)){
@@ -163,6 +165,7 @@ function exec_save_thread(){
      $thread->post_content['history'] = null == $history ? [] : $history;
      $thread->post_content['conditions'] = null == $conditions ? [] : $conditions;
      $thread->post_content['hidden_fields'] = null == $hidden_fields ? [] : $hidden_fields;
+     $thread->post_content['variables'] = null == $variables ? [] : $variables;
      $thread->post_author = $author_id;
      $thread->post_content = pigpack($thread->post_content);
 

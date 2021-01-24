@@ -66,19 +66,31 @@ console.log('evalHiddenFields(): this.model.linkedSurveyRef: ', this.model.linke
 
                temp = hash[idx].split('=');
 
-               let fieldTitle = temp[0];
+               if(false == jQuery.isArray(temp)){
+                    return false;
+               }
 
+               let fieldVal = null;
                let fieldRef = temp[1];
                    fieldRef = fieldRef.replace(/[{}]/g, '');
                    fieldRef = fieldRef.split(':');
 
-                   if(null == fieldRef){ return false; }
-                   if(false == jQuery.isArray(fieldRef)){ return false; }
-                   if(null == fieldRef[1]){ return false; }
+                   if(null == fieldRef){ 
+                        return false; 
+                   }
+
+                   if(false == jQuery.isArray(fieldRef)){ 
+                        return false; 
+                   }
+
+                   if(null == fieldRef[1]){ 
+                        return false; 
+                   }
 
                    fieldRef = fieldRef[1];
+                   fieldVal = temp[0];
 
-               this.pushHiddenField(sectionId, panelRef, fieldRef, fieldTitle);
+               this.addHiddenField(sectionId, panelRef, fieldRef, fieldVal);
           }
      }
 
@@ -134,6 +146,11 @@ console.log('bindThread: no thread');
 // hidden fields
           if(null == this.model.thread.post_content.hidden_fields){
                this.model.thread.post_content.hidden_fields = [];
+          }
+
+// variables
+          if(null == this.model.thread.post_content.variables){
+               this.model.thread.post_content.variables = [];
           }
 
 // sections
@@ -336,6 +353,14 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
 
           this.setCondition(sectionId, panelRef, key, val);
 
+/*
+          if(null != coll.additions[0]){
+               let fieldRef = coll.additions[0].key;
+               let fieldTitle = coll.additions[0].val;
+               this.addHiddenField(sectionId, panelRef, fieldRef, fieldTitle);
+          }
+*/
+
           this.notify(new Message('input::done', this.model));
      }
 
@@ -471,12 +496,15 @@ console.log('initStringOutput(): mtch: ', mtch);
                switch(type){
 
                    case 'field':
-                        // val = this.getStoredAnswerByKey(key);
                         val = this.getStoredAnswerByPanelRef(key);
                         break;
 
                    case 'hidden':
-                        val = this.getHiddenFieldVal(key);
+                        val = this.getHiddenFieldValByTitle(key);
+                        break;
+
+                   case 'var':
+                        val = this.getVariableValByTitle(key);
                         break;
                }
 
@@ -491,7 +519,7 @@ console.log('istring: ', istring);
      }
 
 // adds an entry to the book table of contents
-     this.pushBook = function(){
+     this.addBookRec = function(){
 
           if(null == this.model.panel){ 
                return false; 
@@ -506,13 +534,13 @@ console.log('istring: ', istring);
           if(null == imprint
                || '' == imprint
                || -1 == imprint.indexOf('is going to read')){
-console.log('pushBook(): not going to compute any further since of irrelefant information: ', imprint);
+console.log('addBookRec(): not going to compute: ', imprint);
                return false;
           }
           // imprint = this.initStringOutput(imprint);
 
-console.log('pushBook(): gathered information of relevance: ', imprint);
-console.log('pushBook(): todo: image assets of the current group');
+console.log('addBookRec(): gathered information of relevance: ', imprint);
+console.log('addBookRec(): todo: image assets of the current group');
           let target = this.model.thread.post_content;
 
 // fills the list of information that is of relevance while generating the spreads
@@ -534,10 +562,14 @@ console.log('pushBook(): todo: image assets of the current group');
               });
           }
 
-console.log('pushBook(): ', target.book);
+console.log('addBookRec(): ', target.book);
      }
 
-     this.pushHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
+     this.addHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
+// a hidden field is a named reference that maps stored answer field value
+// as in 
+// {{var:child}}  -> ref:1635abcd.... "child"
+// {{field:1635...}} ref:1635abcd.... "Joybubble"
 
           let target = this.model.thread.post_content.hidden_fields;
 
@@ -554,7 +586,7 @@ console.log('pushBook(): ', target.book);
                target.push(rec);
           }
 
-console.log('pushHiddenField(): ', target);
+console.log('addHiddenField(): ', target);
      }
 
      this.getHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
@@ -575,12 +607,17 @@ console.log('getHiddenField(): ', sectionId, panelRef, fieldRef, fieldTitle);
           return null;
      }
 
-     this.getHiddenFieldVal = function(key){
+// todo
+     this.getVariableValByTitle = function(key){
+          let target = this.model.thread.post_content.variables;
+console.log('getVariableValByTitle(): ', key, target);
+          return 230;
+     }
 
-console.log('getHiddenFieldVal(): key: ', key);
+     this.getHiddenFieldValByTitle = function(key){
 
           let target = this.model.thread.post_content.hidden_fields;
-console.log('getHiddenFieldVal(): target: ', target);
+console.log('getHiddenFieldValByTitle(): ', key, target);
 
           let res;
           let ref;
@@ -601,7 +638,7 @@ console.log('getHiddenFieldVal(): target: ', target);
                }
           }
 
-console.log('getHiddenFieldVal(): res: ', res);
+console.log('getHiddenFieldValByTitle(): res: ', res);
 
           return res;
      }
@@ -609,7 +646,7 @@ console.log('getHiddenFieldVal(): res: ', res);
 // todo
 // book toc is semantic linear
 // history is wild steps from field to field
-     this.pushHistory = function(){
+     this.addHistoryRec = function(){
 
           if(null == this.model.section){ return false; }
           if(null == this.model.panel){ return false; }
@@ -620,7 +657,7 @@ console.log('getHiddenFieldVal(): res: ', res);
 
           target.history.push({ sectionId: sectionId, panelRef: panelRef });
 
-console.log('pushHistory(): ', target.history);
+console.log('addHistoryRec(): ', target.history);
      }
 
      this.loadPanel = function(sectionId, panelRef){
@@ -936,8 +973,8 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
                ref.notify(new Message('toppanel::reached', this.model.panel ));
           }
 
-          this.pushBook();
-          this.pushHistory();
+          this.addBookRec();
+          this.addHistoryRec();
           this.setLink();
 
           this.setupInputKeys();
@@ -1190,17 +1227,8 @@ console.log('evalNextPanel(): redirectSurveyId: ', redirectSurveyId);
 
 // loads panel from logic (jump)
           let panelRef;
-          let coll = this.evalLogicJump(toc);
+          let coll = this.evalLogicJump();
 console.log('evalNextPanel(): evalutated logic jumps: ', coll);
-
-          if(null != coll.additions[0]){
-console.log('evalNextPanel(): additions: ', coll.additions);
-console.log('evalNextPanel(): additions: ', coll.additions);
-console.log('evalNextPanel(): additions: ', coll.additions);
-console.log('evalNextPanel(): additions: ', coll.additions);
-console.log('evalNextPanel(): additions: ', coll.additions);
-alert('todo: addition: '+ coll.additions[0].key +' : ' +coll.additions[0].val);
-          }
 
 // evaluates the reference of the next panel to be loaded
           if(null != coll.links[0]){
@@ -1209,6 +1237,13 @@ alert('todo: addition: '+ coll.additions[0].key +' : ' +coll.additions[0].val);
           else if(null != coll.defaultLink){
                panelRef = coll.defaultLink;
 console.log('evalNextPanel(): link of type "in all other cses jump to: "', panelRef);
+          }
+
+          if(null != coll.additions[0]){
+               let fieldRef = coll.additions[0].key;
+               let fieldTitle = coll.additions[0].val;
+console.log('evalNextPanel(): todo: ', coll);
+               // this.addHiddenField(sectionId, panelRef, fieldRef, fieldTitle);
           }
 
 // loads the next panel by its reference index
@@ -1223,18 +1258,22 @@ console.log('evalNextPanel(): link of type "in all other cses jump to: "', panel
           return true;
      }
 
-     this.evalLogicJump = function(toc){
-console.log('evalLogicJump(): ', toc);
+     this.evalLogicJump = function(){
+console.log('evalLogicJump(): ');
 
 // evaluates the conditions of the logic action jumps
+
           let ref = this;
+
+          let panel = this.model.panel;
+          let toc = this.model.section.post_content.toc;
+
           let res = {
                defaultLink: null,
                links: [],
                additions: []
           };
 
-          let panel = this.model.panel;
 
           for(let idx in toc.rulez){
                let rule = toc.rulez[idx];
@@ -1247,6 +1286,7 @@ console.log('evalLogicJump(): ', toc);
 console.log('evalLogicJump(): rule: ', rule);
                rule.actions.forEach(function(actionpack){
                     let c = ref.evalCondition(actionpack.condition);
+
                     if(false != c.result){
 console.log('evalLogicJump(): actionpack: ', actionpack);
 

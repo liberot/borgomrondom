@@ -198,6 +198,25 @@ function trim_incoming_history($coll){
      return $res;
 }
 
+// todo
+function trim_incoming_variables($coll){
+
+     $res = null;
+
+     if(false == is_array($coll)){ 
+          return $res; 
+     }
+
+     $res = [];
+
+     foreach($coll as $item){
+// fixdiss
+          $res[]= $item;
+     }
+
+     return $res;
+}
+
 function trim_incoming_hidden_fields($coll){
 
      $res = null;
