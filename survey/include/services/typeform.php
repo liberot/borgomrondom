@@ -60,8 +60,7 @@ function exec_construct_typeform_survey(){
 
      $res = init_typeform_survey($survey_file_name);
      if(false == $res){
-          $message = [];
-          $message['survey_file_name'] = sprintf('%s', $survey_file_name);
+          $message = sprintf('survey not added: %s', $survey_file_name);
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }

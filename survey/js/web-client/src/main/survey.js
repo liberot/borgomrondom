@@ -973,11 +973,21 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
                ref.notify(new Message('toppanel::reached', this.model.panel ));
           }
 
+          if(this.isSpreadPanel()){
+               ref.notify(new Message('spreads::reached', this.model.panel ));
+          }
+
           this.addBookRec();
           this.addHistoryRec();
           this.setLink();
 
           this.setupInputKeys();
+     }
+
+     this.isSpreadPanel = function(){
+console.log('isSpreadPanel(): ', this.model.panel.post_content['show_spread_state']);
+          let res = 'true' == this.model.panel.post_content['show_spread_state'] ? true : false;
+          return res;
      }
 
      this.isBottomPanel = function(){
@@ -1567,6 +1577,10 @@ console.log('scanAsset(): ', indx, base, proc, upload);
           jQuery('.survey-assets').html(buf);
      }
 
+     this.bindSpreads = function(msg){
+          console.log('bindSpreads(): ', msg);
+     }
+
      let ref = this;
      this.model = new SurveyModel();
      jQuery('.survey-messages').html(this.fillTemplate(__srv_msg_001_tmpl__, {msg: __survey.__('welcome')}));
@@ -1581,7 +1595,7 @@ console.log('scanAsset(): ', indx, base, proc, upload);
      this.register(new Subscription(        'confirm::group', 'bindGroupInput', this));
      this.register(new Subscription( 'fieldings::downloaded', 'bindFieldingQuestions', this));
      this.register(new Subscription(     'select::statement', 'bindSelectStatement', this));
-     this.register(new Subscription(             'nav::back', 'evalPrevPanel', this));
+     this.register(new Subscription(            'nav::back', 'evalPrevPanel', this));
      this.register(new Subscription(          'set::opinion', 'bindOpinion', this));
      // events
      this.register(new Subscription(          'thread::next', 'loadNextPanel', this));
@@ -1601,6 +1615,7 @@ console.log('scanAsset(): ', indx, base, proc, upload);
      this.register(new Subscription(        'input::corrupt', 'showValidationError', this));
      this.register(new Subscription(   'nextsection::loaded', 'bindSection', this));
      this.register(new Subscription(       'section::loaded', 'bindSection', this));
+     this.register(new Subscription(      'spreads::reached', 'bindSpreads', this));
      this.register(new Subscription(  'bottompanel::reached', 'bindBottomPanel', this));
      this.register(new Subscription(     'toppanel::reached', 'bindTopPanel', this));
 
