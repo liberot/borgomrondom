@@ -262,8 +262,7 @@ function crawl_question_groups($nodes, $parent=null, $res=null){
 
      foreach($nodes as $node){
 
-          $ref = $node['ref'];
-          $res = write_tree($res, $parent, $ref);
+          $res = crawl_tree($res, $parent, $node);
 
           if(!is_null($node['properties']['fields'])){
                $res = crawl_question_groups(
@@ -277,6 +276,52 @@ function crawl_question_groups($nodes, $parent=null, $res=null){
      }
 
      return $res;
+}
+
+function crawl_tree($tree, $parent, $node){
+
+     switch($parent){
+
+          case 'root':
+
+               $tree[] = [ 
+                    'title'=>$node['ref'],
+                    'question'=>$node['title'],
+                    'parent'=>$parent,
+                    'group'=>[] 
+               ];
+               break;
+
+          default:
+
+               $branch = $tree;
+               $tree = crawl_branch($branch, $parent, $node);
+               break;
+     }
+
+     return $tree;
+}
+
+function crawl_branch($branch, $parent, $node){
+
+     for($idx = 0; $idx < count($branch); $idx++){
+
+          if($parent == $branch[$idx]['title']){
+
+               $branch[$idx]['group'][] = [
+                    'title'=>$node['ref'],
+                    'question'=>$node['title'],
+                    'parent'=>$parent,
+                    'group'=>[]
+               ];
+          }
+          else if(!empty($branch[$idx]['group'])){
+
+               $branch[$idx]['group'] = crawl_branch($branch[$idx]['group'], $parent, $node);
+          }
+     }
+
+     return $branch;
 }
 
 
