@@ -513,6 +513,10 @@ console.log('initStringOutput(): mtch: ', mtch);
                istring = istring.replace(mtch[idx], val);
           }
 
+
+// removes _ and * characters
+          istring = istring.replace(/[\*_]/g, '');
+
 console.log('istring: ', istring);
 
           return istring;
