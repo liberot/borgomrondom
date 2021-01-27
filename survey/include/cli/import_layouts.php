@@ -28,7 +28,7 @@ print_r($res);
 
 
 print PHP_EOL;
-print_r('bye');
+print_r('done');
 print PHP_EOL;
 
 exit();

@@ -571,7 +571,7 @@ function build_questionnaire_list_view(){
      $edit = esc_html(__('Edit', 'bookbuilder'));
      $edit_fields = esc_html(__('Edit Fields', 'bookbuilder'));
      $delete = esc_html(__('Delete', 'bookbuilder'));
-     $delete_survey = esc_html(__('Delete Survey', 'bookbuilder'));
+     $delete_survey = esc_html(__('Delete Questionnaire', 'bookbuilder'));
      $headline = esc_html(__('Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__('Welcome', 'bookbuilder'));
 

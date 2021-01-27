@@ -127,65 +127,58 @@ EOD;
 */
 }
 
+function write_tree($toc, $link, $title){
 
-
-// add_action('init', 'test_insert_into_toc');
-function test_insert_into_toc(){
-     $toc = [];
-     $toc = insert_into_toc($toc, 'root', 'a100');
-     $toc = insert_into_toc($toc, 'root', 'a111');
-     $toc = insert_into_toc($toc, 'a111', 'a109');
-     $toc = insert_into_toc($toc, 'a111', 'a110');
-     $toc = insert_into_toc($toc, 'a111', 'a310');
-     $toc = insert_into_toc($toc, 'a310', 'b310');
-     $toc = insert_into_toc($toc, 'a100', 'd310');
-     $toc = insert_into_toc($toc, 'a100', 'd510');
-     $toc = insert_into_toc($toc, 'a100', 'x510');
-     $toc = insert_into_toc($toc, 'x510', 'y510');
-     $toc = insert_into_toc($toc, 'y510', 'z510');
-     $toc = insert_into_toc($toc, 'y510', 'u510');
-     $toc = insert_into_toc($toc, 'y510', 'u410');
-     $toc = insert_into_toc($toc, 'y510', 'u310');
-     print_r($toc);
-     $refs = flatten_toc_refs($toc, []);
-     print_r($refs);
-     exit();
-}
-
-function insert_into_toc($toc, $link, $ref){
      switch($link){
+
           case 'root':
+// some fields are not in groups but in the root of the documen
                $toc[] = [ 
-                    'title'=>$ref, 
+                    'title'=>$title,
                     'group'=>[] 
                ];
                break;
+
           default:
-               $toc = insert_into_branch($toc, $link, $ref);
+               $toc = write_branch($toc, $link, $title);
                break;
      }
+
      return $toc;
 }
 
-function insert_into_branch($branch, $link, $ref){
+function write_branch($branch, $link, $title){
+
      for($idx = 0; $idx < count($branch); $idx++){
+
           if($link == $branch[$idx]['title']){
+
                $branch[$idx]['group'][] = [
-                    'title'=>$ref,
+                    'title'=>$title,
                     'group'=>[]
                ];
           }
           else if(!empty($branch[$idx]['group'])){
-               $branch[$idx]['group'] = insert_into_branch($branch[$idx]['group'], $link, $ref);
+
+               $branch[$idx]['group'] = write_branch($branch[$idx]['group'], $link, $title);
           }
      }
+
      return $branch;
 }
 
 function flatten_toc_refs($toc, $res=null){
-     if(null == $res){ $res = []; }
-     if(null == $toc){ return $res; }
+
+     if(null == $res){
+          $res = []; 
+     }
+
+     if(null == $toc){ 
+          return $res; 
+     }
+
      foreach($toc as $node){
+
           if(!empty($node['group'])){
                $res = flatten_toc_refs($node['group'], $res);
           }
@@ -194,5 +187,6 @@ function flatten_toc_refs($toc, $res=null){
                $res[] = $node['title'];
           }
      }
+
      return $res;
 }

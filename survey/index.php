@@ -36,4 +36,9 @@ require_once('include/views/admin.php');
 require_once('include/views/client.php');
 require_once('include/views/web.php');
 
-
+/*
+add_action('init', 'test_crawl_typeform_survey');
+function test_crawl_typeform_survey(){
+     crawl_typeform_survey('BBC0-Cover-and-Prefa--FvSIczF7.json');
+}
+*/
