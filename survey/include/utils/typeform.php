@@ -285,7 +285,7 @@ function crawl_tree($tree, $parent, $node){
           case 'root':
 
                $tree[] = [ 
-                    'title'=>$node['ref'],
+                    'ref'=>$node['ref'],
                     'question'=>$node['title'],
                     'parent'=>$parent,
                     'group'=>[] 
@@ -306,10 +306,10 @@ function crawl_branch($branch, $parent, $node){
 
      for($idx = 0; $idx < count($branch); $idx++){
 
-          if($parent == $branch[$idx]['title']){
+          if($parent == $branch[$idx]['ref']){
 
                $branch[$idx]['group'][] = [
-                    'title'=>$node['ref'],
+                    'ref'=>$node['ref'],
                     'question'=>$node['title'],
                     'parent'=>$parent,
                     'group'=>[]
@@ -324,4 +324,29 @@ function crawl_branch($branch, $parent, $node){
      return $branch;
 }
 
+function flatten_tree($tree, $res=null){
 
+     if(null == $res){
+          $res = []; 
+     }
+
+     if(null == $tree){ 
+          return $res; 
+     }
+
+     foreach($tree as $node){
+
+          if(!empty($node['group'])){
+
+               $res = flatten_tree($node['group'], $res);
+          }
+          else {
+               $res[] = [
+                    'ref'=>$node['ref'],
+                    'question'=>$node['question'],
+               ];
+          }
+     }
+
+     return $res;
+}

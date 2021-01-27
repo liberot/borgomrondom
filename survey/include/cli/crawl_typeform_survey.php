@@ -26,7 +26,7 @@ print PHP_EOL;
 print PHP_EOL;
 print PHP_EOL;
 
-$res = flatten_toc_refs($res);
+$res = flatten_tree($res);
 print "Walkthrough of thie Fields of the Questionnaire: ";
 print $survey_title;
 print PHP_EOL;
