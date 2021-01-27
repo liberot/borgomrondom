@@ -192,3 +192,8 @@ function insert_question_groups($nodes, $survey_id, $parent=null, $res=null){
      return $res;
 }
 
+function remove_group_nodes($nodes){
+     foreach($nodes as $node){
+          $node->post_content = pagpick($node->post_content);
+     }
+}

@@ -186,9 +186,12 @@ function flatten_toc_refs($toc, $res=null){
      if(null == $res){ $res = []; }
      if(null == $toc){ return $res; }
      foreach($toc as $node){
-          $res[] = $node['title'];
           if(!empty($node['group'])){
                $res = flatten_toc_refs($node['group'], $res);
+          }
+          else {
+// no groups in the collection of flatten refs
+               $res[] = $node['title'];
           }
      }
      return $res;
