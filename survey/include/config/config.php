@@ -70,7 +70,7 @@ class Layout {
      const            IMAGE_SCALE_TYPE = 'cut_into_slot';
      const     INSERT_MOCK_IMAGE_ASSET = false;
 // --------------------------------------------------------
-     const                      Y_STEP = 13;
+     const                      Z_STEP = 100;
 // --------------------------------------------------------
 }
 

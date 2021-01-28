@@ -521,29 +521,34 @@ function import_layouts(){
 
 function parse_layout_doc($svg_path){
 
-     // init_log('parse_layout_doc', []);
-
 // grabs plain svg file
      $ldd = @file_get_contents($svg_path);
-     if(null == $ldd){ return false; }
+     if(null == $ldd){ 
+          return false; 
+     }
 
 // sets up a parser
      $parser = xml_parser_create();
+
      xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, 'UTF-8');
      xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
      xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
-     xml_parse_into_struct($parser, trim($ldd), $svg_doc_1st);
+     xml_parse_into_struct($parser, trim($ldd), $svg_doc);
      xml_parser_free($parser);
 
 // grabs mock spread json file
      $path = Path::get_mock_dir().'/mock-spread.json';
      $spread = @file_get_contents($path);
-     if(null == $spread){ return false; }
+     if(null == $spread){ 
+          return false; 
+     }
 
 // parses json 
      $doc = json_decode($spread);
-     if(null == $doc){ return false; }
-     
+     if(null == $doc){ 
+          return false; 
+     }
+
      $doc = walk_the_doc($doc);
 
 // desired ppi at configurable 300 ppi
@@ -556,10 +561,10 @@ function parse_layout_doc($svg_path){
 // which is constructed at 72ppi i guess
      $doc['assumed_ppi_of_origin'] = Layout::ASSUMED_SVG_UNIT;
 
-     $svg_doc_1st = flatten_groups($svg_doc_1st);
+     $svg_doc = flatten_groups($svg_doc);
 
 // size of the svg document as in the view box and some masks
-     $res = eval_doc_size($svg_doc_1st, $doc);
+     $res = eval_doc_size($svg_doc, $doc);
 
      $doc['printSize']['width'] = $res['doc_width'];
      $doc['printSize']['height'] = $res['doc_height'];
@@ -568,11 +573,11 @@ function parse_layout_doc($svg_path){
      $doc['origin'] = $svg_path;
 
 // text fields within the svg 
-     $res = eval_text_fields($svg_doc_1st, $doc);
+     $res = eval_text_fields($svg_doc, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
 // polygon fields in grey is the image slots
-     $res = eval_polygon_fields($svg_doc_1st, $doc);
+     $res = eval_polygon_fields($svg_doc, $doc);
 
 // insert of mock image assets
      if(true == Layout::INSERT_MOCK_IMAGE_ASSET){
@@ -583,7 +588,7 @@ function parse_layout_doc($svg_path){
 
 // path fields as hearts and circls and such
 // and then sometimes the image slots is paths too
-     $res = eval_path_fields($svg_doc_1st, $doc);
+     $res = eval_path_fields($svg_doc, $doc);
 
      if(true == Layout::INSERT_MOCK_IMAGE_ASSET){
           $res = insert_image_assets($doc, $res);
@@ -599,15 +604,15 @@ function parse_layout_doc($svg_path){
 
 function corr_layout_pos($val, $doc){
 
-     // init_log('corr_layout_pos', []);
-
      $res = null;
      $val = floatval($val);
 
      switch($doc['unit']){
+
           case 'px':
                $res = px_pump($val, $doc['assumed_ppi_of_origin'], $doc['ppi']);
                break;
+
           default:
                $res = px_to_unit($doc['assumed_ppi_of_origin'], $val, $doc['ppi']);
                break;
@@ -617,8 +622,6 @@ function corr_layout_pos($val, $doc){
 }
 
 function corr_path_d($d, $doc){
-
-     // init_log('corr_path_d', []);
 
      $d = preg_replace('/e\-\d+/', '', $d);
      $d = sprintf('%sx', $d);
@@ -660,7 +663,6 @@ function corr_path_d($d, $doc){
 // arc
                case 'a': case 'A':
                     $ary = explode(',', $chunk);
-// print_r($ary);
                     $r = [];
                     $c = 0;
                     foreach($ary as $i){
@@ -703,281 +705,289 @@ function corr_path_d($d, $doc){
 
 function eval_path_fields($svg_doc, $doc){
 
-     // init_log('eval_path_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
-
-     $idx = 0;
      $res = [];
-     $d = 0;
+     $idx = 0;
+     $dpt = 0;
 
      foreach($svg_doc as $node){
 
-          switch($node['tag']){
+// depth count as in layers of the svg doc
+          $idx = $idx +1;
 
-               case 'path':
-
-                    $asset = [];
-                    $asset['type'] = 'path';
-// conf
-                    $asset['conf'] = [];
-                    $asset['conf']['unit'] = $doc['unit'];
-                    $asset['conf']['depth'] = $d;
-
-                    $asset['indx'] = sprintf('path_%s', $idx);
-                    $asset['path'] = corr_path_d($node['attributes']['d'], $doc);
+// evaluates paths
+          if('path' != $node['tag']){
+               continue;
+          }
 
 // css style attribute
-                    $css = $node['attributes']['style'];
-                    if(!is_null($css)){
-                         $style = get_style_coll_from_attribute($css);
-                         $color = $style['fill'];
-                         $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-                         if(is_grey_hex($color)){;
+          $css = $node['attributes']['style'];
+          if(is_null($css)){ continue; }
 
-                              $asset['slot'] = true;
-                         }
-                         else if(is_green_hex($color)){
+          $style = get_style_coll_from_attribute($css);
+          $color = $style['fill'];
+          if(is_null($color)){ continue; }
 
-                              $asset['textfield'] = true;
-                         }
-                    }
+// the green ones is textfield slots
+          if(is_green_hex($color)){ continue; }
+
+// sets up an asset
+          $asset = [];
+          $asset['type'] = 'path';
+
+// sets up a conf
+          $asset['conf'] = [];
+          if(is_grey_hex($color)){ $asset['slot'] = true; }
+
+          $asset['conf']['unit'] = $doc['unit'];
+          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+
+          $asset['indx'] = sprintf('path_%s', $idx);
+          $asset['path'] = corr_path_d($node['attributes']['d'], $doc);
 
 // relative and absolut v and h values
-                    $asset['path'] = preg_replace('/^m/', 'M', $asset['path']);
-                    preg_match(
-                         '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s/i',
-                              $asset['path'],
-                              $mtch
-                    );
+          $asset['path'] = preg_replace('/^m/', 'M', $asset['path']);
 
-                    if(!empty($mtch)){
+          preg_match(
+               '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s/i',
+               $asset['path'],
+               $mtch
+          );
 
-                         if('v' == $mtch[4]){
-                              $mtch[4] = 'V';
-                              $mtch[5] = floatval($mtch[3]) +floatval($mtch[5]);
-                         }
+          if(!empty($mtch)){
 
-                         if('v' == $mtch[6]){
-                              $mtch[6] = 'V';
-                              $mtch[7] = floatval($mtch[3]) +floatval($mtch[7]);
-                         }
+               if('v' == $mtch[4]){
+                    $mtch[4] = 'V';
+                    $mtch[5] = floatval($mtch[3]) +floatval($mtch[5]);
+               }
 
-                         if('v' == $mtch[8]){
-                              $mtch[8] = 'V';
-                              $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
-                         }
+               if('v' == $mtch[6]){
+                    $mtch[6] = 'V';
+                    $mtch[7] = floatval($mtch[3]) +floatval($mtch[7]);
+               }
 
-                         if('v' == $mtch[10]){
-                              $mtch[10] = 'V';
-                              $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
-                         }
+               if('v' == $mtch[8]){
+                    $mtch[8] = 'V';
+                    $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
+               }
 
-                         if('h' == $mtch[4]){
-                              $mtch[4] = 'H';
-                              $mtch[5] = floatval($mtch[2]) +floatval($mtch[5]);
-                         }
+               if('v' == $mtch[10]){
+                    $mtch[10] = 'V';
+                    $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
+               }
 
-                         if('h' == $mtch[6]){
-                              $mtch[6] = 'H';
-                              $mtch[7] = floatval($mtch[2]) +floatval($mtch[7]);
-                         }
+               if('h' == $mtch[4]){
+                    $mtch[4] = 'H';
+                    $mtch[5] = floatval($mtch[2]) +floatval($mtch[5]);
+               }
 
-                         if('h' == $mtch[8]){
-                              $mtch[8] = 'H';
-                              $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
-                         }
+               if('h' == $mtch[6]){
+                    $mtch[6] = 'H';
+                    $mtch[7] = floatval($mtch[2]) +floatval($mtch[7]);
+               }
 
-                         if('h' == $mtch[10]){
-                              $mtch[10] = 'H';
-                              $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
-                         }
+               if('h' == $mtch[8]){
+                    $mtch[8] = 'H';
+                    $mtch[9] = floatval($mtch[5]) +floatval($mtch[9]);
+               }
 
-                         array_shift($mtch);
-                         $asset['path'] = implode(' ', $mtch);
-                   }
+               if('h' == $mtch[10]){
+                    $mtch[10] = 'H';
+                    $mtch[11] = floatval($mtch[7]) +floatval($mtch[11]);
+               }
 
-                   preg_match(
-                         '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)$/i',
-                             $asset['path'], 
-                             $mtch
-                   );
+               array_shift($mtch);
+               $asset['path'] = implode(' ', $mtch);
+          }
 
-                   if(!empty($mtch)){
+          preg_match(
+               '/^(M)\s(.*?)\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)\s([a-z])\s(.*?)$/i',
+               $asset['path'], 
+               $mtch
+          );
 
-                        if('H' == $mtch[4]){
+          if(!empty($mtch)){
 
-                             $xs = [ floatval($mtch[2]), floatval($mtch[5]), floatval($mtch[9]) ];
-                              sort($xs); $xmin = floatval($xs[0]);
-                             rsort($xs); $xmax = floatval($xs[0]);
+               if('H' == $mtch[4]){
 
-                             $ys = [ floatval($mtch[3]), floatval($mtch[7]), floatval($mtch[11]) ];
-                              sort($ys); $ymin = floatval($ys[0]);
-                             rsort($ys); $ymax = floatval($ys[0]);
+                    $xs = [ floatval($mtch[2]), floatval($mtch[5]), floatval($mtch[9]) ];
+                    sort($xs); $xmin = floatval($xs[0]);
+                    rsort($xs); $xmax = floatval($xs[0]);
+
+                    $ys = [ floatval($mtch[3]), floatval($mtch[7]), floatval($mtch[11]) ];
+                    sort($ys); $ymin = floatval($ys[0]);
+                    rsort($ys); $ymax = floatval($ys[0]);
                                    
-                             $asset['conf']['xpos'] = $xmin;
-                             $asset['conf']['ypos'] = $ymin;
-                             $asset['conf']['width'] = $xmax -$xmin;
-                             $asset['conf']['height'] = $ymax -$ymin;
+                    $asset['conf']['xpos'] = $xmin;
+                    $asset['conf']['ypos'] = $ymin;
+                    $asset['conf']['width'] = $xmax -$xmin;
+                    $asset['conf']['height'] = $ymax -$ymin;
 
-                             $asset['layout_code'] = 'P';
-                             if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
-                                  $asset['layout_code'] = 'L';
-                             }
+                    $asset['layout_code'] = 'P';
+                    if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                         $asset['layout_code'] = 'L';
+                    }
 
-                        }
+               }
 
-                        if('V' == $mtch[4]){
-                             $xs = [ floatval($mtch[2]), floatval($mtch[7]), floatval($mtch[11]) ];
-                             sort($xs); $xmin = $xs[0];
-                             rsort($xs); $xmax = $xs[0];
+               if('V' == $mtch[4]){
+                    $xs = [ floatval($mtch[2]), floatval($mtch[7]), floatval($mtch[11]) ];
+                    sort($xs); $xmin = $xs[0];
+                    rsort($xs); $xmax = $xs[0];
 
-                             $ys = [ floatval($mtch[3]), floatval($mtch[5]), floatval($mtch[9]) ];
-                             sort($ys); $ymin = $ys[0];
-                             rsort($ys); $ymax = $ys[0];
+                    $ys = [ floatval($mtch[3]), floatval($mtch[5]), floatval($mtch[9]) ];
+                    sort($ys); $ymin = $ys[0];
+                    rsort($ys); $ymax = $ys[0];
 
-                             $asset['conf']['xpos'] = $xmin;
-                             $asset['conf']['ypos'] = $ymin;
-                             $asset['conf']['width'] = $xmax -$xmin;
-                             $asset['conf']['height'] = $ymax -$ymin;
+                    $asset['conf']['xpos'] = $xmin;
+                    $asset['conf']['ypos'] = $ymin;
+                    $asset['conf']['width'] = $xmax -$xmin;
+                    $asset['conf']['height'] = $ymax -$ymin;
 
-                             $asset['layout_code'] = 'P';
-                             if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
-                                  $asset['layout_code'] = 'L';
-                             }
-                        }
-                   }
-
-                   $res[]= $asset;
-                   $idx++;
-                   break;
+                    $asset['layout_code'] = 'P';
+                    if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                         $asset['layout_code'] = 'L';
+                    }
+               }
           }
 
-          $d += Layout::Y_STEP;
-      }
+          $dpt = Layout::Z_STEP *$idx;
+          $asset['conf']['depth'] = $dpt;
 
-      return $res;
-}
-
-function eval_polygon_fields($svg_doc, $doc){
-
-     // init_log('eval_polygon_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
-
-     $res = [];
-     $indx = intval(0);
-     $d = 0;
-
-     foreach($svg_doc as $node){
-
-          switch($node['tag']){
-
-               case 'polygon':
-
-// asset
-                    $asset = [];
-                    $asset['type'] = 'poly';
-                    $asset['indx'] = sprintf('poly_%s', intval($indx));
-// asset conf
-                    $asset['conf'] = [];
-                    $asset['conf']['unit'] = 'px';
-                    $asset['conf']['depth'] = $d;
-                    $asset['conf']['color'] = [];
-
-// points of the poly
-                    $points = $node['attributes']['points'];
-                    $points = trim(str_replace(',', ' ', $node['attributes']['points']));
-                    $points = explode(' ', $points);
-                    for($idx = 0; $idx < count($points); $idx++){
-                         $points[$idx] = corr_layout_pos($points[$idx], $doc);
-                    } 
-
-// xpositions of a rect
-                    $xt = [];
-                    for($idx = 0; $idx < count($points); $idx+= 2){ 
-                         $xt[]= $points[$idx]; 
-                    }
-
-// min und max x positions 
-                     sort($xt); $xmin = floatval($xt[0]);
-                    rsort($xt); $xmax = floatval($xt[0]);
-
-// ypositions of a rect
-                    $yt = [];
-                    for($idx = 1; $idx < count($points); $idx+= 2){ 
-                         $yt[]= $points[$idx]; 
-                    }
-
-// min und max of y positions 
-                     sort($yt); $ymin = floatval($yt[0]);
-                    rsort($yt); $ymax = floatval($yt[0]);
-
-// client units to defined units or px at current settings
-                    $s = 2;
-                    $xtmp = [];
-                    foreach($points as $point){
-                         $q = floatval($point);
-                         $offset = floatval($doc['doc_x_offset']);
-                         if(($s %2) != 0){ 
-                              $offset = floatval($doc['doc_y_offset']);
-                         }
-                         $q+= $offset;
-                         $xtmp[]= $q;
-                         $s++;
-                    }
-                    $points = implode(' ', $xtmp);
-                    $asset['points'] = $points;
-
-                    $asset['slot'] = false;
-                    $asset['textfield'] = false;
-
-// evaluates the style af a polygon
-                    $css = $node['attributes']['style'];
-                    if(null != $css){
-                         $style = get_style_coll_from_attribute($css);
-                         $color = $style['fill'];
-                         $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
-
-// whether asset is image slot or not
-                         if(is_grey_hex($color)){
-
-                              $asset['slot'] = true;
-
-                              $asset['conf']['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
-                              $asset['conf']['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
-                              $asset['conf']['width'] = $xmax -$xmin;
-                              $asset['conf']['height'] = $ymax -$ymin;
-
-                              $asset['layout_code'] = 'P';
-                              if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
-                                   $asset['layout_code'] = 'L';
-                              }
-                         }
-                         else if(is_green_hex($color)){
-
-                              $asset['textfield'] = true;
-                         }
-                    }
-
-                    $res[]= $asset;
-                    $indx++;
-                    break;
-          }
-
-          $d += Layout::Y_STEP;
+          $res[]= $asset;
      }
 
      return $res;
 }
 
+function eval_polygon_fields($svg_doc, $doc){
+
+     $res = [];
+     $idx = 0;
+     $dpt = 0;
+
+     foreach($svg_doc as $node){
+
+// depth count of the svg layers
+          $idx = $idx +1;
+
+          if('polygon' != $node['tag']){
+               continue;
+          }
+
+// evaluates the style af a polygon
+          $css = $node['attributes']['style'];
+
+          if(null == $css){
+               continue;
+          }
+
+          $style = get_style_coll_from_attribute($css);
+          $color = $style['fill'];
+          if(is_null($color)){
+               continue;
+          }
+
+
+// items of a color green type are reserved textfield slots
+          if(is_green_hex($color)){
+               continue;
+          }
+
+// sets up an asset
+          $asset = [];
+
+          $asset['type'] = 'poly';
+          $asset['indx'] = sprintf('poly_%s', intval($idx));
+
+// sets up asset conf
+          $asset['conf'] = [];
+          $asset['conf']['unit'] = 'px';
+          $asset['conf']['color'] = [];
+          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
+
+// points of the poly
+          $points = $node['attributes']['points'];
+          $points = trim(str_replace(',', ' ', $node['attributes']['points']));
+          $points = explode(' ', $points);
+
+          for($i = 0; $i < count($points); $i++){
+               $points[$i] = corr_layout_pos($points[$i], $doc);
+          }
+
+// xpositions of a rect
+          $xt = [];
+          for($i = 0; $i < count($points); $i+= 2){ 
+               $xt[]= $points[$i]; 
+          }
+
+// min und max x positions 
+          sort($xt); $xmin = floatval($xt[0]);
+          rsort($xt); $xmax = floatval($xt[0]);
+
+// ypositions of a rect
+          $yt = [];
+          for($i = 1; $i < count($points); $i+= 2){ 
+               $yt[]= $points[$i]; 
+          }
+
+// min und max of y positions 
+           sort($yt); $ymin = floatval($yt[0]);
+           rsort($yt); $ymax = floatval($yt[0]);
+
+// client units to defined units or px at current settings
+           $s = 2;
+           $xtmp = [];
+           foreach($points as $point){
+               $q = floatval($point);
+               $offset = floatval($doc['doc_x_offset']);
+               if(($s %2) != 0){ 
+                    $offset = floatval($doc['doc_y_offset']);
+               }
+               $q +=$offset;
+               $xtmp[]= $q;
+               $s++;
+          }
+          $points = implode(' ', $xtmp);
+          $asset['points'] = $points;
+
+          $asset['slot'] = false;
+
+// whether asset is image slot or not
+          if(is_grey_hex($color)){
+
+               $asset['slot'] = true;
+
+               $asset['conf']['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
+               $asset['conf']['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
+               $asset['conf']['width'] = $xmax -$xmin;
+               $asset['conf']['height'] = $ymax -$ymin;
+
+               $asset['layout_code'] = 'P';
+               if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
+                    $asset['layout_code'] = 'L';
+               }
+          }
+
+          $dpt = Layout::Z_STEP *$idx;
+          $asset['conf']['depth'] = $dpt;
+
+          $res[]= $asset;
+     }
+
+     return $res;
+}
 
 function eval_text_fields($svg_doc, $doc){
-
-     // init_log('eval_text_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $res = [];
 
      $idx = 0;
-     $dpt = 1350;
+     $dpt = 0;
 
      foreach($svg_doc as $node){
+
+// depth count of the svg doc
+          $idx = $idx +1;
 
 // textfields is poly
           if('polygon' != $node['tag']){
@@ -1052,19 +1062,17 @@ function eval_text_fields($svg_doc, $doc){
           $asset['conf']['color'] = [];
           $asset['conf']['color']['cmyk'] = $color;
 
+          $dpt = Layout::Z_STEP *$idx;
+          $dpt = $dpt +500;
           $asset['conf']['depth'] = $dpt;
 
           $res[]= $asset;
-
-          $dpt += Layout::Y_STEP;
      }
 
      return $res;
 }
 
 function eval_doc_size($svg_doc, $doc){
-
-     // init_log('eval_doc_size', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $res['doc_width'] = 0;
      $res['doc_height'] = 0;
@@ -1114,8 +1122,6 @@ function eval_doc_size($svg_doc, $doc){
 
 function fit_image_assets_into_slot($doc, $assets){
 
-     // init_log('fit_image_asset_into_slot', ['doc'=>$doc, 'assets'=>$assets]);
-
      $res = [];
      foreach($assets as $asset){
           if('image' == $asset['type']){
@@ -1130,8 +1136,6 @@ function fit_image_assets_into_slot($doc, $assets){
 
 function get_layout_code_of_spread($doc){
 
-     // init_log('get_layout_code_of_spread', ['doc'=>$doc]);
-
      $res = '';
      foreach($doc['assets'] as $node){
           if(false != $node['slot']){
@@ -1144,8 +1148,6 @@ function get_layout_code_of_spread($doc){
 }
 
 function insert_image_assets($doc, $nodes){
-
-     // init_log('insert_image_assets', ['doc'=>$doc, 'nodes'=>$nodes]);
 
      $res = [];
 
@@ -1215,8 +1217,6 @@ function insert_image_assets($doc, $nodes){
 
 function eval_stylesheets($svg_doc){
 
-     // init_log('eval_stylesheets', ['svg_doc'=>$svg_doc]);
-
      $res = [];
      foreach($svg_doc as $node){ switch($node['tag']){
           case 'style':
@@ -1230,8 +1230,6 @@ function eval_stylesheets($svg_doc){
 }
 
 function flatten_groups($svg_doc){
-
-     // init_log('flatten_groups', ['svg_doc'=>$svg_doc]);
 
      $res = $svg_doc;
      $grouped_nodes = [];
@@ -1251,8 +1249,6 @@ function flatten_groups($svg_doc){
 
 function get_style_coll_from_attribute($style){
 
-     // init_log('get_style_coll_from_attribute', ['style'=>$style]);
-
      $res = [];
      $tmp = explode(';', $style);
      foreach($tmp as $directive){
@@ -1264,8 +1260,6 @@ function get_style_coll_from_attribute($style){
 }
 
 function get_style_by_selector($coll, $css){
-
-     // init_log('get_style_by_selector', ['coll'=>$coll, 'css'=>$css]);
 
      $res = [];
      $css = explode(' ', $css);
