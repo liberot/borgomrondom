@@ -248,7 +248,7 @@ let Screen = function(controller){
      }
 
      this.renderPoly = function(target){
-console.log('renderPoly(): ', target);
+// console.log('renderPoly(): ', target);
 
 // textfield slot in hex green
           if(true == target.textfield){

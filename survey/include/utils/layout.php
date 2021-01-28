@@ -521,7 +521,7 @@ function import_layouts(){
 
 function parse_layout_doc($svg_path){
 
-     init_log('parse_layout_doc', []);
+     // init_log('parse_layout_doc', []);
 
 // grabs plain svg file
      $ldd = @file_get_contents($svg_path);
@@ -569,7 +569,6 @@ function parse_layout_doc($svg_path){
 
 // text fields within the svg 
      $res = eval_text_fields($svg_doc_1st, $doc);
-     $res = eval_text_fields($svg_doc_1st, $doc);
      $doc['assets'] = array_merge($doc['assets'], $res);
 
 // polygon fields in grey is the image slots
@@ -600,7 +599,7 @@ function parse_layout_doc($svg_path){
 
 function corr_layout_pos($val, $doc){
 
-     init_log('corr_layout_pos', []);
+     // init_log('corr_layout_pos', []);
 
      $res = null;
      $val = floatval($val);
@@ -619,7 +618,7 @@ function corr_layout_pos($val, $doc){
 
 function corr_path_d($d, $doc){
 
-     init_log('corr_path_d', []);
+     // init_log('corr_path_d', []);
 
      $d = preg_replace('/e\-\d+/', '', $d);
      $d = sprintf('%sx', $d);
@@ -704,7 +703,7 @@ function corr_path_d($d, $doc){
 
 function eval_path_fields($svg_doc, $doc){
 
-     init_log('eval_path_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
+     // init_log('eval_path_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $idx = 0;
      $res = [];
@@ -860,7 +859,7 @@ function eval_path_fields($svg_doc, $doc){
 
 function eval_polygon_fields($svg_doc, $doc){
 
-     init_log('eval_polygon_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
+     // init_log('eval_polygon_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $res = [];
      $indx = intval(0);
@@ -969,152 +968,95 @@ function eval_polygon_fields($svg_doc, $doc){
 }
 
 
-// ****************************************************
-// ****************************************************
-// ****************************************************
-// ****************************************************
-// ****************************************************
-// ****************************************************
-// ****************************************************
-// ****************************************************
-//
-//   text fields will not *go like diss
-//   we might use a color field scheme.
-//
-//
-// ****************************************************
-// ****************************************************
-// ****************************************************
 function eval_text_fields($svg_doc, $doc){
 
-     init_log('eval_text_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
+     // init_log('eval_text_fields', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $res = [];
-     $buf = '';
-     $idx = 0;
-     $d = 0;
 
-// random words as for debug
-     $random_span_ary = file(Path::get_mock_dir().'/mock.txt');
-     $tmp = [];
-     foreach($random_span_ary as $row){
-          $tmp[]= trim_for_print($row);
-     }
-     $random_span_ary = $tmp;
+     $idx = 0;
+     $dpt = 1350;
 
      foreach($svg_doc as $node){
 
-          switch($node['tag']){
-
-               case 'text':
-
-                    switch($node['type']){
-
-                         case 'open':
-
-                              $tspans = [];
-
-                              $cls = null;
-                              $xpos = 0;
-                              $ypos = 0;
-
-// style information
-                              $class = $node['attributes']['class'];
-                              $style = $node['attributes']['style'];
-                              $cls = null == $class ? $style : null;
-                              $cls = null == $style ? null : $style;
-                              $cls = get_style_coll_from_attribute($cls);
-
-// matrix(1,0,0,-1,42.5199,599.899) a/d scale, e/f position tab(b) tan(c) skew, cos(a),sin(b),cos(d) angle
-                              $matrix = $node['attributes']['transform'];
-                              preg_match('/matrix\((.*)\)/', $matrix, $mtch);
-                              if(!empty($mtch)){
-                                   $temp = explode(',', $mtch[1]);
-                                   $xpos = floatval($temp[4]);
-                                   $xpos = corr_layout_pos($xpos, $doc);
-                                   $ypos = floatval($temp[5]);
-                                   $ypos = corr_layout_pos($ypos, $doc);
-                              }
-                              $width = corr_layout_pos(1000, $doc);
-                              $height = corr_layout_pos(300, $doc);
-
-                              $font_family = 'American Typewriter';
-                              $font_size = trim($cls['font-size']);
-                              $font_size = floatval(preg_replace('/[^\d]/i', '', $font_size));
-                              $font_size = corr_layout_pos($font_size, $doc);
-                              if(0 >= $font_size){ $font_size = 1; }
-                              $font_weight = floatval($cls['font-weight']);
-                              $color = rgb2cmyk(hex2rgb($cls['fill']));
-
-                              $asset = [];
-                              $asset['type'] = 'text';
-                              $asset['indx'] = sprintf('text_%s', $idx);
-                              $asset['text'] = ['Test'];
-                              $asset['style'] = $css;
-                              $asset['depth'] = $d;
-
-                              $asset['conf'] = [];
-                              $asset['conf']['font'] = [];
-                              $asset['conf']['font']['family'] = $font_family;
-                              $asset['conf']['font']['size'] = $font_size;
-                              $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval(1.35);
-                              $asset['conf']['font']['align'] = 'left';
-                              $asset['conf']['font']['space'] = '1';
-                              $asset['conf']['font']['weight'] = $font_weight;
-
-                              $asset['conf']['unit'] = 'px';
-                              $asset['conf']['xpos'] = $xpos;
-                              $asset['conf']['ypos'] = $ypos;
-                              $asset['conf']['width'] = $width;
-                              $asset['conf']['height'] = $height;
-                              $asset['conf']['opacity'] = '1';
-
-                              $asset['conf']['color'] = [];
-                              $asset['conf']['color']['cmyk'] = $color;
-
-                              $res[]= $asset;
-
-                              $idx++;
-
-                              break;
-
-                         case 'close':
-
-                              $width = 0;
-                              $height = 0;
-
-                              foreach($tspans as $span){
-
-                                   $temp = floatval($span['attributes']['y']);
-                                   if($height <= floatval($temp)){
-                                       $height = floatval($temp);
-                                   }
-
-                                   $temp = floatval($span['attributes']['x']);
-                                   $temp = explode(' ', $temp);
-                                   foreach($temp as $x){
-                                        if($width <= floatval($x)){
-                                             $width = floatval($x);
-                                        }
-                                   }
-                              }
-
-                              $asset['conf']['width'] = $width;
-                              $asset['conf']['height'] = $height;
-
-                         break;
-                    }
-
-                    $res[]= $asset;
-                    break;
-               
-               case 'tspan':
-
-                    $tspans[]= $node;
-                    break;
+// textfields is poly
+          if('polygon' != $node['tag']){
+               continue;
           }
 
-          $d += Layout::Y_STEP;
+// parses css of node
+          $cls = null;
+
+          $xpos = 0;
+          $ypos = 0;
+
+          $class = $node['attributes']['class'];
+          $style = $node['attributes']['style'];
+
+          $cls = null == $class ? $style : null;
+          $cls = null == $style ? null : $style;
+          $cls = get_style_coll_from_attribute($cls);
+
+// node of no color can not be textfield
+          if(is_null($cls['fill'])){
+               continue;
+          }
+
+// color of green is a textfield
+          $color = $cls['fill'];
+          if(!is_green_hex($color)){
+               continue; 
+          }
+
+// mock data todo to be evaluated
+          $font_family = 'American Typewriter';
+          $width = 2000;
+          $height = 1200;
+
+// evals font
+          $font_size = trim($cls['font-size']);
+          $font_size = floatval(preg_replace('/[^\d]/i', '', $font_size));
+          $font_size = corr_layout_pos($font_size, $doc);
+          if(0 >= $font_size){ 
+               $font_size = 1; 
+          }
+          $font_size = 200; 
+
+          $font_weight = floatval($cls['font-weight']);
+
+// sets up an asset
+          $asset = [];
+          $asset['textfield'] = true;
+          $asset['type'] = 'text';
+          $asset['indx'] = sprintf('text_%s', $idx);
+          $asset['text'] = ['Mockup Wordings'];
+          $asset['style'] = $css;
+
+// sets up asset conf
+          $asset['conf'] = [];
+          $asset['conf']['font'] = [];
+          $asset['conf']['font']['family'] = $font_family;
+          $asset['conf']['font']['size'] = $font_size;
+          $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval(1.35);
+          $asset['conf']['font']['align'] = 'left';
+          $asset['conf']['font']['space'] = '1';
+          $asset['conf']['font']['weight'] = $font_weight;
+
+          $asset['conf']['unit'] = 'px';
+          $asset['conf']['xpos'] = $xpos;
+          $asset['conf']['ypos'] = $ypos;
+          $asset['conf']['width'] = $width;
+          $asset['conf']['height'] = $height;
+          $asset['conf']['opacity'] = '1';
+
+          $asset['conf']['color'] = [];
+          $asset['conf']['color']['cmyk'] = $color;
+
+          $asset['conf']['depth'] = $dpt;
+
+          $res[]= $asset;
+
+          $dpt += Layout::Y_STEP;
      }
 
      return $res;
@@ -1122,7 +1064,7 @@ function eval_text_fields($svg_doc, $doc){
 
 function eval_doc_size($svg_doc, $doc){
 
-     init_log('eval_doc_size', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
+     // init_log('eval_doc_size', ['svg_doc'=>$svg_doc, 'doc'=>$doc]);
 
      $res['doc_width'] = 0;
      $res['doc_height'] = 0;
@@ -1172,7 +1114,7 @@ function eval_doc_size($svg_doc, $doc){
 
 function fit_image_assets_into_slot($doc, $assets){
 
-     init_log('fit_image_asset_into_slot', ['doc'=>$doc, 'assets'=>$assets]);
+     // init_log('fit_image_asset_into_slot', ['doc'=>$doc, 'assets'=>$assets]);
 
      $res = [];
      foreach($assets as $asset){
@@ -1188,7 +1130,7 @@ function fit_image_assets_into_slot($doc, $assets){
 
 function get_layout_code_of_spread($doc){
 
-     init_log('get_layout_code_of_spread', ['doc'=>$doc]);
+     // init_log('get_layout_code_of_spread', ['doc'=>$doc]);
 
      $res = '';
      foreach($doc['assets'] as $node){
@@ -1203,7 +1145,7 @@ function get_layout_code_of_spread($doc){
 
 function insert_image_assets($doc, $nodes){
 
-     init_log('insert_image_assets', ['doc'=>$doc, 'nodes'=>$nodes]);
+     // init_log('insert_image_assets', ['doc'=>$doc, 'nodes'=>$nodes]);
 
      $res = [];
 
@@ -1273,7 +1215,7 @@ function insert_image_assets($doc, $nodes){
 
 function eval_stylesheets($svg_doc){
 
-     init_log('eval_stylesheets', ['svg_doc'=>$svg_doc]);
+     // init_log('eval_stylesheets', ['svg_doc'=>$svg_doc]);
 
      $res = [];
      foreach($svg_doc as $node){ switch($node['tag']){
@@ -1289,7 +1231,7 @@ function eval_stylesheets($svg_doc){
 
 function flatten_groups($svg_doc){
 
-     init_log('flatten_groups', ['svg_doc'=>$svg_doc]);
+     // init_log('flatten_groups', ['svg_doc'=>$svg_doc]);
 
      $res = $svg_doc;
      $grouped_nodes = [];
@@ -1309,7 +1251,7 @@ function flatten_groups($svg_doc){
 
 function get_style_coll_from_attribute($style){
 
-     init_log('get_style_coll_from_attribute', ['style'=>$style]);
+     // init_log('get_style_coll_from_attribute', ['style'=>$style]);
 
      $res = [];
      $tmp = explode(';', $style);
@@ -1323,7 +1265,7 @@ function get_style_coll_from_attribute($style){
 
 function get_style_by_selector($coll, $css){
 
-     init_log('get_style_by_selector', ['coll'=>$coll, 'css'=>$css]);
+     // init_log('get_style_by_selector', ['coll'=>$coll, 'css'=>$css]);
 
      $res = [];
      $css = explode(' ', $css);
