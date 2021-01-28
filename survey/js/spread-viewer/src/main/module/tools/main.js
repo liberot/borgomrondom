@@ -1357,7 +1357,7 @@ let __lib__001__tmpl = ""+
 "<div class='block'>"+
      "<textarea onchange='javascript:layoutQueue.route(\"textinput::updated\", \"{indx}\", \"text\", this.value);'>{text}</textarea>"+
 "</div>"+
-"</div>"
+"</div>"+
 
 "<div class='row'>"+
 "<div class='block'>"+
