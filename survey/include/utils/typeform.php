@@ -246,24 +246,27 @@ function crawl_typeform_survey($survey_file_name){
      $toc = parse_question_groups($doc['fields']);
 
 // lets get it on: start at step 0
-     $ref = $toc[0];
-     $actions = eval_actions_of_field($ref, $lgc);
-print_r($actions);
-
+     // $ref = $toc[0];
+     // $actions = eval_actions_of_field($ref, $lgc);
+     
      return $toc;
 }
 
 function eval_actions_of_field($ref, $lgc){
 
      $res = [];
+
      foreach($lgc as $logic){
+
           if('field' != $logic['type']){
                continue;
           }
+
           if($ref != $logic['ref']){
                continue;
           }
-          $res[]= $logic['actions'];
+
+          $res[]= $logic;
      }
 
      return $res;
@@ -288,7 +291,7 @@ function parse_question_groups($nodes, $parent=null, $res=null){
           $res = crawl_tree($res, $parent, $node);
 
           if(!is_null($node['properties']['fields'])){
-               $res = crawl_question_groups(
+               $res = parse_question_groups(
                     $node['properties']['fields'], 
                     $node['ref'], 
                     $res
@@ -313,6 +316,7 @@ function crawl_tree($tree, $parent, $node){
                     'parent'=>$parent,
                     'group'=>[] 
                ];
+
                break;
 
           default:

@@ -248,7 +248,12 @@ let Screen = function(controller){
      }
 
      this.renderPoly = function(target){
-// console.log('renderPoly(): ', target);
+console.log('renderPoly(): ', target);
+
+// textfield slot in hex green
+          if(true == target.textfield){
+               return;
+          }
 
           let ref = this;
           let tmp = target.points.split(' ');
@@ -370,6 +375,7 @@ let Screen = function(controller){
      }
 
      this.renderText = function(target){
+console.log('renderText(): ', target);
 
           this.setPenStepY(LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.size, target.conf.unit));
 
@@ -389,6 +395,9 @@ let Screen = function(controller){
                'weight': parseFloat(target.conf.font.weight),
                'opacity': parseFloat(target.conf.opacity)
           }
+
+console.log('font: ', font);
+
           let xoffset = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
           let x = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
           let y = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.ypos, target.conf.unit);
@@ -400,7 +409,7 @@ let Screen = function(controller){
           let yy = y;
 
           let buf = '';
-          for(var iidx in target.spans){
+          for(let iidx in target.spans){
                switch(align){
                     case 'left':
                          x = xoffset;
@@ -425,9 +434,10 @@ let Screen = function(controller){
                     }
                }
 
-               let rect = this.model.currentScreen.rect(width, height).move(xx, yy);
                let text = this.model.currentScreen.text(target.spans[iidx].text).font(font).attr(attr).fill(colr);
                    text.tspan(target.spans[iidx].text).font(font).attr(attr).fill(colr);
+
+               let rect = this.model.currentScreen.rect(width, height).move(xx, yy);
                    text.clipWith(rect);
 
                this.stepY();

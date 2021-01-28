@@ -258,6 +258,25 @@ function is_grey_hex($color){
      return $res;
 }
 
+// green as for the textfield slots
+// 009640ff
+// r: 0 g: 150 b: 64
+function is_green_hex($color){
+
+     $res = false;
+     $c = hex2rgb($color);
+
+     if(0 == intval($c['r'])){
+          if(150 == intval($c['g'])){
+               if(64 == intval($c['b'])){
+                    $res = true;
+               }
+          }
+     }
+
+     return $res;
+}
+
 function px_pump($px, $ppi_1st, $ppi_2nd){
 
      $ppi_1st = floatval($ppi_1st);
@@ -714,7 +733,12 @@ function eval_path_fields($svg_doc, $doc){
                          $color = $style['fill'];
                          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
                          if(is_grey_hex($color)){;
+
                               $asset['slot'] = true;
+                         }
+                         else if(is_green_hex($color)){
+
+                              $asset['textfield'] = true;
                          }
                     }
 
@@ -903,6 +927,7 @@ function eval_polygon_fields($svg_doc, $doc){
                     $asset['points'] = $points;
 
                     $asset['slot'] = false;
+                    $asset['textfield'] = false;
 
 // evaluates the style af a polygon
                     $css = $node['attributes']['style'];
@@ -911,8 +936,8 @@ function eval_polygon_fields($svg_doc, $doc){
                          $color = $style['fill'];
                          $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
 
-// whether asset is slot or not
-                         if(is_grey_hex($color)){;
+// whether asset is image slot or not
+                         if(is_grey_hex($color)){
 
                               $asset['slot'] = true;
 
@@ -925,6 +950,10 @@ function eval_polygon_fields($svg_doc, $doc){
                               if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
                                    $asset['layout_code'] = 'L';
                               }
+                         }
+                         else if(is_green_hex($color)){
+
+                              $asset['textfield'] = true;
                          }
                     }
 
