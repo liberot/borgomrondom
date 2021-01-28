@@ -283,7 +283,7 @@ function build_thread_entries_view(){
      $sections = get_sections_by_thread_id($thread_id, $client_id);
      if(is_null($sections)){ return false; }
 
-     $headline = esc_html(__('Book Builder Thread Fields from Book TOC', 'bookbuilder'));
+     $headline = esc_html(__('Book Builder Thread', 'bookbuilder'));
      $id = esc_html(__('ID', 'bookbuilder'));
      $ref = esc_html(__('Reference', 'bookbuilder'));
      $title = esc_html(__('Title', 'bookbuilder'));
@@ -323,7 +323,9 @@ EOD;
 
      $section_id = $sections[0]->ID;
 
-     foreach($thread->post_content['book'] as $item){
+     // print_r($thread);
+     // foreach($thread->post_content['book'] as $item){
+     foreach($thread->post_content['history'] as $item){
 
           $panel = get_panel_by_ref($item['sectionId'], $item['panelRef'], $client_id)[0];
 

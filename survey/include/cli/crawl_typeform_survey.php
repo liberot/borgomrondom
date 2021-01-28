@@ -15,8 +15,8 @@ $path = sprintf('%s%s', $base, '/wp-load.php');
 
 require_once($path);
 
+// evaluates a survey by title
 $survey_title = 'BBC0-Cover-and-Prefa--FvSIczF7.json';
-
 $res = crawl_typeform_survey($survey_title);
 print "Table Of Contents of the Questionnaire: ";
 print $survey_title;
@@ -26,6 +26,7 @@ print PHP_EOL;
 print PHP_EOL;
 print PHP_EOL;
 
+// evaluates field walkthrough 
 $res = flatten_tree($res);
 print "Walkthrough of thie Fields of the Questionnaire: ";
 print $survey_title;
@@ -34,6 +35,7 @@ print_r($res);
 print PHP_EOL;
 print PHP_EOL;
 print PHP_EOL;
+
 
 print PHP_EOL;
 print_r('done');
