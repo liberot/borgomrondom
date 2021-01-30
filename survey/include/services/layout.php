@@ -83,7 +83,8 @@ function exec_get_layout_by_group_and_rule(){
  -----------------------------------------------------------------------
  --
  does work with svg plain documents
- as i copy and paste them into place from some wild svg documents
+ as i copy and paste the targets into place from some wild svg documents
+ into svg documents of 1.1 type without sperenzchen
  as for to find the grey slots for to place the image assets
  and the hearties that is rendered above the masked image assets
  -----------------------------------------------------------------------
@@ -98,7 +99,7 @@ function exec_import_layouts(){
      }
 
      init_log('exec_import_layouts', []);
-    
+
      $coll = import_layouts();
 
      $message = esc_html(__('did import the layouts', 'bookbuilder'));

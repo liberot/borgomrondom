@@ -573,8 +573,8 @@ function parse_layout_doc($svg_path){
      $doc['origin'] = $svg_path;
 
 // text fields within the svg 
-     $res = eval_text_fields($svg_doc, $doc);
-     $doc['assets'] = array_merge($doc['assets'], $res);
+     // $res = eval_text_fields($svg_doc, $doc);
+     // $doc['assets'] = array_merge($doc['assets'], $res);
 
 // polygon fields in grey is the image slots
      $res = eval_polygon_fields($svg_doc, $doc);
@@ -721,14 +721,18 @@ function eval_path_fields($svg_doc, $doc){
 
 // css style attribute
           $css = $node['attributes']['style'];
-          if(is_null($css)){ continue; }
+          if(is_null($css)){ 
+               continue; 
+          }
 
           $style = get_style_coll_from_attribute($css);
+
           $color = $style['fill'];
-          if(is_null($color)){ continue; }
+          if(null == $color){
+               continue; 
+          }
 
 // the green ones is textfield slots
-          if(is_green_hex($color)){ continue; }
 
 // sets up an asset
           $asset = [];
@@ -736,7 +740,8 @@ function eval_path_fields($svg_doc, $doc){
 
 // sets up a conf
           $asset['conf'] = [];
-          if(is_grey_hex($color)){ $asset['slot'] = true; }
+          $asset['slot'] = false; 
+          $asset['textfield'] = false; 
 
           $asset['conf']['unit'] = $doc['unit'];
           $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
@@ -851,8 +856,12 @@ function eval_path_fields($svg_doc, $doc){
           }
 
           $dpt = Layout::Z_STEP *$idx;
-          $asset['conf']['depth'] = $dpt;
 
+          if(is_grey_hex($color)){
+               $asset['slot'] = true; 
+          }
+
+          $asset['conf']['depth'] = $dpt;
           $res[]= $asset;
      }
 
@@ -876,7 +885,6 @@ function eval_polygon_fields($svg_doc, $doc){
 
 // evaluates the style af a polygon
           $css = $node['attributes']['style'];
-
           if(null == $css){
                continue;
           }
@@ -884,12 +892,6 @@ function eval_polygon_fields($svg_doc, $doc){
           $style = get_style_coll_from_attribute($css);
           $color = $style['fill'];
           if(is_null($color)){
-               continue;
-          }
-
-
-// items of a color green type are reserved textfield slots
-          if(is_green_hex($color)){
                continue;
           }
 
@@ -947,20 +949,25 @@ function eval_polygon_fields($svg_doc, $doc){
                $xtmp[]= $q;
                $s++;
           }
+
           $points = implode(' ', $xtmp);
+
           $asset['points'] = $points;
 
+          $asset['conf']['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
+          $asset['conf']['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
+          $asset['conf']['width'] = $xmax -$xmin;
+          $asset['conf']['height'] = $ymax -$ymin;
+
           $asset['slot'] = false;
+          $asset['textfield'] = false; 
+
+          $dpt = Layout::Z_STEP *$idx;
 
 // whether asset is image slot or not
           if(is_grey_hex($color)){
 
                $asset['slot'] = true;
-
-               $asset['conf']['xpos'] = floatval($xmin) +$doc['doc_x_offset'];
-               $asset['conf']['ypos'] = floatval($ymin) +$doc['doc_y_offset'];
-               $asset['conf']['width'] = $xmax -$xmin;
-               $asset['conf']['height'] = $ymax -$ymin;
 
                $asset['layout_code'] = 'P';
                if(floatval($asset['conf']['width']) >= floatval($asset['conf']['height'])){ 
@@ -968,9 +975,51 @@ function eval_polygon_fields($svg_doc, $doc){
                }
           }
 
-          $dpt = Layout::Z_STEP *$idx;
-          $asset['conf']['depth'] = $dpt;
+// whether asset is a text slot or not
+          if(is_green_hex($color)){ 
 
+               $asset['textfield'] = true; 
+
+// mock data todo to be evaluated
+               $font_family = 'American Typewriter';
+
+// evals font
+               $font_size = trim($cls['font-size']);
+               $font_size = floatval(preg_replace('/[^\d]/i', '', $font_size));
+               $font_size = corr_layout_pos($font_size, $doc);
+               if(0 >= $font_size){ 
+                    $font_size = 1; 
+               }
+               $font_size = 200; 
+
+               $font_weight = floatval($cls['font-weight']);
+
+// sets up an asset
+               $asset['textfield'] = true;
+               $asset['type'] = 'text';
+               $asset['indx'] = sprintf('text_%s', $idx);
+               $asset['text'] = ['Mockup Wordings'];
+               $asset['style'] = $css;
+
+// sets up asset conf
+               $asset['conf']['font'] = [];
+               $asset['conf']['font']['family'] = $font_family;
+               $asset['conf']['font']['size'] = $font_size;
+               $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval(1.35);
+               $asset['conf']['font']['align'] = 'left';
+               $asset['conf']['font']['space'] = '1';
+               $asset['conf']['font']['weight'] = $font_weight;
+               $asset['conf']['unit'] = 'px';
+               $asset['conf']['opacity'] = '1';
+               $asset['conf']['color'] = [];
+               $asset['conf']['color']['cmyk'] = $color;
+
+               $dpt = $dpt +500;
+          }
+
+print_r($asset);
+
+          $asset['conf']['depth'] = $dpt;
           $res[]= $asset;
      }
 
