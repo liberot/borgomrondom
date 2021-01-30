@@ -1017,8 +1017,6 @@ function eval_polygon_fields($svg_doc, $doc){
                $dpt = $dpt +500;
           }
 
-print_r($asset);
-
           $asset['conf']['depth'] = $dpt;
           $res[]= $asset;
      }
@@ -1026,6 +1024,7 @@ print_r($asset);
      return $res;
 }
 
+// deprecatto :: obsolette
 function eval_text_fields($svg_doc, $doc){
 
      $res = [];
