@@ -572,10 +572,6 @@ function parse_layout_doc($svg_path){
      $doc['doc_y_offset'] = $res['doc_y_offset'];
      $doc['origin'] = $svg_path;
 
-// text fields within the svg 
-     // $res = eval_text_fields($svg_doc, $doc);
-     // $doc['assets'] = array_merge($doc['assets'], $res);
-
 // polygon fields in grey is the image slots
      $res = eval_polygon_fields($svg_doc, $doc);
 
@@ -731,8 +727,6 @@ function eval_path_fields($svg_doc, $doc){
           if(null == $color){
                continue; 
           }
-
-// the green ones is textfield slots
 
 // sets up an asset
           $asset = [];
@@ -890,6 +884,7 @@ function eval_polygon_fields($svg_doc, $doc){
           }
 
           $style = get_style_coll_from_attribute($css);
+
           $color = $style['fill'];
           if(is_null($color)){
                continue;
@@ -903,6 +898,7 @@ function eval_polygon_fields($svg_doc, $doc){
 
 // sets up asset conf
           $asset['conf'] = [];
+
           $asset['conf']['unit'] = 'px';
           $asset['conf']['color'] = [];
           $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb($color));
@@ -981,139 +977,36 @@ function eval_polygon_fields($svg_doc, $doc){
                $asset['textfield'] = true; 
 
 // mock data todo to be evaluated
-               $font_family = 'American Typewriter';
 
-// evals font
-               $font_size = trim($cls['font-size']);
-               $font_size = floatval(preg_replace('/[^\d]/i', '', $font_size));
-               $font_size = corr_layout_pos($font_size, $doc);
-               if(0 >= $font_size){ 
-                    $font_size = 1; 
-               }
-               $font_size = 200; 
-
-               $font_weight = floatval($cls['font-weight']);
 
 // sets up an asset
                $asset['textfield'] = true;
                $asset['type'] = 'text';
                $asset['indx'] = sprintf('text_%s', $idx);
-               $asset['text'] = ['Mockup Wordings'];
+               $asset['text'] = get_random_words();
                $asset['style'] = $css;
 
 // sets up asset conf
+               $font_family = 'American Typewriter';
+               $font_weight = floatval($cls['font-weight']);
+               $font_size = 69;
+
                $asset['conf']['font'] = [];
                $asset['conf']['font']['family'] = $font_family;
                $asset['conf']['font']['size'] = $font_size;
                $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval(1.35);
-               $asset['conf']['font']['align'] = 'left';
+               $asset['conf']['font']['align'] = 'block';
                $asset['conf']['font']['space'] = '1';
                $asset['conf']['font']['weight'] = $font_weight;
+
                $asset['conf']['unit'] = 'px';
                $asset['conf']['opacity'] = '1';
                $asset['conf']['color'] = [];
-               $asset['conf']['color']['cmyk'] = $color;
-
-               $dpt = $dpt +500;
+               $asset['conf']['color']['cmyk'] = rgb2cmyk(hex2rgb('#e74310'));
+               $dpt = $dpt +50000;
           }
 
           $asset['conf']['depth'] = $dpt;
-          $res[]= $asset;
-     }
-
-     return $res;
-}
-
-// deprecatto :: obsolette
-function eval_text_fields($svg_doc, $doc){
-
-     $res = [];
-
-     $idx = 0;
-     $dpt = 0;
-
-     foreach($svg_doc as $node){
-
-// depth count of the svg doc
-          $idx = $idx +1;
-
-// textfields is poly
-          if('polygon' != $node['tag']){
-               continue;
-          }
-
-// parses css of node
-          $cls = null;
-
-          $xpos = 0;
-          $ypos = 0;
-
-          $class = $node['attributes']['class'];
-          $style = $node['attributes']['style'];
-
-          $cls = null == $class ? $style : null;
-          $cls = null == $style ? null : $style;
-          $cls = get_style_coll_from_attribute($cls);
-
-// node of no color can not be textfield
-          if(is_null($cls['fill'])){
-               continue;
-          }
-
-// color of green is a textfield
-          $color = $cls['fill'];
-          if(!is_green_hex($color)){
-               continue; 
-          }
-
-// mock data todo to be evaluated
-          $font_family = 'American Typewriter';
-          $width = 2000;
-          $height = 1200;
-
-// evals font
-          $font_size = trim($cls['font-size']);
-          $font_size = floatval(preg_replace('/[^\d]/i', '', $font_size));
-          $font_size = corr_layout_pos($font_size, $doc);
-          if(0 >= $font_size){ 
-               $font_size = 1; 
-          }
-          $font_size = 200; 
-
-          $font_weight = floatval($cls['font-weight']);
-
-// sets up an asset
-          $asset = [];
-          $asset['textfield'] = true;
-          $asset['type'] = 'text';
-          $asset['indx'] = sprintf('text_%s', $idx);
-          $asset['text'] = ['Mockup Wordings'];
-          $asset['style'] = $css;
-
-// sets up asset conf
-          $asset['conf'] = [];
-          $asset['conf']['font'] = [];
-          $asset['conf']['font']['family'] = $font_family;
-          $asset['conf']['font']['size'] = $font_size;
-          $asset['conf']['font']['lineHeight'] = floatval($font_size) *floatval(1.35);
-          $asset['conf']['font']['align'] = 'left';
-          $asset['conf']['font']['space'] = '1';
-          $asset['conf']['font']['weight'] = $font_weight;
-
-          $asset['conf']['unit'] = 'px';
-          $asset['conf']['xpos'] = $xpos;
-          $asset['conf']['ypos'] = $ypos;
-          $asset['conf']['width'] = $width;
-          $asset['conf']['height'] = $height;
-          $asset['conf']['opacity'] = '1';
-
-          $asset['conf']['color'] = [];
-          $asset['conf']['color']['cmyk'] = $color;
-
-          $dpt = Layout::Z_STEP *$idx;
-          $dpt = $dpt +500;
-          $asset['conf']['depth'] = $dpt;
-
           $res[]= $asset;
      }
 
@@ -1326,4 +1219,29 @@ function get_style_by_selector($coll, $css){
      return $res;
 }
 
+function get_random_words(){
 
+     $res = [
+          'Random Lines of Some No Sense 1st',
+          'Random Lines of Some No Sense 2nd',
+          'Random Lines of Some No Sense 3rd',
+          'Random Lines of Some No Sense 4th',
+          'Random Lines of Some No Sense 5th'
+     ];
+
+     $lines = @file(Path::get_random_words_path(), FILE_SKIP_EMPTY_LINES);
+
+     if(is_null($lines)){
+
+          return $res;
+     }
+
+     $res = [];
+     $max = count($lines) -1;
+     for($i = 0; $i < 10; $i++){
+          $rnd = random_int(0, $max);
+          $res[]= $lines[$rnd];
+     }
+
+     return $res;
+}

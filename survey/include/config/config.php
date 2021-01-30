@@ -41,13 +41,18 @@ class Path {
           return sprintf('%s%s', $base, '/asset/default-layouts/svg');
      }
 
+     public static final function get_random_words_path(){
+          $base = Path::get_base_dir();
+          return sprintf('%s%s', $base, '/asset/mock/mock.txt');
+     }
+
      public static final function get_mock_dir(){
           $base = Path::get_base_dir();
           return sprintf('%s%s', $base, '/asset/mock');
      }
 
      public static final function get_plugin_dir(){
-          return get_base_dir();
+          return Path::get_base_dir();
      }
 
      private static final function get_base_dir(){
@@ -68,6 +73,7 @@ class Layout {
      const                    NO_SCALE = 'no_scale';
      const               CUT_INTO_SLOT = 'cut_into_slot';
      const            IMAGE_SCALE_TYPE = 'cut_into_slot';
+// --------------------------------------------------------
      const     INSERT_MOCK_IMAGE_ASSET = false;
 // --------------------------------------------------------
      const                      Z_STEP = 100;
@@ -75,14 +81,16 @@ class Layout {
 }
 
 class Proc {
+// --------------------------------------------------------
      const        UPDATE_ON_PERSIST = false;
      const EVAL_UPLOADED_ASSET_SIZE = true;
+     const            TMP_WRITE_SQL = false;
+// --------------------------------------------------------
      const        MEDIA_UPLOAD_PROC = 'base64_upload';
-     const            BASE64_UPLOAD = 'base64_upload';
      const              FILE_UPLOAD = 'file_upload';
      const     KICKOFF_SURVEY_TITLE = 'BBC0 Cover and Preface';
 //   const     KICKOFF_SURVEY_TITLE = '201204 Cover and Preface';
-     const            TMP_WRITE_SQL = false;
+     const            BASE64_UPLOAD = 'base64_upload';
 }
 
 

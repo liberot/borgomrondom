@@ -375,7 +375,7 @@ let Screen = function(controller){
      }
 
      this.renderText = function(target){
-console.log('renderText(): ', target);
+// console.log('renderText(): ', target);
 
           this.setPenStepY(LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.size, target.conf.unit));
 
@@ -395,8 +395,6 @@ console.log('renderText(): ', target);
                'weight': parseFloat(target.conf.font.weight),
                'opacity': parseFloat(target.conf.opacity)
           }
-
-console.log('font: ', font);
 
           let xoffset = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);
           let x = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.xpos, target.conf.unit);

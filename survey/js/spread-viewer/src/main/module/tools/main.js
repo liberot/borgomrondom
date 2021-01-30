@@ -687,6 +687,7 @@ console.log('getPrintSize(): ', res);
      }
 
      this.bindTextInput = function(msg){
+console.log('bindTextInput(): ', msg);
           let idx = this.getIndexOfAssetBy(msg.model.arguments[1]);
           if(null == this.model.doc.assets[idx]){
                return;
@@ -891,7 +892,7 @@ console.log('getPrintSize(): ', res);
                'indx': 'controls'
           }
           jQuery('.layout-actions').empty();
-          jQuery('.layout-actions').append(this.fillTemplate(__lib__007__tmpl, model));
+          jQuery('.layout-actions').empty();
      }
 
      this.getIndexOfAssetBy = function(indx){
@@ -1352,6 +1353,10 @@ let __lib__004__tmpl = "";
 let __lib__002__tmpl = ""+
 "<a href='javascript:layoutQueue.route(\"select::asset\", \"{title}\")'>{title}</a>";
 
+
+
+
+
 let __lib__001__tmpl = ""+
 "<div class='row'>"+
 "<div class='block'>"+
@@ -1464,7 +1469,9 @@ let __lib__001__tmpl = ""+
 
 "</div>";
 
-let __lib__007__tmpl = "";
+
+
+
 
 let __lib__009__tmpl = ""+
 "<form>"+
