@@ -781,6 +781,7 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
           description = this.initStringOutput(description);
 
 // setup of the view components
+          jQuery('.survey-controls1st').html('');
           jQuery('.survey-controls2nd').html('');
           jQuery('.survey-controls3rd').html('');
           jQuery('.survey-controls5th').html('');
@@ -1581,10 +1582,14 @@ console.log('scanAsset(): ', indx, base, proc, upload);
           jQuery('.survey-assets').html(buf);
      }
 
-     this.bindSpreads = function(msg){
-          console.log('bindSpreads(): ', msg);
+     this.drawSpreads = function(msg){
+console.log('drawSpreads(): ', msg);
+          jQuery('.survey-controls3rd').html(__spread_btn_tmpl__);
      }
 
+
+
+// init
      let ref = this;
      this.model = new SurveyModel();
      jQuery('.survey-messages').html(this.fillTemplate(__srv_msg_001_tmpl__, {msg: __survey.__('welcome')}));
@@ -1619,7 +1624,7 @@ console.log('scanAsset(): ', indx, base, proc, upload);
      this.register(new Subscription(        'input::corrupt', 'showValidationError', this));
      this.register(new Subscription(   'nextsection::loaded', 'bindSection', this));
      this.register(new Subscription(       'section::loaded', 'bindSection', this));
-     this.register(new Subscription(      'spreads::reached', 'bindSpreads', this));
+     this.register(new Subscription(      'spreads::reached', 'drawSpreads', this));
      this.register(new Subscription(  'bottompanel::reached', 'bindBottomPanel', this));
      this.register(new Subscription(     'toppanel::reached', 'bindTopPanel', this));
 
@@ -1728,7 +1733,13 @@ let __dropdown_row_tmpl__ = ""+
      "<select class='dropdown-row' onchange='javascript:surveyQueue.routee(\"dropdown::row\", this);'>";
 
 let __dropdown_cell_tmpl__ = ""+
-     "<option class='dropdown-cell' value='{ref}'>{label}</option>"
+     "<option class='dropdown-cell' value='{ref}'>{label}</option>";
+
+let __spread_btn_tmpl__ = ""+
+     "<span class='btn-spread'><a href='javascript:surveyQueue.route(\"spreads::init\")'>yes, show me the spreads now auja</a></span>";
+
+
+
 
 let SurveyModel = function(){
      this.thread;

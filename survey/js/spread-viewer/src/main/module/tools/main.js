@@ -1555,7 +1555,7 @@ let MockModel = function(){
                     "indx": "question",
                     "type": "text",
                     "text": [
-                         "Default Question"
+                         ""
                     ],
                     "selected": "false",
                     "conf": {
@@ -1583,7 +1583,7 @@ let MockModel = function(){
                     "indx": "answer",
                     "type": "text",
                     "text": [
-                         "Default Answer"
+                         ""
                     ],
                     "selected": "false",
                     "conf": {

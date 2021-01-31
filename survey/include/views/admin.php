@@ -202,6 +202,7 @@ function build_thread_list_view(){
      $date = esc_html(__('Date of Init', 'bookbuilder'));
      $author_id = esc_html(__('Author', 'bookbuilder'));
      $edit = esc_html(__('Edit', 'bookbuilder'));
+     $edit_thread = esc_html(__('Edit Thread', 'bookbuilder'));
      $delete = esc_html(__('Delete', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
@@ -237,7 +238,7 @@ EOD;
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_excerpt));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($d));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_author));
-                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href1st, $edit);
+                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href1st, $edit_thread);
                     echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href2nd, $delete);
                echo '</tr>';
           }
@@ -550,7 +551,7 @@ EOD;
           </tfoot>
           </table>
 
-          <input type='submit' id='doaction' class='button action' value='{$apply}'>
+          <!-- <input type='submit' id='doaction' class='button action' value='{$apply}'> -->
 
           </form>
 EOD;

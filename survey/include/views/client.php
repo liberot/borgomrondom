@@ -38,13 +38,13 @@ function build_survey_view(){
           <div class='survey-list'></div>
           <div class='survey-thread'></div>
                <div class='survey-controls1st'></div>
+               <div class='survey-controls3rd'></div>
                <div class='survey-controls5th'></div>
                <div class='survey-controls6th'></div>
                <div class='survey-controls7th'></div>
                <div class='survey-questions1st'></div>
                <div class='file-upload'></div>
                <div class='survey-controls2nd'></div>
-               <div class='survey-controls3rd'></div>
                <div class='survey-assets'></div>
           </div>
      </div>
