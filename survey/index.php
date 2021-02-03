@@ -19,6 +19,7 @@ require_once('include/utils/typeform.php');
 require_once('include/utils/layout.php');
 require_once('include/utils/admin.php');
 require_once('include/utils/utils.php');
+require_once('include/utils/typeform_crawler.php');
 
 require_once('include/services/book.php');
 require_once('include/services/survey.php');
