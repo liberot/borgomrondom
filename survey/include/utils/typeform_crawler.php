@@ -2,7 +2,7 @@
 
 function crawl_typeform_survey($survey_file_name){
      $toc = parse_typeform_survey($survey_file_name);
-     $res = walk_through_survey($toc, $depth=23, $toc[0], null);
+     $res = walk_through_survey($toc, $depth=15, $toc[0], null);
      return $res;
 }
 
@@ -18,15 +18,20 @@ function walk_through_survey($toc, $target_level, $field, $res){
           $res = add_field_to_result($field, $res);
 
           if(is_null($field['choices'])){
-              $rec = add_answer_rec($field, $rec, '0x00', 'noticed');
+              $answer = 'noticed';
+              $rec = add_answer_rec($field, $rec, '0x00', $answer);
               if(++$default_field_idx < count($toc)){
                    $field = $toc[$default_field_idx];
+                   $field['answer'] = $answer;
               }
           }
           else {
               foreach($field['choices'] as $choice){
                    $rec = add_answer_rec($field, $rec, $choice['ref'], $choice['label']);
+
                    $field = eval_next_field($toc, $res, $field);
+                   $field['answer'] = $choice['label'];
+
                    $res = add_field_to_result($field, $res);
               }
           }
@@ -52,6 +57,7 @@ function eval_next_field($toc, $rec, $field){
      $res = null;
 
 // mock
+// todo: eval the next field from the input
      $pos = array_search($field, $toc);
      $pos++;
      if($pos < count($toc)){
@@ -72,7 +78,7 @@ function add_field_to_result($field, $res){
      $buf.= sprintf('question: %s', $field['question']);
      $buf.= PHP_EOL;
 
-     if(false == array_search($buf, $res)){
+     if(false === array_search($buf, $res)){
           array_push($res, $buf);
      }
 
