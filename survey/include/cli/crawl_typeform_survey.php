@@ -22,24 +22,13 @@ if(is_null($survey_title)){
 }
 
 $res = crawl_typeform_survey($survey_title);
-print "Table Of Contents of the Questionnaire: ";
+print "Walkthroughs:";
 print $survey_title;
 print PHP_EOL;
 print_r($res);
 print PHP_EOL;
 print PHP_EOL;
 print PHP_EOL;
-
-// evaluates field walkthrough 
-$res = flatten_tree($res);
-print "Walkthrough of thie Fields of the Questionnaire: ";
-print $survey_title;
-print PHP_EOL;
-print_r($res);
-print PHP_EOL;
-print PHP_EOL;
-print PHP_EOL;
-
 
 print PHP_EOL;
 print_r('done');

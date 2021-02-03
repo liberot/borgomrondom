@@ -2,11 +2,84 @@
 
 function crawl_typeform_survey($survey_file_name){
      $toc = parse_typeform_survey($survey_file_name);
-     $tree = crawl($toc, null, null);
-     return $tree;
+     $res = walk_through_survey($toc, $depth=23, $toc[0], null);
+     return $res;
 }
 
+function walk_through_survey($toc, $target_level, $field, $res){
 
+     if(is_null($res)){
+          $res = [];
+     }
+
+     $default_field_idx = 0;
+     for($level = 0; $level < $target_level; $level++){
+
+          $res = add_field_to_result($field, $res);
+
+          if(is_null($field['choices'])){
+              $rec = add_answer_rec($field, $rec, '0x00', 'noticed');
+              if(++$default_field_idx < count($toc)){
+                   $field = $toc[$default_field_idx];
+              }
+          }
+          else {
+              foreach($field['choices'] as $choice){
+                   $rec = add_answer_rec($field, $rec, $choice['ref'], $choice['label']);
+                   $field = eval_next_field($toc, $res, $field);
+                   $res = add_field_to_result($field, $res);
+              }
+          }
+     }
+
+     return $res;
+}
+
+function add_answer_rec($field, $rec, $ref, $val){
+
+     if(is_null($rec)){
+          $rec = [];
+     }
+
+     $rec[$field['ref']] = [];
+     $rec[$field['ref']][$ref] = $val;
+
+     return $rec;
+}
+
+function eval_next_field($toc, $rec, $field){
+
+     $res = null;
+
+// mock
+     $pos = array_search($field, $toc);
+     $pos++;
+     if($pos < count($toc)){
+          $res = $toc[$pos];
+     }
+
+     return $res;
+}
+
+function add_field_to_result($field, $res){
+
+     $buf = '';
+     $buf.= PHP_EOL;
+     $buf.= sprintf('group: %s', $field['parent']);
+     $buf.= PHP_EOL;
+     $buf.= sprintf('ref: %s', $field['ref']);
+     $buf.= PHP_EOL;
+     $buf.= sprintf('question: %s', $field['question']);
+     $buf.= PHP_EOL;
+
+     if(false == array_search($buf, $res)){
+          array_push($res, $buf);
+     }
+
+     return $res;
+}
+
+/*
 function crawl($toc, $branch, $field){
 
      if(is_null($branch)){
@@ -36,45 +109,7 @@ function crawl($toc, $branch, $field){
      return $branch;
 }
 
-function eval_next_field($toc, $rec, $field){
-
-     $res = null;
-
-// mock
-     $pos = array_search($field, $toc);
-     $pos++;
-     if($pos < count($toc)){
-          $res = $toc[$pos];
-     }
-
-     return $res;
-}
-
-function init_ref_tree($toc){
-
-     $tree = [];
-     foreach($toc as $field){
-          $node = [];
-          $node['ref'] = $field['ref'];
-          if(!is_null($field['actions'])){
-               $childs = [];
-               foreach($field['actions'] as $pack){
-                    if('jump' == $pack['action']){
-                         $child_node = [];
-                         $child_node['from'] = $field['ref'];
-                         $child_node['to'] = $pack['details']['to']['value'];
-                         $childs[]= $child_node;
-                    }
-               }
-               if(!empty($childs)){
-                    $node['childs'] = $childs;
-               }
-          }
-          $tree[]= $node;
-     }
-
-     return $tree;
-}
+*/
 
 function parse_typeform_survey($survey_file_name){
 
