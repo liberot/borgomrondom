@@ -71,11 +71,20 @@ function add_field_to_result($field, $res){
 
      $buf = '';
      $buf.= PHP_EOL;
-     $buf.= sprintf('group: %s', $field['parent']);
+     $buf.= sprintf('--------------------------------------------------------');
      $buf.= PHP_EOL;
-     $buf.= sprintf('ref: %s', $field['ref']);
+     $buf.= sprintf('////////////////////////////////////////////////////////');
      $buf.= PHP_EOL;
-     $buf.= sprintf('question: %s', $field['question']);
+     $buf.= sprintf('group:     %s', $field['parent']);
+     $buf.= PHP_EOL;
+     $buf.= sprintf('ref:       %s', $field['ref']);
+     $buf.= PHP_EOL;
+     $buf.= sprintf('question:  %s', $field['question']);
+     $buf.= PHP_EOL;
+     $buf.= sprintf('answer:    %s', $field['answer']);
+     $buf.= PHP_EOL;
+     $buf.= sprintf('--------------------------------------------------------');
+     $buf.= PHP_EOL;
      $buf.= PHP_EOL;
 
      if(false === array_search($buf, $res)){
