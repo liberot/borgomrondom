@@ -260,17 +260,18 @@ function walk_the_doc($doc){
 }
 
 function trim_doc_node($node){
-     if(is_array($node)){
-          foreach($node as $key=>$value){
-               if(is_object($value)){
-                    $value = get_object_vars($value);
-               }
-               if(is_array($value)){
-                    $node[$key] = trim_doc_node($value);
-                    continue;
-               }
-               $node[$key] = trim_for_print($value);
+     if(!is_array($node)){
+          return $node;
+     }
+     foreach($node as $key=>$value){
+          if(is_object($value)){
+               $value = get_object_vars($value);
           }
+          if(is_array($value)){
+               $node[$key] = trim_doc_node($value);
+               continue;
+          }
+          $node[$key] = trim_for_print($value);
      }
      return $node;
 }

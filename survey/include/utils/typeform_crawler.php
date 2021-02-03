@@ -1,130 +1,117 @@
 <?php defined('ABSPATH') || exit;
 
 function crawl_typeform_survey($survey_file_name){
+
      $toc = parse_typeform_survey($survey_file_name);
-     $res = walk_through_survey($toc, $depth=15, $toc[0], null);
-     return $res;
+     $conf = [
+          'rec',
+          'toc'=>$toc,
+          'node'
+     ];
+
+     $conf = walk_typeform_survey($conf);
+print_r($conf['node']);
+print PHP_EOL;
+
+     $conf = walk_typeform_survey($conf);
+print_r($conf['node']);
+print PHP_EOL;
+
+     $conf = walk_typeform_survey($conf);
+print_r($conf['node']);
+print PHP_EOL;
+
+exit();
+
+     return $conf;
 }
 
-function walk_through_survey($toc, $target_level, $field, $res){
-
-     if(is_null($res)){
-          $res = [];
-     }
-
-     $default_field_idx = 0;
-     for($level = 0; $level < $target_level; $level++){
-
-          $res = add_field_to_result($field, $res);
-
-          if(is_null($field['choices'])){
-              $answer = 'noticed';
-              $rec = add_answer_rec($field, $rec, '0x00', $answer);
-              if(++$default_field_idx < count($toc)){
-                   $field = $toc[$default_field_idx];
-                   $field['answer'] = $answer;
-              }
-          }
-          else {
-              foreach($field['choices'] as $choice){
-                   $rec = add_answer_rec($field, $rec, $choice['ref'], $choice['label']);
-
-                   $field = eval_next_field($toc, $res, $field);
-                   $field['answer'] = $choice['label'];
-
-                   $res = add_field_to_result($field, $res);
-              }
-          }
-     }
-
-     return $res;
-}
-
-function add_answer_rec($field, $rec, $ref, $val){
-
-     if(is_null($rec)){
-          $rec = [];
-     }
-
-     $rec[$field['ref']] = [];
-     $rec[$field['ref']][$ref] = $val;
-
-     return $rec;
-}
-
-function eval_next_field($toc, $rec, $field){
+function walk_typeform_survey($conf){
 
      $res = null;
 
-// mock
-// todo: eval the next field from the input
-     $pos = array_search($field, $toc);
-     $pos++;
-     if($pos < count($toc)){
-          $res = $toc[$pos];
-     }
+// todo: store input
+     $conf['key'] = '0x00';
+     $conf['val'] = 'default';
+     $res = store_input($conf);
+
+// loads next field
+     $res = eval_next_node($conf);
 
      return $res;
 }
 
-function add_field_to_result($field, $res){
+function store_input($conf){
 
-     $buf = '';
-     $buf.= PHP_EOL;
-     $buf.= sprintf('--------------------------------------------------------');
-     $buf.= PHP_EOL;
-     $buf.= sprintf('////////////////////////////////////////////////////////');
-     $buf.= PHP_EOL;
-     $buf.= sprintf('group:     %s', $field['parent']);
-     $buf.= PHP_EOL;
-     $buf.= sprintf('ref:       %s', $field['ref']);
-     $buf.= PHP_EOL;
-     $buf.= sprintf('question:  %s', $field['question']);
-     $buf.= PHP_EOL;
-     $buf.= sprintf('answer:    %s', $field['answer']);
-     $buf.= PHP_EOL;
-     $buf.= sprintf('--------------------------------------------------------');
-     $buf.= PHP_EOL;
-     $buf.= PHP_EOL;
-
-     if(false === array_search($buf, $res)){
-          array_push($res, $buf);
+     if(is_null($conf['rec'])){
+          $conf['rec'] = [];
      }
+
+     $key = $conf['key'];
+     $val = $conf['val'];
+     $ref = $conf['node']['ref'];
+
+     $conf['rec'][$ref] = [];
+     $conf['rec'][$ref][$key] = $val;
+
+     return $conf;
+}
+
+function eval_next_default_node($conf){
+
+     $res = null;
+
+     $pos = false;
+     $idx = 0;
+     foreach($conf['toc'] as $field){
+          if($field['ref'] == $conf['node']['ref']){
+               $pos = $idx;
+          }
+          $idx = $idx+1;
+     }
+
+     if(false === $pos){
+          $pos = 0;
+     }
+     else {
+          $pos = $pos+1;
+     }
+
+     if($pos >= count($conf['toc'])){
+          return $res;
+     }
+
+     if(is_null($conf['toc'][$pos])){
+          return $res;
+     }
+
+     $res = $conf;
+
+     $res['node'] = $conf['toc'][$pos];
 
      return $res;
 }
 
-/*
-function crawl($toc, $branch, $field){
+function eval_next_node($conf){
 
-     if(is_null($branch)){
-          $branch = [];
+     $res = null;
+
+     if(is_null($conf['node'])){
+          $res = eval_next_default_node($conf);
+          return $res;
      }
 
-     if(is_null($branch['knots'])){
-          $branch['knots'] = []; 
+     if(is_null($conf['node']['actions'])){
+          $res = eval_next_default_node($conf);
+          return $res;
      }
 
-     if(is_null($field)){
-          $field = $toc[0];
-     }
+// todo: evaluate: conditions of the node
+// mock: default next node
+     $res = eval_next_default_node($conf);
 
-     $sprout = [];
-     $sprout['ref'] = $field['ref'];
-     $sprout['question'] = preg_replace('/(\r\n)+|\r+|\n+|\t+/', ' ', $field['question']);
-     $sprout['answer'] = 'noticed';
-
-     $branch['branch']= $sprout;
-
-     $field = eval_next_field($toc, $rec, $field);
-     if(!is_null($field)){
-          $branch['knots'][]= crawl($toc, $branch, $field);
-     }
-
-     return $branch;
+     return $res;
 }
-
-*/
 
 function parse_typeform_survey($survey_file_name){
 
