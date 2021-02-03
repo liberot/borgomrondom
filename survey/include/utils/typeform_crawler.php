@@ -2,16 +2,59 @@
 
 function crawl_typeform_survey($survey_file_name){
      $toc = parse_typeform_survey($survey_file_name);
-
-     $tree = init_ref_tree($toc);
-
+     $tree = crawl($toc, null, null);
      return $tree;
+}
+
+
+function crawl($toc, $branch, $field){
+
+     if(is_null($branch)){
+          $branch = [];
+     }
+
+     if(is_null($field)){
+          $field = $toc[0];
+     }
+
+     $node = [];
+     $node['ref'] = $field['ref'];
+     $node['question'] = preg_replace('/(\r\n)+|\r+|\n+|\t+/', ' ', $field['question']);
+
+     if(is_null($field['choices'])){
+          $node['answer'] = 'noticed';
+     }
+
+     $branch['branch']= $node;
+
+     $field = eval_next_field($toc, $rec, $field);
+     if(!is_null($field)){
+          if(is_null($branch['knots'])){
+               $branch['knots'] = [];
+          }
+          $branch['knots'][]= crawl($toc, $branch, $field);
+     }
+
+     return $branch;
+}
+
+function eval_next_field($toc, $rec, $field){
+
+     $res = null;
+
+// mock
+     $pos = array_search($field, $toc);
+     $pos++;
+     if($pos < count($toc)){
+          $res = $toc[$pos];
+     }
+
+     return $res;
 }
 
 function init_ref_tree($toc){
 
      $tree = [];
-
      foreach($toc as $field){
           $node = [];
           $node['ref'] = $field['ref'];
