@@ -21,29 +21,44 @@ function crawl_typeform_survey($survey_file_name){
      $lgc = $doc['logic'];
 
      $toc = parse_question_groups($doc['fields'], null, null, $lgc);
+     $toc = flatten_toc_groups($toc, null);
 
      return $toc;
 }
 
-function setup_field_tree($toc, $lgc, $step, $res){
+function flatten_toc_groups($toc, $res){
 
      if(is_null($res)){
           $res = [];
      }
 
-     $field = $toc[$step];
-
-     $res['step'] = $step;
-     $res['actions'] = eval_actions_of_field($field, $lgc);
-     $res['childs'] = [];
-
-     $step++;
-
-     if($step < count($toc)){
-          $res['childs'][] = setup_field_tree($toc, $lgc, $step, $res); 
+     foreach($toc as $field){
+          if(is_null($field['group'])){
+               $res[]= $field;
+          }
+          else {
+// todo rec
+               foreach($field['group'] as $grouped_field){
+                    $res[]= $grouped_field;
+               }
+          }
      }
 
      return $res;
+}
+
+function eval_field_actions($toc, $lgc, $step, $tree){
+
+     if(is_null($tree)){
+          $tree = [];
+     }
+
+     foreach($toc as $field){;
+          $field['actions'] = eval_actions_of_field($field, $lgc);
+          $tree[]= $field;
+     }
+
+     return $tree;
 }
 
 function eval_actions_of_field($ref, $lgc){
