@@ -13,25 +13,23 @@ function crawl($toc, $branch, $field){
           $branch = [];
      }
 
+     if(is_null($branch['knots'])){
+          $branch['knots'] = []; 
+     }
+
      if(is_null($field)){
           $field = $toc[0];
      }
 
-     $node = [];
-     $node['ref'] = $field['ref'];
-     $node['question'] = preg_replace('/(\r\n)+|\r+|\n+|\t+/', ' ', $field['question']);
+     $sprout = [];
+     $sprout['ref'] = $field['ref'];
+     $sprout['question'] = preg_replace('/(\r\n)+|\r+|\n+|\t+/', ' ', $field['question']);
+     $sprout['answer'] = 'noticed';
 
-     if(is_null($field['choices'])){
-          $node['answer'] = 'noticed';
-     }
-
-     $branch['branch']= $node;
+     $branch['branch']= $sprout;
 
      $field = eval_next_field($toc, $rec, $field);
      if(!is_null($field)){
-          if(is_null($branch['knots'])){
-               $branch['knots'] = [];
-          }
           $branch['knots'][]= crawl($toc, $branch, $field);
      }
 
