@@ -1,6 +1,14 @@
 <?php defined('ABSPATH') || exit;
 
 function crawl_typeform_survey($survey_file_name){
+     $toc = parse_typeform_survey($survey_file_name);
+
+
+
+     return $toc;
+}
+
+function parse_typeform_survey($survey_file_name){
 
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
 
@@ -98,7 +106,7 @@ function parse_question_groups($nodes, $parent=null, $res=null, $lgc){
 
      foreach($nodes as $node){
 
-          $res = crawl_tree($res, $parent, $node, $lgc);
+          $res = parse_tree($res, $parent, $node, $lgc);
 
           if(!is_null($node['properties']['fields'])){
                $res = parse_question_groups(
@@ -115,7 +123,7 @@ function parse_question_groups($nodes, $parent=null, $res=null, $lgc){
      return $res;
 }
 
-function crawl_tree($tree, $parent, $node, $lgc){
+function parse_tree($tree, $parent, $node, $lgc){
 
      switch($parent){
 
@@ -132,14 +140,14 @@ function crawl_tree($tree, $parent, $node, $lgc){
           default:
 
                $branch = $tree;
-               $tree = crawl_branch($branch, $parent, $node, $lgc);
+               $tree = parse_branch($branch, $parent, $node, $lgc);
                break;
      }
 
      return $tree;
 }
 
-function crawl_branch($branch, $parent, $node, $lgc){
+function parse_branch($branch, $parent, $node, $lgc){
 
      for($idx = 0; $idx < count($branch); $idx++){
 
@@ -169,7 +177,7 @@ function crawl_branch($branch, $parent, $node, $lgc){
           }
           else if(!empty($branch[$idx]['group'])){
 
-               $branch[$idx]['group'] = crawl_branch($branch[$idx]['group'], $parent, $node, $lgc);
+               $branch[$idx]['group'] = parse_branch($branch[$idx]['group'], $parent, $node, $lgc);
           }
      }
 
