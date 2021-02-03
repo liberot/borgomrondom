@@ -3,9 +3,36 @@
 function crawl_typeform_survey($survey_file_name){
      $toc = parse_typeform_survey($survey_file_name);
 
+     $tree = init_ref_tree($toc);
 
+     return $tree;
+}
 
-     return $toc;
+function init_ref_tree($toc){
+
+     $tree = [];
+
+     foreach($toc as $field){
+          $node = [];
+          $node['ref'] = $field['ref'];
+          if(!is_null($field['actions'])){
+               $childs = [];
+               foreach($field['actions'] as $pack){
+                    if('jump' == $pack['action']){
+                         $child_node = [];
+                         $child_node['from'] = $field['ref'];
+                         $child_node['to'] = $pack['details']['to']['value'];
+                         $childs[]= $child_node;
+                    }
+               }
+               if(!empty($childs)){
+                    $node['childs'] = $childs;
+               }
+          }
+          $tree[]= $node;
+     }
+
+     return $tree;
 }
 
 function parse_typeform_survey($survey_file_name){
@@ -53,20 +80,6 @@ function flatten_toc_groups($toc, $res){
      }
 
      return $res;
-}
-
-function eval_field_actions($toc, $lgc, $step, $tree){
-
-     if(is_null($tree)){
-          $tree = [];
-     }
-
-     foreach($toc as $field){;
-          $field['actions'] = eval_actions_of_field($field, $lgc);
-          $tree[]= $field;
-     }
-
-     return $tree;
 }
 
 function eval_actions_of_field($ref, $lgc){
