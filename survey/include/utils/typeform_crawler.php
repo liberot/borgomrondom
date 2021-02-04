@@ -4,41 +4,37 @@ function crawl_typeform_survey($survey_file_name){
 
      $toc = parse_typeform_survey($survey_file_name);
      $conf = [
-          'rec',
           'toc'=>$toc,
-          'node'
+          'node'=>[
+               'ref'=>'root'
+          ],
+          'mem'=>[],
+          'rec'=>[]
      ];
 
      $conf = walk_typeform_survey($conf);
-print_r($conf['node']);
-print PHP_EOL;
-
-     $conf = walk_typeform_survey($conf);
-print_r($conf['node']);
-print PHP_EOL;
-
-     $conf = walk_typeform_survey($conf);
-print_r($conf['node']);
-print PHP_EOL;
-
-exit();
 
      return $conf;
 }
 
 function walk_typeform_survey($conf){
 
-     $res = null;
+     if(is_null($conf['node'])){
+          return $conf;
+     }
 
-// todo: store input
-     $conf['key'] = '0x00';
-     $conf['val'] = 'default';
-     $res = store_input($conf);
+// stores input: todo: eval input
+     $conf['mem']['key'] = '0x00';
+     $conf['mem']['val'] = 'default';
+     $conf = store_input($conf);
 
-// loads next field
-     $res = eval_next_node($conf);
+// evals next node
+     $conf = eval_next_node($conf);
 
-     return $res;
+// walks
+     $conf = walk_typeform_survey($conf);
+
+     return $conf;
 }
 
 function store_input($conf){
@@ -47,9 +43,9 @@ function store_input($conf){
           $conf['rec'] = [];
      }
 
-     $key = $conf['key'];
-     $val = $conf['val'];
      $ref = $conf['node']['ref'];
+     $key = $conf['mem']['key'];
+     $val = $conf['mem']['val'];
 
      $conf['rec'][$ref] = [];
      $conf['rec'][$ref][$key] = $val;
@@ -58,8 +54,6 @@ function store_input($conf){
 }
 
 function eval_next_default_node($conf){
-
-     $res = null;
 
      $pos = false;
      $idx = 0;
@@ -78,39 +72,37 @@ function eval_next_default_node($conf){
      }
 
      if($pos >= count($conf['toc'])){
-          return $res;
+          $conf['node'] = null;
+          return $conf;
      }
 
      if(is_null($conf['toc'][$pos])){
-          return $res;
+          $conf['node'] = null;
+          return $conf;
      }
 
-     $res = $conf;
+     $conf['node'] = $conf['toc'][$pos];
 
-     $res['node'] = $conf['toc'][$pos];
-
-     return $res;
+     return $conf;
 }
 
 function eval_next_node($conf){
 
-     $res = null;
-
      if(is_null($conf['node'])){
-          $res = eval_next_default_node($conf);
-          return $res;
+          $conf = eval_next_default_node($conf);
+          return $conf;
      }
 
      if(is_null($conf['node']['actions'])){
-          $res = eval_next_default_node($conf);
-          return $res;
+          $conf = eval_next_default_node($conf);
+          return $conf;
      }
 
 // todo: evaluate: conditions of the node
 // mock: default next node
-     $res = eval_next_default_node($conf);
+     $conf = eval_next_default_node($conf);
 
-     return $res;
+     return $conf;
 }
 
 function parse_typeform_survey($survey_file_name){
