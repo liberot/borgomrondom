@@ -23,9 +23,11 @@ function walk_typeform_survey($conf){
           return $conf;
      }
 
-// stores input: todo: eval input
+// todo: eval input
      $conf['mem']['key'] = '0x00';
      $conf['mem']['val'] = 'default';
+
+// stores input
      $conf = store_input($conf);
 
 // evals next node
@@ -44,6 +46,7 @@ function store_input($conf){
      }
 
      $ref = $conf['node']['ref'];
+
      $key = $conf['mem']['key'];
      $val = $conf['mem']['val'];
 
@@ -88,21 +91,56 @@ function eval_next_default_node($conf){
 
 function eval_next_node($conf){
 
+// evals next default node
      if(is_null($conf['node'])){
           $conf = eval_next_default_node($conf);
           return $conf;
      }
 
+// evals next default node
      if(is_null($conf['node']['actions'])){
           $conf = eval_next_default_node($conf);
           return $conf;
      }
 
-// todo: evaluate: conditions of the node
-// mock: default next node
+// evals conditions of the node
+     foreach($conf['node']['actions'] as $action){
+
+          $log = $action['condition']['op'];
+          $conditions = $action['condition']['vars'];
+
+          foreach($conditions as $condition){
+
+               switch($condition['type']){
+
+                    case 'field':
+// not be evald
+                         break;
+
+                    case 'choice':
+                         $val = $condition['value'];
+                         $rec = get_rec_val($conf);
+print '>rec:';
+print PHP_EOL;
+print_r($val);
+print PHP_EOL;
+print_r($rec);
+print PHP_EOL;
+                         break;
+               }
+          }
+     }
+
      $conf = eval_next_default_node($conf);
 
      return $conf;
+}
+
+function get_rec_val($conf){
+
+     $res = null;
+     $res = $conf['rec'][$conf['node']['ref']];
+     return $res;
 }
 
 function parse_typeform_survey($survey_file_name){
