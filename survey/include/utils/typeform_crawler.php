@@ -30,7 +30,7 @@ function walk_typeform_survey($proc){
      switch($proc['field']['type']){
 
           case 'short_text':
-               $proc['mem']['key'] = '0x01';
+               $proc['mem']['key'] = '0x00';
                $proc['mem']['val'] = 'Text input';
                break;
 
@@ -48,7 +48,7 @@ function walk_typeform_survey($proc){
           case 'picture_choice':
           case 'statement':
           default:
-               $proc['mem']['key'] = '0x00';
+               $proc['mem']['key'] = '0x01';
                $proc['mem']['val'] = 'noticed';
                break;
      }
@@ -148,28 +148,49 @@ function eval_next_node($proc){
      }
 
 // evals conditions of the node
-     foreach($proc['field']['actions'] as $action){
+     for($i = 0; $i < count($proc['field']['actions']); $i++){
 
-          $action_type = $action['action'];
-          $condition_operator = $action['condition']['op'];
-          $condition_vars = $action['condition']['vars'];
+          $type = $proc['field']['actions'][$i]['action'];
+          $operator = $proc['field']['actions'][$i]['op'];
 
-          foreach($condition_vars as $condition){
-               switch($condition['type']){
+          for($ii = 0; $ii < count($proc['field']['actions'][$i]['condition']['vars']); $ii++){
+
+               switch($proc['field']['actions'][$i]['condition']['vars'][$ii]['type']){
+
+                    case 'field':
+
+                         $proc['field']['actions'][$i]['condition']['vars'][$ii]['res'] = 'true';
+
+                         break;
+
                     case 'choice':
-                         $val = $condition['value'];
+
+                         $val = $proc['field']['actions'][$i]['condition']['vars'][$ii]['value'];
                          $rec = get_rec_val($proc);
-                         if($val == $rec){
-                              $condition['res'] = true;
+
+                         $proc['field']['actions'][$i]['condition']['vars'][$ii]['res'] = 'false';
+                         if(array_key_exists($val, $rec)){
+                              $proc['field']['actions'][$i]['condition']['vars'][$ii]['res'] = 'true';
                          }
-                         else {
-                              $condition['res'] = false;
+
+                         break;
+
+                    case 'constant':
+
+                         $val = $proc['field']['actions'][$i]['condition']['vars'][$ii]['value'];
+                         $rec = get_rec_val($proc);
+                         $proc['field']['actions'][$i]['condition']['vars'][$ii]['res'] = 'false';
+                         if($val == $rec['constant']){
+                              $proc['field']['actions'][$i]['condition']['vars'][$ii]['res'] = 'true';
                          }
+
                          break;
                }
           }
      }
+// print_r($proc['field']['actions']);
 
+// mockup
      $proc = eval_next_default_node($proc);
 
      return $proc;
@@ -229,7 +250,7 @@ function flatten_toc_groups($toc, $res){
 
 function eval_actions_of_field($ref, $logic){
 
-     $res = [];
+     $res = null;
 
      foreach($logic as $expression){
 
@@ -239,6 +260,10 @@ function eval_actions_of_field($ref, $logic){
 
           if($ref != $expression['ref']){
                continue;
+          }
+
+          if(is_null($res)){
+               $res = [];
           }
 
           $res[]= $expression;
@@ -311,7 +336,7 @@ function parse_branch($branch, $parent, $proc, $logic){
 
           if($parent == $branch[$idx]['ref']){
 
-               $temp = [
+               $field = [
                     'ref'=>$proc['ref'],
                     'parent'=>$parent,
                     'question'=>$proc['title'],
@@ -319,19 +344,17 @@ function parse_branch($branch, $parent, $proc, $logic){
                ];
 
                switch($proc['type']){
-
                     case 'multiple_choice':
-
-                         $temp['choices'] = $proc['properties']['choices'];
+                         $field['choices'] = $proc['properties']['choices'];
                          break;
                }
 
                $res = eval_actions_of_field($proc['ref'], $logic);
                if(!is_null($res[0]['actions'])){
-                    $temp['actions'] = $res[0]['actions'];
+                    $field['actions'] = $res[0]['actions'];
                }
 
-               $branch[$idx]['group'][] = $temp; 
+               $branch[$idx]['group'][] = $field; 
           }
           else if(!empty($branch[$idx]['group'])){
 
