@@ -39,11 +39,12 @@ function walk_typeform_survey($conf){
                $conf['mem']['val'] = $temp['label'];
                break;
 
-          case 'multiple_choice':
+          case 'yes_no':
                $conf['mem']['key'] = 'constant';
                $conf['mem']['val'] = '1';
                break;
 
+          case 'picture_choice':
           case 'statement':
           default:
                $conf['mem']['key'] = '0x00';
@@ -129,13 +130,13 @@ function eval_next_default_node($conf){
 
 function eval_next_node($conf){
 
-// evals next default node
+// evals next node
      if(is_null($conf['node'])){
           $conf = eval_next_default_node($conf);
           return $conf;
      }
 
-// evals next default node
+// evals next node
      if(is_null($conf['node']['actions'])){
           $conf = eval_next_default_node($conf);
           return $conf;
@@ -144,33 +145,14 @@ function eval_next_node($conf){
 // evals conditions of the node
      foreach($conf['node']['actions'] as $action){
 
-          $log = $action['condition']['op'];
-          $conditions = $action['condition']['vars'];
+          $action_type = $action['action'];
+          $condition_operator = $action['condition']['op'];
+          $condition_vars = $action['condition']['vars'];
 
-// this i am not sure about
-// field as in *this field or field as in a field of the result
-          foreach($conditions as $condition){
-
+          foreach($condition_vars as $condition){
                switch($condition['type']){
-
-                    case 'field':
-                         $conf['node']['req_ref'] = $condition['value'];
-                         break;
-                }
-          }
-
-// 
-          foreach($conditions as $condition){
-
-               switch($condition['type']){
-
                     case 'choice':
                          $val = $condition['value'];
-
-                         if(is_null($conf['node']['req_ref'])){
-                              $conf['node']['req_ref'] = $conf['node']['ref'];
-                         }
-
                          $rec = get_rec_val($conf);
                          break;
                }
@@ -185,7 +167,7 @@ function eval_next_node($conf){
 function get_rec_val($conf){
 
      $res = null;
-     $res = $conf['rec'][$conf['node']['req_ref']];
+     $res = $conf['rec'][$conf['node']['ref']];
      return $res;
 }
 
