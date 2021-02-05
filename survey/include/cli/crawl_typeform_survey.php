@@ -25,7 +25,7 @@ $res = crawl_typeform_survey($survey_title);
 print "Walkthroughs:";
 print $survey_title;
 print PHP_EOL;
-print_r($res);
+print_r($res['pth']);
 print PHP_EOL;
 print PHP_EOL;
 print PHP_EOL;

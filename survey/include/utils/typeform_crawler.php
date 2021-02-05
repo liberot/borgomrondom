@@ -9,7 +9,8 @@ function crawl_typeform_survey($survey_file_name){
                'ref'=>'root'
           ],
           'mem'=>[],
-          'rec'=>[]
+          'rec'=>[],
+          'pth'=>[]
      ];
 
      $conf = walk_typeform_survey($conf);
@@ -23,18 +24,55 @@ function walk_typeform_survey($conf){
           return $conf;
      }
 
-// todo: eval input
-     $conf['mem']['key'] = '0x00';
-     $conf['mem']['val'] = 'default';
+
+// selects answer
+     switch($conf['node']['type']){
+
+          case 'short_text':
+               $conf['mem']['key'] = '0x01';
+               $conf['mem']['val'] = 'Text input';
+               break;
+
+          case 'multiple_choice':
+               $temp = $conf['node']['choices'][0];
+               $conf['mem']['key'] = $temp['ref'];
+               $conf['mem']['val'] = $temp['label'];
+               break;
+
+          case 'multiple_choice':
+               $conf['mem']['key'] = 'constant';
+               $conf['mem']['val'] = '1';
+               break;
+
+          case 'statement':
+          default:
+               $conf['mem']['key'] = '0x00';
+               $conf['mem']['val'] = 'noticed';
+               break;
+     }
 
 // stores input
      $conf = store_input($conf);
+
+// stores path record
+     $conf = store_path_record($conf);
 
 // evals next node
      $conf = eval_next_node($conf);
 
 // walks
      $conf = walk_typeform_survey($conf);
+
+     return $conf;
+}
+
+function store_path_record($conf){
+
+     $conf['node']['answer'] = $conf['mem']['val'];
+
+// todo: determine the possibilities of 'multiple_choice' 
+
+     $conf['pth'][]= $conf['node'];
 
      return $conf;
 }
@@ -109,23 +147,31 @@ function eval_next_node($conf){
           $log = $action['condition']['op'];
           $conditions = $action['condition']['vars'];
 
+// this i am not sure about
+// field as in *this field or field as in a field of the result
           foreach($conditions as $condition){
 
                switch($condition['type']){
 
                     case 'field':
-// not be evald
+                         $conf['node']['req_ref'] = $condition['value'];
                          break;
+                }
+          }
+
+// 
+          foreach($conditions as $condition){
+
+               switch($condition['type']){
 
                     case 'choice':
                          $val = $condition['value'];
+
+                         if(is_null($conf['node']['req_ref'])){
+                              $conf['node']['req_ref'] = $conf['node']['ref'];
+                         }
+
                          $rec = get_rec_val($conf);
-print '>rec:';
-print PHP_EOL;
-print_r($val);
-print PHP_EOL;
-print_r($rec);
-print PHP_EOL;
                          break;
                }
           }
@@ -139,7 +185,7 @@ print PHP_EOL;
 function get_rec_val($conf){
 
      $res = null;
-     $res = $conf['rec'][$conf['node']['ref']];
+     $res = $conf['rec'][$conf['node']['req_ref']];
      return $res;
 }
 
