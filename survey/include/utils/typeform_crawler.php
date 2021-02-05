@@ -4,104 +4,108 @@ function crawl_typeform_survey($survey_file_name){
 
      $toc = parse_typeform_survey($survey_file_name);
 
-     $node = [
+     $proc = [
           'toc'=>$toc,
           'field'=>[
                'ref'=>'root'
           ],
           'mem'=>[],
           'rec'=>[],
-          'pth'=>[]
+          'path'=>[]
      ];
 
-     $node = walk_typeform_survey($node);
+     $proc = walk_typeform_survey($proc);
 
-     return $node;
+     return $proc;
 }
 
-function walk_typeform_survey($node){
+function walk_typeform_survey($proc){
 
-     if(is_null($node['field'])){
-          return $node;
+     if(is_null($proc['field'])){
+          return $proc;
      }
 
 
 // selects answer
-     switch($node['field']['type']){
+     switch($proc['field']['type']){
 
           case 'short_text':
-               $node['mem']['key'] = '0x01';
-               $node['mem']['val'] = 'Text input';
+               $proc['mem']['key'] = '0x01';
+               $proc['mem']['val'] = 'Text input';
                break;
 
           case 'multiple_choice':
-               $temp = $node['field']['choices'][0];
-               $node['mem']['key'] = $temp['ref'];
-               $node['mem']['val'] = $temp['label'];
+               $temp = $proc['field']['choices'][0];
+               $proc['mem']['key'] = $temp['ref'];
+               $proc['mem']['val'] = $temp['label'];
                break;
 
           case 'yes_no':
-               $node['mem']['key'] = 'constant';
-               $node['mem']['val'] = '1';
+               $proc['mem']['key'] = 'constant';
+               $proc['mem']['val'] = '1';
                break;
 
           case 'picture_choice':
           case 'statement':
           default:
-               $node['mem']['key'] = '0x00';
-               $node['mem']['val'] = 'noticed';
+               $proc['mem']['key'] = '0x00';
+               $proc['mem']['val'] = 'noticed';
                break;
      }
 
 // stores input
-     $node = store_input($node);
+     $proc = store_input($proc);
 
 // stores path record
-     $node = store_path_record($node);
+     $proc = store_path_record($proc);
 
 // evals next node
-     $node = eval_next_node($node);
+     $proc = eval_next_node($proc);
 
 // walks
-     $node = walk_typeform_survey($node);
+     $proc = walk_typeform_survey($proc);
 
-     return $node;
+     return $proc;
 }
 
-function store_path_record($node){
+function store_path_record($proc){
 
-     $node['field']['answer'] = $node['mem']['val'];
+     $proc['field']['answer'] = $proc['mem']['val'];
 
-// todo: determine the possibilities of 'multiple_choice' 
+// todo: determine the possibilities of 'multiple_choice' and 'picture_choice'
 
-     $node['pth'][]= $node['field'];
+     $proc['path'][]= [
+          'question'=>$proc['field']['question'],
+          'answer'=>$proc['field']['answer'],
+          'ref'=>$proc['field']['ref']
+     ];
 
-     return $node;
+     return $proc;
 }
 
-function store_input($node){
+function store_input($proc){
 
-     if(is_null($node['rec'])){
-          $node['rec'] = [];
+     if(is_null($proc['rec'])){
+          $proc['rec'] = [];
      }
 
-     $ref = $node['field']['ref'];
+     $ref = $proc['field']['ref'];
 
-     $key = $node['mem']['key'];
-     $val = $node['mem']['val'];
+     $key = $proc['mem']['key'];
+     $val = $proc['mem']['val'];
 
-     $node['rec'][$ref] = [];
-     $node['rec'][$ref][$key] = $val;
+     $proc['rec'][$ref] = [];
+     $proc['rec'][$ref][$key] = $val;
 
-     return $node;
+     return $proc;
 }
 
-function eval_next_default_node($node){
+function eval_next_default_node($proc){
 
      $pos = false;
      $idx = 0;
-     foreach($node['toc'] as $field){
-          if($field['ref'] == $node['field']['ref']){
+     foreach($proc['toc'] as $field){
+          if($field['ref'] == $proc['field']['ref']){
                $pos = $idx;
           }
           $idx = $idx+1;
@@ -114,37 +118,37 @@ function eval_next_default_node($node){
           $pos = $pos+1;
      }
 
-     if($pos >= count($node['toc'])){
-          $node['field'] = null;
-          return $node;
+     if($pos >= count($proc['toc'])){
+          $proc['field'] = null;
+          return $proc;
      }
 
-     if(is_null($node['toc'][$pos])){
-          $node['field'] = null;
-          return $node;
+     if(is_null($proc['toc'][$pos])){
+          $proc['field'] = null;
+          return $proc;
      }
 
-     $node['field'] = $node['toc'][$pos];
+     $proc['field'] = $proc['toc'][$pos];
 
-     return $node;
+     return $proc;
 }
 
-function eval_next_node($node){
+function eval_next_node($proc){
 
 // evals next node
-     if(is_null($node['field'])){
-          $node = eval_next_default_node($node);
-          return $node;
+     if(is_null($proc['field'])){
+          $proc = eval_next_default_node($proc);
+          return $proc;
      }
 
 // evals next node
-     if(is_null($node['field']['actions'])){
-          $node = eval_next_default_node($node);
-          return $node;
+     if(is_null($proc['field']['actions'])){
+          $proc = eval_next_default_node($proc);
+          return $proc;
      }
 
 // evals conditions of the node
-     foreach($node['field']['actions'] as $action){
+     foreach($proc['field']['actions'] as $action){
 
           $action_type = $action['action'];
           $condition_operator = $action['condition']['op'];
@@ -154,21 +158,27 @@ function eval_next_node($node){
                switch($condition['type']){
                     case 'choice':
                          $val = $condition['value'];
-                         $rec = get_rec_val($node);
+                         $rec = get_rec_val($proc);
+                         if($val == $rec){
+                              $condition['res'] = true;
+                         }
+                         else {
+                              $condition['res'] = false;
+                         }
                          break;
                }
           }
      }
 
-     $node = eval_next_default_node($node);
+     $proc = eval_next_default_node($proc);
 
-     return $node;
+     return $proc;
 }
 
-function get_rec_val($node){
+function get_rec_val($proc){
 
      $res = null;
-     $res = $node['rec'][$node['field']['ref']];
+     $res = $proc['rec'][$proc['field']['ref']];
      return $res;
 }
 
@@ -237,7 +247,7 @@ function eval_actions_of_field($ref, $logic){
      return $res;
 }
 
-function parse_question_groups($nodes, $parent, $logic, $res){
+function parse_question_groups($procs, $parent, $logic, $res){
 
 
      if(is_null($res)){ 
@@ -248,18 +258,18 @@ function parse_question_groups($nodes, $parent, $logic, $res){
           $parent = 'root'; 
      }
 
-     if(is_null($nodes)){ 
+     if(is_null($procs)){ 
           return $res; 
      }
 
-     foreach($nodes as $node){
+     foreach($procs as $proc){
 
-          $res = parse_tree($res, $parent, $node, $logic);
+          $res = parse_tree($res, $parent, $proc, $logic);
 
-          if(!is_null($node['properties']['fields'])){
+          if(!is_null($proc['properties']['fields'])){
                $res = parse_question_groups(
-                    $node['properties']['fields'], 
-                    $node['ref'],
+                    $proc['properties']['fields'], 
+                    $proc['ref'],
                     $logic,
                     $res
                );
@@ -271,15 +281,15 @@ function parse_question_groups($nodes, $parent, $logic, $res){
      return $res;
 }
 
-function parse_tree($tree, $parent, $node, $logic){
+function parse_tree($tree, $parent, $proc, $logic){
 
      switch($parent){
 
           case 'root':
 
                $tree[]= [ 
-                    'ref'=>$node['ref'],
-                    'question'=>$node['title'],
+                    'ref'=>$proc['ref'],
+                    'question'=>$proc['title'],
                     'parent'=>$parent
                ];
 
@@ -288,35 +298,35 @@ function parse_tree($tree, $parent, $node, $logic){
           default:
 
                $branch = $tree;
-               $tree = parse_branch($branch, $parent, $node, $logic);
+               $tree = parse_branch($branch, $parent, $proc, $logic);
                break;
      }
 
      return $tree;
 }
 
-function parse_branch($branch, $parent, $node, $logic){
+function parse_branch($branch, $parent, $proc, $logic){
 
      for($idx = 0; $idx < count($branch); $idx++){
 
           if($parent == $branch[$idx]['ref']){
 
                $temp = [
-                    'ref'=>$node['ref'],
+                    'ref'=>$proc['ref'],
                     'parent'=>$parent,
-                    'question'=>$node['title'],
-                    'type'=>$node['type']
+                    'question'=>$proc['title'],
+                    'type'=>$proc['type']
                ];
 
-               switch($node['type']){
+               switch($proc['type']){
 
                     case 'multiple_choice':
 
-                         $temp['choices'] = $node['properties']['choices'];
+                         $temp['choices'] = $proc['properties']['choices'];
                          break;
                }
 
-               $res = eval_actions_of_field($node['ref'], $logic);
+               $res = eval_actions_of_field($proc['ref'], $logic);
                if(!is_null($res[0]['actions'])){
                     $temp['actions'] = $res[0]['actions'];
                }
@@ -325,7 +335,7 @@ function parse_branch($branch, $parent, $node, $logic){
           }
           else if(!empty($branch[$idx]['group'])){
 
-               $branch[$idx]['group'] = parse_branch($branch[$idx]['group'], $parent, $node, $logic);
+               $branch[$idx]['group'] = parse_branch($branch[$idx]['group'], $parent, $proc, $logic);
           }
      }
 
@@ -342,15 +352,15 @@ function flatten_tree($tree, $res=null){
           return $res; 
      }
 
-     foreach($tree as $node){
+     foreach($tree as $proc){
 
-          if(!empty($node['group'])){
+          if(!empty($proc['group'])){
 
-               $res = flatten_tree($node['group'], $res);
+               $res = flatten_tree($proc['group'], $res);
           }
           else {
 
-               $res[]= $node;
+               $res[]= $proc;
           }
      }
 
