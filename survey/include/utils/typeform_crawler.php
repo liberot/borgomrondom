@@ -3,9 +3,10 @@
 function crawl_typeform_survey($survey_file_name){
 
      $toc = parse_typeform_survey($survey_file_name);
-     $conf = [
+
+     $node = [
           'toc'=>$toc,
-          'node'=>[
+          'field'=>[
                'ref'=>'root'
           ],
           'mem'=>[],
@@ -13,94 +14,94 @@ function crawl_typeform_survey($survey_file_name){
           'pth'=>[]
      ];
 
-     $conf = walk_typeform_survey($conf);
+     $node = walk_typeform_survey($node);
 
-     return $conf;
+     return $node;
 }
 
-function walk_typeform_survey($conf){
+function walk_typeform_survey($node){
 
-     if(is_null($conf['node'])){
-          return $conf;
+     if(is_null($node['field'])){
+          return $node;
      }
 
 
 // selects answer
-     switch($conf['node']['type']){
+     switch($node['field']['type']){
 
           case 'short_text':
-               $conf['mem']['key'] = '0x01';
-               $conf['mem']['val'] = 'Text input';
+               $node['mem']['key'] = '0x01';
+               $node['mem']['val'] = 'Text input';
                break;
 
           case 'multiple_choice':
-               $temp = $conf['node']['choices'][0];
-               $conf['mem']['key'] = $temp['ref'];
-               $conf['mem']['val'] = $temp['label'];
+               $temp = $node['field']['choices'][0];
+               $node['mem']['key'] = $temp['ref'];
+               $node['mem']['val'] = $temp['label'];
                break;
 
           case 'yes_no':
-               $conf['mem']['key'] = 'constant';
-               $conf['mem']['val'] = '1';
+               $node['mem']['key'] = 'constant';
+               $node['mem']['val'] = '1';
                break;
 
           case 'picture_choice':
           case 'statement':
           default:
-               $conf['mem']['key'] = '0x00';
-               $conf['mem']['val'] = 'noticed';
+               $node['mem']['key'] = '0x00';
+               $node['mem']['val'] = 'noticed';
                break;
      }
 
 // stores input
-     $conf = store_input($conf);
+     $node = store_input($node);
 
 // stores path record
-     $conf = store_path_record($conf);
+     $node = store_path_record($node);
 
 // evals next node
-     $conf = eval_next_node($conf);
+     $node = eval_next_node($node);
 
 // walks
-     $conf = walk_typeform_survey($conf);
+     $node = walk_typeform_survey($node);
 
-     return $conf;
+     return $node;
 }
 
-function store_path_record($conf){
+function store_path_record($node){
 
-     $conf['node']['answer'] = $conf['mem']['val'];
+     $node['field']['answer'] = $node['mem']['val'];
 
 // todo: determine the possibilities of 'multiple_choice' 
 
-     $conf['pth'][]= $conf['node'];
+     $node['pth'][]= $node['field'];
 
-     return $conf;
+     return $node;
 }
 
-function store_input($conf){
+function store_input($node){
 
-     if(is_null($conf['rec'])){
-          $conf['rec'] = [];
+     if(is_null($node['rec'])){
+          $node['rec'] = [];
      }
 
-     $ref = $conf['node']['ref'];
+     $ref = $node['field']['ref'];
 
-     $key = $conf['mem']['key'];
-     $val = $conf['mem']['val'];
+     $key = $node['mem']['key'];
+     $val = $node['mem']['val'];
 
-     $conf['rec'][$ref] = [];
-     $conf['rec'][$ref][$key] = $val;
+     $node['rec'][$ref] = [];
+     $node['rec'][$ref][$key] = $val;
 
-     return $conf;
+     return $node;
 }
 
-function eval_next_default_node($conf){
+function eval_next_default_node($node){
 
      $pos = false;
      $idx = 0;
-     foreach($conf['toc'] as $field){
-          if($field['ref'] == $conf['node']['ref']){
+     foreach($node['toc'] as $field){
+          if($field['ref'] == $node['field']['ref']){
                $pos = $idx;
           }
           $idx = $idx+1;
@@ -113,37 +114,37 @@ function eval_next_default_node($conf){
           $pos = $pos+1;
      }
 
-     if($pos >= count($conf['toc'])){
-          $conf['node'] = null;
-          return $conf;
+     if($pos >= count($node['toc'])){
+          $node['field'] = null;
+          return $node;
      }
 
-     if(is_null($conf['toc'][$pos])){
-          $conf['node'] = null;
-          return $conf;
+     if(is_null($node['toc'][$pos])){
+          $node['field'] = null;
+          return $node;
      }
 
-     $conf['node'] = $conf['toc'][$pos];
+     $node['field'] = $node['toc'][$pos];
 
-     return $conf;
+     return $node;
 }
 
-function eval_next_node($conf){
+function eval_next_node($node){
 
 // evals next node
-     if(is_null($conf['node'])){
-          $conf = eval_next_default_node($conf);
-          return $conf;
+     if(is_null($node['field'])){
+          $node = eval_next_default_node($node);
+          return $node;
      }
 
 // evals next node
-     if(is_null($conf['node']['actions'])){
-          $conf = eval_next_default_node($conf);
-          return $conf;
+     if(is_null($node['field']['actions'])){
+          $node = eval_next_default_node($node);
+          return $node;
      }
 
 // evals conditions of the node
-     foreach($conf['node']['actions'] as $action){
+     foreach($node['field']['actions'] as $action){
 
           $action_type = $action['action'];
           $condition_operator = $action['condition']['op'];
@@ -153,21 +154,21 @@ function eval_next_node($conf){
                switch($condition['type']){
                     case 'choice':
                          $val = $condition['value'];
-                         $rec = get_rec_val($conf);
+                         $rec = get_rec_val($node);
                          break;
                }
           }
      }
 
-     $conf = eval_next_default_node($conf);
+     $node = eval_next_default_node($node);
 
-     return $conf;
+     return $node;
 }
 
-function get_rec_val($conf){
+function get_rec_val($node){
 
      $res = null;
-     $res = $conf['rec'][$conf['node']['ref']];
+     $res = $node['rec'][$node['field']['ref']];
      return $res;
 }
 
@@ -189,10 +190,9 @@ function parse_typeform_survey($survey_file_name){
 
      $doc = walk_the_doc($doc);
 
-     $lgc = $doc['logic'];
+     $toc = parse_question_groups($doc['fields'], 'root', $doc['logic'], $res=null);
 
-     $toc = parse_question_groups($doc['fields'], null, null, $lgc);
-     $toc = flatten_toc_groups($toc, null);
+     $toc = flatten_toc_groups($toc, $res=null);
 
      return $toc;
 }
@@ -208,7 +208,6 @@ function flatten_toc_groups($toc, $res){
                $res[]= $field;
           }
           else {
-// todo rec
                foreach($field['group'] as $grouped_field){
                     $res[]= $grouped_field;
                }
@@ -218,27 +217,27 @@ function flatten_toc_groups($toc, $res){
      return $res;
 }
 
-function eval_actions_of_field($ref, $lgc){
+function eval_actions_of_field($ref, $logic){
 
      $res = [];
 
-     foreach($lgc as $logic){
+     foreach($logic as $expression){
 
-          if('field' != $logic['type']){
+          if('field' != $expression['type']){
                continue;
           }
 
-          if($ref != $logic['ref']){
+          if($ref != $expression['ref']){
                continue;
           }
 
-          $res[]= $logic;
+          $res[]= $expression;
      }
 
      return $res;
 }
 
-function parse_question_groups($nodes, $parent=null, $res=null, $lgc){
+function parse_question_groups($nodes, $parent, $logic, $res){
 
 
      if(is_null($res)){ 
@@ -255,14 +254,14 @@ function parse_question_groups($nodes, $parent=null, $res=null, $lgc){
 
      foreach($nodes as $node){
 
-          $res = parse_tree($res, $parent, $node, $lgc);
+          $res = parse_tree($res, $parent, $node, $logic);
 
           if(!is_null($node['properties']['fields'])){
                $res = parse_question_groups(
                     $node['properties']['fields'], 
                     $node['ref'],
-                    $res,
-                    $lgc
+                    $logic,
+                    $res
                );
 
                continue;
@@ -272,7 +271,7 @@ function parse_question_groups($nodes, $parent=null, $res=null, $lgc){
      return $res;
 }
 
-function parse_tree($tree, $parent, $node, $lgc){
+function parse_tree($tree, $parent, $node, $logic){
 
      switch($parent){
 
@@ -289,14 +288,14 @@ function parse_tree($tree, $parent, $node, $lgc){
           default:
 
                $branch = $tree;
-               $tree = parse_branch($branch, $parent, $node, $lgc);
+               $tree = parse_branch($branch, $parent, $node, $logic);
                break;
      }
 
      return $tree;
 }
 
-function parse_branch($branch, $parent, $node, $lgc){
+function parse_branch($branch, $parent, $node, $logic){
 
      for($idx = 0; $idx < count($branch); $idx++){
 
@@ -317,7 +316,7 @@ function parse_branch($branch, $parent, $node, $lgc){
                          break;
                }
 
-               $res = eval_actions_of_field($node['ref'], $lgc);
+               $res = eval_actions_of_field($node['ref'], $logic);
                if(!is_null($res[0]['actions'])){
                     $temp['actions'] = $res[0]['actions'];
                }
@@ -326,7 +325,7 @@ function parse_branch($branch, $parent, $node, $lgc){
           }
           else if(!empty($branch[$idx]['group'])){
 
-               $branch[$idx]['group'] = parse_branch($branch[$idx]['group'], $parent, $node, $lgc);
+               $branch[$idx]['group'] = parse_branch($branch[$idx]['group'], $parent, $node, $logic);
           }
      }
 
