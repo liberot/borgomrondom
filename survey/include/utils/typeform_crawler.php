@@ -29,15 +29,20 @@ function walk_typeform_survey($proc){
 // selects answer
      switch($proc['field']['type']){
 
+          case 'number':
+               $proc['mem']['key'] = '0x00';
+               $proc['mem']['val'] = '5';
+               break;
+
           case 'short_text':
                $proc['mem']['key'] = '0x00';
-               $proc['mem']['val'] = 'Text input';
+               $proc['mem']['val'] = 'Why is Cat in the Tree? Does Pooples have Leaders?';
                break;
 
           case 'multiple_choice':
-               $temp = $proc['field']['choices'][0];
-               $proc['mem']['key'] = $temp['ref'];
-               $proc['mem']['val'] = $temp['label'];
+               $choice = get_random_choice($proc);
+               $proc['mem']['key'] = $choice['ref'];
+               $proc['mem']['val'] = $choice['label'];
                break;
 
           case 'yes_no':
@@ -68,17 +73,32 @@ function walk_typeform_survey($proc){
      return $proc;
 }
 
+function get_random_choice($proc){
+
+     $min = 0;
+     $max = count($proc['field']['choices']) -1;
+
+     $random = rand($min, $max);
+//   $random = 0;
+
+// workaround
+     preg_match('/(You have)/', $proc['field']['question'], $match);
+     if(!empty($match)){
+          $random = 0;
+     }
+//
+     $choice = $proc['field']['choices'][$random];
+
+     return $choice;
+}
+
 function store_path_record($proc){
 
      $proc['field']['answer'] = $proc['mem']['val'];
-
-// todo: determine the possibilities of 'multiple_choice' and 'picture_choice'
+     // $proc['path'][]= $proc['field']['ref'];
      $proc['path'][]= [
-          [
-                'question'=>$proc['field']['question'],
-                'answer'=>$proc['field']['answer'],
-                'ref'=>$proc['field']['ref']
-          ]
+          'qustn'=>$proc['field']['question'],
+          'answr'=>$proc['field']['answer']
      ];
 
      return $proc;
@@ -148,6 +168,7 @@ function eval_next_node($proc){
           return $proc;
      }
 
+// evalutated links
      $refs = [
           'evaluated'=>[],
           'always'=>[]
@@ -155,6 +176,10 @@ function eval_next_node($proc){
 
 // evals conditions of the node
      for($i = 0; $i < count($proc['field']['actions']); $i++){
+
+          $type = $proc['field']['actions'][$i]['action'];
+          $link = $proc['field']['actions'][$i]['details']['to']['value'];
+          $operator = $proc['field']['actions'][$i]['condition']['op'];
 
           for($ii = 0; $ii < count($proc['field']['actions'][$i]['condition']['vars']); $ii++){
 
@@ -198,51 +223,63 @@ function eval_next_node($proc){
                }
           }
 
-          $type = $proc['field']['actions'][$i]['action'];
-          $link = $proc['field']['actions'][$i]['details']['to']['value'];
-          $operator = $proc['field']['actions'][$i]['condition']['op'];
+          if('jump' == $type){
 
-          switch($operator){
+               switch($operator){
 
-               case 'is':
-               case 'and':
+                    case 'is':
+                    case 'and':
 
-                    $trues = 0;
+                         $trues = 0;
 
-                    for($ii = 0; $ii < count($proc['field']['actions'][$i]['condition']['vars']); $ii++){
-                         if('true' == $proc['field']['actions'][$i]['condition']['vars'][$ii]['res']){
-                              $trues = $trues +1;
+                         for($ii = 0; $ii < count($proc['field']['actions'][$i]['condition']['vars']); $ii++){
+                              if('true' == $proc['field']['actions'][$i]['condition']['vars'][$ii]['res']){
+                                   $trues = $trues +1;
+                              }
                          }
-                    }
 
-                    $res = 'false';
-                    if($trues == count($proc['field']['actions'][$i]['condition']['vars'])){
-                         $res = 'true';
-                         array_push($refs['evaluated'], $link);
-                    }
-
-                    $proc['field']['actions'][$i]['condition']['res'] = $res;
-
-                    break;
-
-               case 'or':
-
-                    $res = 'false';
-                    for($ii = 0; $ii < count($proc['field']['actions'][$i]['condition']['vars']); $ii++){
-                         if('true' == $proc['field']['actions'][$i]['condition']['vars'][$ii]['res']){
+                         $res = 'false';
+                         if($trues == count($proc['field']['actions'][$i]['condition']['vars'])){
                               $res = 'true';
                               array_push($refs['evaluated'], $link);
                          }
-                    }
 
-                    break;
+                         $proc['field']['actions'][$i]['condition']['res'] = $res;
 
-               case 'always':
+                         break;
 
-                    $proc['field']['actions'][$i]['condition']['res'] = 'true';
-                    array_push($refs['always'], $link);
+                    case 'or':
 
-                    break;
+                         $res = 'false';
+                         for($ii = 0; $ii < count($proc['field']['actions'][$i]['condition']['vars']); $ii++){
+                              if('true' == $proc['field']['actions'][$i]['condition']['vars'][$ii]['res']){
+                                   $res = 'true';
+                                   array_push($refs['evaluated'], $link);
+                              }
+                         }
+
+                         break;
+
+                    case 'always':
+
+                         $proc['field']['actions'][$i]['condition']['res'] = 'true';
+                         array_push($refs['always'], $link);
+
+                         break;
+
+               }
+          }
+          else {
+
+               switch($operator){
+
+                    case 'equal':
+                    default:
+                         $proc['field']['actions'][$i]['condition']['res'] = 'true';
+                         array_push($refs['evaluated'], $link);
+                         break;
+
+               }
           }
      }
 
@@ -257,11 +294,11 @@ function eval_next_node($proc){
      if(!is_null($ref)){
           $proc['mem']['ref'] = $ref;
           $proc = select_field_by_ref($proc);
-print sprintf('evaluated field ref: %s%s', $proc['field']['ref'], PHP_EOL);
+          // print sprintf('evaluated field ref: %s%s', $proc['field']['ref'], PHP_EOL);
      }
      else {
           $proc = eval_next_default_node($proc);
-print sprintf('default field ref: %s%s', $proc['field']['ref'], PHP_EOL);
+           // print sprintf('  default field ref: %s%s', $proc['field']['ref'], PHP_EOL);
      }
 
      return $proc;
