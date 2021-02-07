@@ -82,7 +82,8 @@ function make_selection($proc){
      $fork = [];
      foreach($proc['field']['choices'] as $choice){
           $choice['field'] = $proc['field']['ref'];
-          $choice['visited'] = 'false';
+          $choice['question'] = $proc['field']['question'];
+          $choice['selected'] = 'false';
           $fork[]= $choice;
      }
      $proc['forks'][]= $fork;
@@ -90,7 +91,7 @@ function make_selection($proc){
 // todo: selects an index 
      $idx = 0;
      $proc['mem']['choice'] = $proc['field']['choices'][$idx];
-     $proc['mem']['choice']['visited'] = 'true';
+     $proc['mem']['choice']['selected'] = 'true';
 
      $proc['mask'] = sprintf('%s.%s', $proc['mask'], $idx);
 
