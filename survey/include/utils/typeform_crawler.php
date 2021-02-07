@@ -11,7 +11,9 @@ function crawl_typeform_survey($survey_file_name){
           ],
           'mem'=>[],
           'rec'=>[],
-          'path'=>[]
+          'path'=>[],
+          'forks'=>[],
+          'mask'=>'root'
      ];
 
      $proc = walk_typeform_survey($proc);
@@ -40,7 +42,9 @@ function walk_typeform_survey($proc){
                break;
 
           case 'multiple_choice':
-               $choice = get_random_choice($proc);
+               // $proc = make_random_selection($proc);
+               $proc = make_selection($proc);
+               $choice = $proc['mem']['choice'];
                $proc['mem']['key'] = $choice['ref'];
                $proc['mem']['val'] = $choice['label'];
                break;
@@ -73,29 +77,49 @@ function walk_typeform_survey($proc){
      return $proc;
 }
 
-function get_random_choice($proc){
+function make_selection($proc){
+
+     $fork = [];
+     foreach($proc['field']['choices'] as $choice){
+          $choice['field'] = $proc['field']['ref'];
+          $choice['visited'] = 'false';
+          $fork[]= $choice;
+     }
+     $proc['forks'][]= $fork;
+
+// todo: selects an index 
+     $idx = 0;
+     $proc['mem']['choice'] = $proc['field']['choices'][$idx];
+     $proc['mem']['choice']['visited'] = 'true';
+
+     $proc['mask'] = sprintf('%s.%s', $proc['mask'], $idx);
+
+     return $proc;
+}
+
+function make_random_selection($proc){
 
      $min = 0;
      $max = count($proc['field']['choices']) -1;
 
      $random = rand($min, $max);
-//   $random = 0;
 
-// workaround
+// workaround 
+// there is a lot of payment fields as for the addition of some payment value
      preg_match('/(You have)/', $proc['field']['question'], $match);
      if(!empty($match)){
           $random = 0;
      }
 //
-     $choice = $proc['field']['choices'][$random];
 
-     return $choice;
+     $proc['mem']['choice'] = $proc['field']['choices'][$random];
+
+     return $proc;
 }
 
 function store_path_record($proc){
 
      $proc['field']['answer'] = $proc['mem']['val'];
-     // $proc['path'][]= $proc['field']['ref'];
      $proc['path'][]= [
           'qustn'=>$proc['field']['question'],
           'answr'=>$proc['field']['answer']
@@ -126,9 +150,11 @@ function eval_next_default_node($proc){
      $pos = false;
      $idx = 0;
      foreach($proc['toc'] as $field){
+
           if($field['ref'] == $proc['field']['ref']){
                $pos = $idx;
           }
+
           $idx = $idx+1;
      }
 
