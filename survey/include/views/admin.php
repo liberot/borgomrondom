@@ -200,7 +200,7 @@ function build_thread_list_view(){
      $title = esc_html(__('Title', 'bookbuilder'));
      $excerpt = esc_html(__('Type', 'bookbuilder'));
      $date = esc_html(__('Date of Init', 'bookbuilder'));
-     $author_id = esc_html(__('Author', 'bookbuilder'));
+     $author = esc_html(__('Author', 'bookbuilder'));
      $edit = esc_html(__('Edit', 'bookbuilder'));
      $edit_thread = esc_html(__('Edit Thread', 'bookbuilder'));
      $delete = esc_html(__('Delete', 'bookbuilder'));
@@ -217,7 +217,7 @@ function build_thread_list_view(){
                     <th>{$title}</th>
                     <th>{$excerpt}</th>
                     <th>{$date}</th>
-                    <th>{$author_id}</th>
+                    <th>{$author}</th>
                     <th>{$edit}</th>
                     <th>{$delete}</th>
                </tr>
@@ -228,6 +228,10 @@ EOD;
      $coll = get_threads();
      if(!is_null($coll[0])){
           foreach($coll as $thread){
+
+               $author_rec = get_author_by_id($thread->post_author)[0];
+               $author_credz = sprintf('%s %s', $author_rec->user_login, $author_rec->user_email); 
+
                $href1st = sprintf('%s?page=threads&action=edit&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
                $href2nd = sprintf('%s?page=threads&action=delete&thread_id=%s&client_id=%s', Path::SERVICE_BASE, $thread->ID, $thread->post_author);
                $d = date_create($thread->post_date);
@@ -237,7 +241,7 @@ EOD;
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_title));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_excerpt));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($d));
-                    echo sprintf('<td class="%s">%s</td>', $style, esc_html($thread->post_author));
+                    echo sprintf('<td class="%s">%s</td>', $style, esc_html($author_credz));
                     echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href1st, $edit_thread);
                     echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $href2nd, $delete);
                echo '</tr>';
@@ -251,7 +255,7 @@ EOD;
                          <th>{$title}</th>
                          <th>{$excerpt}</th>
                          <th>{$date}</th>
-                         <th>{$author_id}</th>
+                         <th>{$author}</th>
                          <th>{$edit}</th>
                          <th>{$delete}</th>
                     </tr>

@@ -357,3 +357,22 @@ EOD;
      return $res;
 }
 
+function get_author_by_id($author_id){
+
+     $author_id = esc_sql($author_id);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          select * 
+               from {$prefix}users
+               where ID = '{$author_id}'
+EOD;
+
+     $sql = debug_sql($sql);
+
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
