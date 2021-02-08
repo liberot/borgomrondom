@@ -366,21 +366,15 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
 
      this.setCondition = function(sectionId, panelRef, key, val){
 
-console.log('setCondition(): ', sectionId, panelRef, key, val);
-
-// list of conditions
           let target = this.model.thread.post_content.conditions;
 
-// rec of the condition
           let conditionRec = false;
 
           for(let idx in target){
 
-// updates the condition
                if(sectionId == target[idx].sectionId){
                     if(panelRef == target[idx].panelRef){
                          if(key == target[idx].key){
-console.log('found the condition at: ', idx);
                               target[idx].val = val;
                               conditionRec = true;
                          }
@@ -388,7 +382,6 @@ console.log('found the condition at: ', idx);
                }
           }
 
-// writes condition
           if(false == conditionRec){
                target.push({sectionId: sectionId, panelRef: panelRef, key: key, val: val});
           }
@@ -396,7 +389,6 @@ console.log('found the condition at: ', idx);
           console.log('setCondition(): target: ', target);
      }
 
-// returns whether or not a given answer ref is stored
      this.isStoredAnswerRef = function(sectionId, panelRef, key){
 
           let res = false;
@@ -414,15 +406,11 @@ console.log('found the condition at: ', idx);
           return res;
      }
 
-// guess this be obsolette soon
-// returns the value of a referenced answer
      this.getStoredAnswer = function(sectionId, panelRef, key){
-console.log('getStoredAnswer(): sectionId: ', sectionId, 'panelRef: ', panelRef, 'key: ', key);
 
           let res = null;
           let target = this.model.thread.post_content.conditions;
 
-console.log('getStoredAnswer(): target: ', target);
           for(let idx in target){
                if(sectionId == target[idx].sectionId){
                     if(panelRef == target[idx].panelRef){
@@ -433,12 +421,10 @@ console.log('getStoredAnswer(): target: ', target);
                }
           }
 
-console.log('getStoredAnswer(): res: ', res);
           return res;
      }
 
      this.getStoredAnswerByPanelRef = function(ref){
-console.log('getStoredAnswerByPanelRef(): ref: ', ref);
 
           res = null;
           let target = this.model.thread.post_content.conditions;
@@ -449,12 +435,10 @@ console.log('getStoredAnswerByPanelRef(): ref: ', ref);
                }
           }
 
-console.log('getStoredAnswerByPanelRef(): res: ', res);
           return res;
      }
 
      this.getStoredAnswerByKey = function(key){
-console.log('getStoredAnswerByKey(): key: ', key);
 
           res = null;
           let target = this.model.thread.post_content.conditions;
@@ -464,25 +448,18 @@ console.log('getStoredAnswerByKey(): key: ', key);
                }
           }
 
-console.log('getStoredAnswerByKey(): res: ', res);
           return res;
      }
 
 
-// sets up: inits: the strings of a 'field or call it 'panel
-// it is mainly questions that consist of previously answered questions
-
      this.initStringOutput = function(istring){
-console.log('initStringOutput(): istring: ', istring);
 
           if(null == istring){
                return;
           }
 
-// evals the fields as {{field:hokuspokus12345}}
           let mtch = istring.match(/{{(.{1,128}?)}}/g);
 
-console.log('initStringOutput(): mtch: ', mtch);
           for(let idx in mtch){
 
                let temp = mtch[idx]; 
@@ -642,7 +619,6 @@ console.log('getHiddenFieldValByTitle(): ', key, target);
                }
           }
 
-console.log('getHiddenFieldValByTitle(): res: ', res);
 
           return res;
      }
@@ -1138,7 +1114,6 @@ console.log('this.initImageUpload(): ', files);
 
           condition.result = 1 == condition.result ? true : false;
 
-// groups might be trees also
           if(null != condition.vars){
                for(let idx in condition.vars){
                     if(null != condition.vars[idx].op){
@@ -1150,20 +1125,17 @@ console.log('this.initImageUpload(): ', files);
 
      this.evalRuleR = function(rule){
 
-// evaluates condition rules
           if(null == rule.vars){ 
                return false; 
           }
 
           for(let idx in rule.vars){
 
-// does the cycle until all condition rules is evaluated
                if(null != rule.vars[idx].op){ 
                     this.evalRuleR(rule.vars[idx]);
                     continue;
                }
 
-// evals the condition of a *leaf
                rule.vars[idx].result = false;
 
                let sectionId = this.model.section.ID;
@@ -1175,21 +1147,21 @@ console.log('this.initImageUpload(): ', files);
 
                switch(rule.vars[idx].type){
 
-// evals field reference and the index of the rule
-// as in does the logic action refer to this field
                     case 'field':
                          queriedPanelRef = rule.vars[idx].value;
-                         rule.vars[idx].result = rule.vars[idx].value == panelRef;
+                         // rule.vars[idx].result = rule.vars[idx].value == panelRef;
+                         rule.vars[idx].result = true;
                          break;
+               }
 
-// evals a multiple choice field
-// in terms of is the selected value of the condition the stored value of the runtime
+               switch(rule.vars[idx].type){
+
                     case 'choice':
+                         // rule.vars[idx].result = rule.vars[idx].value == key;
+                         key = this.getStoredAnswerByPanelRef(queriedPanelRef);
                          rule.vars[idx].result = rule.vars[idx].value == key;
                          break;
 
-// evals a yes no type
-// as in is the answer in this field yes or no
                     case 'constant':
                          storedAnswerVal = this.getStoredAnswerByKey(key);
                          if(false == storedAnswerVal || 'false' == storedAnswerVal ){ storedAnswerVal = '0'; }
@@ -1267,16 +1239,12 @@ console.log('evalNextPanel(): todo: ', coll);
                return true;
           }
 
-// loads panel from default list
           this.loadNextPanel();
 
           return true;
      }
 
      this.evalLogicJump = function(){
-console.log('evalLogicJump(): ');
-
-// evaluates the conditions of the logic action jumps
 
           let ref = this;
 
@@ -1293,17 +1261,14 @@ console.log('evalLogicJump(): ');
           for(let idx in toc.rulez){
                let rule = toc.rulez[idx];
 
-// actions that are missing this field
                if(panel.post_content.ref != rule.ref){ 
                     continue; 
                }
 
-console.log('evalLogicJump(): rule: ', rule);
                rule.actions.forEach(function(actionpack){
                     let c = ref.evalCondition(actionpack.condition);
 
                     if(false != c.result){
-console.log('evalLogicJump(): actionpack: ', actionpack);
 
                          switch(actionpack.action){
 
@@ -1331,12 +1296,10 @@ console.log('evalLogicJump(): actionpack: ', actionpack);
                });
           }
 
-console.log('evalLogicJump(): res: ', res);
           return res;
      }
 
      this.loadSectionBySurveyId = function(surveyId){
-console.log('loadSectionBySurveyId(): ', surveyId);
           let model = {
                surveyId: surveyId,
           }
