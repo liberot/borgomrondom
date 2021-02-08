@@ -561,6 +561,9 @@ EOD;
 add_shortcode('questionnaire_list_view', 'build_questionnaire_list_view');
 function build_questionnaire_list_view(){
 
+     wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_enqueue_script('service');
+
      $coll = get_surveys();
 // print 'build_questionnaire_list_view(): get_surveys(): ';
 // print_r($coll);
@@ -604,6 +607,7 @@ EOD;
           foreach($coll as $survey){
                $edit_link = sprintf('%s?page=questionnaire&action=edit&survey_id=%s', Path::SERVICE_BASE, $survey->ID);
                $delete_link = sprintf('%s?page=questionnaire&action=delete&survey_id=%s', Path::SERVICE_BASE, $survey->ID);
+               $js = 'javascript:deleteQuestionnaire(\''.$delete_link.'\');';
                $d = date_create($survey->post_date);
                $d = date_format($d, 'd-m-Y H:i:s');
                echo '<tr>';
@@ -612,7 +616,7 @@ EOD;
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($survey->post_name));
                     echo sprintf('<td class="%s">%s</td>', $style, esc_html($d));
                     echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $edit_link, $edit_fields);
-                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $delete_link, $delete_survey);
+                    echo sprintf('<td class="%s"><a href="%s">%s</a></td>', $style, $js, $delete_survey);
                echo '</tr>';
           }
      };

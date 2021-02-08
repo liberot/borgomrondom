@@ -972,7 +972,6 @@ console.log('isSpreadPanel(): ', this.model.panel.post_content['show_spread_stat
      }
 
      this.isBottomPanel = function(){
-console.log('isBottomPanel(): ', this.model.section.post_content);
 
           let res = false;
           let target = this.model.section.post_content.toc;
@@ -981,6 +980,7 @@ console.log('isBottomPanel(): ', this.model.section.post_content);
                res = true;
           }
 
+console.log('isBottomPanel(): ', res);
           return res;
      }
 
@@ -1223,7 +1223,7 @@ console.log('evalNextPanel(): evalutated logic jumps: ', coll);
           }
           else if(null != coll.defaultLink){
                panelRef = coll.defaultLink;
-console.log('evalNextPanel(): link of type "in all other cses jump to: "', panelRef);
+console.log('evalNextPanel(): link of type -in all other cases jump to-: ', panelRef);
           }
 
           if(null != coll.additions[0]){

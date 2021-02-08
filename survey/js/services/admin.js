@@ -1,3 +1,10 @@
+function deleteQuestionnaire(ref){
+     if(!confirm('Are you aware of the consequences of your action?')){
+          return;
+     }
+     self.location.href = ref;
+}
+
 function setShowSpreadState(ref){
      let vlue = jQuery(ref).val();
      let stmp = jQuery(ref).attr('class');
