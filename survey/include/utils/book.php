@@ -458,6 +458,8 @@ function add_spread($thread_id, $section_id, $panel_ref, $book_id, $chapter_id){
      $idx = 0;
      foreach($doc['assets'] as $asset){
 
+// print_r($asset);
+
           if('image' != $asset['type']){ 
                $assets_of_document[]= $asset;
                continue; 

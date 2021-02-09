@@ -12,6 +12,7 @@ let Screen = function(controller){
 
      this.initScreen = function(msg){
           this.model.doc = msg.model;
+console.log('initScreen(): ', this.model.doc);
           this.setViewSize();
           this.initLayers();
           this.render();
@@ -229,7 +230,6 @@ let Screen = function(controller){
      }
 
      this.renderPath = function(target){
-// console.log('renderPath(): ', target);
 
           let tmp = target.path.split(' ');
           let out = '';
@@ -248,7 +248,6 @@ let Screen = function(controller){
      }
 
      this.renderPoly = function(target){
-// console.log('renderPoly(): ', target);
 
 // textfield slot in hex green
           if(true == target.textfield){
@@ -316,6 +315,7 @@ let Screen = function(controller){
                     ref.notify(new Message('asset::iloaded', { target: target } ));
                }
           });
+
           img.attr(attr);
 
           let slotX = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotX, target.conf.unit);
@@ -324,8 +324,9 @@ let Screen = function(controller){
           let slotH = LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.slotH, target.conf.unit);
 
           let rect = this.model.currentScreen.rect(slotW, slotH).move(slotX, slotY);
+
           img.clipWith(rect);
-          // img.on('mouseover', function(e){ console.log(e); })
+          img.on('mouseover', function(e){ console.log(e); })
      }
 
      this.renderCircles = function(){
@@ -375,7 +376,6 @@ let Screen = function(controller){
      }
 
      this.renderText = function(target){
-// console.log('renderText(): ', target);
 
           this.setPenStepY(LayoutUtil.unitToPx(this.model.doc.ppi, target.conf.font.size, target.conf.unit));
 

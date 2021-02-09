@@ -23,7 +23,6 @@ let Survey = function(controller) {
 
           this.model.section = msg.model.e.coll.section;
           this.model.section.post_content = SurveyUtil.pagpick(this.model.section.post_content);
-console.log('bindSection(): this.model.section: ', this.model.section);
 
           this.evalHiddenFields();
           this.recSection();
@@ -37,7 +36,6 @@ console.log('bindSection(): this.model.section: ', this.model.section);
      this.evalHiddenFields = function(){
 
           this.model.linkedSurveyRef = this.model.section.post_content.survey.settings.redirect_after_submit_url;
-console.log('evalHiddenFields(): this.model.linkedSurveyRef: ', this.model.linkedSurveyRef);
 
           if(null == this.model.linkedSurveyRef){ 
                return false; 
@@ -99,8 +97,6 @@ console.log('evalHiddenFields(): this.model.linkedSurveyRef: ', this.model.linke
           if(-1 == this.model.sections.indexOf(this.model.section)){
                this.model.sections.push(this.model.section);
           }
-
-console.log('recSection(): ', this.model.sections);
      }
 
      this.raiseErrorMessage = function(errorMessage){
@@ -116,7 +112,6 @@ console.log('recSection(): ', this.model.sections);
      }
  
      this.saveThread = function(msg){
-console.log('saveThread(): ', msg);
           this.notify(new Message('save::panel', this.model));
           this.notify(new Message('save::thread', this.model));
      }
@@ -136,7 +131,6 @@ console.log('saveThread(): ', msg);
 
 // thread
           if(null == msg.model.e.coll.thread){
-console.log('bindThread: no thread');
                return false;
           }
 
@@ -155,7 +149,6 @@ console.log('bindThread: no thread');
 
 // sections
           if(null == msg.model.e.coll.sections[0]){
-console.log('bindThread: no sections');
                return false;
           }
 
@@ -184,8 +177,6 @@ console.log('bindThread: no sections');
                     }
                }
           }
-
-console.log('bindThread(): ', this.model.thread);
 
 // link hash
           this.setLink();
@@ -252,7 +243,6 @@ console.log('bindThread(): ', this.model.thread);
      }
 
      this.bindOpinion = function(msg){
-console.log('bindOpinion: ', msg);
           this.evalNextPanel();
      }
 
@@ -283,7 +273,6 @@ console.log('bindOpinion: ', msg);
      }
 
      this.bindMultipleChoiceInput = function(msg){
-console.log('bindMultipleChoiceInput(): ', msg);
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
@@ -299,14 +288,11 @@ console.log('bindMultipleChoiceInput(): ', msg);
                }
           };
 
-console.log('bindMultipleChoiceInput(): ', 'sectionId: ', sectionId, 'panelRef:', panelRef, 'key: ', key, 'val: ', val);
           this.clearInput(sectionId, panelRef, key, val);
           this.bindInput(sectionId, panelRef, key, val);
      }
 
      this.bindYesNoInput = function(msg){
-
-console.log('bindYesNoInput(): ', msg);
 
           let sectionId = this.model.section.ID;
           let panelRef = this.model.panel.post_content.ref;
@@ -335,7 +321,6 @@ console.log('bindYesNoInput(): ', msg);
      }
 
      this.bindInput = function(sectionId, panelRef, key, val){
-console.log('bindInput(): ', sectionId, panelRef, key, val);
 
           if('undefined' == typeof(val)){ 
                val = ''; 
@@ -385,8 +370,6 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
           if(false == conditionRec){
                target.push({sectionId: sectionId, panelRef: panelRef, key: key, val: val});
           }
-
-          console.log('setCondition(): target: ', target);
      }
 
      this.isStoredAnswerRef = function(sectionId, panelRef, key){
@@ -490,11 +473,8 @@ console.log('bindInput(): ', sectionId, panelRef, key, val);
                istring = istring.replace(mtch[idx], val);
           }
 
-
 // removes _ and * characters
           istring = istring.replace(/[\*_]/g, '');
-
-console.log('istring: ', istring);
 
           return istring;
      }
@@ -515,13 +495,10 @@ console.log('istring: ', istring);
           if(null == imprint
                || '' == imprint
                || -1 == imprint.indexOf('is going to read')){
-console.log('addBookRec(): not going to compute: ', imprint);
                return false;
           }
           // imprint = this.initStringOutput(imprint);
 
-console.log('addBookRec(): gathered information of relevance: ', imprint);
-console.log('addBookRec(): todo: image assets of the current group');
           let target = this.model.thread.post_content;
 
 // fills the list of information that is of relevance while generating the spreads
@@ -542,8 +519,6 @@ console.log('addBookRec(): todo: image assets of the current group');
                    panelRef: panelRef
               });
           }
-
-console.log('addBookRec(): ', target.book);
      }
 
      this.addHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
@@ -566,12 +541,9 @@ console.log('addBookRec(): ', target.book);
           if(null == (temp = this.getHiddenField(sectionId, panelRef, fieldRef, fieldTitle))){
                target.push(rec);
           }
-
-console.log('addHiddenField(): ', target);
      }
 
      this.getHiddenField = function(sectionId, panelRef, fieldRef, fieldTitle){
-console.log('getHiddenField(): ', sectionId, panelRef, fieldRef, fieldTitle);
           let target = this.model.thread.post_content.hidden_fields;
           for(let idx in target){
                if(sectionId == target[idx].sectionId){
@@ -591,14 +563,12 @@ console.log('getHiddenField(): ', sectionId, panelRef, fieldRef, fieldTitle);
 // todo
      this.getVariableValByTitle = function(key){
           let target = this.model.thread.post_content.variables;
-console.log('getVariableValByTitle(): ', key, target);
           return 230;
      }
 
      this.getHiddenFieldValByTitle = function(key){
 
           let target = this.model.thread.post_content.hidden_fields;
-console.log('getHiddenFieldValByTitle(): ', key, target);
 
           let res;
           let ref;
@@ -636,12 +606,9 @@ console.log('getHiddenFieldValByTitle(): ', key, target);
           let target = this.model.thread.post_content;
 
           target.history.push({ sectionId: sectionId, panelRef: panelRef });
-
-console.log('addHistoryRec(): ', target.history);
      }
 
      this.loadPanel = function(sectionId, panelRef){
-console.log('loadPanel(): ', sectionId, panelRef);
 
           if(null == sectionId){ return false; }
           if(null == panelRef){ return false; }
@@ -659,7 +626,6 @@ console.log('loadPanel(): ', sectionId, panelRef);
      }
 
      this.bindPanel = function(msg){
-console.log('bindPanel(): ', msg);
 
           if(null == msg.model.e.coll['panel'][0]){ 
                console.log('bindPanel(): no panel');
@@ -688,7 +654,6 @@ console.log('bindPanel(): ', msg);
           }
 
           this.model.section = section;
-console.log('selectSection(): ', this.model.section);
  
           this.evalHiddenFields() 
      }
@@ -714,7 +679,6 @@ console.log('selectSection(): ', this.model.section);
 
 // initpanel sets up the panel . the field 
      this.initPanel = function(){
-console.log('initPanel(): this.model.panel: ', this.model.panel);
           let ref = this;
 
           if(null == this.model.panel){
@@ -966,7 +930,6 @@ console.log('initPanel(): this.model.panel: ', this.model.panel);
      }
 
      this.isSpreadPanel = function(){
-console.log('isSpreadPanel(): ', this.model.panel.post_content['show_spread_state']);
           let res = 'true' == this.model.panel.post_content['show_spread_state'] ? true : false;
           return res;
      }
@@ -980,7 +943,6 @@ console.log('isSpreadPanel(): ', this.model.panel.post_content['show_spread_stat
                res = true;
           }
 
-console.log('isBottomPanel(): ', res);
           return res;
      }
 
@@ -1346,7 +1308,9 @@ console.log('loadNextSection(): this.model.sections: ', this.model.sections);
 console.log('loadNextPanel(): ', target);
 
           let pos = target.refs.indexOf(this.model.panel.post_content.ref);
+console.log('loadNextPanel() position of current panel: ', pos);
               pos+= 1;
+console.log('loadNextPanel() position of next panel: ', pos);
 
           if(pos >= target.refs.length -1){
               pos = target.refs.length -1;
@@ -1546,7 +1510,6 @@ console.log('scanAsset(): ', indx, base, proc, upload);
      }
 
      this.drawSpreads = function(msg){
-console.log('drawSpreads(): ', msg);
           jQuery('.survey-controls3rd').html(__spread_btn_tmpl__);
      }
 

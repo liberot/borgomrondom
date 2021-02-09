@@ -20,6 +20,9 @@ let Correct = function(controller) {
      }
 
      this.corrAssetSize = function(msg){
+return;
+
+
 
           let target = msg.model.target;
           let width = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.ow, target.conf.unit);

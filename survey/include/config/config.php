@@ -74,7 +74,7 @@ class Layout {
      const               CUT_INTO_SLOT = 'cut_into_slot';
      const            IMAGE_SCALE_TYPE = 'cut_into_slot';
 // --------------------------------------------------------
-     const     INSERT_MOCK_IMAGE_ASSET = false;
+     const     INSERT_MOCK_IMAGE_ASSET = true;
 // --------------------------------------------------------
      const                      Z_STEP = 100;
 // --------------------------------------------------------
