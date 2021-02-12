@@ -1,0 +1,1256 @@
+{
+  "id": "SgaKrUmI",
+  "type": "branching",
+  "title": "210902Cover",
+  "workspace": {
+    "href": "https://api.typeform.com/workspaces/ZqH2NG"
+  },
+  "theme": {
+    "href": "https://api.typeform.com/themes/TSYAuE"
+  },
+  "settings": {
+    "language": "en",
+    "progress_bar": "percentage",
+    "meta": {
+      "allow_indexing": false
+    },
+    "hide_navigation": false,
+    "is_public": true,
+    "is_trial": false,
+    "show_progress_bar": true,
+    "show_typeform_branding": false,
+    "are_uploads_public": false,
+    "show_time_to_complete": true
+  },
+  "thankyou_screens": [
+    {
+      "id": "DefaultTyScreen",
+      "ref": "default_tys",
+      "title": "Done! Your information was sent perfectly.",
+      "properties": {
+        "show_button": false,
+        "share_icons": false
+      }
+    }
+  ],
+  "welcome_screens": [
+    {
+      "id": "xNB74wbmDur3",
+      "ref": "9b487b8c-6347-4cc4-9c7a-99e1f98ffa8d",
+      "title": "*Welcome to This Story!*\n",
+      "properties": {
+        "show_button": true,
+        "button_text": "Start"
+      },
+      "attachment": {
+        "type": "image",
+        "href": "https://images.typeform.com/images/puBmQk9kiqTZ",
+        "properties": {}
+      }
+    }
+  ],
+  "fields": [
+    {
+      "id": "oBiqUFR9VjLA",
+      "title": "Our family books tell the story of your child at the heart of your family. The This Story book builder will take you through the book, chapter by chapter, asking questions that can be answered quickly and prompting you to upload images. Let's start with the cover",
+      "ref": "4baff887-61e1-40b5-ae84-344bfd9f6883",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "aaDQedhc6aIH",
+      "title": "What is your child's first name? ",
+      "ref": "efd45ed6-1275-47b6-9a8b-30ab0dda2b41",
+      "properties": {
+        "description": "This will appear in the title on the cover and throughout the book"
+      },
+      "validations": {
+        "required": true
+      },
+      "type": "short_text"
+    },
+    {
+      "id": "1WluG2dH2PI8",
+      "title": "Cover",
+      "ref": "354ed6c2-871b-4ce5-88b9-9da4a76f30b4",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "g5lrAd2b1amw",
+            "title": "Which title would you like on the cover? \n\nOption A\n_*All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*_\n\nOption B\n*This is* *{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}**'s family* \n\nOption C\n_*The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family*_",
+            "ref": "c8436a01-7c36-454b-aa67-a6c96f786555",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "D3YVAiRQVSZz",
+                  "ref": "646c0dac-10f5-48d8-bcf1-66991e91acb7",
+                  "label": "All the people who love ..."
+                },
+                {
+                  "id": "diT2ilI1s5AJ",
+                  "ref": "fc1aa2ec-c7de-4cc8-8582-ad4687298ce4",
+                  "label": "This is [...]'s family"
+                },
+                {
+                  "id": "JGZCstINFKZr",
+                  "ref": "2eafbcc5-445a-45e8-9465-0c911733dbbd",
+                  "label": "The fabulous story of ..."
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "bGdXv3QRFVIo",
+            "title": "You can choose from three design options. Please click through all designs and then choose the one you prefer.\n\nTitle: \n_*'All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'*_\n\n*Option A: Orange*",
+            "ref": "13afc69f-6f18-435c-ad36-43bfbe4302b4",
+            "properties": {
+              "button_text": "Second design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/Aw2XXtbqtXzb"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/Aw2XXtbqtXzb",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "VlyzzyVKv1Ls",
+            "title": "Title \n_*'All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'*_\n\n*Option B: Green*",
+            "ref": "1fc95454-1675-4f03-9578-13ee36d992cd",
+            "properties": {
+              "button_text": "Third design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/F5RFYLg3j7Wj"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/F5RFYLg3j7Wj",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "ZORSTnGoFebL",
+            "title": "Title\n_*'All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'*_\n\nOption C: Blue",
+            "ref": "f0f2d2e8-cb58-45d5-a4ef-961c78387d45",
+            "properties": {
+              "button_text": "See all three choices",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/4aq5sdAhvNmQ"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/4aq5sdAhvNmQ",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "XIcwvqrvif3R",
+            "title": "Title\n_*'All the people who love*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'*_",
+            "ref": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4",
+            "properties": {
+              "description": "Please make your final choice of your preferred style, font and colour scheme, or scroll back up to see the options again",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "supersized": false,
+              "show_labels": true,
+              "choices": [
+                {
+                  "id": "mR4k7K3sNZbj",
+                  "ref": "d0884de5-148f-4767-a82f-e94daed4ccc1",
+                  "label": "Orange",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/RJifUkQQxSbQ",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "0m0DYOtZeLhX",
+                  "ref": "eae312c2-cd1a-4d04-a2fd-6535db0f1770",
+                  "label": "Green",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/t86Yzhv97ezw",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "OR5ODnJQLb4K",
+                  "ref": "dfabf311-5187-475d-bf6c-9df82abadc55",
+                  "label": "Blue",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/PuiivN6mxiE2",
+                    "properties": {}
+                  }
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "picture_choice"
+          },
+          {
+            "id": "PevXkdXQNZRY",
+            "title": "You can choose from three design options. Please click through all designs and then choose the one you prefer.\n\nTitle\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\n\nOption A: Orange",
+            "ref": "b0489d1e-e0d7-450a-9dfb-7fefc7f2251e",
+            "properties": {
+              "button_text": "Second design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/uBtejzD8YSU5"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/uBtejzD8YSU5",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "72flzAtDTNqH",
+            "title": "Title\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption B: Green",
+            "ref": "b30ff125-0860-47b4-8da8-1993d8d6769a",
+            "properties": {
+              "button_text": "Third design option",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/tp5Q33Vq53qL"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/tp5Q33Vq53qL",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "dEecl4JSC4Hp",
+            "title": "Title\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption C: Blue",
+            "ref": "d757ad8c-8c22-4228-9235-ac24693aeccc",
+            "properties": {
+              "button_text": "See all three choices",
+              "hide_marks": true
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/uhG6CNsZ2zm6"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/uhG6CNsZ2zm6",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "jr2YpgBYj2u9",
+            "title": "Title\n_*'This is*_  _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_ ",
+            "ref": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e",
+            "properties": {
+              "description": "Please make your final choice of your preferred style, font and colour scheme, or scroll back up to see the options again",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "supersized": false,
+              "show_labels": true,
+              "choices": [
+                {
+                  "id": "QOJO0ZECvbjT",
+                  "ref": "1bf8cd28-b4b7-490a-9ebb-5b20e2eab6e9",
+                  "label": "Orange",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/fkkLwi3ZfPiY",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "qIsNLHIZZAXM",
+                  "ref": "5393addc-260a-4874-8d4e-14181cdfaca4",
+                  "label": "Green",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/kwgJCmprcy3i",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "xRYelw1kSJPG",
+                  "ref": "b31c17ef-8ef4-466a-ae0e-fcf2e27429fb",
+                  "label": "Blue",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/VKpknjtpCvwm",
+                    "properties": {}
+                  }
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "picture_choice"
+          },
+          {
+            "id": "C25w4hy438Cw",
+            "title": "You can choose from three design options. Please click through all designs and then choose the one you prefer.\n\nTitle\n_*'The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption A: Orange",
+            "ref": "50218ed7-d75f-420a-aea3-8b0b060db830",
+            "properties": {
+              "button_text": "Second design option",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/hM3nr7ff8Zk5"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/hM3nr7ff8Zk5",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "wS6s4mpIHRfv",
+            "title": "Title\n_*'The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption B: Green",
+            "ref": "119cebe2-409b-46e9-868e-8da77a2fc534",
+            "properties": {
+              "button_text": "Third design option",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/7MLGvAEgZqrL"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/7MLGvAEgZqrL",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "OeKQ8q1df2Uy",
+            "title": "Title\n_*'The fabulous story of*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__*'s family'*_\n\nOption C: Blue",
+            "ref": "780c8dc7-9c04-49bb-8aa3-f6cafb99a81e",
+            "properties": {
+              "button_text": "See all three choices",
+              "hide_marks": false
+            },
+            "type": "statement",
+            "attachment": {
+              "type": "image",
+              "href": "https://images.typeform.com/images/vfbuXc7LrDgA"
+            },
+            "layout": {
+              "type": "split",
+              "attachment": {
+                "type": "image",
+                "href": "https://images.typeform.com/images/vfbuXc7LrDgA",
+                "properties": {
+                  "focal_point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "x4DV5lrP7MWE",
+            "title": "Title\n_*'The fabulous story of how*_ _*{{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}*__* came into this world'*_ ",
+            "ref": "e755035c-7f91-4c0f-bebc-544e68313f7f",
+            "properties": {
+              "description": "Please make your final choice of your preferred style, font and colour scheme, or scroll back up to see the options again",
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "supersized": false,
+              "show_labels": true,
+              "choices": [
+                {
+                  "id": "mEVgNV6Aa2Ku",
+                  "ref": "bd8503da-db20-4d8d-8b3d-89a98d31533d",
+                  "label": "Orange",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/tzjffR9baBWa",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "X2dSGbLPk9rb",
+                  "ref": "31d1e171-6a33-4e16-a3f2-e1038816e2c6",
+                  "label": "Green",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/75GgKzfh6LJW",
+                    "properties": {}
+                  }
+                },
+                {
+                  "id": "lCdvr9bpxtmz",
+                  "ref": "6dcc0b56-2a30-47bf-a746-4975ce6888ce",
+                  "label": "Blue",
+                  "attachment": {
+                    "type": "image",
+                    "href": "https://images.typeform.com/images/UgdA3nSkrPNe",
+                    "properties": {}
+                  }
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "picture_choice"
+          },
+          {
+            "id": "HQmuSLtYs5B9",
+            "title": "Please upload a photo of {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} for the cover. ",
+            "ref": "58462893-b6ec-45b5-b4c2-3346ff15c601",
+            "properties": {},
+            "validations": {
+              "required": true
+            },
+            "type": "file_upload"
+          },
+          {
+            "id": "UMrqVP25tKJF",
+            "title": "Would you like to include {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}}'s name and birthdate on the cover?",
+            "ref": "0dfc549f-eedf-406b-8579-d3c3353eba67",
+            "properties": {},
+            "validations": {
+              "required": false
+            },
+            "type": "yes_no"
+          },
+          {
+            "id": "JPX0qtB5kHCU",
+            "title": "Please write the name exactly as you would like it to appear below the title next to the birthdate",
+            "ref": "5fca6324-733b-450d-a6cb-507f1de8cb9f",
+            "properties": {
+              "description": "For example: 'Ayaan Rafiq', 'Bella' or 'James William Campbell'"
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "fkaQPFRVA7DG",
+            "title": "Which day was {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} born?",
+            "ref": "508b883c-daf0-4830-855a-8344d4eed529",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": true,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "yBPh9iGyNKOO",
+                  "ref": "3623f149-263f-430d-8b9d-0e9d02bf6f18",
+                  "label": "1st"
+                },
+                {
+                  "id": "FTnhU8DwQ3gz",
+                  "ref": "f3950823-1a31-41cb-9b6e-e1e67365030b",
+                  "label": "2nd"
+                },
+                {
+                  "id": "HCUMps48CRU4",
+                  "ref": "517dd402-13f9-4fc9-97fe-6714d9422304",
+                  "label": "3rd"
+                },
+                {
+                  "id": "V8rkJToUeAC7",
+                  "ref": "516f30fa-1388-42f4-a9b7-672e596fa4c1",
+                  "label": "4th"
+                },
+                {
+                  "id": "8kFnqIR0TX0Y",
+                  "ref": "852518a5-5515-4336-a8c6-f7291756827f",
+                  "label": "5th"
+                },
+                {
+                  "id": "5bKN2QK2tv6U",
+                  "ref": "c809ecb7-3987-4bbf-ac55-32f9fcf8448e",
+                  "label": "6th"
+                },
+                {
+                  "id": "9lTVH7U3WF3t",
+                  "ref": "2a6a7f6d-eff6-44bc-8a84-f3d6b47ffa8e",
+                  "label": "7th"
+                },
+                {
+                  "id": "5DOjMhe9BJLn",
+                  "ref": "2afceff2-5a3c-49f6-b689-b8123f3678c1",
+                  "label": "8th"
+                },
+                {
+                  "id": "ME7paOl6GVP9",
+                  "ref": "96f39bfb-5f29-4f04-af0d-567087f92436",
+                  "label": "9th"
+                },
+                {
+                  "id": "6FR9FNT2nHLO",
+                  "ref": "2590db95-c88b-4c23-a5c2-5b7dea4564fc",
+                  "label": "10th"
+                },
+                {
+                  "id": "PPBKaFg99PJ4",
+                  "ref": "f815465a-03c0-4c0f-9dae-c98f5282f71d",
+                  "label": "11th"
+                },
+                {
+                  "id": "KeDzyys5s2DO",
+                  "ref": "06151f90-66cc-40d7-ac29-b65cfb263a34",
+                  "label": "12th"
+                },
+                {
+                  "id": "q9qvncFrhOg5",
+                  "ref": "1bec117a-c97e-42d6-957b-366902d7dc9d",
+                  "label": "13th"
+                },
+                {
+                  "id": "lxUzBnFIThOf",
+                  "ref": "362b6562-f538-4b0e-879b-ea99e1fe4b1e",
+                  "label": "14th"
+                },
+                {
+                  "id": "KUSVItbCfJYU",
+                  "ref": "bb5a6565-68be-462e-be26-9e24947ba067",
+                  "label": "15th"
+                },
+                {
+                  "id": "34rasfYXgCm9",
+                  "ref": "3d2ac094-ff52-4c31-8304-e7e4ba06be2e",
+                  "label": "16th"
+                },
+                {
+                  "id": "R6tRnT6wBNgi",
+                  "ref": "c3e3e67a-733f-4297-93d9-111791387a1b",
+                  "label": "17th"
+                },
+                {
+                  "id": "c9QTlDnVpKgw",
+                  "ref": "e1243deb-15a4-4212-93ba-2a792fdd30d9",
+                  "label": "18th"
+                },
+                {
+                  "id": "1DEwnfcY18XV",
+                  "ref": "3a38a925-21b0-4350-8f4e-426695f61399",
+                  "label": "19th"
+                },
+                {
+                  "id": "oV6SM9FpicPN",
+                  "ref": "fcfd3198-a53e-4914-addb-3614151a8cce",
+                  "label": "20th"
+                },
+                {
+                  "id": "cavhuQlcYTPz",
+                  "ref": "738476a0-b9af-49e6-bea2-182915246b3e",
+                  "label": "21st"
+                },
+                {
+                  "id": "LYLTkmvsAHwp",
+                  "ref": "86bd50b8-431b-4a1a-b7a0-22c573f33b49",
+                  "label": "22nd"
+                },
+                {
+                  "id": "kLe76KPvFXhf",
+                  "ref": "6f3d8760-ae8c-4d36-bcc1-0319d8330a3d",
+                  "label": "23rd"
+                },
+                {
+                  "id": "IwWQt9AbPWo4",
+                  "ref": "9132482c-07ba-4569-9664-6dce10d0f3f4",
+                  "label": "24th"
+                },
+                {
+                  "id": "1TYfEgr9SLi7",
+                  "ref": "bd14254c-4305-45d4-a824-0d4911e59cc7",
+                  "label": "25th"
+                },
+                {
+                  "id": "xI3g7X2qEhBz",
+                  "ref": "ace43334-e932-45fa-a5d7-5188635f6861",
+                  "label": "26th"
+                },
+                {
+                  "id": "u3s5pELMJtdk",
+                  "ref": "3d6faa40-d7d3-46ad-9803-8f9ea3c7e78c",
+                  "label": "27th"
+                },
+                {
+                  "id": "abcP4gNVpTtJ",
+                  "ref": "91764366-6e95-42f6-a6c2-6a647ed44fa8",
+                  "label": "28th"
+                },
+                {
+                  "id": "ZctmKExhWTD6",
+                  "ref": "c94c91a0-b2dd-4ff2-ba74-bb04061856bd",
+                  "label": "29th"
+                },
+                {
+                  "id": "5QSaWLMUZK8f",
+                  "ref": "99967e7c-0602-4dce-bb4a-423028e5b49a",
+                  "label": "30th"
+                },
+                {
+                  "id": "OpxdypeEyBYw",
+                  "ref": "db575a00-e8a6-4d7e-84a2-b8d187931c93",
+                  "label": "31st"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "623pQG9UJdOr",
+            "title": "Which month was {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} born in?",
+            "ref": "09d5a807-43b1-4382-a06d-cecb06d6c50b",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": true,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "6F602wRsjOIR",
+                  "ref": "0ade7668-e0e5-4e8a-9529-b6f55e17003a",
+                  "label": "January"
+                },
+                {
+                  "id": "0oyGFIpLGf73",
+                  "ref": "0c9caa0a-4a34-4077-808a-42aefd4018d6",
+                  "label": "February"
+                },
+                {
+                  "id": "kp70Rc3lmNeG",
+                  "ref": "1e0d93ea-7ed6-4216-9230-caf1c818f250",
+                  "label": "March"
+                },
+                {
+                  "id": "ETJXzx9XW9di",
+                  "ref": "e3cea105-823d-48c7-b012-71499fdc2619",
+                  "label": "April"
+                },
+                {
+                  "id": "0Ku62aTTEpWI",
+                  "ref": "dd7ca9e2-8f83-4377-9e58-fe4e6f0d4c38",
+                  "label": "May"
+                },
+                {
+                  "id": "QvuhutIAGBbe",
+                  "ref": "4a230aaf-dd35-4f8d-b4d9-b35688f2e209",
+                  "label": "June"
+                },
+                {
+                  "id": "SGIW4aMnfWYN",
+                  "ref": "e1b81c43-7435-4f67-8c0f-8c5decae7fe9",
+                  "label": "July"
+                },
+                {
+                  "id": "O1XyVlvk0s9X",
+                  "ref": "19339d84-06b1-43eb-8053-d8f5869a4b79",
+                  "label": "August"
+                },
+                {
+                  "id": "rvqlvoby2bFD",
+                  "ref": "a8c8d8a8-1136-460a-bd86-6b8cbb16eadb",
+                  "label": "September"
+                },
+                {
+                  "id": "DxLFDtxWTItY",
+                  "ref": "b5e010fb-18eb-48aa-8184-5cb9c7294120",
+                  "label": "October"
+                },
+                {
+                  "id": "EK3HANUcVQ6X",
+                  "ref": "d9cfd8bf-a498-4836-b9ad-63afd1a13a5d",
+                  "label": "November"
+                },
+                {
+                  "id": "49D9Bvs7UGha",
+                  "ref": "794f429f-a96f-4a34-acb5-0a847092e6d7",
+                  "label": "December"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "ohxu1Std4GfG",
+            "title": "And which year was {{field:efd45ed6-1275-47b6-9a8b-30ab0dda2b41}} born in?",
+            "ref": "42178543-4bbb-4dbf-a771-07d1dc121ba6",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": true,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "GbaPiGMBWmrE",
+                  "ref": "00fd6128-0685-4955-9177-292d88c8ad2d",
+                  "label": "2021"
+                },
+                {
+                  "id": "N3jP7w7lsw2h",
+                  "ref": "e9a547d2-12a0-4cea-ae49-084231cab0f3",
+                  "label": "2020"
+                },
+                {
+                  "id": "jNnMFTMtlRI1",
+                  "ref": "bfc15d8f-ec9f-438e-a297-8b8ae4f98453",
+                  "label": "2019"
+                },
+                {
+                  "id": "QnEKQYogRv1S",
+                  "ref": "85241cf1-6e8a-45ed-898f-449980c41b71",
+                  "label": "2018"
+                },
+                {
+                  "id": "hs6rJikcKKyH",
+                  "ref": "e04f59ee-e917-4fa7-acbe-cc08dc3110a9",
+                  "label": "2017"
+                },
+                {
+                  "id": "KHp0RGDGpg8s",
+                  "ref": "cc1ecaff-d87b-4117-89b7-bfd6e415b695",
+                  "label": "2016"
+                },
+                {
+                  "id": "u96htQLOgXki",
+                  "ref": "a4294c15-aba1-44a9-9248-576e8aa743d0",
+                  "label": "2015"
+                },
+                {
+                  "id": "PQGHoMxdDZYl",
+                  "ref": "19a46a64-5952-4eee-8b64-ab7936576dd7",
+                  "label": "2014"
+                },
+                {
+                  "id": "wYQYyf0lkesK",
+                  "ref": "f4337610-bf42-4247-a81f-c4ac0f0259bb",
+                  "label": "2013"
+                },
+                {
+                  "id": "6Pdi34Mhi4V4",
+                  "ref": "5a827ba7-f4ac-4b60-895a-0d273986d230",
+                  "label": "2012"
+                },
+                {
+                  "id": "ROzUbzozoCCS",
+                  "ref": "9e39f2f3-94c8-434a-988d-f9f8d0672e30",
+                  "label": "2011"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "5Ji2ShUOCGXd",
+            "title": "The line on the cover is going to read\n_*'*__*{{field:5fca6324-733b-450d-a6cb-507f1de8cb9f}}*__*,*_ _*{{field:508b883c-daf0-4830-855a-8344d4eed529}}*_ _*{{field:09d5a807-43b1-4382-a06d-cecb06d6c50b}}*_ _*{{field:42178543-4bbb-4dbf-a771-07d1dc121ba6}}*__*'*_",
+            "ref": "22cde01a-ccd0-4812-9746-9627f42d2df3",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "D8YFcIqbUCHY",
+                  "ref": "95f6ed0a-6298-4192-94e4-e05a661fafca",
+                  "label": "That's right"
+                },
+                {
+                  "id": "xUDqySsuwoDR",
+                  "ref": "263c266b-22d9-4cea-9968-5ac690d2c402",
+                  "label": "Click here if you'd like to correct something"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "PlOQN5pBRuVT",
+      "title": "Would you like to include a dedication on the first page?",
+      "ref": "f97ab645-b0b1-492d-a3dc-9fc381d38e1a",
+      "properties": {
+        "description": "It will read: 'Like every person, every family has its own story, which shapes who we are. This book is for you, and tells the story of how our family came to be.'"
+      },
+      "validations": {
+        "required": false
+      },
+      "type": "yes_no"
+    }
+  ],
+  "hidden": [
+    "child",
+    "respondent",
+    "partner"
+  ],
+  "logic": [
+    {
+      "type": "field",
+      "ref": "c8436a01-7c36-454b-aa67-a6c96f786555",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "50218ed7-d75f-420a-aea3-8b0b060db830"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "c8436a01-7c36-454b-aa67-a6c96f786555"
+              },
+              {
+                "type": "choice",
+                "value": "2eafbcc5-445a-45e8-9465-0c911733dbbd"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "b0489d1e-e0d7-450a-9dfb-7fefc7f2251e"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "c8436a01-7c36-454b-aa67-a6c96f786555"
+              },
+              {
+                "type": "choice",
+                "value": "fc1aa2ec-c7de-4cc8-8582-ad4687298ce4"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "13afc69f-6f18-435c-ad36-43bfbe4302b4"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "c8436a01-7c36-454b-aa67-a6c96f786555"
+              },
+              {
+                "type": "choice",
+                "value": "646c0dac-10f5-48d8-bcf1-66991e91acb7"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4"
+              },
+              {
+                "type": "choice",
+                "value": "d0884de5-148f-4767-a82f-e94daed4ccc1"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4"
+              },
+              {
+                "type": "choice",
+                "value": "eae312c2-cd1a-4d04-a2fd-6535db0f1770"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "3d0adfbd-a080-43ca-ac34-c24e4f3f6ca4"
+              },
+              {
+                "type": "choice",
+                "value": "dfabf311-5187-475d-bf6c-9df82abadc55"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e"
+              },
+              {
+                "type": "choice",
+                "value": "1bf8cd28-b4b7-490a-9ebb-5b20e2eab6e9"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e"
+              },
+              {
+                "type": "choice",
+                "value": "5393addc-260a-4874-8d4e-14181cdfaca4"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "786c9bc8-8e8a-4426-9b4e-fc524ce2ab3e"
+              },
+              {
+                "type": "choice",
+                "value": "b31c17ef-8ef4-466a-ae0e-fcf2e27429fb"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "e755035c-7f91-4c0f-bebc-544e68313f7f",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "e755035c-7f91-4c0f-bebc-544e68313f7f"
+              },
+              {
+                "type": "choice",
+                "value": "bd8503da-db20-4d8d-8b3d-89a98d31533d"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "e755035c-7f91-4c0f-bebc-544e68313f7f"
+              },
+              {
+                "type": "choice",
+                "value": "31d1e171-6a33-4e16-a3f2-e1038816e2c6"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "58462893-b6ec-45b5-b4c2-3346ff15c601"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "e755035c-7f91-4c0f-bebc-544e68313f7f"
+              },
+              {
+                "type": "choice",
+                "value": "6dcc0b56-2a30-47bf-a746-4975ce6888ce"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "0dfc549f-eedf-406b-8579-d3c3353eba67",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "f97ab645-b0b1-492d-a3dc-9fc381d38e1a"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "0dfc549f-eedf-406b-8579-d3c3353eba67"
+              },
+              {
+                "type": "constant",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "22cde01a-ccd0-4812-9746-9627f42d2df3",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "0dfc549f-eedf-406b-8579-d3c3353eba67"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "22cde01a-ccd0-4812-9746-9627f42d2df3"
+              },
+              {
+                "type": "choice",
+                "value": "263c266b-22d9-4cea-9968-5ac690d2c402"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "_links": {
+    "display": "https://thisstory.typeform.com/to/SgaKrUmI"
+  }
+}

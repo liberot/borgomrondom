@@ -49,8 +49,8 @@ require_once('include2nd/utils/typeform.php');
 
 add_action('init', 'setup_env');
 function setup_env(){
-     // drop_tables();
-     // init_tables();
-     // init_log_utils();
-     insert_typeform_survey('210902Cover--SgaKrUmI.json');
+     drop_tables();
+     init_tables();
+     init_log_utils();
+     insert_typeform_survey_from_descriptor('210902Cover--SgaKrUmI.json');
 };

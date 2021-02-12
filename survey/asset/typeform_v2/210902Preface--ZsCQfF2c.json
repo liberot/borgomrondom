@@ -1,0 +1,537 @@
+{
+  "id": "ZsCQfF2c",
+  "type": "branching",
+  "title": "210902Preface",
+  "workspace": {
+    "href": "https://api.typeform.com/workspaces/ZqH2NG"
+  },
+  "theme": {
+    "href": "https://api.typeform.com/themes/TSYAuE"
+  },
+  "settings": {
+    "language": "en",
+    "progress_bar": "percentage",
+    "meta": {
+      "allow_indexing": false
+    },
+    "hide_navigation": false,
+    "is_public": true,
+    "is_trial": false,
+    "show_progress_bar": true,
+    "show_typeform_branding": false,
+    "are_uploads_public": false,
+    "show_time_to_complete": true
+  },
+  "thankyou_screens": [
+    {
+      "id": "DefaultTyScreen",
+      "ref": "default_tys",
+      "title": "Done! Your information was sent perfectly.",
+      "properties": {
+        "show_button": false,
+        "share_icons": false
+      }
+    }
+  ],
+  "fields": [
+    {
+      "id": "X3T13irywrYP",
+      "title": "Are you making this book as a birthday present, and would you like to mention this in the dedication?",
+      "ref": "cadee458-c005-4d0d-9324-3f34f98ac9c8",
+      "properties": {},
+      "validations": {
+        "required": false
+      },
+      "type": "yes_no"
+    },
+    {
+      "id": "9twUg9rI1E5k",
+      "title": "Dedication with birthday message",
+      "ref": "7409c30b-3c02-4645-a922-6fe532d5cf8c",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "H5rnUsYb1NnR",
+            "title": "For which birthday is it? ",
+            "ref": "f6ae0fec-9070-466f-bc68-a1642bd2326a",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "AfSHbZjXQjL6",
+                  "ref": "7e383074-7fcd-45b6-bf9f-7670ca38a842",
+                  "label": "first birthday"
+                },
+                {
+                  "id": "O49b4yPSxU3f",
+                  "ref": "d89b9241-3372-4f71-b20f-82afbc607147",
+                  "label": "second birthday"
+                },
+                {
+                  "id": "LJBCk4uVyD1m",
+                  "ref": "352c4e45-2093-4496-832a-ab3f1b6eaca1",
+                  "label": "third birthday"
+                },
+                {
+                  "id": "cy8H4IdMMfBY",
+                  "ref": "e1705979-f59d-4c9d-b39e-2b1574589ae8",
+                  "label": "fourth birthday"
+                },
+                {
+                  "id": "k9O8ASPY7jZr",
+                  "ref": "14b0f4ff-f77d-4ff0-9344-45e4d746bbc9",
+                  "label": "fifth birthday"
+                },
+                {
+                  "id": "iWHgwc1ORu9O",
+                  "ref": "84746287-89be-4ba1-b2e8-d2353a96e3f8",
+                  "label": "sixth birthday"
+                },
+                {
+                  "id": "dj5ve2SgpBLg",
+                  "ref": "1d8d2ad7-38c3-4591-b8bb-8a3d00140376",
+                  "label": "seventh birthday"
+                },
+                {
+                  "id": "JmWxOVUdeWxQ",
+                  "ref": "9be7bf34-8ed8-44fc-8569-1272319e5861",
+                  "label": "eighth birthday"
+                },
+                {
+                  "id": "YEVDsLKHa0Wx",
+                  "ref": "9fb2c887-9c66-44ff-b30d-2d1ba1ae32be",
+                  "label": "ninth birthday"
+                },
+                {
+                  "id": "m0r3qM9ftWtZ",
+                  "ref": "cf2776a0-d6de-4134-862e-6ecdb418d536",
+                  "label": "tenth birthday"
+                },
+                {
+                  "id": "FdEPWbbPE1e3",
+                  "ref": "15b780e4-4a61-44cc-949c-a354d55526f2",
+                  "label": "eleventh birthday"
+                },
+                {
+                  "id": "bLdtHasUl2pt",
+                  "ref": "27d38000-13ba-40ba-8aaa-5bc7de1102a9",
+                  "label": "twelfth birthday"
+                },
+                {
+                  "id": "MYN7UxiQesj4",
+                  "ref": "3b05f6f1-4752-437a-8161-a096df6e89b6",
+                  "label": "thirteenth birthday"
+                },
+                {
+                  "id": "nPZH6FtF4B6r",
+                  "ref": "21a8d954-d0d7-49e9-8613-7ae254a71e04",
+                  "label": "fourteenth birthday"
+                },
+                {
+                  "id": "g70RAmzemfWF",
+                  "ref": "58e48051-0492-47af-9d95-457b78bd56dd",
+                  "label": "fiftheenth birthday"
+                },
+                {
+                  "id": "SyHloGmaartY",
+                  "ref": "90d52ebc-d73c-4154-bff2-3034f09bf5a1",
+                  "label": "sixteenth birthday"
+                },
+                {
+                  "id": "VXcZVMScpOkS",
+                  "ref": "743365ce-12e8-4379-b1d2-5b095ffad17d",
+                  "label": "seventeenth birthday"
+                },
+                {
+                  "id": "diukg2CrPYMG",
+                  "ref": "32c5db76-4a6e-43cb-a54a-d02c9aa2a27f",
+                  "label": "eighteenth birthday"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "1OK56N85jC8T",
+            "title": "How would you like to sign the dedication? ",
+            "ref": "87ff871f-464c-4e5c-aa82-5f917e90ee89",
+            "properties": {
+              "description": "For example: 'Your Mummy and Daddy', 'Your Mom', 'Your loving parents Samuel Williams and Sue Taylor'\n\nPlease note that you can add your full names in the next question"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "7APnCjzATy6R",
+            "title": "Please let us know your location in a way  would understand",
+            "ref": "cef1d32d-7108-464e-814b-3111db60e177",
+            "properties": {
+              "description": "For example 'Winchester', 'Hackney', or 'Twinkle Cottage'"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "DvFeydj0XiDF",
+            "title": "Which month would you like to put? ",
+            "ref": "201387b6-7168-44bf-bf09-e601c6508f2e",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "dS3GJworA4gb",
+                  "ref": "e2551de9-ef88-4e67-ab34-e55050778605",
+                  "label": "January"
+                },
+                {
+                  "id": "i4BMfoTgzAtD",
+                  "ref": "99a17e13-ef14-4915-9d45-5698e429e371",
+                  "label": "February"
+                },
+                {
+                  "id": "UEOARuLFcyqY",
+                  "ref": "74e42959-f4c4-4e62-9248-170ab06bcaa8",
+                  "label": "March"
+                },
+                {
+                  "id": "GHiMh36W9hIV",
+                  "ref": "41891e16-676a-4261-83dd-d23e452d8be0",
+                  "label": "April"
+                },
+                {
+                  "id": "b7Clqk2nFsRK",
+                  "ref": "404db69d-08ba-485a-b35a-9923b171fa2f",
+                  "label": "May"
+                },
+                {
+                  "id": "0dpCrRmmSsgv",
+                  "ref": "450dd386-4cb8-41f0-8b3e-3041272864b4",
+                  "label": "June"
+                },
+                {
+                  "id": "1OOdfebNjm2J",
+                  "ref": "a77a021d-be8e-407f-bb10-b87fce83b0ad",
+                  "label": "July"
+                },
+                {
+                  "id": "LwuFY4OX3lIB",
+                  "ref": "fa9e5311-fcec-490a-9d20-8bdf84a7848f",
+                  "label": "August"
+                },
+                {
+                  "id": "efyNHE3Bn6Wa",
+                  "ref": "2678798b-8a00-40b0-8265-ff62deccb3eb",
+                  "label": "September"
+                },
+                {
+                  "id": "82udGiNvuoXO",
+                  "ref": "78a187c0-f094-47e9-b466-a3573d668381",
+                  "label": "October"
+                },
+                {
+                  "id": "C9SkwjxdlvbT",
+                  "ref": "03b30480-2a24-4121-b369-64f75bf389df",
+                  "label": "November"
+                },
+                {
+                  "id": "tDfgYpK3XJP3",
+                  "ref": "f581e84d-7242-4433-bcf8-a45be5462df3",
+                  "label": "December"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "ieANSW15cl5j",
+            "title": "And which year? ",
+            "ref": "5a86c0e4-c7e3-4545-8bc2-9ab0096e9adb",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "Ael9IuwAMjes",
+                  "ref": "3d7a9c41-e8da-4495-91b7-0a570d93ecb9",
+                  "label": "2020"
+                },
+                {
+                  "id": "jr764l5vcOjU",
+                  "ref": "7b50e064-111e-4bd9-90d2-24547c527821",
+                  "label": "2021"
+                },
+                {
+                  "id": "7CP5llPjBoXp",
+                  "ref": "a0bc8990-41c4-480b-81b7-b90329aed537",
+                  "label": "2022"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "GBoz3fuRVdOf",
+            "title": "The dedication is going to read\n\n*_'Dear_* *_,_*\n\n*_Like every person, every family has its own story, which shapes who we are. This book is for you, on your_* *_{{field:f6ae0fec-9070-466f-bc68-a1642bd2326a}}, and tells the story of how our family came to be._*\n\n{{field:87ff871f-464c-4e5c-aa82-5f917e90ee89}},\n{{field:cef1d32d-7108-464e-814b-3111db60e177}}, {{field:201387b6-7168-44bf-bf09-e601c6508f2e}}, {{field:5a86c0e4-c7e3-4545-8bc2-9ab0096e9adb}}",
+            "ref": "50e45a81-7abc-4a1d-a011-86358b6b4d94",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "D41bHyqb0ru6",
+                  "ref": "9185cd4c-dd49-4763-b91d-38b9531ccd0e",
+                  "label": "That's right"
+                },
+                {
+                  "id": "VoRv7UYwzJl1",
+                  "ref": "4bc28bb1-3ab0-44fc-962c-f1ed1010fe50",
+                  "label": "Click here or type 'B' to correct"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "so4PwNUgHIVy",
+      "title": "Dedication",
+      "ref": "9021ec30-8c67-44f3-86e7-65e3ec431b13",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "fq5oe3CLXj6W",
+            "title": "How would you like to sign the dedication? ",
+            "ref": "ded50810-68c8-473f-84a6-b7baa86b5b9c",
+            "properties": {
+              "description": "For example: 'Your Mummy and Daddy', 'Your Mom', 'Your loving parents Samual Williams and Sue Taylor'\n\nPlease note that you can add your full names in the next question"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "v3hF3LY3qqLH",
+            "title": "Please let us know your location in a way  would understand",
+            "ref": "854211df-d25c-4be5-9bcf-4e18734f4a1a",
+            "properties": {
+              "description": "For example 'Winchester', 'Hackney', or 'Twinkle Cottage'"
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "short_text"
+          },
+          {
+            "id": "6GoLmMYyZtRg",
+            "title": "Which month would you like to put? ",
+            "ref": "c10c27d1-3119-49be-96ee-79e8c6fb38e0",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "iTcH3KfSqfJu",
+                  "ref": "eaea182a-3068-4d09-beab-af47d7f0fc14",
+                  "label": "January"
+                },
+                {
+                  "id": "YPN1KTyWkaZB",
+                  "ref": "c4add783-1421-4d73-b97f-eff1951a5e50",
+                  "label": "February"
+                },
+                {
+                  "id": "JuEsT3NHwSqs",
+                  "ref": "fb871478-2abe-4178-bda8-cc2e09adf8b6",
+                  "label": "March"
+                },
+                {
+                  "id": "PLf4emJ8YXM1",
+                  "ref": "09642a37-b878-4b58-ba27-5cee87648c9f",
+                  "label": "April"
+                },
+                {
+                  "id": "x3o57DLHCWyQ",
+                  "ref": "37bc3c37-6f82-457e-a735-fd6adc44e716",
+                  "label": "May"
+                },
+                {
+                  "id": "cpO8dDUaAN4f",
+                  "ref": "efa150c6-1005-49d5-90f9-95d5618a8e90",
+                  "label": "June"
+                },
+                {
+                  "id": "ZHV0ClZNSfKg",
+                  "ref": "17572eaf-180c-43d8-bc83-2d3ec5f6ced7",
+                  "label": "July"
+                },
+                {
+                  "id": "H4zUmMEBQKRa",
+                  "ref": "4a75e98b-f1da-4aa5-b559-cddcf1f592d4",
+                  "label": "August"
+                },
+                {
+                  "id": "I34FcAR4lgwJ",
+                  "ref": "b3d9748b-cbeb-449c-83e8-4334c3a8df1f",
+                  "label": "September"
+                },
+                {
+                  "id": "lMxUMvraky3x",
+                  "ref": "09df35f6-a953-4890-bf69-43173f179263",
+                  "label": "October"
+                },
+                {
+                  "id": "pCa9bXNs0Ej2",
+                  "ref": "2c0b59d2-4039-41cd-9b9a-98cb9567df75",
+                  "label": "November"
+                },
+                {
+                  "id": "yGHvi1A9sgqB",
+                  "ref": "d6df941d-25ba-4220-8656-ec4ab403b422",
+                  "label": "December"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "NYdUOdzPEZ2J",
+            "title": "And which year? ",
+            "ref": "7d4d326e-bb3e-4fec-8fa3-1e15278dc076",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "hbsB4oU0PjC2",
+                  "ref": "4f94a177-b0e5-44fe-9b5a-f6d83d992b40",
+                  "label": "2020"
+                },
+                {
+                  "id": "vFeg4xRuyf0D",
+                  "ref": "47935211-a6f8-44d0-bbeb-0403f0fbd3c2",
+                  "label": "2021"
+                },
+                {
+                  "id": "avan4RobvDnG",
+                  "ref": "69bd76b4-f5ea-4793-810d-465fb7415b4e",
+                  "label": "2022"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "yudrD5PzuUuW",
+            "title": "The dedication is going to read\n\n*_'Dear_* *_,_*\n\n*_Like every person, every family has its own story, which shapes who we are. This book is for you, and tells the story of how our family came to be.'_*\n\n*_{{field:ded50810-68c8-473f-84a6-b7baa86b5b9c}},_*\n*_{{field:854211df-d25c-4be5-9bcf-4e18734f4a1a}},_* {{field:c10c27d1-3119-49be-96ee-79e8c6fb38e0}} *_{{field:7d4d326e-bb3e-4fec-8fa3-1e15278dc076}}'_*",
+            "ref": "49affcf4-a20c-40c6-9888-9b3a33e8ecd6",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "XAZhwWovnNpI",
+                  "ref": "38aae509-9813-49c3-9fef-e27f8783dc93",
+                  "label": "That's right"
+                },
+                {
+                  "id": "vEu1PWbHDDFH",
+                  "ref": "062fb784-f273-4a75-8a38-62932fc22e8b",
+                  "label": "Click here to correct"
+                }
+              ]
+            },
+            "validations": {
+              "required": true
+            },
+            "type": "multiple_choice"
+          }
+        ]
+      },
+      "type": "group"
+    }
+  ],
+  "hidden": [
+    "child",
+    "respondent",
+    "partner"
+  ],
+  "logic": [
+    {
+      "type": "field",
+      "ref": "cadee458-c005-4d0d-9324-3f34f98ac9c8",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "9021ec30-8c67-44f3-86e7-65e3ec431b13"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "cadee458-c005-4d0d-9324-3f34f98ac9c8"
+              },
+              {
+                "type": "constant",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "_links": {
+    "display": "https://thisstory.typeform.com/to/ZsCQfF2c"
+  }
+}

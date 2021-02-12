@@ -2,7 +2,7 @@
 
 
 
-function insert_typeform_survey($survey_file_name){
+function insert_typeform_survey_from_descriptor($survey_file_name){
 
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
 
@@ -22,6 +22,57 @@ function insert_typeform_survey($survey_file_name){
      $groups = parse_groups($doc['fields'], null, null);
      $fields = parse_fields($doc['fields'], null, null);
 
+     $res = insert_typeform_survey($survey);
+     $res = insert_typeform_groups($survey, $groups);
+}
+
+
+
+function insert_typeform_groups($survey, $groups){
+
+     global $wpdb;
+
+     $survey_ref = esc_sql($survey['id']);
+     foreach($groups as $group){
+          $ref = esc_sql($group['ref']);
+          $parent_ref = esc_sql($group['parent_id']);
+          $title = esc_sql($group['title']);
+
+          $prefix = $wpdb->prefix;
+               $sql = <<<EOD
+                    insert into {$prefix}ts_bb_group
+                    (ref, parent_ref, survey_ref, title, init) 
+               values 
+                    ('{$ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now())
+EOD;
+          $sql = debug_sql($sql);
+          $res |= $wpdb->query($sql);
+     }
+
+     return $res;
+}
+
+
+
+function insert_typeform_survey($survey){
+
+     global $wpdb;
+
+     $ref = esc_sql($survey['id']);
+     $title = esc_sql($survey['title']);
+     $headline = esc_sql($survey['welcome']);
+
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_survey 
+               (ref, title, headline, init) 
+          values 
+               ('{$ref}', '{$title}', '{$headline}', now())
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 

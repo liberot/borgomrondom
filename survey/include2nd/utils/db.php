@@ -4,7 +4,7 @@
 
 function drop_tables(){
 
-     $tables = ['bb_survey', 'bb_group', 'bb_field', 'bb_thread', 'bb_input', 'bb_book', 'bb_chapter', 'bb_section', 'bb_spread'];
+     $tables = ['ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_thread', 'ts_bb_input', 'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'];
 
      global $wpdb;
      foreach($tables as $table){
@@ -44,7 +44,7 @@ function init_book_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_book (
+          {$prefix}ts_bb_book (
                id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
@@ -72,7 +72,7 @@ function init_chapter_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_chapter (
+          {$prefix}ts_bb_chapter (
                id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
@@ -102,7 +102,7 @@ function init_section_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_section (
+          {$prefix}ts_bb_section (
                id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
@@ -133,7 +133,7 @@ function init_spread_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_spread (
+          {$prefix}ts_bb_spread (
                id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
@@ -165,7 +165,7 @@ function init_thread_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_thread (
+          {$prefix}ts_bb_thread (
                id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
                survey_id bigint(20) unsigned not null,
@@ -193,7 +193,7 @@ function init_input_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_input (
+          {$prefix}ts_bb_input (
                id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
@@ -224,11 +224,13 @@ function init_survey_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_survey (
-               id bigint(20) unsigned not null,
-               linked_survey_id bigint(20) unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+          {$prefix}ts_bb_survey (
+               id bigint(20) not null auto_increment,
+               ref varchar(255) not null unique,
+               title varchar(255),
+               headline varchar(255),
+               linked_survey_id bigint(20) unsigned,
+               linked_survey_ref bigint(20) unsigned,
                description varchar(255),
                init datetime,
                content text,
@@ -249,16 +251,17 @@ function init_group_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_group (
-               id bigint(20) unsigned not null,
-               parent_id bigint(20) unsigned not null,
-               survey_id bigint(20) unsigned not null,
-               linked_survey_id bigint(20) unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+          {$prefix}ts_bb_group (
+               id bigint(20) not null auto_increment,
+               ref varchar(255) not null unique,
+               parent_ref varchar(255) not null,
+               survey_ref varchar(255) not null,
+               linked_survey_ref varchar(255),
+               title varchar(255),
                description varchar(255),
                init datetime,
                content text,
+               layout_def varchar(255),
                primary key (id)
           )
           engine=innodb
@@ -276,7 +279,7 @@ function init_field_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}bb_field (
+          {$prefix}ts_bb_field (
                id bigint(20) unsigned not null,
                group_id bigint(20) unsigned not null,
                parent_id bigint(20) unsigned not null,

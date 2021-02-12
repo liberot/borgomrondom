@@ -1,0 +1,825 @@
+{
+  "id": "ZzFULwse",
+  "type": "branching",
+  "title": "210902fielding questions and payment",
+  "workspace": {
+    "href": "https://api.typeform.com/workspaces/ZqH2NG"
+  },
+  "theme": {
+    "href": "https://api.typeform.com/themes/TSYAuE"
+  },
+  "settings": {
+    "language": "en",
+    "progress_bar": "percentage",
+    "meta": {
+      "allow_indexing": false
+    },
+    "hide_navigation": false,
+    "is_public": true,
+    "is_trial": false,
+    "show_progress_bar": true,
+    "show_typeform_branding": false,
+    "are_uploads_public": false,
+    "show_time_to_complete": true
+  },
+  "thankyou_screens": [
+    {
+      "id": "DefaultTyScreen",
+      "ref": "default_tys",
+      "title": "Done! Your information was sent perfectly.",
+      "properties": {
+        "show_button": false,
+        "share_icons": false
+      }
+    }
+  ],
+  "fields": [
+    {
+      "id": "Aex6LDRZyWsi",
+      "title": "Families come in all shapes and sizes and we make stories for one-parent, two-parent and co-parenting families.\n\nOut of many thousands of questions, our book builder will pick the ones that tell your story for your child.",
+      "ref": "d2cd6969-e6ba-41dd-811b-d50fbd2d83a5",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "zvd0oWhWSrrl",
+      "title": "We are still in development and currently working on:\n\n• A version for families with a child that has been adopted\n• A version for families, where one parent has passed\n• A version, using genderless language ('birthing parent' instead of mother, 'auncle' instead of aunt or uncle, 'they/them' instead of she/her)\n\nIf that's your family, please check back soon!",
+      "ref": "7989fd9b-23d6-49ed-9e48-67572674503b",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "d28RfPDpDSFY",
+      "title": "How many parents and/or carers are in your family?",
+      "ref": "518e5cef-0441-42cc-9080-7130a8529ebf",
+      "properties": {
+        "randomize": false,
+        "allow_multiple_selection": false,
+        "allow_other_choice": false,
+        "vertical_alignment": true,
+        "choices": [
+          {
+            "id": "CO7al1gzDlvz",
+            "ref": "31cc0b6d-53fe-4e3f-b36a-43ddc6de0d9e",
+            "label": "One parent"
+          },
+          {
+            "id": "EiZpHW5sBcfx",
+            "ref": "551ce1fe-e4d2-432c-b35c-6e76850d8643",
+            "label": "Two parents"
+          },
+          {
+            "id": "UUavf0DoWj3k",
+            "ref": "eda65954-a7d3-4b48-895c-2fad84a6b359",
+            "label": "Co-parenting family with two, three or more parents and/or carers"
+          },
+          {
+            "id": "9W5UM8WBMRrQ",
+            "ref": "7756eebc-abe5-459e-bee9-53e5104e6771",
+            "label": "More information on the different versions"
+          }
+        ]
+      },
+      "validations": {
+        "required": true
+      },
+      "type": "multiple_choice"
+    },
+    {
+      "id": "h2Ds722R7eya",
+      "title": "So we could best tell the stories of all families, we have  versions for different types of families\n\n*•* *Two-parent family with the same partner then and now*\n*• Co-parenting family by design, or with an ex-partner, who is in the child's life*\n*• One-parent family by design, or if the other parent is completely absent*\n\nPlease read the information below to make sure you choose the right version",
+      "ref": "fa92a3ef-3ca2-40cc-953e-c72ff63c4cac",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "3eyfFdQhNRqf",
+      "title": "*One-parent family by design, or if the other parent is completely absent*\n\nThis version is designed for one-parent families, whether they were planned as such, or if there was a partner who is now completely out of the picture. \n\nIt also tells your family's story in a linear way, starting with your parents (if you so wish) work and hobbies. It moves onto how  came to be, as well as 's first few years and family life.\n\nPlease note that this version is only for one-parent families by design, or where the other parent is completely absent and/or unknown. It's *not* for families, where another parent (and/or donor) is involved in the parenting - even if the contact is sporadic and/or short - if this is the case, please choose 'co-parenting family'. Psychologists are unanimous that  it's in the interest of the child to include even a semi-absent parent as best as they can, as they are still an important piece of the child's identity. \n\nIf you'd like to be able to give more space to a grandparent, or very long-standing nanny, you may want to opt for the co-parenting version. This version also includes a narrative, but is based on what we call a 'cast list', that gives spaces to the important people in your child's life.",
+      "ref": "a435a608-ee23-42ac-bd72-957aaf052c61",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "CzoG9RJO75SE",
+      "title": "*Two-parent family with the same partner then and now*\n\nThis version is for two-parent families, where two partners conceived a child together and are still parenting as a couple, who are the main care givers. This version does allow you to  include children from previous relationships, though.\n\nIt has a linear structure, starting with the grandparents (if you so wish), gives some background of both parents, including siblings and hobbies as well as how  came to be. It then continues with the child's first few years and the family's life.\n\nIf you would like to include somebody else as a main carer, for example a grandparent, long-standing nanny, or a gamete donor you may want to choose the co-parenting version, which based on what we call a 'cast list', that allows to show  with different households. It still tells the story of your child came to be, though.",
+      "ref": "b1678f81-6fb8-4e88-88b2-6f1304074475",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "lev2x3cvsY7O",
+      "title": "*Co-parenting family by design, or with an ex-partner, who is in the child's life*\n\nThis version celebrates that families come in all shapes and sizes. It's for you if for example a donor is involved in the parenting, if you don't live with the partner you conceived  with and/or if have met somebody new, or if grandparents regularly care for . This version is the most flexible and also works if you're making this book for a step or grand child. \n\nRather than telling your story in a linear way, it focusses on the child and the people who are close to them, and works more like a cast list, choosing to focus on the people who shape the child's life, while still containing the narrative of how your child came to be, though.",
+      "ref": "53d67787-926b-456a-a80d-2ae968457346",
+      "properties": {
+        "button_text": "Continue",
+        "hide_marks": false
+      },
+      "type": "statement"
+    },
+    {
+      "id": "d8EnzsyXW2BP",
+      "title": "Which version would you like to order?",
+      "ref": "071a4523-c73b-42b0-add3-4dddafdc72ad",
+      "properties": {
+        "randomize": false,
+        "allow_multiple_selection": false,
+        "allow_other_choice": false,
+        "vertical_alignment": true,
+        "choices": [
+          {
+            "id": "snbzEDrWYLqZ",
+            "ref": "dcaa2492-f253-448d-b7fa-62b4dfa436da",
+            "label": "One-parent family (by design or where the other parent is completely absent)"
+          },
+          {
+            "id": "fu3Gv2scwWpK",
+            "ref": "946e4def-8984-4464-a968-ffae71e5eae0",
+            "label": "Two-parent family with the same partner then and now"
+          },
+          {
+            "id": "KJ9y1kjEKKeH",
+            "ref": "00ce87ae-3284-4ba9-a85a-83c624bbbdbb",
+            "label": "Co-parenting family (either by design or after a separation)"
+          }
+        ]
+      },
+      "validations": {
+        "required": false
+      },
+      "type": "multiple_choice"
+    },
+    {
+      "id": "8QNHLAq2zOIu",
+      "title": "How did your family come to be?",
+      "ref": "bf1aeb6e-f684-44e4-88a6-99e55dddb399",
+      "properties": {
+        "randomize": false,
+        "allow_multiple_selection": false,
+        "allow_other_choice": false,
+        "vertical_alignment": true,
+        "choices": [
+          {
+            "id": "qoCe5yFp24A2",
+            "ref": "10be6317-f8e6-4d6f-87aa-90ae2c9dd679",
+            "label": "I decided to start a family on my own"
+          },
+          {
+            "id": "b6iO5TGtzGvO",
+            "ref": "889bd673-55e5-4a94-9e52-d0044b2fe46e",
+            "label": "I was with somebody but we separated"
+          },
+          {
+            "id": "FakLuFQn4kTX",
+            "ref": "0b3e26bd-34bf-4e84-bea3-b8337d8d81cf",
+            "label": "Other"
+          }
+        ]
+      },
+      "validations": {
+        "required": true
+      },
+      "type": "multiple_choice"
+    },
+    {
+      "id": "FffYEpxhAvPM",
+      "title": "Is the other parent sill in the child's life ",
+      "ref": "d97cf7da-8ce9-4254-b555-867bb4ce5794",
+      "properties": {
+        "description": "Does  still see the other parent on a regular or semi-regular basis? Please answer 'yes', even if it is just once or twice a year and the child is aware of them"
+      },
+      "validations": {
+        "required": true
+      },
+      "type": "yes_no"
+    },
+    {
+      "id": "9LAK1zj0LCsh",
+      "title": "Your One-Parent Family Story",
+      "ref": "f54f3ef4-7045-4dd9-8ea8-0cc97fd5ba9c",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "oDiljT7yYaSc",
+            "title": "Great! You have chosen to make a book for your child  about your one-parent family. Could you confirm that this is correct?",
+            "ref": "e880686a-c118-4c4e-af72-e24809903560",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "nNNZr0v0peG3",
+                  "ref": "7c1547b6-4a85-4072-b069-8b1cc1d6840f",
+                  "label": "That's right (continues to payment)"
+                },
+                {
+                  "id": "uJpIchkWYA6t",
+                  "ref": "ecc6551a-5c5d-4520-8866-a09b627003bd",
+                  "label": "I'd like to order a different version"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "IBEOTxvy8k6E",
+            "title": "The first book costs £70 and each additional copy a further £50. How many copies would you like to order? ",
+            "ref": "a7b75c02-4562-430d-ad97-f12e303e36b2",
+            "properties": {
+              "description": "If you would like to order more than 10 copies, please get in touch with us on info@thisstory.co.uk for a quote"
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "number"
+          },
+          {
+            "id": "GIhWILdMTcwU",
+            "title": "That's £. Please fill in payment details below ...",
+            "ref": "5ee35545-ef0f-4ca1-b618-9feda692b0b0",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "eR5gne55PBfF",
+            "title": "Thank you for your custom. Let's start with the first chapter!",
+            "ref": "4f0454f0-4177-43e5-9729-9a4e033553c8",
+            "properties": {
+              "description": "One-parent family",
+              "button_text": "Continue",
+              "hide_marks": true
+            },
+            "type": "statement"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "0mFuuA3LNt4F",
+      "title": "Are you still with the same partner, you conceived the child with?",
+      "ref": "483e23f0-4841-4335-a34e-e4bfdb798cdd",
+      "properties": {},
+      "validations": {
+        "required": false
+      },
+      "type": "yes_no"
+    },
+    {
+      "id": "0Y8jD1w3OSmU",
+      "title": "Your two-parent family story",
+      "ref": "639bb2db-ee0e-4245-9ff6-807f68301909",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "W1A48uV4Tbrp",
+            "title": "Great! You have chosen to make a book for your child  about your two-parent family. Could you confirm that this is correct?",
+            "ref": "ce4a8251-abb3-40bb-977f-7797e42cb0f9",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "z81IkMQVsNHg",
+                  "ref": "a1d58ab9-5bbb-4d7e-8885-87f651901e2f",
+                  "label": "That's right (continues to payment)"
+                },
+                {
+                  "id": "eKeYYs2xgIl3",
+                  "ref": "0191e300-3b9c-4b04-b6c0-892389b89546",
+                  "label": "I'd like to order a different version"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "XSTCaUTU8gjy",
+            "title": "The first book costs £70 and each additional copy a further £50. How many copies would you like to order? ",
+            "ref": "dae39cbf-aa04-4490-853a-a8a65748c060",
+            "properties": {
+              "description": "If you would like to order more than 10 copies, please get in touch with us on info@thisstory.co.uk for a quote"
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "number"
+          },
+          {
+            "id": "1Uownvo8a0vF",
+            "title": "That's £. Please fill in payment details below ...",
+            "ref": "fde0d6e7-b38f-46d6-b9c5-f9a617334950",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "gaL9AwQYjGJK",
+            "title": "Thank you for your custom. Let's start with the first chapter!",
+            "ref": "20cdbee1-abaf-418f-afe4-4ac069f520f3",
+            "properties": {
+              "description": "_Two-parent family_",
+              "button_text": "Continue",
+              "hide_marks": true
+            },
+            "type": "statement"
+          }
+        ]
+      },
+      "type": "group"
+    },
+    {
+      "id": "nhaXZPnencyc",
+      "title": "Your co-parenting family story",
+      "ref": "8f66e80e-cabd-4142-a69d-f50a774d450b",
+      "properties": {
+        "button_text": "Continue",
+        "show_button": true,
+        "fields": [
+          {
+            "id": "OlQknfA6UgQc",
+            "title": "Great! You have chosen to make a book for your child  about your co-parenting family. Could you confirm that this is correct?",
+            "ref": "13306275-f6f5-4aa4-9362-2e8d581ee225",
+            "properties": {
+              "randomize": false,
+              "allow_multiple_selection": false,
+              "allow_other_choice": false,
+              "vertical_alignment": true,
+              "choices": [
+                {
+                  "id": "iXAT2frkpwCe",
+                  "ref": "1941115d-d086-4104-8e16-5450275a5118",
+                  "label": "That's right (continues to payment)"
+                },
+                {
+                  "id": "6hNqPS4SVSjE",
+                  "ref": "0fcd00b5-9d4a-4efc-987b-f66f83f3d819",
+                  "label": "I'd like to order a different version"
+                }
+              ]
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "multiple_choice"
+          },
+          {
+            "id": "MRCmSbbDQpsR",
+            "title": "The first book costs £70 and each additional copy a further £50. How many copies would you like to order? ",
+            "ref": "6c13bf8f-cf2d-4d43-be7a-591cc8160f52",
+            "properties": {
+              "description": "If you would like to order more than 10 copies, please get in touch with us on info@thisstory.co.uk for a quote"
+            },
+            "validations": {
+              "required": false
+            },
+            "type": "number"
+          },
+          {
+            "id": "Brqor1gfIlF1",
+            "title": "That's £. Please fill in payment details below ...",
+            "ref": "7244ef6b-8594-4325-9a1f-b80c8b719f0c",
+            "properties": {
+              "button_text": "Continue",
+              "hide_marks": false
+            },
+            "type": "statement"
+          },
+          {
+            "id": "BZxX5UGtoy9R",
+            "title": "Thank you for your custom. Let's start with the first chapter!",
+            "ref": "f7e048ab-378c-4666-9285-d754140fd93d",
+            "properties": {
+              "description": "_Co-parenting family_",
+              "button_text": "Continue",
+              "hide_marks": true
+            },
+            "type": "statement"
+          }
+        ]
+      },
+      "type": "group"
+    }
+  ],
+  "hidden": [
+    "child",
+    "respondent",
+    "partner"
+  ],
+  "logic": [
+    {
+      "type": "field",
+      "ref": "518e5cef-0441-42cc-9080-7130a8529ebf",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "bf1aeb6e-f684-44e4-88a6-99e55dddb399"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+              },
+              {
+                "type": "choice",
+                "value": "31cc0b6d-53fe-4e3f-b36a-43ddc6de0d9e"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "fa92a3ef-3ca2-40cc-953e-c72ff63c4cac"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+              },
+              {
+                "type": "choice",
+                "value": "7756eebc-abe5-459e-bee9-53e5104e6771"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "8f66e80e-cabd-4142-a69d-f50a774d450b"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+              },
+              {
+                "type": "choice",
+                "value": "eda65954-a7d3-4b48-895c-2fad84a6b359"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "483e23f0-4841-4335-a34e-e4bfdb798cdd"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "518e5cef-0441-42cc-9080-7130a8529ebf"
+              },
+              {
+                "type": "choice",
+                "value": "551ce1fe-e4d2-432c-b35c-6e76850d8643"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "bf1aeb6e-f684-44e4-88a6-99e55dddb399",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "fa92a3ef-3ca2-40cc-953e-c72ff63c4cac"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "bf1aeb6e-f684-44e4-88a6-99e55dddb399"
+              },
+              {
+                "type": "choice",
+                "value": "0b3e26bd-34bf-4e84-bea3-b8337d8d81cf"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "f54f3ef4-7045-4dd9-8ea8-0cc97fd5ba9c"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "bf1aeb6e-f684-44e4-88a6-99e55dddb399"
+              },
+              {
+                "type": "choice",
+                "value": "10be6317-f8e6-4d6f-87aa-90ae2c9dd679"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "d97cf7da-8ce9-4254-b555-867bb4ce5794",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "f54f3ef4-7045-4dd9-8ea8-0cc97fd5ba9c"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "d97cf7da-8ce9-4254-b555-867bb4ce5794"
+              },
+              {
+                "type": "constant",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "8f66e80e-cabd-4142-a69d-f50a774d450b"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "d97cf7da-8ce9-4254-b555-867bb4ce5794"
+              },
+              {
+                "type": "constant",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "e880686a-c118-4c4e-af72-e24809903560",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "d2cd6969-e6ba-41dd-811b-d50fbd2d83a5"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "e880686a-c118-4c4e-af72-e24809903560"
+              },
+              {
+                "type": "choice",
+                "value": "ecc6551a-5c5d-4520-8866-a09b627003bd"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "483e23f0-4841-4335-a34e-e4bfdb798cdd",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "8f66e80e-cabd-4142-a69d-f50a774d450b"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "483e23f0-4841-4335-a34e-e4bfdb798cdd"
+              },
+              {
+                "type": "constant",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "ce4a8251-abb3-40bb-977f-7797e42cb0f9",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "d2cd6969-e6ba-41dd-811b-d50fbd2d83a5"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "ce4a8251-abb3-40bb-977f-7797e42cb0f9"
+              },
+              {
+                "type": "choice",
+                "value": "0191e300-3b9c-4b04-b6c0-892389b89546"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "13306275-f6f5-4aa4-9362-2e8d581ee225",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "d2cd6969-e6ba-41dd-811b-d50fbd2d83a5"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "13306275-f6f5-4aa4-9362-2e8d581ee225"
+              },
+              {
+                "type": "choice",
+                "value": "0fcd00b5-9d4a-4efc-987b-f66f83f3d819"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "field",
+      "ref": "071a4523-c73b-42b0-add3-4dddafdc72ad",
+      "actions": [
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "8f66e80e-cabd-4142-a69d-f50a774d450b"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "071a4523-c73b-42b0-add3-4dddafdc72ad"
+              },
+              {
+                "type": "choice",
+                "value": "00ce87ae-3284-4ba9-a85a-83c624bbbdbb"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "639bb2db-ee0e-4245-9ff6-807f68301909"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "071a4523-c73b-42b0-add3-4dddafdc72ad"
+              },
+              {
+                "type": "choice",
+                "value": "946e4def-8984-4464-a968-ffae71e5eae0"
+              }
+            ]
+          }
+        },
+        {
+          "action": "jump",
+          "details": {
+            "to": {
+              "type": "field",
+              "value": "f54f3ef4-7045-4dd9-8ea8-0cc97fd5ba9c"
+            }
+          },
+          "condition": {
+            "op": "is",
+            "vars": [
+              {
+                "type": "field",
+                "value": "071a4523-c73b-42b0-add3-4dddafdc72ad"
+              },
+              {
+                "type": "choice",
+                "value": "dcaa2492-f253-448d-b7fa-62b4dfa436da"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "_links": {
+    "display": "https://thisstory.typeform.com/to/ZzFULwse"
+  }
+}
