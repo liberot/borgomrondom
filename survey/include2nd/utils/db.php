@@ -4,7 +4,11 @@
 
 function drop_tables(){
 
-     $tables = ['ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_thread', 'ts_bb_input', 'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'];
+     $tables = [
+          'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 
+          'ts_bb_thread', 'ts_bb_input', 
+          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'
+     ];
 
      global $wpdb;
      foreach($tables as $table){
@@ -25,6 +29,7 @@ function init_tables(){
      init_survey_table();
      init_group_table();
      init_field_table();
+     init_choice_table();
 
      init_thread_table();
      init_input_table();
@@ -290,9 +295,9 @@ function init_field_table(){
                linked_survey_ref varchar(255),
                linked_field_ref varchar(255),
                type varchar(255),
-               description varchar(255),
                init datetime,
-               title text(255),
+               title text,
+               description text,
                doc text,
                pos int not null,
                primary key (id)
@@ -307,6 +312,38 @@ EOD;
 
 #foreign key (post_id) references {$prefix}posts(ID),
 #foreign key (post_parent_id) references wp_posts(ID),
+
+
+
+function init_choice_table(){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_choice (
+               id bigint(20) not null auto_increment,
+               ref varchar(255) not null unique,
+               typeform_ref varchar(255),
+               survey_ref varchar(255),
+               group_ref varchar(255),
+               parent_ref varchar(255),
+               field_ref varchar(255),
+               title text(255),
+               description text,
+               doc text,
+               pos int not null,
+               init datetime,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+}
 
 
 
