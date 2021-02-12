@@ -22,28 +22,69 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
      $groups = parse_groups($doc['fields'], null, null);
      $fields = parse_fields($doc['fields'], null, null);
 
-     $res = insert_typeform_survey($survey);
-     $res = insert_typeform_groups($survey, $groups);
+     $res = insert_survey($survey, $data);
+     $res = insert_groups($survey, $groups);
+     $res = insert_fields($survey, $fields);
 }
 
 
 
-function insert_typeform_groups($survey, $groups){
+function insert_fields($survey, $fields){
+
+     global $wpdb;
+
+     $survey_ref = esc_sql($survey['id']);
+     $pos = 0;
+     foreach($fields as $field){
+
+          $ref = esc_sql($field['ref']);
+          $typeform_ref = esc_sql($field['id']);
+          $parent_ref = esc_sql($field['parent_id']);
+          $group_ref = esc_sql($field['parent_id']);
+          $title = esc_sql($field['title']);
+          $type = esc_sql($field['type']);
+          $description = esc_sql($field['properties']['description']);
+          $prefix = $wpdb->prefix;
+   
+          $sql = <<<EOD
+               insert into {$prefix}ts_bb_field
+                    (ref, typeform_ref, parent_ref, group_ref, survey_ref, title, type, init, pos)
+               values 
+                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$group_ref}', '{$survey_ref}', '{$title}', '{$type}', now(), '{$pos}')
+EOD;
+          $sql = debug_sql($sql);
+
+
+print_r($sql);
+print "\n";
+
+          $res |= $wpdb->query($sql);
+          $pos = $pos +1;
+     }
+
+     return $res;
+}
+
+
+
+function insert_groups($survey, $groups){
 
      global $wpdb;
 
      $survey_ref = esc_sql($survey['id']);
      foreach($groups as $group){
+
           $ref = esc_sql($group['ref']);
           $parent_ref = esc_sql($group['parent_id']);
           $title = esc_sql($group['title']);
+          $typeform_id = esc_sql($group['id']);
 
           $prefix = $wpdb->prefix;
                $sql = <<<EOD
-                    insert into {$prefix}ts_bb_group
-                    (ref, parent_ref, survey_ref, title, init) 
+               insert into {$prefix}ts_bb_group
+                    (ref, typeform_ref, parent_ref, survey_ref, title, init) 
                values 
-                    ('{$ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now())
+                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now())
 EOD;
           $sql = debug_sql($sql);
           $res |= $wpdb->query($sql);
@@ -54,20 +95,21 @@ EOD;
 
 
 
-function insert_typeform_survey($survey){
+function insert_survey($survey, $data){
 
      global $wpdb;
 
      $ref = esc_sql($survey['id']);
      $title = esc_sql($survey['title']);
      $headline = esc_sql($survey['welcome']);
+     $doc = esc_sql(base64_encode($data));
 
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           insert into {$prefix}ts_bb_survey 
-               (ref, title, headline, init) 
+               (ref, title, headline, init, doc) 
           values 
-               ('{$ref}', '{$title}', '{$headline}', now())
+               ('{$ref}', '{$title}', '{$headline}', now(), '{$doc}')
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);

@@ -233,7 +233,7 @@ function init_survey_table(){
                linked_survey_ref bigint(20) unsigned,
                description varchar(255),
                init datetime,
-               content text,
+               doc text,
                primary key (id)
           )
           engine=innodb
@@ -254,13 +254,14 @@ function init_group_table(){
           {$prefix}ts_bb_group (
                id bigint(20) not null auto_increment,
                ref varchar(255) not null unique,
+               typeform_ref varchar(255)not null,
                parent_ref varchar(255) not null,
                survey_ref varchar(255) not null,
                linked_survey_ref varchar(255),
                title varchar(255),
                description varchar(255),
                init datetime,
-               content text,
+               doc text,
                layout_def varchar(255),
                primary key (id)
           )
@@ -280,16 +281,20 @@ function init_field_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_field (
-               id bigint(20) unsigned not null,
-               group_id bigint(20) unsigned not null,
-               parent_id bigint(20) unsigned not null,
-               linked_survey_id bigint(20) unsigned not null,
-               linked_field_id bigint(20) unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+               id bigint(20) not null auto_increment,
+               ref varchar(255) not null unique,
+               typeform_ref varchar(255),
+               parent_ref varchar(255),
+               group_ref varchar(255),
+               survey_ref varchar(255),
+               linked_survey_ref varchar(255),
+               linked_field_ref varchar(255),
+               type varchar(255),
                description varchar(255),
                init datetime,
-               content text,
+               title text(255),
+               doc text,
+               pos int not null,
                primary key (id)
           )
           engine=innodb
