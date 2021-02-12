@@ -2,7 +2,21 @@
 
 
 
+function insert_typeform_surveys(){
+
+     $files = read_typeform_json_descriptors();
+     foreach($files as $file){
+          $res = insert_typeform_survey_from_descriptor($file);
+     }
+
+     return $res;
+}
+
+
+
 function insert_typeform_survey_from_descriptor($survey_file_name){
+
+     $res = null;
 
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
 
@@ -24,9 +38,11 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
      $choices = parse_choices($doc['fields'], null, null);
 
      $res = insert_survey($survey, $data);
-     $res = insert_groups($survey, $groups);
-     $res = insert_fields($survey, $fields);
-     $res = insert_choices($survey, $choices);
+     $res |= insert_groups($survey, $groups);
+     $res |= insert_fields($survey, $fields);
+     $res |= insert_choices($survey, $choices);
+
+     return $res;
 }
 
 
@@ -118,31 +134,31 @@ function insert_fields($survey, $fields){
           $sql = <<<EOD
                insert into {$prefix}ts_bb_field
                     (
-                         ref, 
-                         typeform_ref, 
-                         parent_ref, 
-                         group_ref, 
-                         survey_ref, 
-                         title, 
-                         description, 
-                         type, 
-                         doc, 
+                         ref,
+                         typeform_ref,
+                         parent_ref,
+                         group_ref,
+                         survey_ref,
+                         title,
+                         description,
+                         type,
+                         doc,
                          pos,
                          init
                     )
                values 
                     (
-                         '{$ref}', 
-                         '{$typeform_ref}', 
-                         '{$parent_ref}', 
-                         '{$group_ref}', 
-                         '{$survey_ref}', 
-                         '{$title}', 
-                         '{$description}', 
-                         '{$type}', 
-                         '{$doc}', 
+                         '{$ref}',
+                         '{$typeform_ref}',
+                         '{$parent_ref}',
+                         '{$group_ref}',
+                         '{$survey_ref}',
+                         '{$title}',
+                         '{$description}',
+                         '{$type}',
+                         '{$doc}',
                          '{$pos}',
-                         now() 
+                         now()
                     )
 EOD;
           $sql = debug_sql($sql);
@@ -309,4 +325,26 @@ function parse_choices($fields, $parent_ref, $res){
 
      return $res;
 }
+
+
+
+function read_typeform_json_descriptors(){
+     $files = [];
+     $path = Path::get_typeform_dir();
+     $h = opendir($path);
+     if(is_null($h)){ return $files; }
+     while(false !== ($file = readdir($h))){
+          if($file != '.' && $file != '..'){
+               preg_match('/(.json$)/', $file, $mtch);
+               if(!empty($mtch)){
+                    $files[]= $file;
+               }
+          }
+     }
+     closedir($h);
+     return $files;
+}
+
+
+
 
