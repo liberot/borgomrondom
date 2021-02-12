@@ -8,15 +8,11 @@ function insert_typeform_surveys(){
      foreach($files as $file){
           $res = insert_typeform_survey_from_descriptor($file);
      }
-
-     return $res;
 }
 
 
 
 function insert_typeform_survey_from_descriptor($survey_file_name){
-
-     $res = null;
 
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
 
@@ -38,11 +34,10 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
      $choices = parse_choices($doc['fields'], null, null);
 
      $res = insert_survey($survey, $data);
-     $res |= insert_groups($survey, $groups);
-     $res |= insert_fields($survey, $fields);
-     $res |= insert_choices($survey, $choices);
+     $res = insert_groups($survey, $groups);
+     $res = insert_fields($survey, $fields);
+     $res = insert_choices($survey, $choices);
 
-     return $res;
 }
 
 
@@ -100,7 +95,7 @@ EOD;
 
           $sql = debug_sql($sql);
 
-          $res |= $wpdb->query($sql);
+          $res = $wpdb->query($sql);
           $pos = $pos +1;
      }
 
@@ -193,7 +188,7 @@ function insert_groups($survey, $groups){
                     ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now(), '{$doc}')
 EOD;
           $sql = debug_sql($sql);
-          $res |= $wpdb->query($sql);
+          $res = $wpdb->query($sql);
      }
 
      return $res;

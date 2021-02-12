@@ -46,6 +46,8 @@ require_once('include2nd/utils/db.php');
 require_once('include2nd/utils/utils.php');
 require_once('include2nd/utils/typeform.php');
 
+require_once('include2nd/services/typeform.php');
+
 
 add_action('init', 'setup_env');
 function setup_env(){

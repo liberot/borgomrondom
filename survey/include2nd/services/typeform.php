@@ -2,8 +2,8 @@
 
 
 
-add_action('admin_post_exec_insert_typeform_survey', 'exec_insert_typeform_survey');
-function exec_insert_typeform_survey(){
+add_action('admin_post_exec_insert_typeform_surveys', 'exec_insert_typeform_surveys');
+function exec_insert_typeform_surveys(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -11,15 +11,18 @@ function exec_insert_typeform_survey(){
           return false;
      }
 
-     $survey_file_name = trim_incoming_filename($_POST['survey_file_name']); 
+     init_log('exec_insert_typeform_surveys', []);
 
-     init_log('exec_insert_typeform_survey', ['survey_file_name']=>$survey_file_name);
+     $res = $insert_typeform_surveys();
 
-     $res = $insert_typeform_survey($survey_file_name);
+     $suc = 'failed';
+     $message = esc_html(__('Typeform Survey Descriptors is NOt added to the DB', 'bookbuilder'));
+     if(true == $res){
+          $suc = 'success';
+          $message = esc_html(__('Typeform Survey Descriptors is added to the DB', 'bookbuilder'));
+     }
 
-     $message = esc_html(__('Survey is parsed', 'bookbuilder'));
-     $coll = ['survey_file_name'=>$survey_file_name]
-     echo json_encode(array('res'=>'failed', 'message'=>$message, 'coll'=>$coll));
+     echo json_encode(array('res'=>$suc, 'message'=>$message));
 }
 
 
