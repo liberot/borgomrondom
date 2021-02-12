@@ -44,19 +44,17 @@ function insert_fields($survey, $fields){
           $title = esc_sql($field['title']);
           $type = esc_sql($field['type']);
           $description = esc_sql($field['properties']['description']);
+          $doc = esc_sql($field['doc']);
+
           $prefix = $wpdb->prefix;
-   
+
           $sql = <<<EOD
                insert into {$prefix}ts_bb_field
-                    (ref, typeform_ref, parent_ref, group_ref, survey_ref, title, type, init, pos)
+                    (ref, typeform_ref, parent_ref, group_ref, survey_ref, title, type, init, doc, pos)
                values 
-                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$group_ref}', '{$survey_ref}', '{$title}', '{$type}', now(), '{$pos}')
+                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$group_ref}', '{$survey_ref}', '{$title}', '{$type}', now(), '{$doc}', '{$pos}')
 EOD;
           $sql = debug_sql($sql);
-
-
-print_r($sql);
-print "\n";
 
           $res |= $wpdb->query($sql);
           $pos = $pos +1;
@@ -76,15 +74,16 @@ function insert_groups($survey, $groups){
 
           $ref = esc_sql($group['ref']);
           $parent_ref = esc_sql($group['parent_id']);
+          $typeform_ref = esc_sql($group['id']);
           $title = esc_sql($group['title']);
-          $typeform_id = esc_sql($group['id']);
+          $doc = esc_sql($group['doc']);
 
           $prefix = $wpdb->prefix;
                $sql = <<<EOD
                insert into {$prefix}ts_bb_group
-                    (ref, typeform_ref, parent_ref, survey_ref, title, init) 
+                    (ref, typeform_ref, parent_ref, survey_ref, title, init, doc) 
                values 
-                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now())
+                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now(), '{$doc}')
 EOD;
           $sql = debug_sql($sql);
           $res |= $wpdb->query($sql);
@@ -151,6 +150,7 @@ function parse_groups($fields, $parent_id, $res){
                $group['title'] = $field['title'];
                $group['type'] = $field['type'];
                $group['parent_id'] = $parent_id;
+               $group['doc'] = base64_encode(json_encode($field));
                $res[]= $group;
                $parent_id = $field['ref'];
                $res = parse_groups($childs, $parent_id, $res);
@@ -173,6 +173,7 @@ function parse_fields($fields, $parent_id, $res){
           $field['parent_id'] = $parent_id;
           $childs = $field['properties']['fields'];
           if(is_null($childs)){
+               $field['doc'] = base64_encode(json_encode($field));
                $res[]= $field;
           }
           else {
