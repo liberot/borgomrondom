@@ -21,33 +21,33 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
      $survey = parse_survey($doc);
      $groups = parse_groups($doc['fields'], null, null);
      $fields = parse_fields($doc['fields'], null, null);
-     $choice = parse_choices($doc['fields'], null, null);
+     $choices = parse_choices($doc['fields'], null, null);
 
      $res = insert_survey($survey, $data);
      $res = insert_groups($survey, $groups);
      $res = insert_fields($survey, $fields);
-     $res = insert_choice($survey, $choice);
+     $res = insert_choices($survey, $choices);
 }
 
 
 
-function insert_choice($survey, $choice){
+function insert_choices($survey, $choices){
 
      global $wpdb;
 
      $survey_ref = esc_sql($survey['id']);
      $pos = 0;
-     foreach($choice as $ch){
+     foreach($choices as $choice){
 
-          $ref = esc_sql($ch['ref']);
-          $typeform_ref = esc_sql($ch['id']);
-          $parent_ref = esc_sql($ch['parent_ref']);
-          $group_ref = esc_sql($ch['parent_ref']);
-          $field_ref = esc_sql($ch['field_ref']);
-          $title = esc_sql($ch['title']);
-          $description = esc_sql($ch['description']);
-          $label = esc_sql($ch['label']);
-          $doc = base64_encode(json_encode($ch));
+          $ref = esc_sql($choice['ref']);
+          $typeform_ref = esc_sql($choice['id']);
+          $parent_ref = esc_sql($choice['parent_ref']);
+          $group_ref = esc_sql($choice['parent_ref']);
+          $field_ref = esc_sql($choice['field_ref']);
+          $title = esc_sql($choice['title']);
+          $description = esc_sql($choice['description']);
+          $label = esc_sql($choice['label']);
+          $doc = base64_encode(json_encode($choice));
 
           $prefix = $wpdb->prefix;
 
