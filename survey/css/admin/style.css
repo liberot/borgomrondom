@@ -7,4 +7,14 @@
      padding: 2em;
      border: 1px dotted;
      border-radius: 1em;
+     font-size: 1.1em;
+     font-weight: 350;
+     background-color: rgba(255, 255, 255, 0.45)
+}
+
+.choice-output {
+     margin: 1em;
+     font-style: italic;
+     font-size: 0.95em;
+     font-weight: 250;
 }

@@ -39,14 +39,73 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
      $groups = parse_groups($doc['fields'], null, null);
      $fields = parse_fields($doc['fields'], null, null);
      $choices = parse_choices($doc['fields'], null, null);
+     $actions = parse_actions($doc['logic'], null, null);
 
      $res = insert_survey($survey, $data);
      $res&= insert_groups($survey, $groups);
      $res&= insert_fields($survey, $fields);
      $res&= insert_choices($survey, $choices);
+     $res&= insert_actions($survey, $actions);
 
      return $res;
 }
+
+
+
+function insert_actions($survey, $actions){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $survey_ref = esc_sql($survey['id']);
+
+     foreach($actions as $action){
+
+          $ref = esc_sql($action['ref']);
+          $field_ref = esc_sql($action['field_ref']);
+          $type = esc_sql($action['type']);
+          $cmd = esc_sql($action['cmd']);
+          $link_type = esc_sql($action['link_type']);
+          $link_ref = esc_sql($action['link_ref']);
+          $doc = esc_sql(base64_encode(json_encode($action['condition'])));
+
+          $sql = <<<EOD
+               insert into {$prefix}ts_bb_action
+                    (
+                         ref, 
+                         survey_ref,
+                         field_ref,
+                         type,
+                         cmd,
+                         link_type,
+                         link_ref,
+                         doc,
+                         init
+                    )
+               values 
+                    (
+                         '{$ref}',
+                         '{$survey_ref}',
+                         '{$field_ref}',
+                         '{$type}',
+                         '{$cmd}',
+                         '{$link_type}',
+                         '{$link_ref}',
+                         '{$doc}',
+                         now()
+                    )
+
+EOD;
+
+          $sql = debug_sql($sql);
+          $res = $wpdb->query($sql);
+     }
+
+     return $res;
+}
+
 
 
 
@@ -57,6 +116,7 @@ function insert_choices($survey, $choices){
      global $wpdb;
 
      $survey_ref = esc_sql($survey['id']);
+     $prefix = $wpdb->prefix;
      $pos = 0;
      foreach($choices as $choice){
 
@@ -68,9 +128,7 @@ function insert_choices($survey, $choices){
           $title = esc_sql($choice['title']);
           $description = esc_sql($choice['description']);
           $label = esc_sql($choice['label']);
-          $doc = base64_encode(json_encode($choice));
-
-          $prefix = $wpdb->prefix;
+          $doc = esc_sql(base64_encode(json_encode($choice)));
 
           $sql = <<<EOD
                insert into {$prefix}ts_bb_choice
@@ -341,6 +399,40 @@ function parse_choices($fields, $parent_ref, $res){
 
 
 
+function parse_actions($logics){
+
+     $res = [];
+
+     if(is_null($logics)){ return $res; }
+     if(is_null($parent_ref)){ $parent_ref = 'root'; }
+     if(is_null($res)){ $res = []; }
+
+     foreach($logics as $logic){
+          $type = $logic['type'];
+          $field_ref = $logic['ref'];
+
+          foreach($logic['actions'] as $action){
+               $temp = [];
+               $temp['cmd'] = $action['action'];
+               if('jump' != $temp['cmd']){
+                    continue;
+               }
+               $temp['ref'] = random_string(64);
+               $temp['type'] = $type;
+               $temp['field_ref'] = $field_ref;
+               $temp['cmd'] = $action['action'];
+               $temp['link_type'] = $action['details']['to']['type'];
+               $temp['link_ref'] = $action['details']['to']['value'];
+               $temp['condition'] = $action['condition'];
+               $res[]= $temp;
+          }
+     }
+
+     return $res;
+}
+
+
+
 function read_typeform_json_descriptors(){
 
      $files = [];
@@ -412,6 +504,18 @@ EOD;
      $res['fields'] = $wpdb->get_results($sql);
 
 
+
+// choices
+     foreach($res['fields'] as $field){
+
+          $field_ref = $field->ref;
+          $field->choices = [];
+          $sql = <<<EOD
+               select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}'
+               order by pos
+EOD;
+          $field->choices = $wpdb->get_results($sql);
+     }
 
      return $res;
 

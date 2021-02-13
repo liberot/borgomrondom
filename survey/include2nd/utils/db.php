@@ -2,12 +2,47 @@
 
 
 
+function remove_v1_posts(){
+
+     $res = false;
+
+     $types = [
+          'surveyprint_asset',
+          'surveyprint_book',
+          'surveyprint_chapter',
+          'surveyprint_layout',
+          'surveyprint_panel',
+          'surveyprint_question',
+          'surveyprint_section',
+          'surveyprint_spread',
+          'surveyprint_survey',
+          'surveyprint_thread',
+          'surveyprint_toc'
+     ];
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     foreach($types as $type){
+
+          $sql = <<<EOD
+               delete from {$prefix}posts where post_type = '{$type}'
+
+EOD;
+          $sql = debug_sql($sql);
+          $res = $wpdb->query($sql);
+     }
+
+     return $res;
+}
+
+
+
 function drop_tables(){
 
      $res = false;
 
      $tables = [
-          'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 
+          'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
           'ts_bb_thread', 'ts_bb_input', 
           'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'
      ];
@@ -34,6 +69,7 @@ function init_tables(){
      $res&= init_group_table();
      $res&= init_field_table();
      $res&= init_choice_table();
+     $res&= init_action_table();
 
      $res&= init_thread_table();
      $res&= init_input_table();
@@ -388,6 +424,40 @@ EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
 
+     return $res;
+}
+
+
+
+function init_action_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_action (
+               id bigint(20) not null auto_increment,
+               ref varchar(255) not null unique,
+               survey_ref varchar(255),
+               field_ref varchar(255),
+               cmd varchar(255),
+               type varchar(255),
+               link_type varchar(255),
+               link_ref varchar(255),
+               doc text,
+               init datetime,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+
+     $sql = debug_sql($sql);
+print_r($sql);
+     $res = $wpdb->query($sql);
      return $res;
 }
 

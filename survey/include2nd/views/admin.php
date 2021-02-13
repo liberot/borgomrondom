@@ -358,11 +358,21 @@ function build_questionnaire_edit_view(){
 EOD;
 
      foreach($survey['fields'] as $field){
+
+          $buf = "<div class='choice-output'>";
+          foreach($field->choices as $choice){
+               $buf.= $choice->title;
+               $buf.= '<br/>';
+          }
+          $buf.= '</div>';
+
           echo <<<EOD
                <div class='field-output'>
                     {$field->title}
+                    {$buf}
                </div>
 EOD;
+
      }
 
 }
