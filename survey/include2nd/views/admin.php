@@ -1,6 +1,8 @@
 <?php defined('ABSPATH') || exit;
 
-// plugin menu insert
+
+
+// inserts menu items of the plugin
 add_action('admin_menu', 'setup_admin_menu');
 function setup_admin_menu() {
 
@@ -64,6 +66,8 @@ function setup_admin_menu() {
      remove_submenu_page('surveyprint_admin_utils', 'surveyprint_admin_utils');
 };
 
+
+
 // surveyprint utilities
 add_shortcode('surveyprint_utils_view', 'build_surveyprint_utils_view');
 function build_surveyprint_utils_view(){
@@ -75,7 +79,9 @@ function build_surveyprint_utils_view(){
      wp_enqueue_script('service');
 
      $headline = esc_html(__('BookBuilder Plugin Utilities', 'bookbuilder'));
-     $welcome = esc_html(__('', 'bookbuilder'));
+     $welcome = esc_html(__(':', 'bookbuilder'));
+     $delete_db = esc_html(__('Removal of the BookBuider DB', 'bookbuilder'));
+     $init_db = esc_html(__('Initialization of the BookBuilder DB', 'bookbuilder'));
 
      echo <<<EOD
           <div class='wrap'>
@@ -84,7 +90,16 @@ function build_surveyprint_utils_view(){
                <hr class='wp-header-end'>
      EOD;
 
+     echo <<<EOD
+     <div class='edit'>
+          <div class='unit'><a href='javascript:deleteDB();'>{$delete_db}</a></div>
+          <div class='unit'><a href='javascript:initDB();'>{$init_db}</a></div>
+     </div>
+EOD;
+
 }
+
+
 
 // typeform utilities
 add_shortcode('typeform_utils_view', 'build_typeform_utils_view');
@@ -97,7 +112,7 @@ function build_typeform_utils_view(){
      wp_enqueue_script('service');
 
      $headline = esc_html(__('BookBuilder Typeform Utilities', 'bookbuilder'));
-     $welcome = esc_html(__('', 'bookbuilder'));
+     $welcome = esc_html(__(':', 'bookbuilder'));
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -110,28 +125,23 @@ function build_typeform_utils_view(){
      $actions = esc_html(__('Actions:', 'bookbuilder'));
      $bucket_name = esc_html(__('Bucket name:', 'bookbuilder'));
      $download_resultset = esc_html(__('Download of a Typeform Resultset', 'bookbuilder'));
-     $construction = esc_html(__('Construciton of a Questionnaire', 'bookbuilder'));
-     $edit = esc_html(__('Edit of a Questionnaire', 'bookbuilder'));
-/*
-     $construct_fielding_questions = esc_html(
-          __('Construction of the Fielding Questions from "./asset/typeform/201204-Cover-and-Pre--cMsCFF9a.json"', 'bookbuilder')
-     );
-*/
-     $construct_fielding_questions = esc_html(
-          __('Construction of the Fielding Questions from "./asset/typeform/BBC0-Cover-and-Prefa--FvSIczF7.json"', 'bookbuilder')
-     );
-     $construct_surveys_from_folder = esc_html(__('Construction of all Surveys from "./asset/typeform/*.json"', 'bookbuilder'));
+     $construction = esc_html(__('Construction of the Questionnaires', 'bookbuilder'));
+
      echo <<<EOD
      <div class='edit'>
           <div class='unit'>{$auth_token}</div>
-          <div><input class='auth_token' type='text'></input></div>
+          <div class='unit'><input class='auth_token' type='text'></input></div>
           <div class='unit'>{$bucket_name}</div>
-          <div><input class='bucket' type='text' value='N2BwhIXs'></input></div>
-          <div><input class='filename' type='text' value='typeform_survey.json'></input></div>
+          <div class='unit'><input class='bucket' type='text' value='N2BwhIXs'></input></div>
+          <div class='unit'><input class='filename' type='text' value='typeform_survey.json'></input></div>
+          <div class='unit'>{$actions}</div>
+          <div class='unit'><a href='javascript:insertTypeformSurveys();'>{$construction}</a></div>
      </div>
 EOD;
 
 }
+
+
 
 add_shortcode('thread_view', 'build_thread_view');
 function build_thread_view(){
@@ -156,6 +166,8 @@ function build_thread_view(){
                break;
      }
 }
+
+
 
 add_shortcode('thread_list_view', 'build_thread_list_view');
 function build_thread_list_view(){
@@ -184,6 +196,8 @@ function build_thread_list_view(){
 EOD;
 
 }
+
+
 
 add_shortcode('build_thread_entries_view', 'build_thread_entries_view');
 function build_thread_entries_view(){
@@ -320,7 +334,8 @@ function build_questionnaire_view(){
 add_shortcode('questionnaire_edit_view', 'build_questionnaire_edit_view');
 function build_questionnaire_edit_view(){
 
-     $survey_id = $_REQUEST['survey_id'];
+     $survey_ref = $_REQUEST['ref'];
+     $survey = get_survey_by_ref($survey_ref);
 
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
      wp_enqueue_style('admin_style');
@@ -331,23 +346,9 @@ function build_questionnaire_edit_view(){
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');
 
-     $message = esc_html(__('List of Questions', 'bookbuilder'));
-     $id = esc_html(__('ID', 'bookbuilder'));
-     $title = esc_html(__('Question', 'bookbuilder'));
+     $welcome = esc_html(__(':', 'bookbuilder'));
      $headline = esc_html(__('BookBuilder Stored Questionnaire', 'bookbuilder'));
-     $welcome = esc_html(__('', 'bookbuilder'));
-     $excerpt = esc_html(__('Reference', 'bookbuilder'));
-     $parent = esc_html(__('Group', 'bookbuilder'));
-     $date = esc_html(__('Date of Init', 'bookbuilder'));
-     $redirect = esc_html(__('Redirect', 'bookbuilder'));
-     $save_input = esc_html(__('Save', 'bookbuilder'));
-     $apply = esc_html(__('Apply', 'bookbuilder'));
-     $no_redirect = esc_html(__('No Redirect', 'bookbuilder'));
-     $spread_view = esc_html(__('Spreads', 'bookbuilder'));
-     $yes = esc_html(__('Yes', 'bookbuilder'));
-     $no = esc_html(__('No', 'bookbuilder'));
 
-     $href = sprintf('%s?page=questionnaire&edit=survey_printrules&survey_id=%s', Path::SERVICE_BASE, $survey_id);
      echo <<<EOD
 
           <div class='wrap'>
@@ -356,11 +357,22 @@ function build_questionnaire_edit_view(){
                <hr class='wp-header-end'>
 EOD;
 
+     foreach($survey['fields'] as $field){
+          echo <<<EOD
+               <div class='field-output'>
+                    {$field->title}
+               </div>
+EOD;
+     }
+
 }
 
 add_shortcode('questionnaire_list_view', 'build_questionnaire_list_view');
 function build_questionnaire_list_view(){
 
+     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
+     wp_enqueue_style('admin_style');
+ 
      wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
      wp_enqueue_script('service');
 
@@ -374,7 +386,7 @@ function build_questionnaire_list_view(){
      $delete = esc_html(__('Delete', 'bookbuilder'));
      $delete_survey = esc_html(__('Delete Questionnaire', 'bookbuilder'));
      $headline = esc_html(__('BookBuilder Stored Questionnaire', 'bookbuilder'));
-     $welcome = esc_html(__('', 'bookbuilder'));
+     $welcome = esc_html(__(':', 'bookbuilder'));
 
      echo <<<EOD
 
@@ -384,7 +396,18 @@ function build_questionnaire_list_view(){
                <hr class='wp-header-end'>
 EOD;
 
+     $surveys = get_typeform_surveys();
+     foreach($surveys as $survey){
+     $href = sprintf('%s?page=questionnaire&action=edit&ref=%s', Path::SERVICE_BASE, $survey->ref);
+     echo <<<EOD
+          <div class='survey-output'>
+              <a href='{$href}'>{$survey->title}</a>
+          </div>
+EOD;
+     }
 }
+
+
 
 add_shortcode('spreads_view', 'build_spreads_view');
 function build_spreads_view() {

@@ -20,7 +20,7 @@ function init_log_utils(){
                'rewrite'                => false,
                'capability_type'        => 'post',
                'has_archive'            => false,
-               'taxonomies'             => array('ategory', 'post_tag'),
+               'taxonomies'             => array('post_tag'),
                'show_in_rest'           => false
           ]
      );
@@ -42,6 +42,7 @@ function init_log($title, $log){
      }
 
      $title = esc_sql($title);
+     $log = serialize($log);
 
      $conf = [
           'post_type'=>'surveyprint_log',

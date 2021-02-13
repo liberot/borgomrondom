@@ -4,6 +4,8 @@
 
 function drop_tables(){
 
+     $res = false;
+
      $tables = [
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 
           'ts_bb_thread', 'ts_bb_input', 
@@ -20,29 +22,35 @@ EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->query($sql);
      }
+
+     return $res;
 }
 
 
 
 function init_tables(){
 
-     init_survey_table();
-     init_group_table();
-     init_field_table();
-     init_choice_table();
+     $res = init_survey_table();
+     $res&= init_group_table();
+     $res&= init_field_table();
+     $res&= init_choice_table();
 
-     init_thread_table();
-     init_input_table();
+     $res&= init_thread_table();
+     $res&= init_input_table();
 
-     init_book_table();
-     init_chapter_table();
-     init_section_table();
-     init_spread_table();
+     $res&= init_book_table();
+     $res&= init_chapter_table();
+     $res&= init_section_table();
+     $res&= init_spread_table();
+
+     return $res;
 }
 
 
 
 function init_book_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -66,11 +74,15 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 
 
 function init_chapter_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -96,11 +108,15 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 
 
 function init_section_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -127,11 +143,15 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 
 
 function init_spread_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -159,11 +179,15 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 
 
 function init_thread_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -187,11 +211,15 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 
 
 function init_input_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -218,11 +246,15 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 
 
 function init_survey_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -247,9 +279,13 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 function init_group_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -276,9 +312,13 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 function init_field_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -308,6 +348,8 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 #foreign key (post_id) references {$prefix}posts(ID),
@@ -316,6 +358,8 @@ EOD;
 
 
 function init_choice_table(){
+
+     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -343,6 +387,8 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
 }
 
 

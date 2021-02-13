@@ -4,26 +4,33 @@
 
 function insert_typeform_surveys(){
 
+     $res = false;
+
      $files = read_typeform_json_descriptors();
      foreach($files as $file){
+
           $res = insert_typeform_survey_from_descriptor($file);
      }
+
+     return $res;
 }
 
 
 
 function insert_typeform_survey_from_descriptor($survey_file_name){
 
+     $res = false;
+
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
 
      $data = @file_get_contents($path);
      if(is_null($data)){ 
-          return false; 
+          return $res; 
      }
 
      $doc = json_decode($data);
      if(is_null($doc)){ 
-          return false; 
+          return $res; 
      }
 
      $doc = walk_the_doc($doc);
@@ -34,15 +41,18 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
      $choices = parse_choices($doc['fields'], null, null);
 
      $res = insert_survey($survey, $data);
-     $res = insert_groups($survey, $groups);
-     $res = insert_fields($survey, $fields);
-     $res = insert_choices($survey, $choices);
+     $res&= insert_groups($survey, $groups);
+     $res&= insert_fields($survey, $fields);
+     $res&= insert_choices($survey, $choices);
 
+     return $res;
 }
 
 
 
 function insert_choices($survey, $choices){
+
+     $res = false;
 
      global $wpdb;
 
@@ -106,6 +116,8 @@ EOD;
 
 function insert_fields($survey, $fields){
 
+     $res = false;
+
      global $wpdb;
 
      $survey_ref = esc_sql($survey['id']);
@@ -158,7 +170,7 @@ function insert_fields($survey, $fields){
 EOD;
           $sql = debug_sql($sql);
 
-          $res |= $wpdb->query($sql);
+          $res = $wpdb->query($sql);
           $pos = $pos +1;
      }
 
@@ -168,6 +180,8 @@ EOD;
 
 
 function insert_groups($survey, $groups){
+
+     $res = false;
 
      global $wpdb;
 
@@ -198,6 +212,8 @@ EOD;
 
 function insert_survey($survey, $data){
 
+     $res = false;
+
      global $wpdb;
 
      $ref = esc_sql($survey['id']);
@@ -223,10 +239,12 @@ EOD;
 function parse_survey($doc){
 
      $res = [];
+
      $res['id'] = $doc['id'];
      $res['type'] = $doc['type'];
      $res['title'] = $doc['title'];
      $res['welcome'] = $doc['welcome_screens'][0]['title'];
+
      return $res;
 }
 
@@ -324,7 +342,9 @@ function parse_choices($fields, $parent_ref, $res){
 
 
 function read_typeform_json_descriptors(){
+
      $files = [];
+
      $path = Path::get_typeform_dir();
      $h = opendir($path);
      if(is_null($h)){ return $files; }
@@ -337,9 +357,62 @@ function read_typeform_json_descriptors(){
           }
      }
      closedir($h);
+
      return $files;
 }
 
 
 
+function get_typeform_surveys(){
 
+     global $wpdb;
+
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_survey
+EOD;
+
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
+
+
+
+function get_survey_by_ref($ref) {
+
+     $res = [];
+     $ref = esc_sql($ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+
+// surveys
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_survey where ref = '{$ref}'
+EOD;
+     $res['survey'] = $wpdb->get_results($sql);
+
+
+
+// groups
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_group where survey_ref = '{$ref}'
+EOD;
+     $res['groups'] = $wpdb->get_results($sql);
+
+
+
+// fields
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field where survey_ref = '{$ref}'
+          order by pos
+EOD;
+     $res['fields'] = $wpdb->get_results($sql);
+
+
+
+     return $res;
+
+}

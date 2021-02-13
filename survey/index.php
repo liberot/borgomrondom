@@ -47,6 +47,7 @@ require_once('include2nd/utils/utils.php');
 require_once('include2nd/utils/typeform.php');
 
 require_once('include2nd/services/typeform.php');
+require_once('include2nd/services/db.php');
 
 require_once('include2nd/views/admin.php');
 
@@ -56,5 +57,5 @@ function setup_env(){
      // init_tables();
      // init_log_utils();
      // insert_typeform_survey_from_descriptor('210902Cover--SgaKrUmI.json');
-     insert_typeform_surveys();
+     // insert_typeform_surveys();
 };

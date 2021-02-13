@@ -13,7 +13,7 @@ function exec_insert_typeform_surveys(){
 
      init_log('exec_insert_typeform_surveys', []);
 
-     $res = $insert_typeform_surveys();
+     $res = insert_typeform_surveys();
 
      $suc = 'failed';
      $message = esc_html(__('Typeform Survey Descriptors is NOt added to the DB', 'bookbuilder'));

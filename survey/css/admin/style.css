@@ -2,14 +2,9 @@
 
 }
 
-.group-title {
-     font-size: 1.15em !important;
-     font-style: italic !important;
-     color: #d599e2 !important;
-     font-weight: bold;
-}
-
-.node-field {
-     font-style: italic !important; 
-     padding-left: 23px !important;
+.field-output, .survey-output {
+     margin: 2em;
+     padding: 2em;
+     border: 1px dotted;
+     border-radius: 1em;
 }

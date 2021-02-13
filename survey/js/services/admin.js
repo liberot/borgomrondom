@@ -1,152 +1,32 @@
-function deleteQuestionnaire(ref){
-     if(!confirm('Are you aware of the consequences of your action?')){
+function deleteDB(){
+     if(!confirm('This will delete BookBuilder DB and can not be undone')){
           return;
      }
-     self.location.href = ref;
-}
-
-function setShowSpreadState(ref){
-     let vlue = jQuery(ref).val();
-     let stmp = jQuery(ref).attr('class');
-     let mtch = stmp.match(/question\-(.{1,128})/);
-     if(null == mtch || null == mtch[1]){
-          return false;
-     }
-     let quid = mtch[1];
-     let data = {
-          action: 'exec_set_show_spread_state',
-          question_id: quid,
-          show_spread_state: vlue
-     }
-     this.postCommand(data);
-}
-
-function setRedirect(ref){
-     let suid = jQuery(ref).val();
-     let stmp = jQuery(ref).attr('class');
-     let mtch = stmp.match(/question\-(.{1,128})/);
-     if(null == mtch || null == mtch[1]){
-          return false;
-     }
-     let quid = mtch[1];
-     let data = {
-          action: 'exec_init_redirect',
-          question_id: quid,
-          survey_id: suid
-     }
-     this.postCommand(data);
-}
-function deleteSurveyPage(){
      let data = { 
-          action: 'exec_delete_survey_page'
+          action: 'exec_delete_db'
      };
      this.postCommand(data);
 }
 
-function deleteLayouts(){
+
+
+function initDB(){
      let data = { 
-          action: 'exec_delete_layouts'
+          action: 'exec_init_db'
      };
      this.postCommand(data);
 }
 
-function dumpClientThreads(){
+
+
+function insertTypeformSurveys(){
      let data = { 
-          action: 'exec_dump_threads'
+          action: 'exec_insert_typeform_surveys'
      };
      this.postCommand(data);
 }
 
-function dumpSurveys(){
-     let data = { 
-          action: 'exec_dump_surveys'
-     };
-     this.postCommand(data);
-}
 
-function deleteSurveys(){
-     let data = { 
-          action: 'exec_delete_surveys'
-     };
-     this.postCommand(data);
-}
-
-function deleteClientThreads(){
-     let data = { 
-          action: 'exec_delete_client_threads'
-     };
-     this.postCommand(data);
-}
-
-function initSurveyPage(){
-     let data = { 
-          action: 'exec_init_survey_page'
-     };
-     this.postCommand(data);
-}
-
-function deleteSurveyDB(){
-     let data = { 
-          action: 'exec_delete_bookbuilder_db'
-     };
-     this.postCommand(data);
-}
-
-function constructFieldingQuestions(){
-     let data = { 
-          action: 'exec_construct_typeform_survey',
-          survey_file_name: 'BBC0-Cover-and-Prefa--FvSIczF7.json'
-          /* survey_file_name: '201204-Cover-and-Pre--cMsCFF9a.json' */
-     };
-     this.postCommand(data);
-}
-
-function constructAllSurveys(){
-     let data = { 
-          action: 'exec_construct_all_surveys',
-     };
-     this.postCommand(data);
-}
-
-function saveQuestion(id, max, group){
-     let data = {
-          action: 'exec_save_question',
-          id: id,
-          max: max,
-          group: group
-     };
-     let suc = function(e){
-     }
-     this.postCommand(data, suc);
-}
-
-function downloadTypeformSurveyResult(){
-     let data = {
-          action: 'exec_download_typeform_survey',
-          auth_token: jQuery('.auth_token').val(),
-          bucket: jQuery('.bucket').val(),
-          type: 'result'
-     };
-     this.postCommand(data);
-}
-
-function downloadTypeformSurvey(){
-     let data = {
-          action: 'exec_download_typeform_survey',
-          auth_token: jQuery('.auth_token').val(),
-          bucket: jQuery('.bucket').val(),
-          type: 'form'
-     };
-     this.postCommand(data);
-}
-
-function constructTypeformSurvey(){
-     let data = {
-          action: 'exec_construct_typeform_survey',
-          survey_file_name: jQuery('.filename').val()
-     };
-     this.postCommand(data);
-}
 
 function postCommand(data, suc){
      jQuery('.messages').html(sprintf('<span>%s</span>', __service.__('wait')));
@@ -166,4 +46,6 @@ function postCommand(data, suc){
           }
      });
 }
+
+
 
