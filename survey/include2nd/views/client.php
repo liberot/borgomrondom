@@ -8,8 +8,6 @@ function build_client_view(){
 
      $field_ref = get_session_ticket('field_ref');
      $field = get_field_by_ref($field_ref);
-print_r($field);
-print_r($field_ref);
 
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));

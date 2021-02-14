@@ -43,7 +43,7 @@ function drop_tables(){
 
      $tables = [
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
-          'ts_bb_thread', 'ts_bb_input', 
+          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec', 
           'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'
      ];
 
@@ -72,7 +72,7 @@ function init_tables(){
      $res&= init_action_table();
 
      $res&= init_thread_table();
-     $res&= init_input_table();
+     $res&= init_rec_table();
 
      $res&= init_book_table();
      $res&= init_chapter_table();
@@ -231,9 +231,8 @@ function init_thread_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_thread (
-               id bigint(20) unsigned not null,
+               id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
-               survey_id bigint(20) unsigned not null,
                title varchar(255) null,
                note varchar(255) null,
                description varchar(255),
@@ -253,7 +252,7 @@ EOD;
 
 
 
-function init_input_table(){
+function init_rec_table(){
 
      $res = false;
 
@@ -262,7 +261,7 @@ function init_input_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}ts_bb_input (
+          {$prefix}ts_bb_rec (
                id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
@@ -274,6 +273,7 @@ function init_input_table(){
                description varchar(255),
                init datetime,
                content text,
+               pos int,
                primary key (id)
           )
           engine=innodb
