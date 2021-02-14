@@ -154,4 +154,47 @@ function trim_incoming_filename($val){
 
 
 
+function insert_survey_page(){
+
+     delete_survey_page();
+
+     $conti = <<<EOD
+        <p>[client_view]</p>
+EOD;
+
+     $page_id = wp_insert_post([
+          'post_author'=>get_author_id(),
+          'post_content'=>$conti,
+          'post_title'=>'Questionnaire',
+          'post_status'=>'publish',
+          'comment_status'=>'closed',
+          'ping_status'=>'closed',
+          'post_name'=>'bookbuilder',
+          'post_type'=>'page',
+          'comment_count'=>0
+     ]);
+
+     return $page_id;
+}
+
+
+
+function delete_survey_page(){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          delete from {$prefix}posts 
+               where post_type = 'page' 
+               and post_title = 'Questionnaire' 
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
+
+}
+
+
 
