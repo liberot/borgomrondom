@@ -533,3 +533,75 @@ EOD;
      $res = $wpdb->query($sql);
      return $res;
 }
+
+
+
+function get_kickoff_field() {
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $title = Proc::KICKOFF_SURVEY_TITLE;
+     $sql = <<<EOD
+          select f.* from {$prefix}ts_bb_survey s, wp_ts_bb_field f 
+               where s.ref = f.survey_ref 
+               and s.title like '%{$title}%' 
+               order by pos 
+               limit 1; 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_field_by_ref($ref) {
+
+     $ref = esc_sql($ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+          where ref = '{$ref}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_actions_of_field_by_ref($ref){
+
+     $ref = esc_sql($ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_action 
+          where field_ref = '{$ref}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_field_of_survey_at_pos($survey_ref, $pos){
+
+     $survey_ref = esc_sql($survey_ref);
+     $pos = esc_sql($pos);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+          where survey_ref = '{$survey_ref}' 
+          and pos = '{$pos}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+print_r($sql);
+     return $res;
+}
+
+
+

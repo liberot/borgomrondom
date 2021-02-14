@@ -198,3 +198,31 @@ EOD;
 
 
 
+
+
+// https://wordpress.org/support/plugin/wp-session-manager/
+function set_session_ticket($key, $value){
+     if(function_exists('wp_session_start')){ 
+          wp_session_start();
+          global $wp_session;
+          $wp_session[$key] = $value;
+          return true;
+     }
+     session_start();
+     $_SESSION[$key] = $value;
+     return true;
+}
+
+
+
+// https://wordpress.org/support/plugin/wp-session-manager/
+function get_session_ticket($key){
+     if(function_exists('wp_session_start')){ 
+          wp_session_start();
+          global $wp_session;
+          return $wp_session[$key]; 
+     }
+     session_start();
+     return $_SESSION[$key];
+}
+
