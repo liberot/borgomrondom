@@ -406,10 +406,12 @@ function init_choice_table(){
                id bigint(20) not null auto_increment,
                ref varchar(255) not null unique,
                typeform_ref varchar(255),
+               parent_ref varchar(255),
                survey_ref varchar(255),
                group_ref varchar(255),
-               parent_ref varchar(255),
                field_ref varchar(255),
+               target_survey_ref varchar(255),
+               target_field_ref varchar(255),
                title text(255),
                description text,
                doc text,
@@ -456,7 +458,6 @@ function init_action_table(){
 EOD;
 
      $sql = debug_sql($sql);
-print_r($sql);
      $res = $wpdb->query($sql);
      return $res;
 }

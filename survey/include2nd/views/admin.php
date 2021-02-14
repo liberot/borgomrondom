@@ -334,6 +334,7 @@ function build_questionnaire_view(){
 add_shortcode('questionnaire_edit_view', 'build_questionnaire_edit_view');
 function build_questionnaire_edit_view(){
 
+     $surveys = get_typeform_surveys();
      $survey_ref = $_REQUEST['ref'];
      $survey = get_survey_by_ref($survey_ref);
 
@@ -357,19 +358,50 @@ function build_questionnaire_edit_view(){
                <hr class='wp-header-end'>
 EOD;
 
+     $field_select = <<<EOD
+           <div class='blockR'>
+                <select onchange='javascript:selectTargetField(this);'>
+                     <option>field</option>
+                </select>
+           </div>
+EOD;
+
+     $field_out = <<<EOD
+          <div class='blockL'>%s</div>
+EOD;
+
      foreach($survey['fields'] as $field){
 
-          $buf = "<div class='choice-output'>";
+          $buf1st = '';
           foreach($field->choices as $choice){
-               $buf.= $choice->title;
-               $buf.= '<br/>';
+
+               $buf2nd = '';
+               foreach($surveys as $target){
+                    $selected = '';
+                    if($target->ref == $choice->target_survey_ref){
+                         $selected = 'selected';
+                    }
+                    $buf2nd.= sprintf("<option value='%s' %s>%s</option>", $target->ref, $selected, $target->title);
+               };
+
+               $buf1st.= "<div class='choice-output row'>";
+               $buf1st.= sprintf($field_out, $choice->title);
+
+               $buf1st.= "<div class='blockR'>";
+               $buf1st.= sprintf("<select class='bind:%s' onchange='javascript:selectTargetSurvey(this);'>", $choice->ref);
+               $buf1st.= $buf2nd;
+               $buf1st.= "</select>";
+               $buf1st.= '</div>';
+
+               $buf1st.= $field_select;
+
+               $buf1st.= '</div>';
           }
-          $buf.= '</div>';
 
           echo <<<EOD
                <div class='field-output'>
                     {$field->title}
-                    {$buf}
+                    {$buf1st}
                </div>
 EOD;
 

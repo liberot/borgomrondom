@@ -1,3 +1,26 @@
+
+function selectTargetField(ref){}
+
+
+
+function selectTargetSurvey(ref){
+     let target_survey_ref = jQuery(ref).val();
+     let clazz = jQuery(ref).attr('class');
+     let match = clazz.match(/bind:(.{1,128})/);
+     if(null == match || null == match[1]){
+          return false;
+     }
+     let choice_ref = match[1];
+     let data = {
+          action: 'exec_set_target_survey',
+          choice_ref: choice_ref,
+          target_survey_ref: target_survey_ref 
+     }
+     this.postCommand(data);
+}
+
+
+
 function deleteDB(){
      if(!confirm('This will delete BookBuilder DB and can not be undone')){
           return;

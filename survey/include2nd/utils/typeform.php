@@ -520,3 +520,16 @@ EOD;
      return $res;
 
 }
+
+
+function set_target_survey($choice_ref, $target_survey_ref){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          update {$prefix}ts_bb_choice set target_survey_ref = '{$target_survey_ref}' where ref = '{$choice_ref}';
+EOD;
+     $res = $wpdb->query($sql);
+     return $res;
+}
