@@ -2,12 +2,8 @@
 
 
 
-add_action('init', 'init_thread');
-add_action('init', 'set_next_field_ref');
 
-
-
-function init_thread(){
+function init_bb_thread(){
 
 // debug
      // set_session_ticket('thread_id', null);
@@ -178,4 +174,36 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 
+}
+
+
+
+function decorate_field_title($field){
+
+     $temp = $field->title;
+     preg_match_all('/\{\{(.{0,128})\}\}/', $temp, $match);
+
+     if(is_null($match)){
+     }
+     else {
+          $client_id = get_author_id();
+          $thread_id = get_session_ticket('thread_id');
+          foreach($match[1] as $m){
+               $j = preg_replace('/field:/', '', $m[1]);
+               $k = preg_replace('/[\{\}]/', '', $j);
+               $field_ref = $k;
+               $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+               $insert = '';
+               if(is_null($rec)){
+               }
+               else {
+                    $insert = $rec->doc;
+               }
+               $temp = preg_replace(sprintf('/\{\{%s\}\}/', $m), $insert, $temp);
+          }
+     }
+
+     $field->title = $temp;
+
+     return $field;
 }

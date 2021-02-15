@@ -88,7 +88,8 @@ class Proc {
 // --------------------------------------------------------
      const        MEDIA_UPLOAD_PROC = 'base64_upload';
      const              FILE_UPLOAD = 'file_upload';
-     const     KICKOFF_SURVEY_TITLE = '210902fielding questions and payment';
+     // const     KICKOFF_SURVEY_TITLE = '210902fielding questions and payment';
+     const     KICKOFF_SURVEY_TITLE = '210902Cover';
      const            BASE64_UPLOAD = 'base64_upload';
 }
 

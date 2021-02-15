@@ -2,9 +2,15 @@
 
 
 
+// this be started at auth
+add_action('init', 'init_bb_thread');
+
+
 
 add_shortcode('client_view', 'build_client_view');
 function build_client_view(){
+
+     set_next_field_ref();
 
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/client/style.css');
      wp_enqueue_style('admin_style');
@@ -22,17 +28,7 @@ function build_client_view(){
                <hr class='wp-header-end'>
 EOD;
 
-
-/*
-print "thread_id:";
-print_r(get_session_ticket('thread_id'));
-print "<br/>";
-print "field_ref:";
-print_r($field_ref);
-print "<br/>";
-print_r($field);
-print "<br/>";
-*/
+     $field = decorate_field_title($field);
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
