@@ -262,13 +262,12 @@ function init_rec_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_rec (
-               id bigint(20) unsigned not null,
+               id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                survey_ref varchar(255),
                group_ref varchar(255),
                field_ref varchar(255),
-               choice_ref varchar(255),
                title varchar(255),
                note varchar(255),
                description varchar(255),
@@ -476,6 +475,190 @@ function debug_sql($sql){
 
      return $sql;
 }
+
+
+
+function get_field_by_ref($ref) {
+
+     $ref = esc_sql($ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+          where ref = '{$ref}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_actions_of_field_by_ref($ref){
+
+     $ref = esc_sql($ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_action 
+          where field_ref = '{$ref}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_field_of_survey_at_pos($survey_ref, $pos){
+
+     $survey_ref = esc_sql($survey_ref);
+     $pos = esc_sql($pos);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+          where survey_ref = '{$survey_ref}' 
+          and pos = '{$pos}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_rec_of_field($client_id, $thread_id, $field_ref){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $field_ref = esc_sql($field_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec 
+          where client_id = '{$client_id}' 
+          and thread_id = '{$thread_id}' 
+          and field_ref = '{$field_ref}'
+          order by init
+          limit 1 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_choices_of_field($field_ref){
+
+     $field_ref = esc_sql($field_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_choice 
+          where field_ref = '{$field_ref}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function insert_bb_rec($client_id, $thread_id, $field, $answer){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $survey_ref = esc_sql($field->survey_ref);
+     $group_ref = esc_sql($field->group_ref);
+     $field_ref = esc_sql($field->ref);
+     $answer = esc_sql($answer);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_rec
+               (client_id, thread_id, survey_ref, group_ref, field_ref, doc, init) 
+          values 
+               ('{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', '{$answer}', now())
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+}
+
+
+
+function get_survey_by_ref($ref) {
+
+     $res = [];
+     $ref = esc_sql($ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+
+// surveys
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_survey where ref = '{$ref}'
+EOD;
+     $res['survey'] = $wpdb->get_results($sql);
+
+
+
+// groups
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_group where survey_ref = '{$ref}'
+EOD;
+     $res['groups'] = $wpdb->get_results($sql);
+
+
+
+// fields
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field where survey_ref = '{$ref}'
+          order by pos
+EOD;
+     $res['fields'] = $wpdb->get_results($sql);
+
+
+
+// choices
+     foreach($res['fields'] as $field){
+
+          $field_ref = $field->ref;
+          $field->choices = [];
+          $sql = <<<EOD
+               select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}'
+               order by pos
+EOD;
+          $field->choices = $wpdb->get_results($sql);
+     }
+
+     return $res;
+
+}
+
+
+
+function get_typeform_surveys(){
+
+     global $wpdb;
+
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_survey
+EOD;
+
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
+
+
+
+
 
 
 

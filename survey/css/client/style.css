@@ -9,6 +9,26 @@
 
 
 
-.input-main {
+.input-form {
    margin: .5em 0em .5em 0em;
 }
+
+
+
+.input-text {
+   width: 100%;
+   font-size: 3em !important;
+   height: 3em;
+   padding: 1em;
+   font-weight: 700;
+}
+
+
+
+.input-choice {
+   font-size: 1.3em;
+}
+
+
+
+

@@ -5,10 +5,6 @@
 
 function init_bb_thread(){
 
-// debug
-     // set_session_ticket('thread_id', null);
-     // set_session_ticket('field_ref', null);
-
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
      if(!is_numeric($thread_id)){
@@ -39,6 +35,7 @@ function set_next_field_ref(){
      else {
           $field = eval_next_field($field_ref);
      }
+
      set_session_ticket('field_ref', $field->ref);
 }
 
@@ -62,6 +59,8 @@ function eval_next_field($field_ref){
      else {
           $jumps = eval_jumps($actions);
           if(is_null($jumps)){
+               $pos = intval($field->pos);
+               $pos = $pos+1;
                $field = get_field_of_survey_at_pos($field->survey_ref, $pos)[0];
           }
           else {
@@ -71,7 +70,7 @@ function eval_next_field($field_ref){
      }
 
 // eval of the survey jump
-     $choice = get_choice_of_field($field_ref)[0];
+     $choice = get_choices_of_field($field_ref)[0];
      if(is_null($choice)){
      }
      else {
@@ -81,7 +80,7 @@ function eval_next_field($field_ref){
           if(is_null($rec)){
           }
           else {
-               if($rec->choice_ref == $choice->ref){
+               if($rec->doc == $choice->ref){
                     $link_ref = $choice->link_ref;
                     $field = get_field_by_ref($link_ref)[0];
                }
@@ -106,7 +105,7 @@ function eval_jumps($actions){
 
           foreach($condition->vars as $condition_var){
                $condition_field_ref = '';
-               
+
                switch($condition_var->type){
                     case 'field':
                          $condition_field_ref = $condition_var->value;
@@ -138,9 +137,9 @@ function is_rec_of_field_set_to($field_ref, $choice_ref){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_ref 
+          select * from {$prefix}ts_bb_rec 
           where field_ref = '{$field_ref}' 
-          and choice_ref = '{$choice_ref}' 
+          and doc = '{$choice_ref}' 
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
@@ -181,17 +180,15 @@ EOD;
 function decorate_field_title($field){
 
      $temp = $field->title;
-     preg_match_all('/\{\{(.{0,128})\}\}/', $temp, $match);
+     preg_match_all('/{{(.{42})}}/', $temp, $match);
 
-     if(is_null($match)){
+     if(empty($match)){
      }
      else {
           $client_id = get_author_id();
           $thread_id = get_session_ticket('thread_id');
           foreach($match[1] as $m){
-               $j = preg_replace('/field:/', '', $m[1]);
-               $k = preg_replace('/[\{\}]/', '', $j);
-               $field_ref = $k;
+               $field_ref = preg_replace('/field:/', '', $m);
                $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
                $insert = '';
                if(is_null($rec)){
@@ -199,11 +196,60 @@ function decorate_field_title($field){
                else {
                     $insert = $rec->doc;
                }
-               $temp = preg_replace(sprintf('/\{\{%s\}\}/', $m), $insert, $temp);
+               $temp = str_replace($m, $insert, $temp);
           }
      }
 
-     $field->title = $temp;
+     if(is_null($temp)){
+     }
+     else {
+          $field->title = $temp;
+     }
 
      return $field;
+}
+
+
+
+function process_incoming(){
+
+     switch($_POST['cmd']){
+
+          case 'reset_session':
+
+               set_session_ticket('thread_id', null);
+               set_session_ticket('field_ref', null);
+               set_next_field_ref();
+
+               wp_redirect('');
+
+               break;
+
+          case 'rec':
+
+               $client_id = get_author_id();
+               $thread_id = get_session_ticket('thread_id');
+               $field_ref = get_session_ticket('field_ref');
+
+               $ticket = trim_incoming_filename($_POST['ticket']);
+               if($ticket != $field_ref){
+                    break;
+               }
+
+               $answer = trim_incoming_string($_POST['answer']);
+               if(is_null($answer)){
+                    break;
+               }
+
+               if(1 >= strlen($answer)){
+                    break;
+               }
+
+               $field = get_field_by_ref($field_ref)[0];
+
+               $res = insert_bb_rec($client_id, $thread_id, $field, $answer);
+               set_next_field_ref();
+
+               break;
+     }
 }
