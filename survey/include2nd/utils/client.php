@@ -3,13 +3,14 @@
 
 
 add_action('init', 'init_thread');
-add_action('init', 'step_to_next_field');
+add_action('init', 'set_next_field_ref');
 
 
 
 function init_thread(){
 
      // set_session_ticket('thread_id', null);
+     // set_session_ticket('field_ref', null);
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
@@ -21,13 +22,11 @@ function init_thread(){
      if(is_numeric($thread_id)){
           set_session_ticket('thread_id', $thread_id);
      }
-print 'thread_id:';
-print_r(get_session_ticket('thread_id'));
 }
 
 
 
-function step_to_next_field(){
+function set_next_field_ref(){
 
      $field = null;
      $field_ref = get_session_ticket('field_ref');
@@ -38,10 +37,6 @@ function step_to_next_field(){
           $field = eval_next_field($field_ref);
      }
      set_session_ticket('field_ref', $field->ref);
-print 'field_ref:';
-print_r($field_ref);
-print_r($field);
-     return $field_ref;
 }
 
 
@@ -57,22 +52,73 @@ function eval_next_field($field_ref){
           $field = get_field_of_survey_at_pos($field->survey_ref, $pos)[0];
      }
      else {
-          $field = eval_actions($actions);
+          $jumps = eval_jumps($actions);
+          if(is_null($jumps)){
+               $field = get_field_of_survey_at_pos($field->survey_ref, $pos)[0];
+          }
+          else {
+               $link_ref = $jumps[0];
+               $field = get_field_by_ref($link_ref)[0];
+          }
      }
      return $field;
 }
 
 
 
-function eval_actions($actions){
+function eval_jumps($actions){
 
      $client_id = get_author_id();
+     $jummps = [];
      foreach($actions as $action){
-print_r($action);
+
+          $condition = json_decode(base64_decode($action->doc, true));
+          if(is_null($condition)){
+               continue;
+          }
+
+          foreach($condition->vars as $condition_var){
+               $condition_field_ref = '';
+               
+               switch($condition_var->type){
+                    case 'field':
+                         $condition_field_ref = $condition_var->value;
+                         break;
+               }
+
+               switch($condition_var->type){
+                    case 'choice':
+                         $res = is_rec_of_field_set_to($condition_field_ref, $condition_var->value);
+                         if(!is_null($res)){
+                         }
+                         else {
+                              $jumps[]= $action->link_ref;
+                         }
+                         break;
+
+               }
+          }
      }
 }
 
 
+
+function is_rec_of_field_set_to($field_ref, $choice_ref){
+
+     $field_ref = esc_sql($field_ref);
+     $choice_ref = esc_sql($choice_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_ref 
+          where field_ref = '{$field_ref}' 
+          and choice_ref = '{$choice_ref}' 
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
 
 function insert_thread($client_id){
 
@@ -82,6 +128,7 @@ function insert_thread($client_id){
      $sql = <<<EOD
           insert into {$prefix}ts_bb_thread (client_id) values ('{$client_id}');
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
      return $wpdb->insert_id;
 }
@@ -96,6 +143,7 @@ function get_thread_by_id($id){
      $sql = <<<EOD
           select * from {$prefix}ts_bb_thread where id = '{$id}';
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 

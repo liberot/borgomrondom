@@ -599,7 +599,6 @@ function get_field_of_survey_at_pos($survey_ref, $pos){
           and pos = '{$pos}' 
 EOD;
      $res = $wpdb->get_results($sql);
-print_r($sql);
      return $res;
 }
 

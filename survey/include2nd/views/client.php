@@ -24,6 +24,15 @@ function build_client_view(){
 EOD;
 
 
+print "thread_id:";
+print_r(get_session_ticket('thread_id'));
+print "<br/>";
+print "field_ref:";
+print_r($field_ref);
+print "<br/>";
+print_r($field);
+print "<br/>";
+
 }
 
 
