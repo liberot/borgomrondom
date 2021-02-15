@@ -263,16 +263,17 @@ function init_rec_table(){
      create table if not exists
           {$prefix}ts_bb_rec (
                id bigint(20) unsigned not null,
-               thread_id bigint(20) unsigned not null,
                client_id bigint(20) unsigned not null,
+               thread_id bigint(20) unsigned not null,
                survey_ref varchar(255),
                group_ref varchar(255),
                field_ref varchar(255),
+               choice_ref varchar(255),
                title varchar(255),
                note varchar(255),
                description varchar(255),
                init datetime,
-               content text,
+               doc text,
                pos int,
                primary key (id)
           )
@@ -405,7 +406,6 @@ function init_choice_table(){
           {$prefix}ts_bb_choice (
                id bigint(20) not null auto_increment,
                ref varchar(255) not null unique,
-               typeform_ref varchar(255),
                parent_ref varchar(255),
                survey_ref varchar(255),
                group_ref varchar(255),

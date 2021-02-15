@@ -542,7 +542,7 @@ function get_kickoff_field() {
      $prefix = $wpdb->prefix;
      $title = Proc::KICKOFF_SURVEY_TITLE;
      $sql = <<<EOD
-          select f.* from {$prefix}ts_bb_survey s, wp_ts_bb_field f 
+          select f.* from {$prefix}ts_bb_survey s, {$prefix}ts_bb_field f 
                where s.ref = f.survey_ref 
                and s.title like '%{$title}%' 
                order by pos 
@@ -597,6 +597,42 @@ function get_field_of_survey_at_pos($survey_ref, $pos){
           select * from {$prefix}ts_bb_field 
           where survey_ref = '{$survey_ref}' 
           and pos = '{$pos}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_rec_of_field($client_id, $thread_id, $field_ref){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $field_ref = esc_sql($field_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec 
+          where client_id = '{$client_id}' 
+          and thread_id = '{$thread_id}' 
+          and field_ref = '{$field_ref}' 
+EOD;
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_choice_of_field($field_ref){
+
+     $field_ref = esc_sql($field_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_choice 
+          where field_ref = '{$field_ref}' 
 EOD;
      $res = $wpdb->get_results($sql);
      return $res;

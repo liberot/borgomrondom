@@ -9,12 +9,13 @@ add_action('init', 'set_next_field_ref');
 
 function init_thread(){
 
+// debug
      // set_session_ticket('thread_id', null);
      // set_session_ticket('field_ref', null);
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
-     if(is_null($thread_id)){
+     if(!is_numeric($thread_id)){
           $thread_id = insert_thread($client_id);
      }
      else {
@@ -25,7 +26,13 @@ function init_thread(){
 }
 
 
-
+/**
+     sets the next field ref into the session
+     kickoff is the one to start with
+     the actions of a field eval to the next logic field
+          depending on the input ( rec )
+     and the survey jumps of the answers from the backend
+*/
 function set_next_field_ref(){
 
      $field = null;
@@ -41,10 +48,15 @@ function set_next_field_ref(){
 
 
 
+/**
+     evaluates the *next logic field
+*/
 function eval_next_field($field_ref){
 
      $field = null;
      $field = get_field_by_ref($field_ref)[0];
+
+// eval of the action jump of the survey
      $actions = get_actions_of_field_by_ref($field_ref);
      if(empty($actions)){
           $pos = intval($field->pos);
@@ -61,6 +73,25 @@ function eval_next_field($field_ref){
                $field = get_field_by_ref($link_ref)[0];
           }
      }
+
+// eval of the survey jump
+     $choice = get_choice_of_field($field_ref)[0];
+     if(is_null($choice)){
+     }
+     else {
+          $client_id = get_author_id();
+          $thread_id = get_session_ticket('thread_id');
+          $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+          if(is_null($rec)){
+          }
+          else {
+               if($rec->choice_ref == $choice->ref){
+                    $link_ref = $choice->link_ref;
+                    $field = get_field_by_ref($link_ref)[0];
+               }
+          }
+     }
+
      return $field;
 }
 
