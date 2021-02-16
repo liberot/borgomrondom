@@ -36,7 +36,7 @@ EOD;
      echo <<<EOD
           <form class='input-form' method='post' action=''>
                <input type='hidden' name='cmd' value='reset_session'></input> 
-               <div class=''><input type='submit' value='Reset the Thread'></div>
+               <div class=''><input type='submit' value='Start Thread'></div>
           </form>
 EOD;
 
@@ -77,8 +77,8 @@ EOD;
                break;
 
           case 'yes_no':
-               $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'yes', 'Yes');
-               $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'no', 'No');
+               $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'true', 'Yes');
+               $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'false', 'No');
                break;
 
 

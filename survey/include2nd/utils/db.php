@@ -488,6 +488,7 @@ function get_field_by_ref($ref) {
           select * from {$prefix}ts_bb_field 
           where ref = '{$ref}' 
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -504,6 +505,7 @@ function get_actions_of_field_by_ref($ref){
           select * from {$prefix}ts_bb_action 
           where field_ref = '{$ref}' 
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -522,6 +524,7 @@ function get_field_of_survey_at_pos($survey_ref, $pos){
           where survey_ref = '{$survey_ref}' 
           and pos = '{$pos}' 
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -541,9 +544,10 @@ function get_rec_of_field($client_id, $thread_id, $field_ref){
           where client_id = '{$client_id}' 
           and thread_id = '{$thread_id}' 
           and field_ref = '{$field_ref}'
-          order by init
+          order by init desc
           limit 1 
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -560,6 +564,7 @@ function get_choices_of_field($field_ref){
           select * from {$prefix}ts_bb_choice 
           where field_ref = '{$field_ref}' 
 EOD;
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -651,14 +656,26 @@ function get_typeform_surveys(){
           select * from {$prefix}ts_bb_survey
 EOD;
 
+     $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
-
      return $res;
 }
 
 
 
+function get_first_field_of_group($group_ref){
 
+     global $wpdb;
 
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+          where group_ref = '{$group_ref}'
+          order by pos asc
+          limit 1
+EOD;
 
-
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}

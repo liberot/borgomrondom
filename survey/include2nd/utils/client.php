@@ -58,18 +58,23 @@ function eval_next_field($field_ref){
      }
      else {
           $jumps = eval_jumps($actions);
-          if(is_null($jumps)){
+          if(empty($jumps)){
                $pos = intval($field->pos);
                $pos = $pos+1;
                $field = get_field_of_survey_at_pos($field->survey_ref, $pos)[0];
           }
           else {
                $link_ref = $jumps[0];
+// fixdiss: groups is fields also
                $field = get_field_by_ref($link_ref)[0];
+               if(is_null($field)){
+                    $field = get_first_field_of_group($link_ref)[0];
+               }
           }
      }
 
 // eval of the survey jump
+/*
      $choice = get_choices_of_field($field_ref)[0];
      if(is_null($choice)){
      }
@@ -86,6 +91,7 @@ function eval_next_field($field_ref){
                }
           }
      }
+*/
 
      return $field;
 }
@@ -95,7 +101,10 @@ function eval_next_field($field_ref){
 function eval_jumps($actions){
 
      $client_id = get_author_id();
-     $jummps = [];
+     $thread_id = get_session_ticket('thread_id');
+
+     $jumps = [];
+
      foreach($actions as $action){
 
           $condition = json_decode(base64_decode($action->doc, true));
@@ -103,48 +112,70 @@ function eval_jumps($actions){
                continue;
           }
 
+          // is or and always...
+          $op = $condition->op;
+
+          // vars
+          $condition_results = [];
+          $condition_field_ref;
           foreach($condition->vars as $condition_var){
-               $condition_field_ref = '';
 
                switch($condition_var->type){
+
                     case 'field':
                          $condition_field_ref = $condition_var->value;
                          break;
                }
+          }
 
+          foreach($condition->vars as $condition_var){
                switch($condition_var->type){
+
+                    case 'constant':
                     case 'choice':
-                         $res = is_rec_of_field_set_to($condition_field_ref, $condition_var->value);
-                         if(!is_null($res)){
+
+                         $val = $condition_var->value;
+                         $val = false == $val ? 'false' : 'true';
+                         $rec = get_rec_of_field($client_id, $thread_id, $condition_field_ref)[0];
+                         if($rec->doc == $val){
+                              $condition_results[]= 'true';
                          }
                          else {
-                              $jumps[]= $action->link_ref;
+                              $condition_results[]= 'false';
                          }
+
                          break;
+
 
                }
           }
+
+          switch($op){
+
+               case 'is':
+               case 'and':
+                    if(false === array_search('false', $condition_results)){
+                         $jumps[]= $action->link_ref;
+                    }
+                    break;
+
+               case 'or':
+                    if(false !== array_search('true', $condition_results)){
+                         $jumps[]= $action->link_ref;
+                    }
+                    break;
+
+               case 'always':
+                    $jumps[]= $action->link_ref;
+                    break;
+          }
+
      }
+
+     return $jumps;
 }
 
 
-
-function is_rec_of_field_set_to($field_ref, $choice_ref){
-
-     $field_ref = esc_sql($field_ref);
-     $choice_ref = esc_sql($choice_ref);
-
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_rec 
-          where field_ref = '{$field_ref}' 
-          and doc = '{$choice_ref}' 
-EOD;
-     $sql = debug_sql($sql);
-     $res = $wpdb->get_results($sql);
-     return $res;
-}
 
 function insert_thread($client_id){
 
@@ -179,14 +210,15 @@ EOD;
 
 function decorate_field_title($field){
 
+     $client_id = get_author_id();
+     $thread_id = get_session_ticket('thread_id');
+
      $temp = $field->title;
      preg_match_all('/{{(.{42})}}/', $temp, $match);
 
      if(empty($match)){
      }
      else {
-          $client_id = get_author_id();
-          $thread_id = get_session_ticket('thread_id');
           foreach($match[1] as $m){
                $field_ref = preg_replace('/field:/', '', $m);
                $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
