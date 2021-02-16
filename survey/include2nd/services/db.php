@@ -14,6 +14,7 @@ function exec_delete_db(){
      init_log('exec_delete_db', []);
 
      $res = drop_tables();
+     $res = remove_v1_records();
 
      $suc = 'failed';
      $message = esc_html(__('Typform DB is NOt deleted', 'bookbuilder'));

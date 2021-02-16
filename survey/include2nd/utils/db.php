@@ -2,7 +2,7 @@
 
 
 
-function remove_v1_posts(){
+function remove_v1_records(){
 
      $res = false;
 
@@ -17,21 +17,19 @@ function remove_v1_posts(){
           'surveyprint_spread',
           'surveyprint_survey',
           'surveyprint_thread',
-          'surveyprint_toc'
+          'surveyprint_toc',
+          'surveyprint_log'
      ];
 
      global $wpdb;
      $prefix = $wpdb->prefix;
      foreach($types as $type){
-
           $sql = <<<EOD
                delete from {$prefix}posts where post_type = '{$type}'
-
 EOD;
           $sql = debug_sql($sql);
           $res = $wpdb->query($sql);
      }
-
      return $res;
 }
 
