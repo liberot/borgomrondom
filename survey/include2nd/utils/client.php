@@ -108,9 +108,33 @@ function eval_next_field($field_ref){
      $thread_id = get_session_ticket('thread_id');
 
      $field = null;
-     $field = get_field_by_ref($field_ref)[0];
 
-// eval of the action jump of the survey
+// evaluates jump to another survey from the wp backend
+     $choices = get_choices_of_field($field_ref);
+     if(empty($choices)){
+     }
+     else {
+          $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+          if(is_null($rec)){
+          }
+          else {
+               foreach($choices as $choice){
+                    if($rec->doc == $choice->ref){
+                         $survey_ref = $choice->target_survey_ref;
+                         $field = get_first_field_of_survey_by_ref($survey_ref)[0];
+                         if(is_null($field)){
+                         }
+                         else{
+                              return $field;
+                         }
+                    }
+               }
+          }
+     }
+
+
+// evaluates the action jumps of the survey descriptor
+     $field = get_field_by_ref($field_ref)[0];
      $actions = get_actions_of_field_by_ref($field_ref);
      if(empty($actions)){
           $pos = intval($field->pos);
@@ -126,31 +150,15 @@ function eval_next_field($field_ref){
           }
           else {
                $link_ref = $jumps[0];
+
 // fixdiss: groups is fields also
                $field = get_field_by_ref($link_ref)[0];
                if(is_null($field)){
+print_r($link_ref);
                     $field = get_first_field_of_group($link_ref)[0];
                }
           }
      }
-
-// eval of the survey jump of the backend
-     /*
-     $choice = get_choices_of_field($field_ref)[0];
-     if(is_null($choice)){
-     }
-     else {
-          $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
-          if(is_null($rec)){
-          }
-          else {
-               if($rec->doc == $choice->ref){
-                    $link_ref = $choice->link_ref;
-                    $field = get_field_by_ref($link_ref)[0];
-               }
-          }
-     }
-     */
 
      return $field;
 }

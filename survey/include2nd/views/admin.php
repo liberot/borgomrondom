@@ -375,7 +375,7 @@ EOD;
           $buf1st = '';
           foreach($field->choices as $choice){
 
-               $buf2nd = "<option value='00notarget'>No Survey</option>";
+               $buf2nd = "<option value='notarget'>No Survey</option>";
                foreach($surveys as $target){
                     $selected = '';
                     if($target->ref == $choice->target_survey_ref){

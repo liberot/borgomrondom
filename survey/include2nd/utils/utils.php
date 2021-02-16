@@ -260,7 +260,10 @@ function debug_field_add($key, $value){
      if(is_null($_SESSION['debug'])){
           $_SESSION['debug'] = [];
      }
-     $_SESSION['debug'][$key] = $value;
+     if(is_null($_SESSION['debug'][$key])){
+          $_SESSION['debug'][$key] = [];
+     }
+     $_SESSION['debug'][$key][]= $value;
 }
 
 

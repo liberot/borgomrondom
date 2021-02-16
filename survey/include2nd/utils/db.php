@@ -665,12 +665,33 @@ EOD;
 
 function get_first_field_of_group($group_ref){
 
+     $group_ref = esc_sql($group_ref);
      global $wpdb;
 
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field 
           where group_ref = '{$group_ref}'
+          order by pos asc
+          limit 1
+EOD;
+
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_first_field_of_survey_by_ref($survey_ref){
+
+     $survey_ref = esc_sql($survey_ref);
+     global $wpdb;
+
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+          where survey_ref = '{$survey_ref}'
           order by pos asc
           limit 1
 EOD;
