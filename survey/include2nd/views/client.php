@@ -2,15 +2,16 @@
 
 
 
-// this be started at auth
-add_action('init', 'init_bb_thread');
-
-
-
 add_shortcode('client_view', 'build_client_view');
 function build_client_view(){
 
-     process_incoming();
+     if(!is_user_logged_in()){
+          echo '<p>ProfileBuilder Authentication Procedere</p>';
+          echo do_shortcode('[wppb-login]');
+          echo do_shortcode('[wppb-register]');
+          echo do_shortcode('[wppb-recover-password]');
+          return;
+     }
 
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/client/style.css');
      wp_enqueue_style('admin_style');
@@ -32,6 +33,10 @@ EOD;
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
+
+
+flush_debug_field();
+
 
      echo <<<EOD
           <form class='input-form' method='post' action=''>
@@ -90,7 +95,7 @@ EOD;
                {$buf1st}
                <input type='hidden' name='cmd' value='rec'></input> 
                <input type='hidden' name='ticket' value='{$field_ref}'></input> 
-               <div class=''><input type='submit' value='Rec'></div>
+               <div class=''><input type='submit' value='Submit REC'></div>
           </form>
 EOD;
 

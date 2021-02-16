@@ -158,13 +158,13 @@ function insert_survey_page(){
 
      delete_survey_page();
 
-     $conti = <<<EOD
+     $post_content = <<<EOD
         <p>[client_view]</p>
 EOD;
 
      $page_id = wp_insert_post([
           'post_author'=>get_author_id(),
-          'post_content'=>$conti,
+          'post_content'=>$post_content,
           'post_title'=>'Questionnaire',
           'post_status'=>'publish',
           'comment_status'=>'closed',
@@ -226,3 +226,57 @@ function get_session_ticket($key){
      return $_SESSION[$key];
 }
 
+
+
+function insert_guest_client(){
+
+// sets up a guest client
+// client is cutomer as for debug reasons
+     // $role_title = Role::GUEST;
+     $role_title = Role::CUSTOMER;
+     $role = add_role($role_title, 'BookBuilder Client');
+     $client = wp_insert_user([
+          'user_email'=>'surveyprint',
+          'user_pass'=>'surveyprint',
+          'user_login'=>'surveyprint',
+          'user_nicename'=>'surveyprint',
+          'display_name'=>'surveyprint',
+          'nickname'=>'surveyprint',
+          'first_name'=>'surveyprint',
+          'last_name'=>'surveyprint',
+          'description'=>'surveyprint',
+          'rich_editing'=>'false',
+          'use_ssl'=>'true',
+          'user_activation_key'=>'surveyprint',
+          'role'=>$role_title
+     ]);
+     return $client;
+}
+
+
+
+function debug_field_add($key, $value){
+
+     if(is_null($_SESSION['debug'])){
+          $_SESSION['debug'] = [];
+     }
+     $_SESSION['debug'][$key] = $value;
+}
+
+
+
+function flush_debug_field(){
+
+     if(is_null($_SESSION['debug'])){
+          return;
+     }
+
+     foreach($_SESSION['debug'] as $key=>$value){
+          print '<br/>--<br/>';
+          print $key;
+          print '<br/>--<br/>';
+          print_r($value);
+          print '<br/>--<br/>';
+     }
+     $_SESSION['debug'] = [];
+}

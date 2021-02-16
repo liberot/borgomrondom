@@ -2,8 +2,12 @@
 
 
 
-
+add_action('init', 'init_bb_thread');
 function init_bb_thread(){
+
+     if(!is_user_logged_in()){
+          return;
+     }
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
@@ -16,6 +20,57 @@ function init_bb_thread(){
 
      if(is_numeric($thread_id)){
           set_session_ticket('thread_id', $thread_id);
+     }
+}
+
+
+
+add_action('init', 'process_incoming');
+function process_incoming(){
+
+     if(!is_user_logged_in()){
+          return;
+     }
+
+     switch($_POST['cmd']){
+
+          case 'reset_session':
+
+               set_session_ticket('thread_id', null);
+               set_session_ticket('field_ref', null);
+               init_bb_thread();
+               set_next_field_ref();
+
+               wp_redirect('');
+
+               break;
+
+          case 'rec':
+
+               $client_id = get_author_id();
+               $thread_id = get_session_ticket('thread_id');
+               $field_ref = get_session_ticket('field_ref');
+
+               $ticket = trim_incoming_filename($_POST['ticket']);
+               if($ticket != $field_ref){
+                    break;
+               }
+
+               $answer = trim_incoming_string($_POST['answer']);
+               if(is_null($answer)){
+                    break;
+               }
+
+               if(1 >= strlen($answer)){
+                    break;
+               }
+
+               $field = get_field_by_ref($field_ref)[0];
+
+               $res = insert_bb_rec($client_id, $thread_id, $field, $answer);
+               set_next_field_ref();
+
+               break;
      }
 }
 
@@ -120,6 +175,9 @@ function eval_jumps($actions){
                continue;
           }
 
+debug_field_add('action', $action);
+debug_field_add('condition', $condition);
+
           // is or and always...
           $op = $condition->op;
 
@@ -183,6 +241,8 @@ function eval_jumps($actions){
                     break;
           }
      }
+
+debug_field_add('jumps', $jumps);
 
      return $jumps;
 }
@@ -258,46 +318,3 @@ function decorate_field_title($field){
 
 
 
-function process_incoming(){
-
-     switch($_POST['cmd']){
-
-          case 'reset_session':
-
-               set_session_ticket('thread_id', null);
-               set_session_ticket('field_ref', null);
-               init_bb_thread();
-               set_next_field_ref();
-
-               wp_redirect('');
-
-               break;
-
-          case 'rec':
-
-               $client_id = get_author_id();
-               $thread_id = get_session_ticket('thread_id');
-               $field_ref = get_session_ticket('field_ref');
-
-               $ticket = trim_incoming_filename($_POST['ticket']);
-               if($ticket != $field_ref){
-                    break;
-               }
-
-               $answer = trim_incoming_string($_POST['answer']);
-               if(is_null($answer)){
-                    break;
-               }
-
-               if(1 >= strlen($answer)){
-                    break;
-               }
-
-               $field = get_field_by_ref($field_ref)[0];
-
-               $res = insert_bb_rec($client_id, $thread_id, $field, $answer);
-               set_next_field_ref();
-
-               break;
-     }
-}
