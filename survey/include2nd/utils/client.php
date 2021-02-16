@@ -7,15 +7,18 @@ function init_bb_thread(){
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
+
      if(!is_numeric($thread_id)){
           $thread_id = insert_thread($client_id);
      }
      else {
      }
+
      if(is_numeric($thread_id)){
           set_session_ticket('thread_id', $thread_id);
      }
 }
+
 
 
 /**
@@ -46,6 +49,9 @@ function set_next_field_ref(){
 */
 function eval_next_field($field_ref){
 
+     $client_id = get_author_id();
+     $thread_id = get_session_ticket('thread_id');
+
      $field = null;
      $field = get_field_by_ref($field_ref)[0];
 
@@ -73,14 +79,12 @@ function eval_next_field($field_ref){
           }
      }
 
-// eval of the survey jump
-/*
+// eval of the survey jump of the backend
+     /*
      $choice = get_choices_of_field($field_ref)[0];
      if(is_null($choice)){
      }
      else {
-          $client_id = get_author_id();
-          $thread_id = get_session_ticket('thread_id');
           $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
           if(is_null($rec)){
           }
@@ -91,13 +95,16 @@ function eval_next_field($field_ref){
                }
           }
      }
-*/
+     */
 
      return $field;
 }
 
 
 
+/**
+     evals the jump actions and their conditions that is mapped to the current field
+*/
 function eval_jumps($actions){
 
      $client_id = get_author_id();
@@ -108,6 +115,7 @@ function eval_jumps($actions){
      foreach($actions as $action){
 
           $condition = json_decode(base64_decode($action->doc, true));
+
           if(is_null($condition)){
                continue;
           }
@@ -115,7 +123,7 @@ function eval_jumps($actions){
           // is or and always...
           $op = $condition->op;
 
-          // vars
+          // variables
           $condition_results = [];
           $condition_field_ref;
           foreach($condition->vars as $condition_var){
@@ -132,17 +140,17 @@ function eval_jumps($actions){
                switch($condition_var->type){
 
                     case 'constant':
-                    case 'choice':
 
                          $val = $condition_var->value;
                          $val = false == $val ? 'false' : 'true';
+
+                         break;
+
+                    case 'choice':
+
+                         $val = $condition_var->value;
                          $rec = get_rec_of_field($client_id, $thread_id, $condition_field_ref)[0];
-                         if($rec->doc == $val){
-                              $condition_results[]= 'true';
-                         }
-                         else {
-                              $condition_results[]= 'false';
-                         }
+                         $condition_results[]= $rec->doc == $val ? 'true' : 'false';
 
                          break;
 
@@ -164,12 +172,16 @@ function eval_jumps($actions){
                          $jumps[]= $action->link_ref;
                     }
                     break;
-
-               case 'always':
-                    $jumps[]= $action->link_ref;
-                    break;
           }
 
+          switch($op){
+
+               case 'always':
+                    if(empty($jumps)){
+                         $jumps[]= $action->link_ref;
+                    }
+                    break;
+          }
      }
 
      return $jumps;
@@ -177,6 +189,9 @@ function eval_jumps($actions){
 
 
 
+/**
+     adds a new thread
+*/
 function insert_thread($client_id){
 
      $client_id = esc_sql($client_id);
@@ -251,6 +266,7 @@ function process_incoming(){
 
                set_session_ticket('thread_id', null);
                set_session_ticket('field_ref', null);
+               init_bb_thread();
                set_next_field_ref();
 
                wp_redirect('');
