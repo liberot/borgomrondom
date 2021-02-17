@@ -10,8 +10,8 @@ function bbClientInit(){
                { 
                     'action': 'exec_nav_prev_field'
                },
-               function(e){ 
-                    console.log(e); 
+               function(e){
+                    window.location.reload();
                },
                function(e){ 
                     console.log(e); 

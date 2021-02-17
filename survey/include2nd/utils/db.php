@@ -529,7 +529,7 @@ EOD;
 
 
 
-function get_rec_of_field($client_id, $thread_id, $field_ref){
+function get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -541,6 +541,28 @@ function get_rec_of_field($client_id, $thread_id, $field_ref){
           select * from {$prefix}ts_bb_rec where client_id = '{$client_id}' 
                and thread_id = '{$thread_id}' 
                and field_ref = '{$field_ref}'
+          order by init desc
+          limit 1 
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $rec_pos = esc_sql($rec_pos);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec where client_id = '{$client_id}' 
+               and thread_id = '{$thread_id}' 
+               and pos = '{$rec_pos}'
           order by init desc
           limit 1 
 EOD;
@@ -567,10 +589,11 @@ EOD;
 
 
 
-function insert_bb_rec($client_id, $thread_id, $field, $answer){
+function insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
+     $rec_pos = esc_sql($rec_pos);
      $survey_ref = esc_sql($field->survey_ref);
      $group_ref = esc_sql($field->group_ref);
      $field_ref = esc_sql($field->ref);
@@ -580,9 +603,9 @@ function insert_bb_rec($client_id, $thread_id, $field, $answer){
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           insert into {$prefix}ts_bb_rec
-               (client_id, thread_id, survey_ref, group_ref, field_ref, doc, init) 
+               (client_id, thread_id, survey_ref, group_ref, field_ref, pos, doc, init) 
           values 
-               ('{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', '{$answer}', now())
+               ('{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', '{$rec_pos}', '{$answer}', now())
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);

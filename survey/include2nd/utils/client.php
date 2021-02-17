@@ -13,13 +13,15 @@ function init_bb_thread(){
      $thread_id = get_session_ticket('thread_id');
 
      if(!is_numeric($thread_id)){
+
           $thread_id = insert_thread($client_id);
+          $rec_pos = 0;
+
+          set_session_ticket('thread_id', $thread_id);
+          set_session_ticket('rec_pos', $rec_pos);
+
      }
      else {
-     }
-
-     if(is_numeric($thread_id)){
-          set_session_ticket('thread_id', $thread_id);
      }
 }
 
@@ -40,6 +42,7 @@ function process_incoming(){
 
                set_session_ticket('thread_id', null);
                set_session_ticket('field_ref', null);
+               set_session_ticket('rec_pos', null);
 
                init_bb_thread();
                set_field_ref_to_next();
@@ -59,6 +62,7 @@ function process_incoming(){
                $client_id = get_author_id();
                $thread_id = get_session_ticket('thread_id');
                $field_ref = get_session_ticket('field_ref');
+               $rec_pos = get_session_ticket('rec_pos');
 
                $ticket = trim_incoming_filename($_POST['ticket']);
                if($ticket != $field_ref){
@@ -76,7 +80,7 @@ function process_incoming(){
 
                $field = get_field_by_ref($field_ref)[0];
 
-               $res = insert_bb_rec($client_id, $thread_id, $field, $answer);
+               $res = insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer);
 
                set_field_ref_to_next();
 
@@ -97,6 +101,8 @@ function set_field_ref_to_next(){
 
      $field = null;
      $field_ref = get_session_ticket('field_ref');
+     $rec_pos = get_session_ticket('rec_pos');
+
      if(is_null($field_ref)){
           $field = get_kickoff_field()[0];
      }
@@ -105,13 +111,10 @@ function set_field_ref_to_next(){
      }
 
      set_session_ticket('field_ref', $field->ref);
-}
 
-
-
-function set_field_ref_to_ref($field_ref){
-
-     set_session_ticket('field_ref', $field_ref);
+     $rec_pos = intval($rec_pos);
+     $rec_pos = $rec_pos +1;
+     set_session_ticket('rec_pos', $rec_pos);
 }
 
 
@@ -131,7 +134,7 @@ function eval_next_field($field_ref){
      if(empty($choices)){
      }
      else {
-          $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+          $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
           if(is_null($rec)){
           }
           else {
@@ -232,7 +235,7 @@ debug_field_add('condition', $condition);
                     case 'choice':
 
                          $val = $condition_var->value;
-                         $rec = get_rec_of_field($client_id, $thread_id, $condition_field_ref)[0];
+                         $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
                          $condition_results[]= $rec->doc == $val ? 'true' : 'false';
 
                          break;
@@ -287,7 +290,7 @@ function decorate_field_title($field){
      else {
           foreach($match[1] as $m){
                $field_ref = preg_replace('/field:/', '', $m);
-               $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+               $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
                $insert = '';
                if(is_null($rec)){
                }

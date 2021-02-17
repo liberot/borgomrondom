@@ -17,6 +17,6 @@ else {
      if(empty($action)){
      } 
      else{
-          do_action("admin_post_{$action}");
+          do_action("client_post_{$action}");
      }
 }

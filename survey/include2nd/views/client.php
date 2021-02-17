@@ -18,7 +18,7 @@ function build_client_view(){
      $field_ref = get_session_ticket('field_ref');
      $field = get_field_by_ref($field_ref)[0];
      $answer_text = '';
-     $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+     $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
      if(is_null($rec)){
      }
      else {
@@ -47,6 +47,7 @@ EOD;
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
+     $rec_pos = get_session_ticket('rec_pos');
 
 
 flush_debug_field();
@@ -73,6 +74,7 @@ EOD;
      echo <<<EOD
           <div class=''>client_id: {$client_id}</div>
           <div class=''>thread_id: {$thread_id}</div>
+          <div class=''>rec_pos: {$rec_pos}</div>
           <div class=''>survey_ref: {$field->survey_ref}</div>
           <div class=''>group_ref: {$field->group_ref}</div>
           <div class=''>field_ref: {$field_ref}</div>
