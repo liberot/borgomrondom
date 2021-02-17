@@ -13,12 +13,26 @@ function build_client_view(){
           return;
      }
 
+     $client_id = get_author_id();
+     $thread_id = get_session_ticket('thread_id');
+     $field_ref = get_session_ticket('field_ref');
+     $field = get_field_by_ref($field_ref)[0];
+     $answer_text = '';
+     $rec = get_rec_of_field($client_id, $thread_id, $field_ref)[0];
+     if(is_null($rec)){
+     }
+     else {
+debug_field_add('rec', $rec);
+          $answer_text = esc_html($rec->doc);
+     }
+
+     wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/client/main.js', array('jquery'));
+     wp_enqueue_script('service');
+
      wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/client/style.css');
      wp_enqueue_style('admin_style');
 
      $headline = esc_html(__('BookBuilder Client Threads', 'bookbuilder'));
-     $field_ref = get_session_ticket('field_ref');
-     $field = get_field_by_ref($field_ref)[0];
 
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
@@ -39,10 +53,21 @@ flush_debug_field();
 
 
      echo <<<EOD
-          <form class='input-form' method='post' action=''>
+
+          <div class='row'>
+
+               <form class='input-form block' method='post' action=''>
+               <input type='hidden' name='cmd' value='init_session'></input> 
+               <div class=''><input type='submit' value='Start existing thread'></div>
+               </form>
+
+               <form class='input-form block' method='post' action=''>
                <input type='hidden' name='cmd' value='reset_session'></input> 
-               <div class=''><input type='submit' value='Start Thread'></div>
-          </form>
+               <div class=''><input type='submit' value='Start a new thread'></div>
+               </form>
+
+          </div>
+
 EOD;
 
      echo <<<EOD
@@ -65,7 +90,9 @@ EOD;
 
           case 'short_text':
 
-               $buf1st.= "<div class=''><input type='text' class='input-text' name='answer'></input></div>";
+               $buf1st.= "<div class=''>";
+               $buf1st.= sprintf("<input type='text' class='input-text' name='answer' value='%s'></input>", $answer_text);
+               $buf1st.= "</div>";
                break;
 
           case 'multiple_choice':

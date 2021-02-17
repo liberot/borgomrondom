@@ -32,16 +32,25 @@ function process_incoming(){
           return;
      }
 
+     $client_id = get_author_id();
+
      switch($_POST['cmd']){
 
           case 'reset_session':
 
                set_session_ticket('thread_id', null);
                set_session_ticket('field_ref', null);
+
                init_bb_thread();
-               set_next_field_ref();
+               set_field_ref_to_next();
 
                wp_redirect('');
+
+               break;
+
+          case 'init_existing_session':
+
+               $session = get_session_of_client($client_id);
 
                break;
 
@@ -68,7 +77,8 @@ function process_incoming(){
                $field = get_field_by_ref($field_ref)[0];
 
                $res = insert_bb_rec($client_id, $thread_id, $field, $answer);
-               set_next_field_ref();
+
+               set_field_ref_to_next();
 
                break;
      }
@@ -83,7 +93,7 @@ function process_incoming(){
           depending on the input ( rec )
      and the survey jumps of the answers from the backend
 */
-function set_next_field_ref(){
+function set_field_ref_to_next(){
 
      $field = null;
      $field_ref = get_session_ticket('field_ref');
@@ -95,6 +105,13 @@ function set_next_field_ref(){
      }
 
      set_session_ticket('field_ref', $field->ref);
+}
+
+
+
+function set_field_ref_to_ref($field_ref){
+
+     set_session_ticket('field_ref', $field_ref);
 }
 
 
@@ -257,40 +274,6 @@ debug_field_add('jumps', $jumps);
 
 
 
-/**
-     adds a new thread
-*/
-function insert_thread($client_id){
-
-     $client_id = esc_sql($client_id);
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          insert into {$prefix}ts_bb_thread (client_id) values ('{$client_id}');
-EOD;
-     $sql = debug_sql($sql);
-     $res = $wpdb->query($sql);
-     return $wpdb->insert_id;
-}
-
-
-
-function get_thread_by_id($id){
-
-     $id = esc_sql($id);
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_thread where id = '{$id}';
-EOD;
-     $sql = debug_sql($sql);
-     $res = $wpdb->get_results($sql);
-     return $res;
-
-}
-
-
-
 function decorate_field_title($field){
 
      $client_id = get_author_id();
@@ -318,6 +301,8 @@ function decorate_field_title($field){
      if(is_null($temp)){
      }
      else {
+          $temp = str_replace('{{', '', $temp);
+          $temp = str_replace('}}', '', $temp);
           $field->title = $temp;
      }
 

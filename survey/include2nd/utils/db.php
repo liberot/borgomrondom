@@ -538,10 +538,9 @@ function get_rec_of_field($client_id, $thread_id, $field_ref){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_rec 
-          where client_id = '{$client_id}' 
-          and thread_id = '{$thread_id}' 
-          and field_ref = '{$field_ref}'
+          select * from {$prefix}ts_bb_rec where client_id = '{$client_id}' 
+               and thread_id = '{$thread_id}' 
+               and field_ref = '{$field_ref}'
           order by init desc
           limit 1 
 EOD;
@@ -559,8 +558,7 @@ function get_choices_of_field($field_ref){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_choice 
-          where field_ref = '{$field_ref}' 
+          select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}' 
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
@@ -697,4 +695,75 @@ EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
+}
+
+
+
+/**
+     adds a new thread
+*/
+function insert_thread($client_id){
+
+     $client_id = esc_sql($client_id);
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_thread (client_id) values ('{$client_id}');
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $wpdb->insert_id;
+}
+
+
+
+function get_thread_by_id($id){
+
+     $id = esc_sql($id);
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_thread where id = '{$id}';
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_session_of_client($client_id){
+
+     $client_id = esc_sql($client_id);
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_thread where client_id = '{$clientid}'
+          order by init desc
+          limit 1
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function get_last_record_of_client($client_id, $thread_id){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec where client_id = '{$client_id}'
+               and thread_id = '{$thread_id}'
+          order by init desc
+          limit 1
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+
 }

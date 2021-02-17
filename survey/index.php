@@ -47,8 +47,9 @@ require_once('include2nd/utils/utils.php');
 require_once('include2nd/utils/typeform.php');
 require_once('include2nd/utils/client.php');
 
-require_once('include2nd/services/typeform.php');
 require_once('include2nd/services/db.php');
+require_once('include2nd/services/typeform.php');
+require_once('include2nd/services/client.php');
 
 require_once('include2nd/views/admin.php');
 require_once('include2nd/views/client.php');

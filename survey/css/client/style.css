@@ -31,4 +31,31 @@
 
 
 
+#branding img {
+    visibility: hidden !important;
+    display: none !important;
+    height: 0px !important;
+    content: url('');
+    float: left;
+}
 
+
+
+.row {
+     width: 100%;
+     display: flex;
+     flex-direction: row;
+}
+
+
+
+.block {
+     width: 25%;
+}
+
+
+
+#primary {
+    visibility: hidden !inportant;
+    display: none !important;
+}
