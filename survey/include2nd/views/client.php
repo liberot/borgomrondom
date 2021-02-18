@@ -18,6 +18,7 @@ function build_client_view(){
      $field_ref = get_session_ticket('field_ref');
      $field = get_field_by_ref($field_ref)[0];
      $answer_text = '';
+
      $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
      if(is_null($rec)){
      }
@@ -58,12 +59,12 @@ flush_debug_field();
           <div class='row'>
 
                <form class='input-form block' method='post' action=''>
-               <input type='hidden' name='cmd' value='init_session'></input> 
+               <input type='hidden' name='cmd' value='init_existing_session'></input> 
                <div class=''><input type='submit' value='Start existing thread'></div>
                </form>
 
                <form class='input-form block' method='post' action=''>
-               <input type='hidden' name='cmd' value='reset_session'></input> 
+               <input type='hidden' name='cmd' value='init_new_session'></input> 
                <div class=''><input type='submit' value='Start a new thread'></div>
                </form>
 

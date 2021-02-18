@@ -99,7 +99,7 @@ function init_book_table(){
                note varchar(255) null,
                description varchar(255),
                init datetime,
-               content text,
+               doc text,
                primary key (id)
           )
           engine=innodb
@@ -231,6 +231,7 @@ function init_thread_table(){
           {$prefix}ts_bb_thread (
                id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
+               thread_id bigint(20) unsigned not null,
                title varchar(255) null,
                note varchar(255) null,
                description varchar(255),
@@ -761,7 +762,7 @@ function get_session_of_client($client_id){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_thread where client_id = '{$clientid}'
+          select * from {$prefix}ts_bb_thread where client_id = '{$client_id}'
           order by init desc
           limit 1
 EOD;

@@ -12,16 +12,13 @@ function init_bb_thread(){
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
 
-     if(!is_numeric($thread_id)){
+     if(is_null($thread_id)){
 
           $thread_id = insert_thread($client_id);
           $rec_pos = 0;
 
           set_session_ticket('thread_id', $thread_id);
           set_session_ticket('rec_pos', $rec_pos);
-
-     }
-     else {
      }
 }
 
@@ -35,16 +32,16 @@ function process_incoming(){
      }
 
      $client_id = get_author_id();
+     $thread_id = get_session_ticket('thread_id');
 
      switch($_POST['cmd']){
 
-          case 'reset_session':
+          case 'init_new_session':
 
                set_session_ticket('thread_id', null);
                set_session_ticket('field_ref', null);
                set_session_ticket('rec_pos', null);
 
-               init_bb_thread();
                set_field_ref_to_next();
 
                wp_redirect('');
@@ -53,7 +50,25 @@ function process_incoming(){
 
           case 'init_existing_session':
 
-               $session = get_session_of_client($client_id);
+               $rec = get_session_of_client($client_id)[0];
+
+               if(is_null($rec)){
+               }
+               else {
+
+                    $thread_id = $rec->id;
+                    $rec = get_last_record_of_client($client_id, $thread_id)[0];
+                    if(is_null($rec)){
+                    }
+                    else {
+                         set_session_ticket('client_id', $rec->client_id);
+                         set_session_ticket('thread_id', $rec->thread_id);
+                         set_session_ticket('field_ref', $rec->field_ref);
+                         set_session_ticket('rec_pos', $rec->pos);
+
+                         wp_redirect('');
+                    }
+               }
 
                break;
 
@@ -70,6 +85,7 @@ function process_incoming(){
                }
 
                $answer = trim_incoming_string($_POST['answer']);
+               $answer = trim_for_print($answer);
                if(is_null($answer)){
                     break;
                }
