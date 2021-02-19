@@ -31,6 +31,12 @@
 
 
 
+.image-choice {
+   width: 10em;
+}
+
+
+
 #branding img {
     visibility: hidden !important;
     display: none !important;

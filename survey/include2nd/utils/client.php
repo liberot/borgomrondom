@@ -1,7 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
 
-
 add_action('init', 'init_bb_thread');
 function init_bb_thread(){
 
@@ -11,15 +10,6 @@ function init_bb_thread(){
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
-
-     if(is_null($thread_id)){
-
-          $thread_id = insert_thread($client_id);
-          $rec_pos = 0;
-
-          set_session_ticket('thread_id', $thread_id);
-          set_session_ticket('rec_pos', $rec_pos);
-     }
 }
 
 
@@ -31,75 +21,21 @@ function process_incoming(){
           return;
      }
 
-     $client_id = get_author_id();
-     $thread_id = get_session_ticket('thread_id');
-
      switch($_POST['cmd']){
 
-          case 'init_new_session':
+          case 'init_new_thread':
 
-               set_session_ticket('thread_id', null);
-               set_session_ticket('field_ref', null);
-               set_session_ticket('rec_pos', null);
-
-               set_field_ref_to_next();
-
-               wp_redirect('');
-
+               init_new_thread();
                break;
 
-          case 'init_existing_session':
+          case 'init_existing_thread':
 
-               $rec = get_session_of_client($client_id)[0];
-
-               if(is_null($rec)){
-               }
-               else {
-
-                    $thread_id = $rec->id;
-                    $rec = get_last_record_of_client($client_id, $thread_id)[0];
-                    if(is_null($rec)){
-                    }
-                    else {
-                         set_session_ticket('client_id', $rec->client_id);
-                         set_session_ticket('thread_id', $rec->thread_id);
-                         set_session_ticket('field_ref', $rec->field_ref);
-                         set_session_ticket('rec_pos', $rec->pos);
-
-                         wp_redirect('');
-                    }
-               }
-
+               init_existing_thread();
                break;
 
           case 'rec':
 
-               $client_id = get_author_id();
-               $thread_id = get_session_ticket('thread_id');
-               $field_ref = get_session_ticket('field_ref');
-               $rec_pos = get_session_ticket('rec_pos');
-
-               $ticket = trim_incoming_filename($_POST['ticket']);
-               if($ticket != $field_ref){
-                    break;
-               }
-
-               $answer = trim_incoming_string($_POST['answer']);
-               $answer = trim_for_print($answer);
-               if(is_null($answer)){
-                    break;
-               }
-
-               if(1 >= strlen($answer)){
-                    break;
-               }
-
-               $field = get_field_by_ref($field_ref)[0];
-
-               $res = insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer);
-
-               set_field_ref_to_next();
-
+               write_rec();
                break;
      }
 }
@@ -113,17 +49,14 @@ function process_incoming(){
           depending on the input ( rec )
      and the survey jumps of the answers from the backend
 */
-function set_field_ref_to_next(){
+function proceed_to_next_field(){
 
-     $field = null;
      $field_ref = get_session_ticket('field_ref');
      $rec_pos = get_session_ticket('rec_pos');
 
-     if(is_null($field_ref)){
-          $field = get_kickoff_field()[0];
-     }
-     else {
-          $field = eval_next_field($field_ref);
+     $field = eval_next_field($field_ref);
+     if(is_null($field)){
+          return;
      }
 
      set_session_ticket('field_ref', $field->ref);
@@ -131,6 +64,21 @@ function set_field_ref_to_next(){
      $rec_pos = intval($rec_pos);
      $rec_pos = $rec_pos +1;
      set_session_ticket('rec_pos', $rec_pos);
+}
+
+
+
+function proceed_to_kickoff_field(){
+
+     $client_id = get_author_id();
+     $field = get_kickoff_field()[0];
+
+     if(is_null($field)){
+          return;
+     }
+
+     set_session_ticket('field_ref', $field->ref);
+     set_session_ticket('rec_pos', 0);
 }
 
 
@@ -186,11 +134,8 @@ function eval_next_field($field_ref){
           }
           else {
                $link_ref = $jumps[0];
-
-// fixdiss: groups is fields also
                $field = get_field_by_ref($link_ref)[0];
                if(is_null($field)){
-print_r($link_ref);
                     $field = get_first_field_of_group($link_ref)[0];
                }
           }
@@ -326,6 +271,87 @@ function decorate_field_title($field){
      }
 
      return $field;
+}
+
+
+
+function init_new_thread(){
+
+     $client_id = get_author_id();
+
+     set_session_ticket('thread_id', null);
+     set_session_ticket('field_ref', null);
+     set_session_ticket('rec_pos', null);
+
+     $thread_id = insert_thread($client_id);
+     if(false == $thread_id){
+          return;
+     }
+
+     set_session_ticket('thread_id', $thread_id);
+
+     proceed_to_kickoff_field();
+
+     wp_redirect('');
+}
+
+
+
+function init_existing_thread(){
+
+     $client_id = get_author_id();
+     $rec = get_session_of_client($client_id)[0];
+
+     if(is_null($rec)){
+     }
+     else {
+
+          $thread_id = $rec->id;
+          $rec = get_last_record_of_client($client_id, $thread_id)[0];
+          if(is_null($rec)){
+          }
+          else {
+               set_session_ticket('client_id', $rec->client_id);
+               set_session_ticket('thread_id', $rec->thread_id);
+               set_session_ticket('field_ref', $rec->field_ref);
+               set_session_ticket('rec_pos', $rec->pos);
+               wp_redirect('');
+          }
+     }
+}
+
+
+
+function write_rec(){
+
+     $client_id = get_author_id();
+     $thread_id = get_session_ticket('thread_id');
+     $field_ref = get_session_ticket('field_ref');
+
+     $rec_pos = get_session_ticket('rec_pos');
+
+     $ticket = trim_incoming_filename($_POST['ticket']);
+     if($ticket != $field_ref){
+          return;
+     }
+
+     $answer = trim_incoming_string($_POST['answer']);
+     $answer = trim_for_print($answer);
+     if(is_null($answer)){
+          return;
+     }
+
+     if(empty($answer)){
+          return;
+     }
+
+     $field = get_field_by_ref($field_ref)[0];
+     $res = insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer);
+     if(is_null($res)){
+     }
+     else {
+          proceed_to_next_field();
+     }
 }
 
 
