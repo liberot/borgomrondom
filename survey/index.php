@@ -1,7 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
 define ('BOOKBUILDER_VERSION', 'monson.0.2');
-define ('SURVeY', sprintf('%s%s%s%s', DIRECTORY_SEPARATOR, 'bookbuilder', DIRECTORY_SEPARATOR, 'survey'));
 
 /*
 require_once('include1st/config/config.php');

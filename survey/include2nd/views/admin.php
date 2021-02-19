@@ -72,8 +72,8 @@ function setup_admin_menu() {
 add_shortcode('surveyprint_utils_view', 'build_surveyprint_utils_view');
 function build_surveyprint_utils_view(){
 
-     wp_register_script('service_i18n', WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
-     wp_register_script(     'service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_register_script('service_i18n', Path::get_plugin_dir().'/js/services/i18n.js');
+     wp_register_script(     'service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
 
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
@@ -105,8 +105,8 @@ EOD;
 add_shortcode('typeform_utils_view', 'build_typeform_utils_view');
 function build_typeform_utils_view(){
 
-     wp_register_script(  'service_i18n', WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
-     wp_register_script(       'service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_register_script(  'service_i18n', Path::get_plugin_dir().'/js/services/i18n.js');
+     wp_register_script(       'service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
 
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
@@ -175,7 +175,7 @@ function build_thread_list_view(){
      $headline = esc_html(__('List of the Threads', 'bookbuilder'));
      $welcome = esc_html(__('', 'bookbuilder'));
 
-     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
+     wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
 
      $headline = esc_html(__('BookBuilder Client Threads', 'bookbuilder'));
@@ -202,7 +202,7 @@ EOD;
 add_shortcode('build_thread_entries_view', 'build_thread_entries_view');
 function build_thread_entries_view(){
 
-     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
+     wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
 
      $thread_id = trim_incoming_numeric($_REQUEST['thread_id']);
@@ -338,11 +338,11 @@ function build_questionnaire_edit_view(){
      $survey_ref = $_REQUEST['ref'];
      $survey = get_survey_by_ref($survey_ref);
 
-     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
+     wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
  
-     wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
-     wp_register_script('service_i18n', WP_PLUGIN_URL.SURVeY.'/js/services/i18n.js');
+     wp_register_script('service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service_i18n', Path::get_plugin_dir().'/js/services/i18n.js');
 
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');
@@ -412,10 +412,10 @@ EOD;
 add_shortcode('questionnaire_list_view', 'build_questionnaire_list_view');
 function build_questionnaire_list_view(){
 
-     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/admin/style.css');
+     wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
  
-     wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/services/admin.js', array('jquery'));
+     wp_register_script('service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
      wp_enqueue_script('service');
 
      $message = esc_html(__('List of stored Questionnaire:', 'bookbuilder'));
@@ -454,16 +454,16 @@ EOD;
 add_shortcode('spreads_view', 'build_spreads_view');
 function build_spreads_view() {
 
-     wp_register_script(     'viewer-config', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/config-spreads.js');
-     wp_register_script(       'viewer-main', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/main.js');
-     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/tools/main.js');
-     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/main.js');
-     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/correct.js');
-     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/bitmap.js');
-     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/lib/svg.js');
-     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/util/main.js');
-     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/init.js', array('jquery'));
+     wp_register_script(     'viewer-config', Path::get_plugin_dir().'/js/spread-viewer/src/main/config-spreads.js');
+     wp_register_script(       'viewer-main', Path::get_plugin_dir().'/js/spread-viewer/src/main/main.js');
+     wp_register_script(      'viewer-tools', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/tools/main.js');
+     wp_register_script(     'viewer-screen', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/screen/main.js');
+     wp_register_script(    'viewer-correct', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/screen/correct.js');
+     wp_register_script(     'viewer-bitmap', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/screen/bitmap.js');
+     wp_register_script(        'viewer-svg', Path::get_plugin_dir().'/js/spread-viewer/lib/svg.js');
+     wp_register_script('viewer-layout_util', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/util/main.js');
+     wp_register_script( 'viewer-layout_net', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', Path::get_plugin_dir().'/js/spread-viewer/init.js', array('jquery'));
 
      wp_enqueue_script('viewer-config');
      wp_enqueue_script('viewer-main');
@@ -476,7 +476,7 @@ function build_spreads_view() {
      wp_enqueue_script('viewer-layout_net');
      wp_enqueue_script('viewer-layout_init');
 
-     wp_register_style('constructor_style', WP_PLUGIN_URL.SURVeY.'/css/spread-viewer/style.css');
+     wp_register_style('constructor_style', Path::get_plugin_url().'/css/spread-viewer/style.css');
      wp_enqueue_style('constructor_style');
 
      $headline = esc_html(__('Spread Manager', 'bookbuilder'));
@@ -511,16 +511,16 @@ EOD;
 add_shortcode('layouts_view', 'build_layouts_view');
 function build_layouts_view() {
 
-     wp_register_script(     'viewer-config', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/config-layouts.js');
-     wp_register_script(       'viewer-main', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/main.js');
-     wp_register_script(      'viewer-tools', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/tools/main.js');
-     wp_register_script(     'viewer-screen', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/main.js');
-     wp_register_script(    'viewer-correct', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/correct.js');
-     wp_register_script(     'viewer-bitmap', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/screen/bitmap.js');
-     wp_register_script(        'viewer-svg', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/lib/svg.js');
-     wp_register_script('viewer-layout_util', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/util/main.js');
-     wp_register_script( 'viewer-layout_net', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init', WP_PLUGIN_URL.SURVeY.'/js/spread-viewer/init.js', array('jquery'));
+     wp_register_script(     'viewer-config', Path::get_plugin_dir().'/js/spread-viewer/src/main/config-layouts.js');
+     wp_register_script(       'viewer-main', Path::get_plugin_dir().'/js/spread-viewer/src/main/main.js');
+     wp_register_script(      'viewer-tools', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/tools/main.js');
+     wp_register_script(     'viewer-screen', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/screen/main.js');
+     wp_register_script(    'viewer-correct', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/screen/correct.js');
+     wp_register_script(     'viewer-bitmap', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/screen/bitmap.js');
+     wp_register_script(        'viewer-svg', Path::get_plugin_dir().'/js/spread-viewer/lib/svg.js');
+     wp_register_script('viewer-layout_util', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/util/main.js');
+     wp_register_script( 'viewer-layout_net', Path::get_plugin_dir().'/js/spread-viewer/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', Path::get_plugin_dir().'/js/spread-viewer/init.js', array('jquery'));
 
      wp_enqueue_script('viewer-config');
      wp_enqueue_script('viewer-main');
@@ -533,7 +533,7 @@ function build_layouts_view() {
      wp_enqueue_script('viewer-layout_net');
      wp_enqueue_script('viewer-layout_init');
 
-     wp_register_style('viewer_style', WP_PLUGIN_URL.SURVeY.'/css/spread-viewer/style.css');
+     wp_register_style('viewer_style', Path::get_plugin_url().'/css/spread-viewer/style.css');
      wp_enqueue_style('viewer_style');
 
      $headline = esc_html(__('BookBuilder Layout Manager', 'bookbuilder'));

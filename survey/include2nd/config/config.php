@@ -55,6 +55,11 @@ class Path {
           return Path::get_base_dir();
      }
 
+     public static final function get_plugin_url(){
+          return WP_PLUGIN_URL.'/bookbuilder/survey';
+     }
+
+
      private static final function get_base_dir(){
           $base = plugin_dir_path(__DIR__);
           $base = preg_match('/^(.{0,1024})\/bookbuilder\/survey\//', $base, $mtch);

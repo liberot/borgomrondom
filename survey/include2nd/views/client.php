@@ -21,13 +21,11 @@ function build_client_view(){
 
      $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
 
-     wp_register_script('service', WP_PLUGIN_URL.SURVeY.'/js/client/main.js', array('jquery'));
+     wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
+     wp_enqueue_style('client_style');
+
+     wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
-
-     wp_register_style('admin_style', WP_PLUGIN_URL.SURVeY.'/css/client/style.css');
-     wp_enqueue_style('admin_style');
-
-     $headline = esc_html(__('BookBuilder Client Threads', 'bookbuilder'));
 
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
@@ -100,6 +98,10 @@ EOD;
 
           case 'picture_choice':
                $buf1st = build_picture_choice_view($field, $rec);
+               break;
+
+          case 'file_upload':
+               $buf1st = build_file_upload_view($field, $rec);
                break;
 
      }
@@ -198,3 +200,23 @@ function build_picture_choice_view($field, $rec){
 
 
 
+function build_file_upload_view($field, $rec){
+
+     wp_register_script('upload', Path::get_plugin_url().'/js/client/upload.js', array('jquery'));
+     wp_enqueue_script('upload');
+
+     $drop_those_files = esc_html(__('Drop The Files Into Here', 'bookbuilder'));
+
+     $buf1st = <<<EOD
+     <form>
+          <input type='file' class='files' name='filename' multiple='multiple' accept='image/jpeg, image/png'></input>
+          <div class='fake'>{$drop_those_files}</div>
+     </form>
+
+     <div class='row'>
+          <div class='asset-copies'></div>
+     </div>
+EOD;
+
+     return $buf1st;
+}

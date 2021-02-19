@@ -65,3 +65,37 @@
     visibility: hidden !inportant;
     display: none !important;
 }
+
+
+
+.drag {
+     background-color: pink;
+}
+
+
+
+.files {
+     visibility: hidden;
+     display: none;
+}
+
+
+
+.fake {
+     position: relative;
+     left: 0px;
+     top: 0px;
+     margin: 12px 0px 12px 0px;
+     width: 98%;
+     height: 35px;
+     padding: 5px;
+     border: 1px dotted #cedece;
+     font-size: 0.5em;
+}
+
+
+
+.asset-copies img {
+
+     height: 99px;
+}
