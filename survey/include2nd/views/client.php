@@ -5,6 +5,9 @@
 add_shortcode('client_view', 'build_client_view');
 function build_client_view(){
 
+     wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
+     wp_enqueue_script('service');
+
      if(!is_user_logged_in()){
           echo '<p>ProfileBuilder Authentication Procedere</p>';
           echo do_shortcode('[wppb-login]');
@@ -23,9 +26,6 @@ function build_client_view(){
 
      wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
      wp_enqueue_style('client_style');
-
-     wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
-     wp_enqueue_script('service');
 
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));

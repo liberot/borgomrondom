@@ -236,7 +236,7 @@ function init_thread_table(){
                note varchar(255) null,
                description varchar(255),
                init datetime,
-               content text,
+               doc text,
                primary key (id)
           )
           engine=innodb
@@ -732,7 +732,7 @@ function insert_thread($client_id){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          insert into {$prefix}ts_bb_thread (client_id) values ('{$client_id}');
+          insert into {$prefix}ts_bb_thread (client_id, init) values ('{$client_id}', now());
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
@@ -741,13 +741,14 @@ EOD;
 
 
 
-function get_thread_by_id($id){
+function get_thread_by_id($client_id, $thread_id){
 
      $id = esc_sql($id);
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_thread where id = '{$id}';
+          select * from {$prefix}ts_bb_thread where id = '{$thread_id}'
+          and client_id = '{$client_id}'
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->get_results($sql);
@@ -756,7 +757,7 @@ EOD;
 
 
 
-function get_session_of_client($client_id){
+function get_last_thread_of_client($client_id){
 
      $client_id = esc_sql($client_id);
      global $wpdb;

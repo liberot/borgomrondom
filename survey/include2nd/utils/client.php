@@ -24,19 +24,16 @@ function process_incoming(){
      switch($_POST['cmd']){
 
           case 'init_new_thread':
-
-               init_new_thread();
-               break;
+                init_new_thread();
+                break;
 
           case 'init_existing_thread':
-
-               init_existing_thread();
-               break;
+                init_existing_thread();
+                break;
 
           case 'rec':
-
-               write_rec();
-               break;
+                write_rec();
+                break;
      }
 }
 
@@ -300,7 +297,7 @@ function init_new_thread(){
 function init_existing_thread(){
 
      $client_id = get_author_id();
-     $rec = get_session_of_client($client_id)[0];
+     $rec = get_last_thread_of_client($client_id)[0];
 
      if(is_null($rec)){
      }

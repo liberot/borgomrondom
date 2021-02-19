@@ -72,8 +72,8 @@ function setup_admin_menu() {
 add_shortcode('surveyprint_utils_view', 'build_surveyprint_utils_view');
 function build_surveyprint_utils_view(){
 
-     wp_register_script('service_i18n', Path::get_plugin_dir().'/js/services/i18n.js');
-     wp_register_script(     'service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service', Path::get_plugin_url().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
 
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
@@ -105,8 +105,8 @@ EOD;
 add_shortcode('typeform_utils_view', 'build_typeform_utils_view');
 function build_typeform_utils_view(){
 
-     wp_register_script(  'service_i18n', Path::get_plugin_dir().'/js/services/i18n.js');
-     wp_register_script(       'service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service', Path::get_plugin_url().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
 
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
@@ -208,7 +208,7 @@ function build_thread_entries_view(){
      $thread_id = trim_incoming_numeric($_REQUEST['thread_id']);
      $client_id = trim_incoming_numeric($_REQUEST['client_id']);
 
-     $thread = get_thread_by_id($thread_id, $client_id)[0];
+     $thread = get_thread_by_id($client_id, $thread_id)[0];
 
      if(is_null($thread)){ return false; }
      $thread->post_content = pagpick($thread->post_content);
@@ -341,8 +341,8 @@ function build_questionnaire_edit_view(){
      wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
  
-     wp_register_script('service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
-     wp_register_script('service_i18n', Path::get_plugin_dir().'/js/services/i18n.js');
+     wp_register_script('service', Path::get_plugin_url().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
 
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');
@@ -415,7 +415,7 @@ function build_questionnaire_list_view(){
      wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
  
-     wp_register_script('service', Path::get_plugin_dir().'/js/services/admin.js', array('jquery'));
+     wp_register_script('service', Path::get_plugin_url().'/js/services/admin.js', array('jquery'));
      wp_enqueue_script('service');
 
      $message = esc_html(__('List of stored Questionnaire:', 'bookbuilder'));

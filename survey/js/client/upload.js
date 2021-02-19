@@ -1,3 +1,6 @@
+
+
+
 jQuery(document).ready(function(){
      bbRenderFileupload();
 });
@@ -58,7 +61,6 @@ let bbParseAssets = function(){
 
      let ref = this;
 
-     let parseProc = [];
      let assetCopies = [];
 
      let files = document.querySelector('.files').files;
@@ -72,8 +74,6 @@ let bbParseAssets = function(){
           }
 
           let indx = 'image_'+idx;
-
-          parseProc.push({ indx: indx, proc: idx, state: 0x00 });
 
           let r = new FileReader();
               r.onload = function(e){
@@ -90,8 +90,8 @@ let bbParseAssets = function(){
 
 let bbScanAsset = function(indx, base){
 
+     let scaleR = 1.35;
      let ref = this;
-     let scaleR = 1;
      let img = new Image();
 
          img.onload = function(){
