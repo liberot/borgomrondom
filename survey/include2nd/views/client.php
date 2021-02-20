@@ -202,9 +202,6 @@ function build_picture_choice_view($field, $rec){
 
 function build_file_upload_view($field, $rec){
 
-     wp_register_script('upload', Path::get_plugin_url().'/js/client/upload.js', array('jquery'));
-     wp_enqueue_script('upload');
-
      $drop_those_files = esc_html(__('Drop The Files Into Here', 'bookbuilder'));
 
      $buf1st = <<<EOD

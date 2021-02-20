@@ -40,3 +40,31 @@ function exec_nav_prev_field(){
 
 
 
+add_action('client_post_exec_upload_asset', 'exec_upload_asset');
+function exec_upload_asset(){
+
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $client_id = get_author_id();
+     $thread_id = get_session_ticket('thread_id');
+
+     $base = $_POST['scan']['base'];
+
+     $message = esc_html(__('Could not upload asset', 'bookbuilder'));
+     $res = 'failed';
+
+     if(!is_null($base)){
+          $message = esc_html(__('Asset is uploaded', 'bookbuilder'));
+          $res = 'success';
+     }
+
+     echo json_encode(array('res'=>$res, 'message'=>$message, 'base'=>$base));
+}
+
+
+
+

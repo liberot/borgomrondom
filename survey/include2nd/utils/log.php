@@ -2,7 +2,6 @@
 
 
 
-
 function init_log_utils(){
 
       $res = register_post_type(

@@ -90,7 +90,8 @@ function eval_next_field($field_ref){
 
      $field = null;
 
-// evaluates jump to another survey from the wp backend
+// boss - jump
+// evaluates jumps to foreign surveys - to be adjuste in the wp admin area
      $choices = get_choices_of_field($field_ref);
      if(empty($choices)){
      }
@@ -113,7 +114,7 @@ function eval_next_field($field_ref){
           }
      }
 
-
+// typeform - logic - jump
 // evaluates the action jumps of the survey descriptor
      $field = get_field_by_ref($field_ref)[0];
      $actions = get_actions_of_field_by_ref($field_ref);
