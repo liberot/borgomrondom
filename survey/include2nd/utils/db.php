@@ -306,13 +306,12 @@ function init_asset_table(){
                survey_ref varchar(255) not null,
                group_ref varchar(255) not null,
                field_ref varchar(255) not null,
-               index varchar(255) not null,
-               width varchar(255) not null,
-               height varchar(255) not null,
+               width varchar(255),
+               height varchar(255),
                layout_code varchar(255) not null,
                rec_pos int unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+               title varchar(255),
+               note varchar(255),
                description varchar(255),
                init datetime,
                doc text,
@@ -324,7 +323,6 @@ EOD;
 
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
-
      return $res;
 }
 
@@ -681,7 +679,7 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
           insert into {$prefix}ts_bb_rec
                (
                client_id, thread_id, survey_ref, group_ref, field_ref, 
-               rec_pos, index, width, height, layout_code,
+               rec_pos, title, width, height, layout_code,
                doc, init
                )
           values 
@@ -692,8 +690,8 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
                )
 EOD;
      $sql = debug_sql($sql);
-print_r($sql);
      $res = $wpdb->query($sql);
+//print_r($sql);
      return $res;
 }
 
