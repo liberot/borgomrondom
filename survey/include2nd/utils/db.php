@@ -667,6 +667,12 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
      $group_ref = esc_sql($field->group_ref);
      $field_ref = esc_sql($field->ref);
 
+     $doc = esc_sql($scan['base']);
+     $index = esc_sql($scan['index']);
+     $width = esc_sql($scan['width']);
+     $height = esc_sql($scan['height']);
+     $layout_code = esc_sql($scan['layout_code']);
+     
      $rec_pos = esc_sql($rec_pos);
 
      global $wpdb;
@@ -686,6 +692,7 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
                )
 EOD;
      $sql = debug_sql($sql);
+print_r($sql);
      $res = $wpdb->query($sql);
      return $res;
 }

@@ -65,16 +65,21 @@ function exec_upload_asset(){
           return false;
      }
 
-     $field = get_field_by_ref($field_ref);
+     $field = get_field_by_ref($field_ref)[0];
      if(is_null($field)){
           $message = esc_html(__('No field', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
-     insert_asset($client_id, $thread_id, $field, $scan, $rec_pos);
+     $res = insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos);
+     if(false == $res){
+          $message = esc_html(__('No insert', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
 
-     echo json_encode(array('res'=>$res, 'message'=>$message, 'base'=>$base));
+     echo json_encode(array('res'=>'success', 'message'=>$message));
 }
 
 

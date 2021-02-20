@@ -72,11 +72,11 @@ let bbParseAssets = function(){
                continue; 
           }
 
-          let indx = 'image_'+idx;
+          let index = 'image_'+idx;
 
           let r = new FileReader();
               r.onload = function(e){
-                   bbScanAsset(indx, e.target.result);
+                   bbScanAsset(index, e.target.result);
               }
               r.onerror = function(e){
                    console.log('bbParseAssets(): onerror: ', e);
@@ -87,7 +87,7 @@ let bbParseAssets = function(){
 
 
 
-let bbScanAsset = function(indx, base){
+let bbScanAsset = function(index, base){
 
      let scaleR = 0.33;
 
@@ -111,11 +111,11 @@ let bbScanAsset = function(indx, base){
               }
 
               let res = {
-                  indx: indx,
+                  index: index,
                   base: base,
-                  layoutCode: layoutCode,
-                  ow: this.naturalWidth,
-                  oh: this.naturalHeight,
+                  layout_code: layoutCode,
+                  width: this.naturalWidth,
+                  height: this.naturalHeight,
               }
 
               bbBindScan(res);
