@@ -79,6 +79,7 @@ function exec_upload_asset(){
           return false;
      }
 
+     $message = esc_html(__('Yeah did', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message));
 }
 

@@ -299,7 +299,7 @@ function init_asset_table(){
 
      $sql = <<<EOD
      create table if not exists
-          {$prefix}ts_bb_book (
+          {$prefix}ts_bb_asset (
                id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
@@ -676,7 +676,7 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          insert into {$prefix}ts_bb_rec
+          insert into {$prefix}ts_bb_asset
                (
                client_id, thread_id, survey_ref, group_ref, field_ref, 
                rec_pos, title, width, height, layout_code,
@@ -691,7 +691,6 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);
-//print_r($sql);
      return $res;
 }
 
