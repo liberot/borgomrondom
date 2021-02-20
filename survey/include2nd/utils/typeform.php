@@ -2,14 +2,14 @@
 
 
 
-function insert_typeform_surveys(){
+function bb_insert_typeform_surveys(){
 
      $res = false;
 
-     $files = read_typeform_json_descriptors();
+     $files = bb_read_typeform_json_descriptors();
      foreach($files as $file){
 
-          $res = insert_typeform_survey_from_descriptor($file);
+          $res = bb_insert_typeform_survey_from_descriptor($file);
      }
 
      return $res;
@@ -17,7 +17,7 @@ function insert_typeform_surveys(){
 
 
 
-function insert_typeform_survey_from_descriptor($survey_file_name){
+function bb_insert_typeform_survey_from_descriptor($survey_file_name){
 
      $res = false;
 
@@ -33,26 +33,26 @@ function insert_typeform_survey_from_descriptor($survey_file_name){
           return $res; 
      }
 
-     $doc = walk_the_doc($doc);
+     $doc = bb_walk_the_doc($doc);
 
-     $survey = parse_survey($doc);
-     $groups = parse_groups($doc['fields'], null, null);
-     $fields = parse_fields($doc['fields'], null, null);
-     $choices = parse_choices($doc['fields'], null, null);
-     $actions = parse_actions($doc['logic'], null, null);
+     $survey = bb_parse_survey($doc);
+     $groups = bb_parse_groups($doc['fields'], null, null);
+     $fields = bb_parse_fields($doc['fields'], null, null);
+     $choices = bb_parse_choices($doc['fields'], null, null);
+     $actions = bb_parse_actions($doc['logic'], null, null);
 
-     $res = insert_survey($survey, $data);
-     $res&= insert_groups($survey, $groups);
-     $res&= insert_fields($survey, $fields);
-     $res&= insert_choices($survey, $choices);
-     $res&= insert_actions($survey, $actions);
+     $res = bb_insert_survey($survey, $data);
+     $res&= bb_insert_groups($survey, $groups);
+     $res&= bb_insert_fields($survey, $fields);
+     $res&= bb_insert_choices($survey, $choices);
+     $res&= bb_insert_actions($survey, $actions);
 
      return $res;
 }
 
 
 
-function insert_actions($survey, $actions){
+function bb_insert_actions($survey, $actions){
 
      $res = false;
 
@@ -99,7 +99,7 @@ function insert_actions($survey, $actions){
 
 EOD;
 
-          $sql = debug_sql($sql);
+          $sql = bb_debug_sql($sql);
           $res = $wpdb->query($sql);
      }
 
@@ -109,7 +109,7 @@ EOD;
 
 
 
-function insert_choices($survey, $choices){
+function bb_insert_choices($survey, $choices){
 
      $res = false;
 
@@ -158,7 +158,7 @@ function insert_choices($survey, $choices){
                     )
 EOD;
 
-          $sql = debug_sql($sql);
+          $sql = bb_debug_sql($sql);
 
           $res = $wpdb->query($sql);
           $pos = $pos +1;
@@ -169,7 +169,7 @@ EOD;
 
 
 
-function insert_fields($survey, $fields){
+function bb_insert_fields($survey, $fields){
 
      $res = false;
 
@@ -223,7 +223,7 @@ function insert_fields($survey, $fields){
                          now()
                     )
 EOD;
-          $sql = debug_sql($sql);
+          $sql = bb_debug_sql($sql);
 
           $res = $wpdb->query($sql);
           $pos = $pos +1;
@@ -234,7 +234,7 @@ EOD;
 
 
 
-function insert_groups($survey, $groups){
+function bb_insert_groups($survey, $groups){
 
      $res = false;
 
@@ -255,7 +255,7 @@ function insert_groups($survey, $groups){
                values 
                     ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', now(), '{$doc}')
 EOD;
-          $sql = debug_sql($sql);
+          $sql = bb_debug_sql($sql);
           $res = $wpdb->query($sql);
      }
 
@@ -264,7 +264,7 @@ EOD;
 
 
 
-function insert_survey($survey, $data){
+function bb_insert_survey($survey, $data){
 
      $res = false;
 
@@ -282,7 +282,7 @@ function insert_survey($survey, $data){
           values 
                ('{$ref}', '{$title}', '{$headline}', now(), '{$doc}')
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -290,7 +290,7 @@ EOD;
 
 
 
-function parse_survey($doc){
+function bb_parse_survey($doc){
 
      $res = [];
 
@@ -304,7 +304,7 @@ function parse_survey($doc){
 
 
 
-function parse_groups($fields, $parent_ref, $res){
+function bb_parse_groups($fields, $parent_ref, $res){
 
      if(is_null($fields)){ return $res; }
      if(is_null($parent_ref)){ $parent_ref = 'root'; }
@@ -327,7 +327,7 @@ function parse_groups($fields, $parent_ref, $res){
                $group['doc'] = base64_encode(json_encode($field));
                $res[]= $group;
                $parent_ref = $field['ref'];
-               $res = parse_groups($childs, $parent_ref, $res);
+               $res = bb_parse_groups($childs, $parent_ref, $res);
           }
      }
 
@@ -336,7 +336,7 @@ function parse_groups($fields, $parent_ref, $res){
 
 
 
-function parse_fields($fields, $parent_ref, $res){
+function bb_parse_fields($fields, $parent_ref, $res){
 
      if(is_null($fields)){ return $res; }
      if(is_null($parent_ref)){ $parent_ref = 'root'; }
@@ -354,7 +354,7 @@ function parse_fields($fields, $parent_ref, $res){
           }
           else {
                $parent_ref = $field['ref'];
-               $res = parse_fields($childs, $parent_ref, $res);
+               $res = bb_parse_fields($childs, $parent_ref, $res);
           }
      }
 
@@ -363,7 +363,7 @@ function parse_fields($fields, $parent_ref, $res){
 
 
 
-function parse_choices($fields, $parent_ref, $res){
+function bb_parse_choices($fields, $parent_ref, $res){
 
      if(is_null($fields)){ return $res; }
      if(is_null($parent_ref)){ $parent_ref = 'root'; }
@@ -386,7 +386,7 @@ function parse_choices($fields, $parent_ref, $res){
           }
           else {
                $parent_ref = $field['ref'];
-               $res = parse_choices($childs, $parent_ref, $res);
+               $res = bb_parse_choices($childs, $parent_ref, $res);
           }
      }
 
@@ -395,7 +395,7 @@ function parse_choices($fields, $parent_ref, $res){
 
 
 
-function parse_actions($logics){
+function bb_parse_actions($logics){
 
      $res = [];
 
@@ -413,7 +413,7 @@ function parse_actions($logics){
                if('jump' != $temp['cmd']){
                     continue;
                }
-               $temp['ref'] = random_string(64);
+               $temp['ref'] = bb_get_random_string(64);
                $temp['type'] = $type;
                $temp['field_ref'] = $field_ref;
                $temp['cmd'] = $action['action'];
@@ -429,7 +429,7 @@ function parse_actions($logics){
 
 
 
-function read_typeform_json_descriptors(){
+function bb_read_typeform_json_descriptors(){
 
      $files = [];
 
@@ -451,7 +451,7 @@ function read_typeform_json_descriptors(){
 
 
 
-function set_target_survey($choice_ref, $target_survey_ref){
+function bb_set_target_survey_ref($choice_ref, $target_survey_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -465,7 +465,7 @@ EOD;
 
 
 
-function get_kickoff_field() {
+function bb_get_kickoff_field() {
 
      global $wpdb;
      $prefix = $wpdb->prefix;

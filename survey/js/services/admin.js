@@ -3,7 +3,7 @@ function selectTargetField(ref){}
 
 
 
-function selectTargetSurvey(ref){
+function bbSelectTargetSurvey(ref){
      let target_survey_ref = jQuery(ref).val();
      let clazz = jQuery(ref).attr('class');
      let match = clazz.match(/bind:(.{1,128})/);
@@ -12,7 +12,7 @@ function selectTargetSurvey(ref){
      }
      let choice_ref = match[1];
      let data = {
-          action: 'exec_set_target_survey',
+          action: 'bb_set_target_survey',
           choice_ref: choice_ref,
           target_survey_ref: target_survey_ref 
      }
@@ -21,21 +21,21 @@ function selectTargetSurvey(ref){
 
 
 
-function deleteDB(){
+function bbDeleteDB(){
      if(!confirm('This will delete BookBuilder DB and can not be undone')){
           return;
      }
      let data = { 
-          action: 'exec_delete_db'
+          action: 'bb_delete_db'
      };
      this.postCommand(data);
 }
 
 
 
-function initDB(){
+function bbInitDB(){
      let data = { 
-          action: 'exec_init_db'
+          action: 'bb_init_db'
      };
      this.postCommand(data);
 }
@@ -44,7 +44,7 @@ function initDB(){
 
 function insertTypeformSurveys(){
      let data = { 
-          action: 'exec_insert_typeform_surveys'
+          action: 'bb_insert_typeform_surveys'
      };
      this.postCommand(data);
 }

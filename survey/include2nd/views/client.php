@@ -2,8 +2,8 @@
 
 
 
-add_shortcode('client_view', 'build_client_view');
-function build_client_view(){
+add_shortcode('bb_client_view', 'bb_build_client_view');
+function bb_build_client_view(){
 
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
@@ -16,13 +16,13 @@ function build_client_view(){
           return;
      }
 
-     $client_id = get_author_id();
-     $thread_id = get_session_ticket('thread_id');
-     $field_ref = get_session_ticket('field_ref');
+     $client_id = bb_get_author_id();
+     $thread_id = bb_get_session_ticket('thread_id');
+     $field_ref = bb_get_session_ticket('field_ref');
 
-     $field = get_field_by_ref($field_ref)[0];
+     $field = bb_get_field_by_ref($field_ref)[0];
 
-     $rec = get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
+     $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
 
      wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
      wp_enqueue_style('client_style');
@@ -36,26 +36,26 @@ function build_client_view(){
                <hr class='wp-header-end'>
 EOD;
 
-     $field = decorate_field_title($field);
+     $field = bb_decorate_field_title($field);
 
-     $client_id = get_author_id();
-     $thread_id = get_session_ticket('thread_id');
-     $rec_pos = get_session_ticket('rec_pos');
+     $client_id = bb_get_author_id();
+     $thread_id = bb_get_session_ticket('thread_id');
+     $rec_pos = bb_get_session_ticket('rec_pos');
 
 
-flush_debug_field();
+bb_flush_debug_field();
 
      echo <<<EOD
 
           <div class='row'>
 
                <form class='input-form block' method='post' action=''>
-               <input type='hidden' name='cmd' value='init_existing_thread'></input> 
+               <input type='hidden' name='cmd' value='bb_init_existing_thread'></input> 
                <div class=''><input type='submit' value='Start existing thread'></div>
                </form>
 
                <form class='input-form block' method='post' action=''>
-               <input type='hidden' name='cmd' value='init_new_thread'></input> 
+               <input type='hidden' name='cmd' value='bb_init_new_thread'></input> 
                <div class=''><input type='submit' value='Start a new thread'></div>
                </form>
 
@@ -79,29 +79,29 @@ EOD;
 
           case 'statement':
 
-               $buf1st = build_statement_view($field, $rec);
+               $buf1st = bb_build_statement_view($field, $rec);
                break;
 
           case 'short_text':
 
-               $buf1st = build_short_text_view($field, $rec);
+               $buf1st = bb_build_short_text_view($field, $rec);
                break;
 
           case 'multiple_choice':
 
-               $buf1st = build_multiple_choice_view($field, $rec);
+               $buf1st = bb_build_multiple_choice_view($field, $rec);
                break;
 
           case 'yes_no':
-               $buf1st = build_yes_no_view($field, $rec);
+               $buf1st = bb_build_yes_no_view($field, $rec);
                break;
 
           case 'picture_choice':
-               $buf1st = build_picture_choice_view($field, $rec);
+               $buf1st = bb_build_picture_choice_view($field, $rec);
                break;
 
           case 'file_upload':
-               $buf1st = build_file_upload_view($field, $rec);
+               $buf1st = bb_build_file_upload_view($field, $rec);
                break;
 
      }
@@ -109,7 +109,7 @@ EOD;
      echo <<<EOD
           <form class='input-form' method='post' action=''>
                {$buf1st}
-               <input type='hidden' name='cmd' value='rec'></input> 
+               <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field_ref}'></input> 
                <div class=''><input type='submit' value='Submit REC'></div>
           </form>
@@ -119,22 +119,24 @@ EOD;
 
 
 
-function build_yes_no_view($field, $rec){
+function bb_build_yes_no_view($field, $rec){
 
      $yes = esc_html(__('Yes', 'bookbuilder'));
      $no = esc_html(__('No', 'bookbuilder'));
+
      $buf1st = '';
      $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'true', $yes);
      $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'false', $no);
+
      return $buf1st;
 }
 
 
 
-function build_multiple_choice_view($field, $rec){
+function bb_build_multiple_choice_view($field, $rec){
 
      $buf1st = '';
-     $choices = get_choices_of_field($field->ref);
+     $choices = bb_get_choices_of_field($field->ref);
      if(is_null($choices)){
      }
      else {
@@ -148,7 +150,7 @@ function build_multiple_choice_view($field, $rec){
 
 
 
-function build_short_text_view($field, $rec){
+function bb_build_short_text_view($field, $rec){
 
      $answer_text = '';
      if(is_null($rec)){
@@ -166,7 +168,7 @@ function build_short_text_view($field, $rec){
 
 
 
-function build_statement_view($field, $rec){
+function bb_build_statement_view($field, $rec){
 
      $buf1st = '';
      $buf1st.= "<input type='hidden' name='answer' value='noticed'></input>"; 
@@ -175,10 +177,10 @@ function build_statement_view($field, $rec){
 
 
 
-function build_picture_choice_view($field, $rec){
+function bb_build_picture_choice_view($field, $rec){
 
      $buf1st = '';
-     $choices = get_choices_of_field($field->ref);
+     $choices = bb_get_choices_of_field($field->ref);
      if(is_null($choices)){
      }
      else {
@@ -200,7 +202,7 @@ function build_picture_choice_view($field, $rec){
 
 
 
-function build_file_upload_view($field, $rec){
+function bb_build_file_upload_view($field, $rec){
 
      $drop_those_files = esc_html(__('Drop The Files Into Here', 'bookbuilder'));
 
@@ -217,3 +219,6 @@ EOD;
 
      return $buf1st;
 }
+
+
+

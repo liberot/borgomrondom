@@ -2,8 +2,8 @@
 
 
 
-add_action('client_post_exec_nav_prev_field', 'exec_nav_prev_field');
-function exec_nav_prev_field(){
+add_action('client_post_bb_nav_prev_field', 'bb_nav_prev_field');
+function bb_nav_prev_field(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -11,10 +11,10 @@ function exec_nav_prev_field(){
           return false;
      }
 
-     $client_id = get_author_id();
-     $thread_id = get_session_ticket('thread_id');
+     $client_id = bb_get_author_id();
+     $thread_id = bb_get_session_ticket('thread_id');
 
-     $rec_pos = get_session_ticket('rec_pos');
+     $rec_pos = bb_get_session_ticket('rec_pos');
      if(is_null($client_id)){
           echo json_encode(array('res'=>'success', 'message'=>'no rec_pos'));
           return;
@@ -40,8 +40,8 @@ function exec_nav_prev_field(){
 
 
 
-add_action('client_post_exec_upload_asset', 'exec_upload_asset');
-function exec_upload_asset(){
+add_action('client_post_bb_upload_asset', 'bb_upload_asset');
+function bb_upload_asset(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -49,10 +49,10 @@ function exec_upload_asset(){
           return false;
      }
 
-     $client_id = get_author_id();
-     $thread_id = get_session_ticket('thread_id');
-     $field_ref = get_session_ticket('field_ref');
-     $rec_pos = get_session_ticket('rec_pos');
+     $client_id = bb_get_author_id();
+     $thread_id = bb_get_session_ticket('thread_id');
+     $field_ref = bb_get_session_ticket('field_ref');
+     $rec_pos = bb_get_session_ticket('rec_pos');
 
      $scan = $_POST['scan'];
 
@@ -65,14 +65,14 @@ function exec_upload_asset(){
           return false;
      }
 
-     $field = get_field_by_ref($field_ref)[0];
+     $field = bb_get_field_by_ref($field_ref)[0];
      if(is_null($field)){
           $message = esc_html(__('No field', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
-     $res = insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos);
+     $res = bb_insert_asset($client_id, $thread_id, $field, $scan, $rec_pos);
      if(false == $res){
           $message = esc_html(__('No insert', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));

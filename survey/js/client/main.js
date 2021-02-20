@@ -155,7 +155,7 @@ let bbUploadAsset = function(scan){
 
      let data = {
 
-          'action': 'exec_upload_asset',
+          'action': 'bb_upload_asset',
           'scan': scan 
      }
 

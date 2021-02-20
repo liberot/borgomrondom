@@ -2,8 +2,8 @@
 
 
 
-add_action('admin_post_exec_insert_typeform_surveys', 'exec_insert_typeform_surveys');
-function exec_insert_typeform_surveys(){
+add_action('admin_post_bb_insert_typeform_surveys', 'bb_exec_insert_typeform_surveys');
+function bb_exec_insert_typeform_surveys(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -11,9 +11,7 @@ function exec_insert_typeform_surveys(){
           return false;
      }
 
-     init_log('exec_insert_typeform_surveys', []);
-
-     $res = insert_typeform_surveys();
+     $res = bb_insert_typeform_surveys();
 
      $suc = 'failed';
      $message = esc_html(__('Typeform Survey Descriptors is NOt added to the DB', 'bookbuilder'));
@@ -28,8 +26,8 @@ function exec_insert_typeform_surveys(){
 
 
 
-add_action('admin_post_exec_set_target_survey', 'exec_set_target_survey');
-function exec_set_target_survey(){
+add_action('admin_post_bb_set_target_survey', 'bb_set_target_survey');
+function bb_set_target_survey(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -37,12 +35,10 @@ function exec_set_target_survey(){
           return false;
      }
 
-     init_log('exec_set_target_survey', []);
-
      $choice_ref = trim_incoming_filename($_POST['choice_ref']);
      $target_survey_ref = trim_incoming_filename($_POST['target_survey_ref']);
 
-     $res = set_target_survey($choice_ref, $target_survey_ref);
+     $res = bb_set_target_survey_ref($choice_ref, $target_survey_ref);
 
      $suc = 'failed';
      $message = esc_html(__('Target Survy is NOt set', 'bookbuilder'));

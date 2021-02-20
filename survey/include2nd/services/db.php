@@ -2,8 +2,8 @@
 
 
 
-add_action('admin_post_exec_delete_db', 'exec_delete_db');
-function exec_delete_db(){
+add_action('admin_post_bb_delete_db', 'bb_delete_db');
+function bb_delete_db(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -11,10 +11,10 @@ function exec_delete_db(){
           return false;
      }
 
-     init_log('exec_delete_db', []);
+     // init_log('bb_delete_db', []);
 
-     $res = drop_tables();
-     $res = remove_v1_records();
+     $res = bb_drop_tables();
+     $res = bb_remove_v1_records();
 
      $suc = 'failed';
      $message = esc_html(__('Typform DB is NOt deleted', 'bookbuilder'));
@@ -28,8 +28,8 @@ function exec_delete_db(){
 
 
 
-add_action('admin_post_exec_init_db', 'exec_init_db');
-function exec_init_db(){
+add_action('admin_post_bb_init_db', 'bb_init_db');
+function bb_init_db(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -37,9 +37,7 @@ function exec_init_db(){
           return false;
      }
 
-     init_log('exec_init_db', []);
-
-     $res = init_tables();
+     $res = bb_init_tables();
 
      $suc = 'failed';
      $message = esc_html(__('Typform DB is NOt inited', 'bookbuilder'));
@@ -50,5 +48,6 @@ function exec_init_db(){
 
      echo json_encode(array('res'=>$suc, 'message'=>$message));
 }
+
 
 

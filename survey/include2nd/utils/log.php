@@ -2,7 +2,7 @@
 
 
 
-function init_log_utils(){
+function bb_init_log_utils(){
 
       $res = register_post_type(
           'surveyprint_log',  [
@@ -27,7 +27,7 @@ function init_log_utils(){
 
 
 
-function init_log($title, $log){
+function bb_init_log($title, $log){
 
      if(is_null($log)){ 
           return false; 
@@ -56,3 +56,7 @@ function init_log($title, $log){
 
      return true;
 }
+
+
+
+

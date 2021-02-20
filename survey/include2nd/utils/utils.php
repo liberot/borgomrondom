@@ -2,7 +2,7 @@
 
 
 
-function walk_the_doc($doc){
+function bb_walk_the_doc($doc){
      $res = null;
      if(is_object($doc)){ 
           $doc = get_object_vars($doc); 
@@ -10,13 +10,13 @@ function walk_the_doc($doc){
      if(false == is_array($doc)){ 
           return res; 
      }
-     $res = trim_doc_node($doc);
+     $res = bb_trim_doc_node($doc);
      return $res;
 }
 
 
 
-function trim_doc_node($node){
+function bb_trim_doc_node($node){
      if(!is_array($node)){
           return $node;
      }
@@ -25,17 +25,17 @@ function trim_doc_node($node){
                $value = get_object_vars($value);
           }
           if(is_array($value)){
-               $node[$key] = trim_doc_node($value);
+               $node[$key] = bb_trim_doc_node($value);
                continue;
           }
-          $node[$key] = trim_for_print($value);
+          $node[$key] = bb_trim_for_print($value);
      }
      return $node;
 }
 
 
 
-function trim_for_print($string){
+function bb_trim_for_print($string){
 
      $res = $string;
 
@@ -52,7 +52,7 @@ function trim_for_print($string){
 
 
 
-function random_string($length=21){
+function bb_get_random_string($length=21){
      return substr(
           str_shuffle(
                str_repeat(
@@ -107,21 +107,21 @@ function fetch($url, $token){
 
 
 
-function psuuid(){
-     $res = sprintf('%s::%s', random_string(25), mktime()); 
+function bb_get_psuuid(){
+     $res = sprintf('%s::%s', bb_get_random_string(25), mktime()); 
      return $res;
 }
 
 
 
-function get_author_id(){
+function bb_get_author_id(){
      $res = get_current_user_id();
      return $res;
 }
 
 
 
-function trim_incoming_string($val, $max=null){
+function bb_trim_incoming_string($val, $max=null){
      if(is_null($val)){ 
           $val = ''; 
      }
@@ -135,7 +135,7 @@ function trim_incoming_string($val, $max=null){
 
 
 
-function trim_incoming_numeric($val){
+function bb_trim_incoming_numeric($val){
      if(is_null($val)){ $val = 0; }
      $val = substr($val, 0, 15);
      $val = preg_replace('/[^0-9]/', '', $val);
@@ -144,7 +144,7 @@ function trim_incoming_numeric($val){
 
 
 
-function trim_incoming_filename($val){
+function bb_trim_incoming_filename($val){
      if(is_null($val)){ $val = ''; }
      $val = substr($val, 0, 128);
      $val = sanitize_textarea_field($val);
@@ -154,16 +154,16 @@ function trim_incoming_filename($val){
 
 
 
-function insert_survey_page(){
+function bb_insert_survey_page(){
 
-     delete_survey_page();
+     bb_delete_survey_page();
 
      $post_content = <<<EOD
-        <p>[client_view]</p>
+        <p>[bb_client_view]</p>
 EOD;
 
      $page_id = wp_insert_post([
-          'post_author'=>get_author_id(),
+          'post_author'=>bb_get_author_id(),
           'post_content'=>$post_content,
           'post_title'=>'Questionnaire',
           'post_status'=>'publish',
@@ -179,7 +179,7 @@ EOD;
 
 
 
-function delete_survey_page(){
+function bb_delete_survey_page(){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -189,7 +189,7 @@ function delete_survey_page(){
                where post_type = 'page' 
                and post_title = 'Questionnaire' 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -201,7 +201,7 @@ EOD;
 
 
 // https://wordpress.org/support/plugin/wp-session-manager/
-function set_session_ticket($key, $value){
+function bb_set_session_ticket($key, $value){
      if(function_exists('wp_session_start')){ 
           wp_session_start();
           global $wp_session;
@@ -216,7 +216,7 @@ function set_session_ticket($key, $value){
 
 
 // https://wordpress.org/support/plugin/wp-session-manager/
-function get_session_ticket($key){
+function bb_get_session_ticket($key){
      if(function_exists('wp_session_start')){ 
           wp_session_start();
           global $wp_session;
@@ -228,7 +228,7 @@ function get_session_ticket($key){
 
 
 
-function insert_guest_client(){
+function bb_insert_guest_client(){
 
 // sets up a guest client
 // client is cutomer as for debug reasons
@@ -255,7 +255,7 @@ function insert_guest_client(){
 
 
 
-function debug_field_add($key, $value){
+function bb_add_debug_field($key, $value){
 
      if(is_null($_SESSION['debug'])){
           $_SESSION['debug'] = [];
@@ -268,7 +268,7 @@ function debug_field_add($key, $value){
 
 
 
-function flush_debug_field(){
+function bb_flush_debug_field(){
 
      if(is_null($_SESSION['debug'])){
           return;
@@ -283,3 +283,6 @@ function flush_debug_field(){
      }
      $_SESSION['debug'] = [];
 }
+
+
+

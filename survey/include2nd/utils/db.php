@@ -2,7 +2,7 @@
 
 
 
-function remove_v1_records(){
+function bb_remove_v1_records(){
 
      $res = false;
 
@@ -27,7 +27,7 @@ function remove_v1_records(){
           $sql = <<<EOD
                delete from {$prefix}posts where post_type = '{$type}'
 EOD;
-          $sql = debug_sql($sql);
+          $sql = bb_debug_sql($sql);
           $res = $wpdb->query($sql);
      }
      return $res;
@@ -35,7 +35,7 @@ EOD;
 
 
 
-function drop_tables(){
+function bb_drop_tables(){
 
      $res = false;
 
@@ -53,7 +53,7 @@ function drop_tables(){
           $sql = <<<EOD
                drop table if exists {$prefix}$table
 EOD;
-          $sql = debug_sql($sql);
+          $sql = bb_debug_sql($sql);
           $res = $wpdb->query($sql);
      }
 
@@ -62,30 +62,30 @@ EOD;
 
 
 
-function init_tables(){
+function bb_init_tables(){
 
-     $res = init_survey_table();
-     $res&= init_group_table();
-     $res&= init_field_table();
-     $res&= init_choice_table();
-     $res&= init_action_table();
+     $res = bb_init_survey_table();
+     $res&= bb_init_group_table();
+     $res&= bb_init_field_table();
+     $res&= bb_init_choice_table();
+     $res&= bb_init_action_table();
 
-     $res&= init_thread_table();
-     $res&= init_rec_table();
+     $res&= bb_init_thread_table();
+     $res&= bb_init_rec_table();
 
-     $res&= init_asset_table();
+     $res&= bb_init_asset_table();
 
-     $res&= init_book_table();
-     $res&= init_chapter_table();
-     $res&= init_section_table();
-     $res&= init_spread_table();
+     $res&= bb_init_book_table();
+     $res&= bb_init_chapter_table();
+     $res&= bb_init_section_table();
+     $res&= bb_init_spread_table();
 
      return $res;
 }
 
 
 
-function init_book_table(){
+function bb_init_book_table(){
 
      $res = false;
 
@@ -109,7 +109,7 @@ function init_book_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -117,7 +117,7 @@ EOD;
 
 
 
-function init_chapter_table(){
+function bb_init_chapter_table(){
 
      $res = false;
 
@@ -143,7 +143,7 @@ function init_chapter_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -151,7 +151,7 @@ EOD;
 
 
 
-function init_section_table(){
+function bb_init_section_table(){
 
      $res = false;
 
@@ -178,7 +178,7 @@ function init_section_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -186,7 +186,7 @@ EOD;
 
 
 
-function init_spread_table(){
+function bb_init_spread_table(){
 
      $res = false;
 
@@ -214,7 +214,7 @@ function init_spread_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -222,7 +222,7 @@ EOD;
 
 
 
-function init_thread_table(){
+function bb_init_thread_table(){
 
      $res = false;
 
@@ -246,7 +246,7 @@ function init_thread_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -254,7 +254,7 @@ EOD;
 
 
 
-function init_rec_table(){
+function bb_init_rec_table(){
 
      $res = false;
 
@@ -282,7 +282,7 @@ function init_rec_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -290,7 +290,7 @@ EOD;
 
 
 
-function init_asset_table(){
+function bb_init_asset_table(){
 
      $res = false;
 
@@ -321,14 +321,14 @@ function init_asset_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
 }
 
 
 
-function init_survey_table(){
+function bb_init_survey_table(){
 
      $res = false;
 
@@ -353,13 +353,13 @@ function init_survey_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
 }
 
-function init_group_table(){
+function bb_init_group_table(){
 
      $res = false;
 
@@ -386,13 +386,13 @@ function init_group_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
 }
 
-function init_field_table(){
+function bb_init_field_table(){
 
      $res = false;
 
@@ -422,7 +422,7 @@ function init_field_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -433,7 +433,7 @@ EOD;
 
 
 
-function init_choice_table(){
+function bb_init_choice_table(){
 
      $res = false;
 
@@ -462,7 +462,7 @@ function init_choice_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
@@ -470,7 +470,7 @@ EOD;
 
 
 
-function init_action_table(){
+function bb_init_action_table(){
 
      $res = false;
 
@@ -496,14 +496,14 @@ function init_action_table(){
           default charset='utf8'
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
 }
 
 
 
-function debug_sql($sql){
+function bb_debug_sql($sql){
 
      if(true != Proc::TMP_WRITE_SQL){
           return $sql;
@@ -518,7 +518,7 @@ function debug_sql($sql){
 
 
 
-function get_field_by_ref($ref) {
+function bb_get_field_by_ref($ref) {
 
      $ref = esc_sql($ref);
 
@@ -528,14 +528,14 @@ function get_field_by_ref($ref) {
           select * from {$prefix}ts_bb_field 
           where ref = '{$ref}' 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_actions_of_field_by_ref($ref){
+function bb_get_actions_of_field_by_ref($ref){
 
      $ref = esc_sql($ref);
 
@@ -545,14 +545,14 @@ function get_actions_of_field_by_ref($ref){
           select * from {$prefix}ts_bb_action 
           where field_ref = '{$ref}' 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_field_of_survey_at_pos($survey_ref, $pos){
+function bb_get_field_of_survey_at_pos($survey_ref, $pos){
 
      $survey_ref = esc_sql($survey_ref);
      $pos = esc_sql($pos);
@@ -564,14 +564,14 @@ function get_field_of_survey_at_pos($survey_ref, $pos){
           where survey_ref = '{$survey_ref}' 
           and pos = '{$pos}' 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref){
+function bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -586,14 +586,14 @@ function get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref){
           order by init desc
           limit 1 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos){
+function bb_get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -608,14 +608,14 @@ function get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos){
           order by init desc
           limit 1 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_choices_of_field($field_ref){
+function bb_get_choices_of_field($field_ref){
 
      $field_ref = esc_sql($field_ref);
 
@@ -624,14 +624,14 @@ function get_choices_of_field($field_ref){
      $sql = <<<EOD
           select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}' 
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function insert_bb_rec($client_id, $thread_id, $field, $answer, $rec_pos){
+function bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -649,14 +649,14 @@ function insert_bb_rec($client_id, $thread_id, $field, $answer, $rec_pos){
           values 
                ('{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', '{$rec_pos}', '{$answer}', now())
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
 }
 
 
 
-function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
+function bb_insert_asset($client_id, $thread_id, $field, $scan, $rec_pos){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -689,14 +689,14 @@ function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
                '{$doc}', now()
                )
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
 }
 
 
 
-function get_survey_by_ref($ref) {
+function bb_get_survey_by_ref($ref) {
 
      $res = [];
      $ref = esc_sql($ref);
@@ -748,7 +748,7 @@ EOD;
 
 
 
-function get_typeform_surveys(){
+function bb_get_typeform_surveys(){
 
      global $wpdb;
 
@@ -757,14 +757,14 @@ function get_typeform_surveys(){
           select * from {$prefix}ts_bb_survey
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_first_field_of_group($group_ref){
+function bb_get_first_field_of_group($group_ref){
 
      $group_ref = esc_sql($group_ref);
      global $wpdb;
@@ -777,14 +777,14 @@ function get_first_field_of_group($group_ref){
           limit 1
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_first_field_of_survey_by_ref($survey_ref){
+function bb_get_first_field_of_survey_by_ref($survey_ref){
 
      $survey_ref = esc_sql($survey_ref);
      global $wpdb;
@@ -797,7 +797,7 @@ function get_first_field_of_survey_by_ref($survey_ref){
           limit 1
 EOD;
 
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -807,7 +807,7 @@ EOD;
 /**
      adds a new thread
 */
-function insert_thread($client_id){
+function bb_insert_thread($client_id){
 
      $client_id = esc_sql($client_id);
      global $wpdb;
@@ -815,14 +815,14 @@ function insert_thread($client_id){
      $sql = <<<EOD
           insert into {$prefix}ts_bb_thread (client_id, init) values ('{$client_id}', now());
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $wpdb->insert_id;
 }
 
 
 
-function get_thread_by_id($client_id, $thread_id){
+function bb_get_thread_by_id($client_id, $thread_id){
 
      $id = esc_sql($id);
      global $wpdb;
@@ -831,14 +831,14 @@ function get_thread_by_id($client_id, $thread_id){
           select * from {$prefix}ts_bb_thread where id = '{$thread_id}'
           and client_id = '{$client_id}'
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_last_thread_of_client($client_id){
+function bb_get_last_thread_of_client($client_id){
 
      $client_id = esc_sql($client_id);
      global $wpdb;
@@ -848,14 +848,14 @@ function get_last_thread_of_client($client_id){
           order by init desc
           limit 1
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
 
 
-function get_last_record_of_client($client_id, $thread_id){
+function bb_get_last_record_of_client($client_id, $thread_id){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -868,8 +868,11 @@ function get_last_record_of_client($client_id, $thread_id){
           order by init desc
           limit 1
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 
 }
+
+
+

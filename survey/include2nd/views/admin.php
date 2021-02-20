@@ -3,8 +3,8 @@
 
 
 // inserts menu items of the plugin
-add_action('admin_menu', 'setup_admin_menu');
-function setup_admin_menu() {
+add_action('admin_menu', 'bb_setup_admin_menu');
+function bb_setup_admin_menu() {
 
      $page_title = 'surveyprint';
      $menu_title = esc_html(__('BookBuilder', 'bookbuilder'));
@@ -20,7 +20,7 @@ function setup_admin_menu() {
      $page_title = 'utils';
      $menu_slug = 'surveyprint_utils';
      $capability = 'administrator';
-     $function = 'build_surveyprint_utils_view';
+     $function = 'bb_build_surveyprint_utils_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
@@ -28,7 +28,7 @@ function setup_admin_menu() {
      $page_title = 'utils';
      $menu_slug = 'typeform_utils';
      $capability = 'administrator';
-     $function = 'build_typeform_utils_view';
+     $function = 'bb_build_typeform_utils_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
@@ -36,7 +36,7 @@ function setup_admin_menu() {
      $page_title = 'questionnaire';
      $menu_slug = 'questionnaire';
      $capability = 'administrator';
-     $function = 'build_questionnaire_view';
+     $function = 'bb_build_questionnaire_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
@@ -44,7 +44,7 @@ function setup_admin_menu() {
      $page_title = 'threads';
      $menu_slug = 'threads';
      $capability = 'administrator';
-     $function = 'build_thread_view';
+     $function = 'bb_build_thread_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 /*
      $parent_slug = 'surveyprint_admin_utils';
@@ -52,7 +52,7 @@ function setup_admin_menu() {
      $page_title = 'spreads';
      $menu_slug = 'spreads';
      $capability = 'administrator';
-     $function = 'build_spreads_view';
+     $function = 'bb_build_spreads_view';
      add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 */
      $parent_slug = 'surveyprint_admin_utils';
@@ -60,7 +60,7 @@ function setup_admin_menu() {
      $menu_slug = 'layouts';
      $capability = 'administrator';
      $menu_title = esc_html(__('Layout Manager', 'survey'));
-     $function = 'build_layouts_view';
+     $function = 'bb_build_layouts_view';
      add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      remove_submenu_page('surveyprint_admin_utils', 'surveyprint_admin_utils');
@@ -69,8 +69,8 @@ function setup_admin_menu() {
 
 
 // surveyprint utilities
-add_shortcode('surveyprint_utils_view', 'build_surveyprint_utils_view');
-function build_surveyprint_utils_view(){
+add_shortcode('bb_surveyprint_utils_view', 'bb_build_surveyprint_utils_view');
+function bb_build_surveyprint_utils_view(){
 
      wp_register_script('service', Path::get_plugin_url().'/js/services/admin.js', array('jquery'));
      wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
@@ -92,8 +92,8 @@ function build_surveyprint_utils_view(){
 
      echo <<<EOD
      <div class='edit'>
-          <div class='unit'><a href='javascript:deleteDB();'>{$delete_db}</a></div>
-          <div class='unit'><a href='javascript:initDB();'>{$init_db}</a></div>
+          <div class='unit'><a href='javascript:bbDeleteDB();'>{$delete_db}</a></div>
+          <div class='unit'><a href='javascript:bbInitDB();'>{$init_db}</a></div>
      </div>
 EOD;
 
@@ -102,8 +102,8 @@ EOD;
 
 
 // typeform utilities
-add_shortcode('typeform_utils_view', 'build_typeform_utils_view');
-function build_typeform_utils_view(){
+add_shortcode('bb_typeform_utils_view', 'bb_build_typeform_utils_view');
+function bb_build_typeform_utils_view(){
 
      wp_register_script('service', Path::get_plugin_url().'/js/services/admin.js', array('jquery'));
      wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
@@ -143,13 +143,13 @@ EOD;
 
 
 
-add_shortcode('thread_view', 'build_thread_view');
-function build_thread_view(){
+add_shortcode('bb_thread_view', 'bb_build_thread_view');
+function bb_build_thread_view(){
 
      switch($_REQUEST['action']){
 
           case 'edit':
-               build_thread_entries_view();
+               bb_build_thread_entries_view();
                break; 
 
           case 'delete':
@@ -158,19 +158,19 @@ function build_thread_view(){
                if(!is_null($thread_id) && !is_null($thread_id)){
                     delete_thread_by_id($thread_id, $client_id);
                }
-               build_thread_list_view();
+               bb_build_thread_list_view();
                break;
 
           default:
-               build_thread_list_view();
+               bb_build_thread_list_view();
                break;
      }
 }
 
 
 
-add_shortcode('thread_list_view', 'build_thread_list_view');
-function build_thread_list_view(){
+add_shortcode('bb_thread_list_view', 'bb_build_thread_list_view');
+function bb_build_thread_list_view(){
 
      $headline = esc_html(__('List of the Threads', 'bookbuilder'));
      $welcome = esc_html(__('', 'bookbuilder'));
@@ -199,8 +199,8 @@ EOD;
 
 
 
-add_shortcode('build_thread_entries_view', 'build_thread_entries_view');
-function build_thread_entries_view(){
+add_shortcode('bb_thread_entries_view', 'bb_build_thread_entries_view');
+function bb_build_thread_entries_view(){
 
      wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
@@ -308,8 +308,8 @@ EOD;
 
 }
 
-add_shortcode('questionnaire_view', 'build_questionnaire_view');
-function build_questionnaire_view(){
+add_shortcode('bb_questionnaire_view', 'bb_build_questionnaire_view');
+function bb_build_questionnaire_view(){
 
      switch($_REQUEST['action']){
 
@@ -318,25 +318,25 @@ function build_questionnaire_view(){
                if(!is_null($survey_id)){
                     delete_survey_by_id($survey_id);
                }
-               build_questionnaire_list_view();
+               bb_build_questionnaire_list_view();
                break;
 
           case 'edit':
-               build_questionnaire_edit_view();
+               bb_build_questionnaire_edit_view();
                break;
  
           default:
-               build_questionnaire_list_view();
+               bb_build_questionnaire_list_view();
                break;
      }
 }
 
-add_shortcode('questionnaire_edit_view', 'build_questionnaire_edit_view');
-function build_questionnaire_edit_view(){
+add_shortcode('bb_questionnaire_edit_view', 'bb_build_questionnaire_edit_view');
+function bb_build_questionnaire_edit_view(){
 
-     $surveys = get_typeform_surveys();
+     $surveys = bb_get_typeform_surveys();
      $survey_ref = $_REQUEST['ref'];
-     $survey = get_survey_by_ref($survey_ref);
+     $survey = bb_get_survey_by_ref($survey_ref);
 
      wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
@@ -409,8 +409,8 @@ EOD;
 
 }
 
-add_shortcode('questionnaire_list_view', 'build_questionnaire_list_view');
-function build_questionnaire_list_view(){
+add_shortcode('bb_questionnaire_list_view', 'bb_build_questionnaire_list_view');
+function bb_build_questionnaire_list_view(){
 
      wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
@@ -438,7 +438,7 @@ function build_questionnaire_list_view(){
                <hr class='wp-header-end'>
 EOD;
 
-     $surveys = get_typeform_surveys();
+     $surveys = bb_get_typeform_surveys();
      foreach($surveys as $survey){
      $href = sprintf('%s?page=questionnaire&action=edit&ref=%s', Path::SERVICE_BASE, $survey->ref);
      echo <<<EOD
@@ -451,8 +451,8 @@ EOD;
 
 
 
-add_shortcode('spreads_view', 'build_spreads_view');
-function build_spreads_view() {
+add_shortcode('bb_spreads_view', 'bb_build_spreads_view');
+function bb_build_spreads_view() {
 
      wp_register_script(     'viewer-config', Path::get_plugin_dir().'/js/spread-viewer/src/main/config-spreads.js');
      wp_register_script(       'viewer-main', Path::get_plugin_dir().'/js/spread-viewer/src/main/main.js');
@@ -508,8 +508,8 @@ EOD;
      echo $res;
 }
 
-add_shortcode('layouts_view', 'build_layouts_view');
-function build_layouts_view() {
+add_shortcode('bb_layouts_view', 'bb_build_layouts_view');
+function bb_build_layouts_view() {
 
      wp_register_script(     'viewer-config', Path::get_plugin_dir().'/js/spread-viewer/src/main/config-layouts.js');
      wp_register_script(       'viewer-main', Path::get_plugin_dir().'/js/spread-viewer/src/main/main.js');
@@ -565,3 +565,6 @@ function build_layouts_view() {
 EOD;
      echo $res;
 }
+
+
+
