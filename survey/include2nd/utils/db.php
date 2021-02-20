@@ -41,7 +41,8 @@ function drop_tables(){
 
      $tables = [
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
-          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec', 
+          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec',
+          'ts_bb_asset',
           'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'
      ];
 
@@ -71,6 +72,8 @@ function init_tables(){
 
      $res&= init_thread_table();
      $res&= init_rec_table();
+
+     $res&= init_asset_table();
 
      $res&= init_book_table();
      $res&= init_chapter_table();
@@ -272,7 +275,47 @@ function init_rec_table(){
                description varchar(255),
                init datetime,
                doc text,
-               pos int,
+               pos int unsigned not null,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
+}
+
+
+
+function init_asset_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_book (
+               id bigint(20) not null auto_increment,
+               client_id bigint(20) unsigned not null,
+               thread_id bigint(20) unsigned not null,
+               survey_ref varchar(255) not null,
+               group_ref varchar(255) not null,
+               field_ref varchar(255) not null,
+               index varchar(255) not null,
+               width varchar(255) not null,
+               height varchar(255) not null,
+               layout_code varchar(255) not null,
+               rec_pos int unsigned not null,
+               title varchar(255) null,
+               note varchar(255) null,
+               description varchar(255),
+               init datetime,
+               doc text,
                primary key (id)
           )
           engine=innodb
@@ -374,7 +417,7 @@ function init_field_table(){
                title text,
                description text,
                doc text,
-               pos int not null,
+               pos int unsigned not null,
                primary key (id)
           )
           engine=innodb
@@ -413,7 +456,7 @@ function init_choice_table(){
                title text(255),
                description text,
                doc text,
-               pos int not null,
+               pos int unsigned not null,
                init datetime,
                primary key (id)
           )
@@ -590,7 +633,7 @@ EOD;
 
 
 
-function insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer){
+function insert_bb_rec($client_id, $thread_id, $field, $answer, $rec_pos){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -607,6 +650,40 @@ function insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer){
                (client_id, thread_id, survey_ref, group_ref, field_ref, pos, doc, init) 
           values 
                ('{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', '{$rec_pos}', '{$answer}', now())
+EOD;
+     $sql = debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+}
+
+
+
+function insert_bb_asset($client_id, $thread_id, $field, $scan, $rec_pos){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+
+     $survey_ref = esc_sql($field->survey_ref);
+     $group_ref = esc_sql($field->group_ref);
+     $field_ref = esc_sql($field->ref);
+
+     $rec_pos = esc_sql($rec_pos);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_rec
+               (
+               client_id, thread_id, survey_ref, group_ref, field_ref, 
+               rec_pos, index, width, height, layout_code,
+               doc, init
+               )
+          values 
+               (
+               '{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', 
+               '{$rec_pos}', '{$index}', '{$width}', '{$height}', '{$layout_code}',
+               '{$doc}', now()
+               )
 EOD;
      $sql = debug_sql($sql);
      $res = $wpdb->query($sql);

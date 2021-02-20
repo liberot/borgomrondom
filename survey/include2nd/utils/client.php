@@ -344,7 +344,7 @@ function write_rec(){
      }
 
      $field = get_field_by_ref($field_ref)[0];
-     $res = insert_bb_rec($client_id, $thread_id, $rec_pos, $field, $answer);
+     $res = insert_bb_rec($client_id, $thread_id, $field, $answer, $rec_pos);
      if(is_null($res)){
      }
      else {

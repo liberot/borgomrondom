@@ -143,7 +143,7 @@ let bbBindScan = function(scan){
 
      bbAssetCopies.push(scan);
 
-     bbRenderAssetCopies();
+     bbRenderAssetCopies(scan);
      bbUploadAsset(scan);
 }
 
@@ -168,7 +168,7 @@ let bbUploadAsset = function(scan){
 
 
 
-let bbRenderAssetCopies = function(){
+let bbRenderAssetCopies = function(scan){
 
      let buf = '';
 

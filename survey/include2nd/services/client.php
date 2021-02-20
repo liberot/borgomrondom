@@ -51,16 +51,28 @@ function exec_upload_asset(){
 
      $client_id = get_author_id();
      $thread_id = get_session_ticket('thread_id');
+     $field_ref = get_session_ticket('field_ref');
+     $rec_pos = get_session_ticket('rec_pos');
 
-     $base = $_POST['scan']['base'];
+     $scan = $_POST['scan'];
 
-     $message = esc_html(__('Could not upload asset', 'bookbuilder'));
-     $res = 'failed';
-
-     if(!is_null($base)){
-          $message = esc_html(__('Asset is uploaded', 'bookbuilder'));
-          $res = 'success';
+     $temp = base64_decode($scan['base'], true);
+     $finf = new finfo(FILEINFO_MIME);
+     $temp = $finf->buffer($temp);
+     if(-1 == strpos('image/png', $temp)){
+          $message = esc_html(__('Corrupt', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          return false;
      }
+
+     $field = get_field_by_ref($field_ref);
+     if(is_null($field)){
+          $message = esc_html(__('No field', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          return false;
+     }
+
+     insert_asset($client_id, $thread_id, $field, $scan, $rec_pos);
 
      echo json_encode(array('res'=>$res, 'message'=>$message, 'base'=>$base));
 }
