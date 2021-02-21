@@ -4,6 +4,7 @@
 jQuery(document).ready(function(){
      bbClientInit();
      bbRenderFileupload();
+     bbRenderAssetCopies();
 });
 
 
@@ -138,11 +139,9 @@ let bbScanAsset = function(index, base){
 
 
 
-let bbAssetCopies = [];
 let bbBindScan = function(scan){
 
      bbAssetCopies.push(scan);
-
      bbRenderAssetCopies(scan);
      bbUploadAsset(scan);
 }
@@ -159,8 +158,7 @@ let bbUploadAsset = function(scan){
      }
 
      let cb = function(e){
-          console.log(e);
-          window.location.reload();
+          // window.location.reload();
      }
 
      bbPostData(data, cb);
@@ -174,7 +172,12 @@ let bbRenderAssetCopies = function(scan){
 
      for(let idx in bbAssetCopies){
           buf+= "<img src='";
-          buf+= bbAssetCopies[idx]['base'];
+          if(null != bbAssetCopies[idx]['doc']){
+               buf+= bbAssetCopies[idx]['doc'];
+          }
+          else if(null != bbAssetCopies[idx]['base']){
+               buf+= bbAssetCopies[idx]['base'];
+          }
           buf+= "'/>";
      }
 
@@ -183,6 +186,7 @@ let bbRenderAssetCopies = function(scan){
 
 
 
+let bbAssetCopies = [];
 let bbClientInit = function(){
      window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
      history.pushState(null, null, window.location.href);
@@ -200,6 +204,9 @@ let bbClientInit = function(){
                }
           );
      };
+     if(null != assetsOfField){
+          bbAssetCopies = assetsOfField;
+     }
 }
 
 

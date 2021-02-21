@@ -73,7 +73,7 @@ add_shortcode('bb_surveyprint_utils_view', 'bb_build_surveyprint_utils_view');
 function bb_build_surveyprint_utils_view(){
 
      wp_register_script('service', Path::get_plugin_url().'/js/admin/main.js', array('jquery'));
-     wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/admin/i18n.js');
 
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
@@ -106,7 +106,7 @@ add_shortcode('bb_typeform_utils_view', 'bb_build_typeform_utils_view');
 function bb_build_typeform_utils_view(){
 
      wp_register_script('service', Path::get_plugin_url().'/js/admin/main.js', array('jquery'));
-     wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/admin/i18n.js');
 
      wp_enqueue_script('service_i18n');
      wp_enqueue_script('service');
@@ -342,7 +342,7 @@ function bb_build_questionnaire_edit_view(){
      wp_enqueue_style('admin_style');
  
      wp_register_script('service', Path::get_plugin_url().'/js/admin/main.js', array('jquery'));
-     wp_register_script('service_i18n', Path::get_plugin_url().'/js/services/i18n.js');
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/admin/i18n.js');
 
      wp_enqueue_script('service');
      wp_enqueue_script('service_i18n');

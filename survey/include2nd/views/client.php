@@ -78,6 +78,8 @@ EOD;
 EOD;
 
      $buf1st = '';
+     $buf2nd = '';
+     $assets = null;
      switch($field->type){
 
           case 'statement':
@@ -109,6 +111,8 @@ EOD;
           case 'file_upload':
 
                $buf1st = bb_build_file_upload_view($field, $rec);
+               $buf2nd = "<input type='hidden' name='is_file_upload' value='yes'></input>";
+               $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field->ref);
                break;
 
      }
@@ -116,12 +120,24 @@ EOD;
      echo <<<EOD
           <form class='input-form' method='post' action=''>
                {$buf1st}
+               {$buf2nd}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field_ref}'></input> 
                <div class=''><input type='submit' value='Submit REC'></div>
           </form>
 EOD;
 
+     echo "<script type='text/javascript'>";
+     echo "let = assetsOfField = ";
+     if(!is_null($assets)){
+          echo json_encode($assets, JSON_PRETTY_PRINT);
+     }
+     else{
+          echo "[]";
+     }
+     echo ';';
+     echo PHP_EOL;
+     echo "</script>";
 }
 
 
@@ -212,12 +228,12 @@ function bb_build_picture_choice_view($field, $rec){
 function bb_build_file_upload_view($field, $rec){
 
      $drop_those_files = esc_html(__('Drop The Files Into Here', 'bookbuilder'));
+     $client_id = bb_get_session_ticket('client_id');
+     $thread_id = bb_get_session_ticket('thread_id');
 
      $buf1st = <<<EOD
-     <form>
-          <input type='file' class='files' name='filename' multiple='multiple' accept='image/jpeg, image/png'></input>
-          <div class='fake'>{$drop_those_files}</div>
-     </form>
+     <input type='file' class='files' name='filename' multiple='multiple' accept='image/jpeg, image/png'></input>
+     <div class='fake'>{$drop_those_files}</div>
 
      <div class='row'>
           <div class='asset-copies'></div>
