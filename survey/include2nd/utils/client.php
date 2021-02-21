@@ -253,9 +253,9 @@ function bb_decorate_field_title($field){
      if(is_null($temp)){
      }
      else {
-          // $temp = str_replace('{{', '', $temp);
-          // $temp = str_replace('}}', '', $temp);
-          // $field->title = $temp;
+          $temp = str_replace('{{', '', $temp);
+          $temp = str_replace('}}', '', $temp);
+          $field->title = $temp;
      }
 
      return $field;
