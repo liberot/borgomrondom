@@ -150,6 +150,7 @@ BBClient.bbUploadAsset = function(scan){
      }
 
      let cb = function(e){
+          console.log(e);
           // window.location.reload();
      }
 

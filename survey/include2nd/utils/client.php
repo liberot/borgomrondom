@@ -317,20 +317,20 @@ function bb_write_rec(){
      $field_ref = bb_get_session_ticket('field_ref');
 
      $rec_pos = bb_get_session_ticket('rec_pos');
+
      $ticket = bb_trim_incoming_filename($_POST['ticket']);
      if($ticket != $field_ref){
           return;
      }
 
      
-     $field = bb_get_field_by_ref($field_ref);
+     $field = bb_get_field_by_ref($field_ref)[0];
      if(is_null($field)){
           return;
      }
 
      if('file_upload' == $field->type){
           $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field_ref);
-bb_add_debug_field('assets', $assets);
           if(empty($assets)){
                return;
           }
