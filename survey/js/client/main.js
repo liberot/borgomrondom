@@ -1,16 +1,8 @@
+BBClient = null == BBClient ? {} : BBClient;
 
 
 
-jQuery(document).ready(function(){
-     bbClientInit();
-     bbRenderFileupload();
-     bbRenderAssetCopies();
-});
-
-
-
-
-let bbRenderFileupload = function(){
+BBClient.bbRenderFileupload = function(){
 
      let form = document.querySelector('.files');
      let fake = document.querySelector('.fake');
@@ -48,7 +40,7 @@ let bbRenderFileupload = function(){
 
 
 
-let bbInitImageUpload = function(files){
+BBClient.bbInitImageUpload = function(files){
 
      let formdata = new FormData();
      for(let idx in files){
@@ -61,7 +53,7 @@ let bbInitImageUpload = function(files){
 
 
 
-let bbParseAssets = function(){
+BBClient.bbParseAssets = function(){
 
      let assetCopies = [];
      let files = document.querySelector('.files').files;
@@ -88,7 +80,7 @@ let bbParseAssets = function(){
 
 
 
-let bbScanAsset = function(index, base){
+BBClient.bbScanAsset = function(index, base){
 
      let scaleR = 0.33;
 
@@ -139,16 +131,16 @@ let bbScanAsset = function(index, base){
 
 
 
-let bbBindScan = function(scan){
+BBClient.bbBindScan = function(scan){
 
-     bbAssetCopies.push(scan);
-     bbRenderAssetCopies(scan);
-     bbUploadAsset(scan);
+     BBClient.bbAssetCopies.push(scan);
+     BBClient.bbRenderAssetCopies(scan);
+     BBClient.bbUploadAsset(scan);
 }
 
 
 
-let bbUploadAsset = function(scan){
+BBClient.bbUploadAsset = function(scan){
 
      let ref = this;
 
@@ -161,12 +153,12 @@ let bbUploadAsset = function(scan){
           // window.location.reload();
      }
 
-     bbPostData(data, cb);
+     BBClient.bbPostData(data, cb);
 }
 
 
 
-let bbRenderAssetCopies = function(scan){
+BBClient.bbRenderAssetCopies = function(scan){
 
      let buf = '';
 
@@ -186,13 +178,12 @@ let bbRenderAssetCopies = function(scan){
 
 
 
-let bbAssetCopies = [];
-let bbClientInit = function(){
+BBClient.bbClientInit = function(){
      window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
      history.pushState(null, null, window.location.href);
      window.onpopstate = function(e){
           history.pushState(null, null, window.location.href);
-          bbPostData(
+          BBClient.bbPostData(
                { 
                     'action': 'bb_nav_prev_field'
                },
@@ -204,14 +195,12 @@ let bbClientInit = function(){
                }
           );
      };
-     if(null != assetsOfField){
-          bbAssetCopies = assetsOfField;
-     }
+     BBClient.bbAssetCopies = null == assetsOfField ? [] : assetsOfField;
 }
 
 
 
-let bbPostData = function(data, suc, err){
+BBClient.bbPostData = function(data, suc, err){
      let serviceURL = '/wp-content/plugins/bookbuilder/survey/include2nd/services/post.php';
      let ref = this;
      jQuery('.layout-messages').html('wait...');
@@ -228,6 +217,14 @@ let bbPostData = function(data, suc, err){
           }
      });
 }
+
+
+
+jQuery(document).ready(function(){
+     bbClientInit();
+     bbRenderFileupload();
+     bbRenderAssetCopies();
+});
 
 
 
