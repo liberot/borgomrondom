@@ -104,7 +104,7 @@ function bb_init_book_table(){
                note varchar(255) null,
                description varchar(255),
                init datetime,
-               doc text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -133,12 +133,12 @@ function bb_init_chapter_table(){
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                book_id bigint(20) unsigned not null,
-               pos int unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+               title varchar(255),
+               note varchar(255),
                description varchar(255),
+               pos int unsigned not null,
                init datetime,
-               content text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -173,7 +173,7 @@ function bb_init_section_table(){
                note varchar(255) null,
                description varchar(255),
                init datetime,
-               content text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -204,12 +204,12 @@ function bb_init_spread_table(){
                book_id bigint(20) unsigned not null,
                chapter_id bigint(20) unsigned not null,
                section_id bigint(20) unsigned not null,
-               pos int unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+               title varchar(255),
+               note varchar(255),
                description varchar(255),
+               pos int unsigned not null,
                init datetime,
-               content text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -235,13 +235,14 @@ function bb_init_layout_table(){
      create table if not exists
           {$prefix}ts_bb_layout (
                id bigint(20) not null auto_increment,
-               title varchar(255) null,
-               note varchar(255) null,
+               title varchar(255),
                description varchar(255),
-               code varchar(255),
                origin varchar(255),
+               code varchar(255),
+               lgrp varchar(255),
+               note varchar(255),
                init datetime,
-               doc text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -268,11 +269,11 @@ function bb_init_thread_table(){
                id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
-               title varchar(255) null,
-               note varchar(255) null,
+               title varchar(255),
+               note varchar(255),
                description varchar(255),
                init datetime,
-               doc text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -307,7 +308,7 @@ function bb_init_rec_table(){
                note varchar(255),
                description varchar(255),
                init datetime,
-               doc text,
+               doc longtext,
                pos int unsigned not null,
                primary key (id)
           )
@@ -339,9 +340,9 @@ function bb_init_asset_table(){
                survey_ref varchar(255) not null,
                group_ref varchar(255) not null,
                field_ref varchar(255) not null,
-               width varchar(255),
-               height varchar(255),
                layout_code varchar(255) not null,
+               width int unsigned not null,
+               height int unsigned not null,
                rec_pos int unsigned not null,
                title varchar(255),
                note varchar(255),
@@ -379,7 +380,7 @@ function bb_init_survey_table(){
                linked_survey_ref bigint(20) unsigned,
                description varchar(255),
                init datetime,
-               doc text,
+               doc longtext,
                primary key (id)
           )
           engine=innodb
@@ -411,7 +412,7 @@ function bb_init_group_table(){
                title varchar(255),
                description varchar(255),
                init datetime,
-               doc text,
+               doc longtext,
                layout_def varchar(255),
                primary key (id)
           )
@@ -445,7 +446,7 @@ function bb_init_field_table(){
                linked_field_ref varchar(255),
                type varchar(255),
                init datetime,
-               title text,
+               title longtext,
                description text,
                doc text,
                pos int unsigned not null,
@@ -484,9 +485,9 @@ function bb_init_choice_table(){
                field_ref varchar(255),
                target_survey_ref varchar(255),
                target_field_ref varchar(255),
-               title text(255),
-               description text,
-               doc text,
+               title varchar(255),
+               description varchar(255),
+               doc longtext,
                pos int unsigned not null,
                init datetime,
                primary key (id)
@@ -521,7 +522,7 @@ function bb_init_action_table(){
                type varchar(255),
                link_type varchar(255),
                link_ref varchar(255),
-               doc text,
+               doc longtext,
                init datetime,
                primary key (id)
           )
@@ -776,7 +777,6 @@ EOD;
      }
 
      return $res;
-
 }
 
 

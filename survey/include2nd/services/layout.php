@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
-add_action('admin_post_exec_init_layout', 'exec_init_layout');
-function exec_init_layout(){
+add_action('admin_post_bb_insert_layout', 'bb_insert_layout');
+function exec_bb_insert_layout(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -9,13 +9,10 @@ function exec_init_layout(){
           return false;
      }
 
-     init_log('admin_post_exec_init_layout', []);
+     $rule = bb_trim_incoming_filename($_POST['rule']);
+     $group = bb_trim_incoming_filename($_POST['group']);
 
-     $rule = trim_incoming_filename($_POST['rule']);
-     $group = trim_incoming_filename($_POST['group']);
-
-     $doc = walk_the_doc($_POST['doc']);
-     $doc = pigpack($doc);
+     $doc = bb_walk_the_doc($_POST['doc']);
      if(false == $doc){
           $message = esc_html(__('doc invalid', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -31,7 +28,7 @@ function exec_init_layout(){
           'tags_input'=>$tags_input
      ];
 
-     $coll = init_layout($conf);
+     $coll = bb_insert_layout($conf);
      $message = esc_html(__('layout inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'term_id'=>$term_id));
 }
@@ -47,14 +44,16 @@ function exec_get_layouts_by_group(){
 
      init_log('admin_post_exec_get_layouts_by_group', []);
 
-     $group = trim_incoming_filename($_POST['group']);
+     $group = bb_trim_incoming_filename($_POST['group']);
      $coll = get_layouts_by_group($group);
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
-add_action('admin_post_exec_get_layout_by_group_and_rule', 'exec_get_layout_by_group_and_rule');
-function exec_get_layout_by_group_and_rule(){
+
+
+add_action('admin_post_bb_get_layouts_by_group_and_code', 'bb_exec_get_layouts_by_group_and_code');
+function bb_exec_get_layouts_by_group_and_code(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -62,12 +61,13 @@ function exec_get_layout_by_group_and_rule(){
           return false;
      }
 
-     init_log('admin_post_exec_get_layout_by_group_and_rule', []);
+     $lgrp = bb_trim_incoming_filename($_POST['lgrp']);
+     $code = bb_trim_incoming_filename($_POST['code']);
 
-     $group = trim_incoming_filename($_POST['group']);
-     $rule = trim_incoming_filename($_POST['rule']);
-     $coll = get_layout_by_group_and_rule($group, $rule);
+     $coll = bb_get_layouts_by_group_and_code($lgrp, $code);
+
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
+
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 

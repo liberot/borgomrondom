@@ -28,9 +28,9 @@ let Net = function(controller){
      this.loadLayouts = function(msg){
           let ref = this;
           let data = {
-               action: 'exec_get_layout_by_group_and_rule',
-               group: msg.model.group,
-               rule: msg.model.rule 
+               action: 'bb_get_layouts_by_group_and_code',
+               lgrp: msg.model.group,
+               code: msg.model.rule 
           }
           let cb = function(e){
                ref.notify(new Message('layoutpresets::loaded', e.coll));

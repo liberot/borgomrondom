@@ -373,29 +373,59 @@ EOD;
      foreach($survey['fields'] as $field){
 
           $buf1st = '';
-          foreach($field->choices as $choice){
 
-               $buf2nd = "<option value='notarget'>No Survey</option>";
-               foreach($surveys as $target){
-                    $selected = '';
-                    if($target->ref == $choice->target_survey_ref){
-                         $selected = 'selected';
+          switch($field->type){
+
+// todo: insertion of the choices at parse time
+/*
+                    $field->choices = [
+                         (object)[
+                              'ref'=>$field_ref,
+                              'title'=>'yes',
+                              'target_survey_ref'=>'',
+                              'target_field_ref'=>''
+                         ],
+                         (object)[
+                              'ref'=>$field_ref,
+                              'title'=>'yes',
+                              'target_survey_ref'=>'',
+                              'target_field_ref'=>''
+                         ]
+                    ]; 
+*/
+
+               case 'yes_no':
+               case 'multiple_choice':
+
+                    foreach($field->choices as $choice){
+
+                         $buf2nd = "<option value=''>No Survey</option>";
+
+                         foreach($surveys as $target){
+
+                              $selected = '';
+                              if($target->ref == $choice->target_survey_ref){
+                                   $selected = 'selected';
+                              }
+
+                              $buf2nd.= sprintf("<option value='%s' %s>%s</option>", $target->ref, $selected, $target->title);
+                         };
+
+                         $buf1st.= "<div class='choice-output row'>";
+                         $buf1st.= sprintf($field_out, $choice->title);
+
+                         $buf1st.= "<div class='blockR'>";
+                         $buf1st.= sprintf("<select class='bind:%s' onchange='javascript:BBAdmin.bbSelectTargetSurvey(this);'>", $choice->ref);
+                         $buf1st.= $buf2nd;
+                         $buf1st.= "</select>";
+                         $buf1st.= '</div>';
+
+                         $buf1st.= $field_select;
+
+                         $buf1st.= '</div>';
                     }
-                    $buf2nd.= sprintf("<option value='%s' %s>%s</option>", $target->ref, $selected, $target->title);
-               };
 
-               $buf1st.= "<div class='choice-output row'>";
-               $buf1st.= sprintf($field_out, $choice->title);
-
-               $buf1st.= "<div class='blockR'>";
-               $buf1st.= sprintf("<select class='bind:%s' onchange='javascript:BBAdmin.bbSelectTargetSurvey(this);'>", $choice->ref);
-               $buf1st.= $buf2nd;
-               $buf1st.= "</select>";
-               $buf1st.= '</div>';
-
-               $buf1st.= $field_select;
-
-               $buf1st.= '</div>';
+                    break;
           }
 
           echo <<<EOD

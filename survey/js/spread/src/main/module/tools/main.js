@@ -48,28 +48,34 @@ let Tools = function(controller){
      }
 
      this.initDocument = function(){
-
-console.log('initDocument(): ', this.model.doc);
+console.log('initDocument(): ', this.model);
 
           switch(SpreadViewerConfig.mode){
+
                case SpreadViewerConfig.WEB_CLIENT:
                     this.setupNavigation();
                     break;
+
                case SpreadViewerConfig.SPREAD_CLIENT:
                     this.setupTools();
                     this.setupLibrary();
                     break;
+
                case SpreadViewerConfig.LAYOUT_CLIENT:
                     this.setupTools();
                     this.setupLibrary();
                     break;
           }
+
           this.selectLibraryItem(null);
+
           this.notify(new Message('document::inited', this.model.doc));
+
           jQuery('.select_ppi select').val(this.model.doc.ppi);
      }
 
      this.setupNavigation = function(){
+
           jQuery('.layout-pages').html(__tool__991__tmpl);
      }
 
@@ -386,45 +392,6 @@ console.log('initDocument(): ', this.model.doc);
           this.notify(new Message('asset::updated', this.model.doc));
      }
 
-     this.bindBook = function(msg){
-
-          if(null == msg.model.book){
-console.log('bindBook(): no book');
-              return false;
-          }
-
-          this.model.book = msg.model.book;
-          if(null == msg.model.chapter){
-console.log('bindBook(): no chapter');
-              return false;
-          }
-
-          this.model.chapter = msg.model.chapter;
-          if(null == msg.model.toc){
-console.log('bindBook(): no toc');
-              return false;
-          }
-
-console.log('bindBook(): msg.model: ', msg.model);
-          this.model.toc = msg.model.toc[0];
-
-          this.model.toc.post_content = LayoutUtil.pagpick(this.model.toc.post_content);
-console.log('bindBook(): this.model.toc: ', this.model.toc);
-
-          this.model.spreads = [];
-          this.model.spidx = 0;
-// todo 
-// the first chapter
-          for(let idx in this.model.chapter){
-               this.model.spreads = this.model.spreads.concat(this.model.chapter[idx].spreads);
-          }
-          for(let idx in this.model.spreads){
-               this.model.spreads[idx].post_content = LayoutUtil.pagpick(this.model.spreads[idx].post_content);
-          }
-// todo......
-          this.loadSpread();
-     }
-
      this.nextSpread = function(){
           if(null == this.model.spreads){ return; }
           this.model.spidx +=1
@@ -454,16 +421,29 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
      }
  
      this.loadSpread = function(){
-          if(null == this.model.spreads){ return; }
+
+          if(null == this.model.spreads){ 
+               return; 
+          }
+
           this.model.spread = this.evalSpread(this.model.spidx);
-          if(null == this.model.spread){ return; }
-          this.model.doc = this.model.spread.post_content;
+
+          if(null == this.model.spread){ 
+               return; 
+          }
+
+          this.model.doc = this.model.spread.doc;
+
           for(let idx in this.model.doc.assets){
+
                let target = this.model.doc.assets[idx]; 
+
                switch(target.type){
+
                     case 'image':
                          this.initAsset(target);
                     break;
+
                     case 'text':
                          for(let iidx in target.text){
                               target.text[iidx] = 
@@ -506,21 +486,37 @@ console.log('bindBook(): this.model.toc: ', this.model.toc);
      }
 
      this.bindLoadedLayoutGroup = function(msg){
+console.log('bindLoadedLayoutGroup():', msg);
           this.model.loadedLayoutGroup = msg.model;
-          for(let idx in this.model.loadedLayoutGroup){
-               this.model.loadedLayoutGroup[idx].post_content = LayoutUtil.pagpick(this.model.loadedLayoutGroup[idx].post_content);
+          for(let idx in this.model){
+               this.model[idx].doc = LayoutUtil.pagpick(this.model[idx].doc);
           }
+console.log('bindLoadedLayoutGroup():', this.model.loadedLayoutGroup);
      }
 
+
+
+
      this.bindLoadedLayoutPresets = function(msg){
+
+
           this.model.loadedLayoutPresets = msg.model;
-          if(null == this.model.loadedLayoutPresets){ return false; }
+
+          if(null == this.model.loadedLayoutPresets){ 
+               return false; 
+          }
+
           if(null == this.model.loadedLayoutPresets[0]){
+
                this.model.doc = new MockModel().model;
                this.initDocument();
                return false;
           }
-          this.model.doc = LayoutUtil.pagpick(this.model.loadedLayoutPresets[0].post_content);
+
+          this.model.doc = LayoutUtil.pagpick(this.model.loadedLayoutPresets[0].doc);
+
+console.log('bindLoadedLayoutPresets():', this.model.doc);
+
           this.initDocument();
      }
 
@@ -1169,7 +1165,6 @@ console.log('bindTextInput(): ', msg);
      this.register(new Subscription(     'textinput::focused', 'lockControlKeys', this));
      this.register(new Subscription(        'textinput::done', 'unlockControlKeys', this));
      this.register(new Subscription(          'image::loaded', 'bindImageAsset', this));
-     this.register(new Subscription(           'book::loaded', 'bindBook', this));
      this.register(new Subscription(      'unitbtn::released', 'bindUnit', this));
      this.register(new Subscription(    'layoutgroup::loaded', 'bindLoadedLayoutGroup', this));
      this.register(new Subscription(  'layoutpresets::loaded', 'bindLoadedLayoutPresets', this));

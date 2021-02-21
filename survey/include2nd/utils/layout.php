@@ -4,11 +4,15 @@ add_action('init', 'bb_init_layout_utils');
 function bb_init_layout_utils(){
 }
 
+
+
 function bb_insert_layout($layout_doc){
 
      $title = esc_sql('Default Layout from SVG');
-     $code = esc_sql($layout_doc['layout']['code']);
      $origin = esc_sql($layout_doc['origin']);
+     $code = esc_sql($layout_doc['layout']['code']);
+     $lgrp = esc_sql($layout_doc['layout']['lgrp']);
+     $lgrp = empty($lgrp) ? 'default' : $lgrp;
 
      $doc = base64_encode(json_encode($layout_doc));
 
@@ -16,15 +20,17 @@ function bb_insert_layout($layout_doc){
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           insert into {$prefix}ts_bb_layout
-               (title, code, origin, doc, init) 
+               (title, origin, lgrp, code, doc, init) 
           values 
-               ('{$title}', '{$code}', '{$origin}', '{$doc}', now())
+               ('{$title}', '{$origin}', '{$lgrp}','{$code}','{$doc}', now())
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 
 }
+
+
 
 function bb_get_layouts_by_group($group_ref){
 
@@ -33,25 +39,52 @@ function bb_get_layouts_by_group($group_ref){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where group = '{$group}'
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
 
-function bb_get_layouts_by_rule($rule){
 
-     $rule = esc_sql($rule);
+
+function bb_get_layouts_by_code($code){
+
+     $code = esc_sql($code);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
+          select * from {$prefix}ts_bb_layout 
+               where code = '{$code}'
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
+
+
+
+function bb_get_layouts_by_group_and_code($lgrp, $code){
+
+     $lgrp = esc_sql($lgrp);
+     $code = esc_sql($code);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where lgrp = '{$lgrp}'
+               and code = '{$code}'
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
+
+
 
 function bb_px_to_unit($ppi = 300, $pxs = 0, $unit = 'mm'){
 
