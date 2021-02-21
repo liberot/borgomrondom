@@ -322,10 +322,16 @@ function bb_write_rec(){
           return;
      }
 
-     $is_file_upload = bb_trim_incoming_filename($_POST['is_file_upload']);
-     if('yes' == $is_file_upload){
+     
+     $field = bb_get_field_by_ref($field_ref);
+     if(is_null($field)){
+          return;
+     }
+
+     if('file_upload' == $field->type){
           $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field_ref);
-          if(is_null($assets)){
+bb_add_debug_field('assets', $assets);
+          if(empty($assets)){
                return;
           }
           else{

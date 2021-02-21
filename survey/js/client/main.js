@@ -1,4 +1,4 @@
-BBClient = null == BBClient ? {} : BBClient;
+let BBClient = {};
 
 
 
@@ -28,12 +28,12 @@ BBClient.bbRenderFileupload = function(){
      fake.addEventListener('drop', function(e){ 
           // let data = bbInitImageUpload(e.dataTransfer.files);
           document.querySelector('.files').files = e.dataTransfer.files;
-          bbParseAssets();
+          BBClient.bbParseAssets();
      });
 
      form.addEventListener('change', function(e){
           // let data = bbInitImageUpload(form.files);
-          bbParseAssets();
+          BBClient.bbParseAssets();
      });
 
 }
@@ -69,7 +69,7 @@ BBClient.bbParseAssets = function(){
 
           let r = new FileReader();
               r.onload = function(e){
-                   bbScanAsset(index, e.target.result);
+                   BBClient.bbScanAsset(index, e.target.result);
               }
               r.onerror = function(e){
                    console.log('bbParseAssets(): onerror: ', e);
@@ -111,7 +111,7 @@ BBClient.bbScanAsset = function(index, base){
                   height: this.naturalHeight,
               }
 
-              bbBindScan(res);
+              BBClient.bbBindScan(res);
         }
 
      let acceptedAssetType = false;
@@ -162,13 +162,13 @@ BBClient.bbRenderAssetCopies = function(scan){
 
      let buf = '';
 
-     for(let idx in bbAssetCopies){
+     for(let idx in BBClient.bbAssetCopies){
           buf+= "<img src='";
-          if(null != bbAssetCopies[idx]['doc']){
-               buf+= bbAssetCopies[idx]['doc'];
+          if(null != BBClient.bbAssetCopies[idx]['doc']){
+               buf+= BBClient.bbAssetCopies[idx]['doc'];
           }
-          else if(null != bbAssetCopies[idx]['base']){
-               buf+= bbAssetCopies[idx]['base'];
+          else if(null != BBClient.bbAssetCopies[idx]['base']){
+               buf+= BBClient.bbAssetCopies[idx]['base'];
           }
           buf+= "'/>";
      }
@@ -221,9 +221,9 @@ BBClient.bbPostData = function(data, suc, err){
 
 
 jQuery(document).ready(function(){
-     bbClientInit();
-     bbRenderFileupload();
-     bbRenderAssetCopies();
+     BBClient.bbClientInit();
+     BBClient.bbRenderFileupload();
+     BBClient.bbRenderAssetCopies();
 });
 
 

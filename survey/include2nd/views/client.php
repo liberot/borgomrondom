@@ -78,7 +78,6 @@ EOD;
 EOD;
 
      $buf1st = '';
-     $buf2nd = '';
      $assets = null;
      switch($field->type){
 
@@ -111,7 +110,6 @@ EOD;
           case 'file_upload':
 
                $buf1st = bb_build_file_upload_view($field, $rec);
-               $buf2nd = "<input type='hidden' name='is_file_upload' value='yes'></input>";
                $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field->ref);
                break;
 
@@ -120,7 +118,6 @@ EOD;
      echo <<<EOD
           <form class='input-form' method='post' action=''>
                {$buf1st}
-               {$buf2nd}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field_ref}'></input> 
                <div class=''><input type='submit' value='Submit REC'></div>
