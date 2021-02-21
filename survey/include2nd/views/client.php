@@ -23,6 +23,7 @@ function bb_build_client_view(){
      $field = bb_get_field_by_ref($field_ref)[0];
 
      $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
+bb_add_debug_field('rec', $rec);
 
      wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
      wp_enqueue_style('client_style');
@@ -37,13 +38,14 @@ function bb_build_client_view(){
 EOD;
 
      $field = bb_decorate_field_title($field);
+bb_add_debug_field('field', $field);
 
      $client_id = bb_get_author_id();
      $thread_id = bb_get_session_ticket('thread_id');
      $rec_pos = bb_get_session_ticket('rec_pos');
 
 
-// bb_flush_debug_field();
+bb_flush_debug_field();
 
      echo <<<EOD
 
@@ -71,6 +73,7 @@ EOD;
           <div class=''>group_ref: {$field->group_ref}</div>
           <div class=''>field_ref: {$field_ref}</div>
           <div class=''>type: {$field->type}</div>
+          <div class='field-title'>{$field->description}</div>
           <div class='field-title'>{$field->title}</div>
 EOD;
 

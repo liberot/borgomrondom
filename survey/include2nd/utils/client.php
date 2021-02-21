@@ -148,11 +148,13 @@ function bb_eval_jumps($actions){
 
      foreach($actions as $action){
 
+bb_add_debug_field('action', $action);
           $condition = json_decode(base64_decode($action->doc, true));
 
           if(is_null($condition)){
                continue;
           }
+bb_add_debug_field('condition', $condition);
 
           // is or and always...
           $op = $condition->op;
@@ -218,6 +220,7 @@ function bb_eval_jumps($actions){
           }
      }
 
+bb_add_debug_field('jumps', $jumps);
      return $jumps;
 }
 
@@ -250,9 +253,9 @@ function bb_decorate_field_title($field){
      if(is_null($temp)){
      }
      else {
-          $temp = str_replace('{{', '', $temp);
-          $temp = str_replace('}}', '', $temp);
-          $field->title = $temp;
+          // $temp = str_replace('{{', '', $temp);
+          // $temp = str_replace('}}', '', $temp);
+          // $field->title = $temp;
      }
 
      return $field;
