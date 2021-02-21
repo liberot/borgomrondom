@@ -81,11 +81,6 @@ function bb_upload_asset(){
 
      $answer = 'upload';
      $res = bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos);
-     if(is_null($res)){
-     }
-     else {
-          bb_proceed_to_next_field();
-     }
 
      $message = esc_html(__('File is uploaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message));
