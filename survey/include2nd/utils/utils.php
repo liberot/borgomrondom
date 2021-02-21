@@ -286,3 +286,19 @@ function bb_flush_debug_field(){
 
 
 
+function bb_remove_base_from_chunk($chunk){
+     $res = preg_replace('/data:image\/png;base64,/', '', $chunk);
+     return $res;
+}
+
+
+
+function bb_add_base_to_chunk($chunk){
+     $res = bb_remove_base_from_chunk($chunk);
+     $res = sprintf('data:image/png;base64,%s', $res);
+     return $res;
+}
+
+
+
+

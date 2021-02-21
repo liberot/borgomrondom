@@ -17,7 +17,7 @@ let Net = function(controller){
      this.importLayouts = function(msg){
           let ref = this;
           let data = {
-               action: 'exec_import_layouts'
+               action: 'bb_import_layouts'
           }
           let cb = function(e){
                ref.notify(new Message('layouts::imported', e.coll));
