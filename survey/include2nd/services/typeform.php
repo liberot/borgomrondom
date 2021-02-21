@@ -35,8 +35,8 @@ function bb_set_target_survey(){
           return false;
      }
 
-     $choice_ref = trim_incoming_filename($_POST['choice_ref']);
-     $target_survey_ref = trim_incoming_filename($_POST['target_survey_ref']);
+     $choice_ref = bb_trim_incoming_filename($_POST['choice_ref']);
+     $target_survey_ref = bb_trim_incoming_filename($_POST['target_survey_ref']);
 
      $res = bb_set_target_survey_ref($choice_ref, $target_survey_ref);
 
