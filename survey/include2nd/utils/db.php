@@ -15,6 +15,7 @@ function bb_remove_v1_records(){
           'surveyprint_question',
           'surveyprint_section',
           'surveyprint_spread',
+          'surveyprint_layout',
           'surveyprint_survey',
           'surveyprint_thread',
           'surveyprint_toc',
@@ -43,7 +44,7 @@ function bb_drop_tables(){
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
           'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec',
           'ts_bb_asset',
-          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_spread'
+          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread'
      ];
 
      global $wpdb;
@@ -78,6 +79,7 @@ function bb_init_tables(){
      $res&= bb_init_book_table();
      $res&= bb_init_chapter_table();
      $res&= bb_init_section_table();
+     $res&= bb_init_layout_table();
      $res&= bb_init_spread_table();
 
      return $res;
@@ -196,7 +198,7 @@ function bb_init_spread_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_spread (
-               id bigint(20) unsigned not null,
+               id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                book_id bigint(20) unsigned not null,
@@ -217,6 +219,37 @@ EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
+     return $res;
+}
+
+
+
+function bb_init_layout_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_layout (
+               id bigint(20) not null auto_increment,
+               title varchar(255) null,
+               note varchar(255) null,
+               description varchar(255),
+               code varchar(255),
+               origin varchar(255),
+               init datetime,
+               doc text,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
      return $res;
 }
 

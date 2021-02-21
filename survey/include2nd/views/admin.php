@@ -92,8 +92,8 @@ function bb_build_surveyprint_utils_view(){
 
      echo <<<EOD
      <div class='edit'>
-          <div class='unit'><a href='javascript:BBClient.bbDeleteDB();'>{$delete_db}</a></div>
-          <div class='unit'><a href='javascript:BBClient.bbInitDB();'>{$init_db}</a></div>
+          <div class='unit'><a href='javascript:BBAdmin.bbDeleteDB();'>{$delete_db}</a></div>
+          <div class='unit'><a href='javascript:BBAdmin.bbInitDB();'>{$init_db}</a></div>
      </div>
 EOD;
 
@@ -135,7 +135,7 @@ function bb_build_typeform_utils_view(){
           <div class='unit'><input class='bucket' type='text' value='N2BwhIXs'></input></div>
           <div class='unit'><input class='filename' type='text' value='typeform_survey.json'></input></div>
           <div class='unit'>{$actions}</div>
-          <div class='unit'><a href='javascript:BBClient.bbInsertTypeformSurveys();'>{$construction}</a></div>
+          <div class='unit'><a href='javascript:BBAdmin.bbInsertTypeformSurveys();'>{$construction}</a></div>
      </div>
 EOD;
 
@@ -360,7 +360,7 @@ EOD;
 
      $field_select = <<<EOD
            <div class='blockR'>
-                <select onchange='javascript:BBClient.bbSelectTargetField(this);'>
+                <select onchange='javascript:BBAdmin.bbSelectTargetField(this);'>
                      <option>field</option>
                 </select>
            </div>
@@ -388,7 +388,7 @@ EOD;
                $buf1st.= sprintf($field_out, $choice->title);
 
                $buf1st.= "<div class='blockR'>";
-               $buf1st.= sprintf("<select class='bind:%s' onchange='javascript:BBClient.bbSelectTargetSurvey(this);'>", $choice->ref);
+               $buf1st.= sprintf("<select class='bind:%s' onchange='javascript:BBAdmin.bbSelectTargetSurvey(this);'>", $choice->ref);
                $buf1st.= $buf2nd;
                $buf1st.= "</select>";
                $buf1st.= '</div>';

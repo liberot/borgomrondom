@@ -13,8 +13,8 @@ function bb_delete_db(){
 
      // init_log('bb_delete_db', []);
 
-     $res = bb_drop_tables();
      $res = bb_remove_v1_records();
+     $res = bb_drop_tables();
 
      $suc = 'failed';
      $message = esc_html(__('Typform DB is NOt deleted', 'bookbuilder'));

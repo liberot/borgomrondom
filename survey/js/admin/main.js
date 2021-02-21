@@ -1,7 +1,9 @@
-let BBAdmin = null == BBAdmin ? {} : BBAdmin;
+let BBAdmin = {};
 
 
-BBAdmin.bbSelectTargetField = function(ref){}
+
+BBAdmin.bbSelectTargetField = function(ref){
+}
 
 
 

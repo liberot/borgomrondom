@@ -4,7 +4,26 @@ add_action('init', 'bb_init_layout_utils');
 function bb_init_layout_utils(){
 }
 
-function bb_insert_layout($layout){
+function bb_insert_layout($layout_doc){
+
+     $title = esc_sql('Default Layout from SVG');
+     $code = esc_sql($layout_doc['layout']['code']);
+     $origin = esc_sql($layout_doc['origin']);
+
+     $doc = base64_encode(json_encode($layout_doc));
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_layout
+               (title, code, origin, doc, init) 
+          values 
+               ('{$title}', '{$code}', '{$origin}', '{$doc}', now())
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+
 }
 
 function bb_get_layouts_by_group($group_ref){
@@ -15,7 +34,7 @@ function bb_get_layouts_by_group($group_ref){
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -29,7 +48,7 @@ function bb_get_layouts_by_rule($rule){
      $sql = <<<EOD
           select {$prefix}posts.* from {$prefix}posts where post_type = 'surveyprint_layout' and post_excerpt = '{$rule}' order by ID desc
 EOD;
-     $sql = debug_sql($sql);
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
 }
@@ -385,28 +404,12 @@ function bb_import_layouts(){
 
      foreach($targets as $svg_path){
 
-          $doc = bb_parse_layout_doc($svg_path);
+          $layout_doc = bb_parse_layout_doc($svg_path);
+          $coll['ids'][]= bb_insert_layout($layout_doc);
 
-          $coll['docs'][]= $doc;
-
-          $rule = $doc['layout']['code'];
-
-// fixthiss
-          $conf = [
-               'post_type'=>'surveyprint_layout',
-               'post_name'=>'layout_rule',
-               'post_title'=>'default',
-               'post_excerpt'=>$rule,
-               'post_content'=>$doc,
-               'tags_input'=>$tags_input
-          ];
-          $coll['ids'][]= bb_insert_layout($layout);
-
-          $coll['rules'][]= $rule;
-          $coll['paths'][]= $svg_path;
      }
 
-     return $coll;
+     return $res;
 }
 
 
