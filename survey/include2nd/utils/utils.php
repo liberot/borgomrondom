@@ -28,6 +28,8 @@ function bb_trim_doc_node($node){
                $node[$key] = bb_trim_doc_node($value);
                continue;
           }
+          $value = false === $value ? 'false' : $value;
+          $value = true === $value ? 'true' : $value;
           $node[$key] = bb_trim_for_print($value);
      }
      return $node;
