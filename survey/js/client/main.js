@@ -51,7 +51,7 @@ let bbInitImageUpload = function(files){
 
      let formdata = new FormData();
      for(let idx in files){
-          formdata.append('action', 'exec_image_upload');
+          formdata.append('action', 'bb_upload_asset');
           formdata.append('image_'+idx, files[idx]);
      }
 
@@ -154,13 +154,13 @@ let bbUploadAsset = function(scan){
      let ref = this;
 
      let data = {
-
           'action': 'bb_upload_asset',
           'scan': scan 
      }
 
      let cb = function(e){
           console.log(e);
+          window.location.reload();
      }
 
      bbPostData(data, cb);
@@ -190,7 +190,7 @@ let bbClientInit = function(){
           history.pushState(null, null, window.location.href);
           bbPostData(
                { 
-                    'action': 'exec_nav_prev_field'
+                    'action': 'bb_nav_prev_field'
                },
                function(e){
                     window.location.reload();

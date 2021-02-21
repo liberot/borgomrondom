@@ -154,9 +154,6 @@ function bb_eval_jumps($actions){
                continue;
           }
 
-bb_add_debug_field('action', $action);
-bb_add_debug_field('condition', $condition);
-
           // is or and always...
           $op = $condition->op;
 
@@ -220,8 +217,6 @@ bb_add_debug_field('condition', $condition);
                     break;
           }
      }
-
-bb_add_debug_field('jumps', $jumps);
 
      return $jumps;
 }
@@ -327,10 +322,6 @@ function bb_write_rec(){
 
      $answer = bb_trim_incoming_string($_POST['answer']);
      $answer = bb_trim_for_print($answer);
-     if(is_null($answer)){
-          return;
-     }
-
      if(empty($answer)){
           return;
      }

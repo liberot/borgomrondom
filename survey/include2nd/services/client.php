@@ -26,14 +26,14 @@ function bb_nav_prev_field(){
           $rec_pos = 0;
      }
 
-     $rec = get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos)[0];
+     $rec = bb_get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos)[0];
      if(is_null($rec)){
           echo json_encode(array('res'=>'success', 'message'=>'no rec'));
           return;
      }
 
-     set_session_ticket('field_ref', $rec->field_ref);
-     set_session_ticket('rec_pos', $rec->pos);
+     bb_set_session_ticket('field_ref', $rec->field_ref);
+     bb_set_session_ticket('rec_pos', $rec->pos);
 
      echo json_encode(array('res'=>'success', 'message'=>'prev_field', 'rec'=>$rec));
 }
@@ -79,7 +79,15 @@ function bb_upload_asset(){
           return false;
      }
 
-     $message = esc_html(__('Yeah did', 'bookbuilder'));
+     $answer = 'upload';
+     $res = bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos);
+     if(is_null($res)){
+     }
+     else {
+          bb_proceed_to_next_field();
+     }
+
+     $message = esc_html(__('File is uploaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message));
 }
 

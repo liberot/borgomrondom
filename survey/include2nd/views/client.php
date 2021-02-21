@@ -43,7 +43,7 @@ EOD;
      $rec_pos = bb_get_session_ticket('rec_pos');
 
 
-bb_flush_debug_field();
+// bb_flush_debug_field();
 
      echo <<<EOD
 
@@ -83,6 +83,7 @@ EOD;
                break;
 
           case 'short_text':
+          case 'numeric':
 
                $buf1st = bb_build_short_text_view($field, $rec);
                break;
@@ -93,14 +94,17 @@ EOD;
                break;
 
           case 'yes_no':
+
                $buf1st = bb_build_yes_no_view($field, $rec);
                break;
 
           case 'picture_choice':
+
                $buf1st = bb_build_picture_choice_view($field, $rec);
                break;
 
           case 'file_upload':
+
                $buf1st = bb_build_file_upload_view($field, $rec);
                break;
 
