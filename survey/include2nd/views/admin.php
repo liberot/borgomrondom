@@ -376,24 +376,6 @@ EOD;
 
           switch($field->type){
 
-// todo: insertion of the choices at parse time
-/*
-                    $field->choices = [
-                         (object)[
-                              'ref'=>$field_ref,
-                              'title'=>'yes',
-                              'target_survey_ref'=>'',
-                              'target_field_ref'=>''
-                         ],
-                         (object)[
-                              'ref'=>$field_ref,
-                              'title'=>'yes',
-                              'target_survey_ref'=>'',
-                              'target_field_ref'=>''
-                         ]
-                    ]; 
-*/
-
                case 'yes_no':
                case 'multiple_choice':
 

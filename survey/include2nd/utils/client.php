@@ -77,6 +77,8 @@ function bb_proceed_to_kickoff_field(){
 */
 function bb_eval_next_field($field_ref){
 
+bb_add_debug_field('eval_next_field:', $field_ref);
+
      $client_id = bb_get_author_id();
      $thread_id = bb_get_session_ticket('thread_id');
 
@@ -85,6 +87,8 @@ function bb_eval_next_field($field_ref){
 // boss - jump
 // evaluates jumps to foreign surveys - to be adjuste in the wp admin area
      $choices = bb_get_choices_of_field($field_ref);
+bb_add_debug_field('choices:', $choices);
+
      if(empty($choices)){
      }
      else {
@@ -178,7 +182,8 @@ bb_add_debug_field('condition', $condition);
                     case 'constant':
 
                          $val = $condition_var->value;
-                         $val = false == $val ? 'false' : 'true';
+                         $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
+                         $condition_results[]= $rec->doc == $val ? 'true' : 'false';
 
                          break;
 

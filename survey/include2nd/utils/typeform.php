@@ -38,12 +38,14 @@ function bb_insert_typeform_survey_from_descriptor($survey_file_name){
      $survey = bb_parse_survey($doc);
      $groups = bb_parse_groups($doc['fields'], null, null);
      $fields = bb_parse_fields($doc['fields'], null, null);
+     $yesnos = bb_parse_yesnos($doc['fields'], null, null);
      $choices = bb_parse_choices($doc['fields'], null, null);
      $actions = bb_parse_actions($doc['logic'], null, null);
 
      $res = bb_insert_survey($survey, $data);
      $res&= bb_insert_groups($survey, $groups);
      $res&= bb_insert_fields($survey, $fields);
+     $res&= bb_insert_yesnos($survey, $yesnos);
      $res&= bb_insert_choices($survey, $choices);
      $res&= bb_insert_actions($survey, $actions);
 
@@ -159,7 +161,65 @@ function bb_insert_choices($survey, $choices){
 EOD;
 
           $sql = bb_debug_sql($sql);
+          $res = $wpdb->query($sql);
+          $pos = $pos +1;
+     }
 
+     return $res;
+}
+
+
+
+function bb_insert_yesnos($survey, $yesnos){
+
+     $res = false;
+
+     global $wpdb;
+
+     $survey_ref = esc_sql($survey['id']);
+     $prefix = $wpdb->prefix;
+     $pos = 0;
+     foreach($yesnos as $yesno){
+
+          $ref = esc_sql($yesno['ref']);
+          $parent_ref = esc_sql($yesno['parent_ref']);
+          $group_ref = esc_sql($yesno['parent_ref']);
+          $field_ref = esc_sql($yesno['field_ref']);
+          $title = esc_sql($yesno['title']);
+          $description = esc_sql($yesno['description']);
+          $label = esc_sql($yesno['label']);
+          $doc = esc_sql(base64_encode(json_encode($yesno)));
+
+          $sql = <<<EOD
+               insert into {$prefix}ts_bb_choice
+                    (
+                         ref, 
+                         survey_ref,
+                         group_ref, 
+                         parent_ref, 
+                         field_ref, 
+                         title, 
+                         description, 
+                         doc, 
+                         pos,
+                         init
+                    )
+               values 
+                    (
+                         '{$ref}', 
+                         '{$survey_ref}', 
+                         '{$group_ref}', 
+                         '{$parent_ref}', 
+                         '{$field_ref}', 
+                         '{$label}', 
+                         '{$description}', 
+                         '{$doc}', 
+                         '{$pos}',
+                         now() 
+                    )
+EOD;
+
+          $sql = bb_debug_sql($sql);
           $res = $wpdb->query($sql);
           $pos = $pos +1;
      }
@@ -363,6 +423,50 @@ function bb_parse_fields($fields, $parent_ref, $res){
 
 
 
+function bb_parse_yesnos($fields, $parent_ref, $res){
+
+     if(is_null($fields)){ return $res; }
+     if(is_null($parent_ref)){ $parent_ref = 'root'; }
+     if(is_null($res)){ $res = []; }
+
+     foreach($fields as $field){
+
+          $properties = $field['properties'];
+          $childs = $field['properties']['fields'];
+
+          if(is_null($childs)){
+
+               switch($field['type']){
+                    case 'yes_no':
+
+                         $picks = ['yes', 'no'];
+                         foreach($picks as $pick){
+                              $yesno = [];
+                              $yesno['label'] = $pick;
+                              // $yesno['id'] = bb_get_random_string(37);
+                              // $yesno['ref'] = bb_get_random_string(37);
+                              $yesno['id'] = sprintf('%s_%s', $field['ref'], $pick);
+                              $yesno['ref'] = sprintf('%s_%s', $field['ref'], $pick);
+                              $yesno['parent_ref'] = $parent_ref;
+                              $yesno['typeform_ref'] = $field['id'];
+                              $yesno['field_ref'] = $field['ref'];
+                              $res[]= $yesno;
+                         };
+
+                         break;
+               }
+          }
+          else {
+               $parent_ref = $field['ref'];
+               $res = bb_parse_yesnos($childs, $parent_ref, $res);
+          }
+     }
+
+     return $res;
+}
+
+
+
 function bb_parse_choices($fields, $parent_ref, $res){
 
      if(is_null($fields)){ return $res; }
@@ -374,6 +478,7 @@ function bb_parse_choices($fields, $parent_ref, $res){
           $properties = $field['properties'];
           $childs = $field['properties']['fields'];
           $choices = $field['properties']['choices'];
+
           if(is_null($childs)){
                if(!is_null($choices)){
                     foreach($choices as $choice){

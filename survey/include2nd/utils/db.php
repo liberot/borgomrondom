@@ -743,6 +743,7 @@ function bb_get_survey_by_ref($ref) {
      $sql = <<<EOD
           select * from {$prefix}ts_bb_survey where ref = '{$ref}'
 EOD;
+     $sql = bb_debug_sql($sql);
      $res['survey'] = $wpdb->get_results($sql);
 
 
@@ -751,6 +752,7 @@ EOD;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_group where survey_ref = '{$ref}'
 EOD;
+     $sql = bb_debug_sql($sql);
      $res['groups'] = $wpdb->get_results($sql);
 
 
@@ -760,6 +762,7 @@ EOD;
           select * from {$prefix}ts_bb_field where survey_ref = '{$ref}'
           order by pos
 EOD;
+          $sql = bb_debug_sql($sql);
      $res['fields'] = $wpdb->get_results($sql);
 
 
@@ -773,6 +776,7 @@ EOD;
                select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}'
                order by pos
 EOD;
+          $sql = bb_debug_sql($sql);
           $field->choices = $wpdb->get_results($sql);
      }
 
