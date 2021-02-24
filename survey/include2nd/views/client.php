@@ -176,7 +176,15 @@ function bb_build_multiple_choice_view($field, $rec){
      else {
           $buf1st.= sprintf("<div class='input-choice'>");
           foreach($choices as $choice){
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", $choice->ref, $choice->title);
+
+                $title = esc_html($choice->title);
+                $value = $choice->ref;
+                $checked = '';
+                if($value == $rec->doc){
+                     $checked = 'checked';
+                }
+
+                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $title);
           }
      }
      return $buf1st;
@@ -186,16 +194,11 @@ function bb_build_multiple_choice_view($field, $rec){
 
 function bb_build_short_text_view($field, $rec){
 
-     $answer_text = '';
-     if(is_null($rec)){
-     }
-     else {
-          $answer_text = esc_html($rec->doc);
-     }
+     $answer = esc_html($rec->doc);
 
      $buf1st = '';
      $buf1st.= "<div class=''>";
-     $buf1st.= sprintf("<input type='text' class='input-text' name='answer' value='%s'></input>", $answer_text);
+     $buf1st.= sprintf("<input type='text' class='input-text' name='answer' value='%s'></input>", $answer);
      $buf1st.= "</div>";
      return $buf1st;
 }
@@ -220,8 +223,17 @@ function bb_build_picture_choice_view($field, $rec){
      else {
           $buf1st.= sprintf("<div class='input-choice row'>");
           foreach($choices as $choice){
+
+                $title = esc_html($choice->title);
+                $value = $choice->ref;
+                $checked = '';
+                if($value == $rec->doc){
+                     $checked = 'checked';
+                }
+
                 $buf1st.= "<div class='block'>";
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", $choice->ref, $choice->title);
+                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $choice->title);
+
                 $temp = json_decode(base64_decode($choice->doc, true));
                 if(is_null($temp)){
                 }
