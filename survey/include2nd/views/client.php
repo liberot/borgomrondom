@@ -5,9 +5,6 @@
 add_shortcode('bb_client_view', 'bb_build_client_view');
 function bb_build_client_view(){
 
-     wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
-     wp_enqueue_script('service');
-
      if(!is_user_logged_in()){
           echo '<p>ProfileBuilder Authentication Procedere</p>';
           echo do_shortcode('[wppb-login]');
@@ -15,6 +12,28 @@ function bb_build_client_view(){
           echo do_shortcode('[wppb-recover-password]');
           return;
      }
+
+     $view_state = bb_get_session_ticket('view_state');
+
+     switch($view_state){
+
+          case 'spread':
+              bb_build_client_spread_view();
+              break;
+
+          case 'survey':
+          default:
+              bb_build_client_survey_view();
+              break;
+     }
+}
+
+
+
+function bb_build_client_survey_view(){
+
+     wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
+     wp_enqueue_script('service');
 
      $client_id = bb_get_author_id();
      $thread_id = bb_get_session_ticket('thread_id');
@@ -43,8 +62,6 @@ bb_add_debug_field('field:', $field);
      $client_id = bb_get_author_id();
      $thread_id = bb_get_session_ticket('thread_id');
      $rec_pos = bb_get_session_ticket('rec_pos');
-
-     bb_build_spread_view();
 
      echo <<<EOD
 
@@ -108,7 +125,6 @@ EOD;
                $buf1st = bb_build_file_upload_view($field, $rec);
                $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field->ref);
                break;
-
      }
 
      echo <<<EOD
@@ -284,16 +300,16 @@ EOD;
 
 
 
-// fixdiss
-function bb_build_spread_view(){
-
-     if('true' != bb_get_session_ticket('spreads')){
-
-          return false;
-     }
+function bb_build_client_spread_view(){
 
      echo <<<EOD
           <div class=''>The spreads be shown here as for debug reasons</div>
+
+          <form class='input-form block' method='post' action=''>
+               <input type='hidden' name='cmd' value='bb_show_survey'></input> 
+               <div class=''><input type='submit' value='Switch to survey'></div>
+          </form>
+
 EOD;
 
 }

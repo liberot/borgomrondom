@@ -35,6 +35,10 @@ function bb_process_incoming(){
                 bb_show_spreads();
                 break;
 
+          case 'bb_show_survey':
+                bb_show_survey();
+                break;
+
           case 'bb_write_rec':
                 bb_write_rec();
                 break;
@@ -58,7 +62,7 @@ function bb_proceed_to_next_field(){
 
      bb_set_session_ticket('field_ref', $field->ref);
      bb_set_session_ticket('rec_pos', $rec_pos);
-     bb_set_session_ticket('spreads', null);
+     bb_set_session_ticket('view_state', null);
 }
 
 
@@ -74,7 +78,7 @@ function bb_proceed_to_kickoff_field(){
 
      bb_set_session_ticket('field_ref', $field->ref);
      bb_set_session_ticket('rec_pos', 0);
-     bb_set_session_ticket('spreads', null);
+     bb_set_session_ticket('view_state', null);
 }
 
 
@@ -290,7 +294,7 @@ function bb_init_new_thread(){
      bb_set_session_ticket('thread_id', null);
      bb_set_session_ticket('field_ref', null);
      bb_set_session_ticket('rec_pos', null);
-     bb_set_session_ticket('spreads', null);
+     bb_set_session_ticket('view_statee', null);
 
      $thread_id = bb_insert_thread($client_id);
      if(false == $thread_id){
@@ -326,6 +330,7 @@ function bb_init_existing_thread(){
                bb_set_session_ticket('thread_id', $rec->thread_id);
                bb_set_session_ticket('field_ref', $rec->field_ref);
                bb_set_session_ticket('rec_pos', $rec->pos);
+               bb_set_session_ticket('view_state', null);
 
                wp_redirect('');
           }
@@ -382,11 +387,16 @@ function bb_write_rec(){
 
 
 
-// fixdiss
+// todo 
 function bb_show_spreads(){
 
-     bb_set_session_ticket('spreads', 'true');
+     bb_set_session_ticket('view_state', 'spread');
 }
 
 
+
+function bb_show_survey(){
+
+     bb_set_session_ticket('view_state', null);
+}
 
