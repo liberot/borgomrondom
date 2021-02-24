@@ -44,9 +44,6 @@ bb_add_debug_field('field:', $field);
      $thread_id = bb_get_session_ticket('thread_id');
      $rec_pos = bb_get_session_ticket('rec_pos');
 
-
-bb_flush_debug_field();
-
      echo <<<EOD
 
           <div class='row'>
@@ -62,17 +59,9 @@ bb_flush_debug_field();
                </form>
 
           </div>
-
 EOD;
 
      echo <<<EOD
-          <div class=''>client_id: {$client_id}</div>
-          <div class=''>thread_id: {$thread_id}</div>
-          <div class=''>rec_pos: {$rec_pos}</div>
-          <div class=''>survey_ref: {$field->survey_ref}</div>
-          <div class=''>group_ref: {$field->group_ref}</div>
-          <div class=''>field_ref: {$field_ref}</div>
-          <div class=''>type: {$field->type}</div>
           <div class='field-title'>{$field->description}</div>
           <div class='field-title'>{$field->title}</div>
 EOD;
@@ -135,6 +124,19 @@ EOD;
      echo ';';
      echo PHP_EOL;
      echo "</script>";
+
+     echo <<<EOD
+          <div class=''>client_id: {$client_id}</div>
+          <div class=''>thread_id: {$thread_id}</div>
+          <div class=''>rec_pos: {$rec_pos}</div>
+          <div class=''>survey_ref: {$field->survey_ref}</div>
+          <div class=''>group_ref: {$field->group_ref}</div>
+          <div class=''>field_ref: {$field_ref}</div>
+          <div class=''>type: {$field->type}</div>
+EOD;
+
+bb_flush_debug_field();
+
 }
 
 
@@ -242,6 +244,7 @@ function bb_build_picture_choice_view($field, $rec){
                 }
                 $buf1st.= "</div>";
           }
+          $buf1st.= "</div>";
      }
      return $buf1st;
 }
