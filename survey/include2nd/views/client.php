@@ -144,9 +144,23 @@ function bb_build_yes_no_view($field, $rec){
      $yes = esc_html(__('Yes', 'bookbuilder'));
      $no = esc_html(__('No', 'bookbuilder'));
 
+     $choices = bb_get_choices_of_field($field->ref);
+
      $buf1st = '';
-     $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'true', $yes);
-     $buf1st.= sprintf("<input type='radio' name='answer' value='%s'> %s</input><br/>", 'false', $no);
+     if(is_null($choices)){
+     }
+     else {
+          $buf1st.= sprintf("<div class='input-choice'>");
+          foreach($choices as $choice){
+                $title = esc_html(__($choice->title, 'bookbuilder'));
+                $value = $choice->ref;
+                $checked = '';
+                if($value == $rec->doc){
+                     $checked = 'checked';
+                }
+                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $title);
+          }
+     }
 
      return $buf1st;
 }

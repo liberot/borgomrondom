@@ -82,9 +82,7 @@ bb_add_debug_field('eval_next_field:', $field_ref);
      $client_id = bb_get_author_id();
      $thread_id = bb_get_session_ticket('thread_id');
 
-     $field = null;
-
-// boss - jump
+// bossjump
 // evaluates jumps to foreign surveys - to be adjuste in the wp admin area
      $choices = bb_get_choices_of_field($field_ref);
 bb_add_debug_field('choices:', $choices);
@@ -110,7 +108,7 @@ bb_add_debug_field('choices:', $choices);
           }
      }
 
-// typeform - logic - jump
+// logicjump (typeform)
 // evaluates the action jumps of the survey descriptor
      $field = bb_get_field_by_ref($field_ref)[0];
      $actions = bb_get_actions_of_field_by_ref($field_ref);
@@ -125,12 +123,15 @@ bb_add_debug_field('choices:', $choices);
                $pos = intval($field->pos);
                $pos = $pos+1;
                $field = bb_get_field_of_survey_at_pos($field->survey_ref, $pos)[0];
+bb_add_debug_field('no jumps, stepping to: ', $field);
+bb_add_debug_field('at pos: ', $pos);
           }
           else {
                $link_ref = $jumps[0];
                $field = bb_get_field_by_ref($link_ref)[0];
                if(is_null($field)){
                     $field = bb_get_first_field_of_group($link_ref)[0];
+bb_add_debug_field('jump found, stepping to: ', $field);
                }
           }
      }
@@ -181,16 +182,23 @@ bb_add_debug_field('condition', $condition);
 
                     case 'constant':
 
-                         $val = $condition_var->value;
                          $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
-                         $condition_results[]= $rec->doc == $val ? 'true' : 'false';
+                         $val = $condition_var->value;
+                         $rvl = $rec->doc;
+                         // yes_no
+                         preg_match('/^.{36}_(.{2,3})/', $rvl, $match);
+                         if(!is_null($match[1])){
+                              $rvl = 'yes' == $match[1] ? 'true' : 'false';
+                         }
 
+                         $condition_results[]= $rvl == $val ? 'true' : 'false';
                          break;
 
                     case 'choice':
 
                          $val = $condition_var->value;
                          $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
+
                          $condition_results[]= $rec->doc == $val ? 'true' : 'false';
 
                          break;
