@@ -34,6 +34,7 @@ function bb_nav_prev_field(){
 
      bb_set_session_ticket('field_ref', $rec->field_ref);
      bb_set_session_ticket('rec_pos', $rec->pos);
+     bb_set_session_ticket('spreads', null);
 
      echo json_encode(array('res'=>'success', 'message'=>'prev_field', 'rec'=>$rec));
 }

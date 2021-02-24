@@ -31,9 +31,14 @@ function bb_process_incoming(){
                 bb_init_existing_thread();
                 break;
 
+          case 'bb_show_spreads':
+                bb_show_spreads();
+                break;
+
           case 'bb_write_rec':
                 bb_write_rec();
                 break;
+
      }
 }
 
@@ -48,11 +53,12 @@ function bb_proceed_to_next_field(){
           return;
      }
 
-     bb_set_session_ticket('field_ref', $field->ref);
-
      $rec_pos = intval($rec_pos);
      $rec_pos = $rec_pos +1;
+
+     bb_set_session_ticket('field_ref', $field->ref);
      bb_set_session_ticket('rec_pos', $rec_pos);
+     bb_set_session_ticket('spreads', null);
 }
 
 
@@ -68,6 +74,7 @@ function bb_proceed_to_kickoff_field(){
 
      bb_set_session_ticket('field_ref', $field->ref);
      bb_set_session_ticket('rec_pos', 0);
+     bb_set_session_ticket('spreads', null);
 }
 
 
@@ -283,6 +290,7 @@ function bb_init_new_thread(){
      bb_set_session_ticket('thread_id', null);
      bb_set_session_ticket('field_ref', null);
      bb_set_session_ticket('rec_pos', null);
+     bb_set_session_ticket('spreads', null);
 
      $thread_id = bb_insert_thread($client_id);
      if(false == $thread_id){
@@ -308,14 +316,17 @@ function bb_init_existing_thread(){
      else {
 
           $thread_id = $rec->id;
+
           $rec = bb_get_last_record_of_client($client_id, $thread_id)[0];
           if(is_null($rec)){
           }
           else {
+
                bb_set_session_ticket('client_id', $rec->client_id);
                bb_set_session_ticket('thread_id', $rec->thread_id);
                bb_set_session_ticket('field_ref', $rec->field_ref);
                bb_set_session_ticket('rec_pos', $rec->pos);
+
                wp_redirect('');
           }
      }
@@ -360,12 +371,21 @@ function bb_write_rec(){
      }
 
      $field = bb_get_field_by_ref($field_ref)[0];
+
      $res = bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos);
      if(is_null($res)){
      }
      else {
           bb_proceed_to_next_field();
      }
+}
+
+
+
+// fixdiss
+function bb_show_spreads(){
+
+     bb_set_session_ticket('spreads', 'true');
 }
 
 

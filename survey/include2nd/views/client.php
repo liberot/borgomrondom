@@ -44,18 +44,25 @@ bb_add_debug_field('field:', $field);
      $thread_id = bb_get_session_ticket('thread_id');
      $rec_pos = bb_get_session_ticket('rec_pos');
 
+     bb_build_spread_view();
+
      echo <<<EOD
 
           <div class='row'>
 
                <form class='input-form block' method='post' action=''>
-               <input type='hidden' name='cmd' value='bb_init_existing_thread'></input> 
-               <div class=''><input type='submit' value='Start existing thread'></div>
+                    <input type='hidden' name='cmd' value='bb_init_existing_thread'></input> 
+                    <div class=''><input type='submit' value='Start existing thread'></div>
                </form>
 
                <form class='input-form block' method='post' action=''>
-               <input type='hidden' name='cmd' value='bb_init_new_thread'></input> 
-               <div class=''><input type='submit' value='Start a new thread'></div>
+                    <input type='hidden' name='cmd' value='bb_init_new_thread'></input> 
+                    <div class=''><input type='submit' value='Start a new thread'></div>
+               </form>
+
+               <form class='input-form block' method='post' action=''>
+                     <input type='hidden' name='cmd' value='bb_show_spreads'></input> 
+                     <div class=''><input type='submit' value='Show spreads'></div>
                </form>
 
           </div>
@@ -271,3 +278,16 @@ EOD;
 
 
 
+// fixdiss
+function bb_build_spread_view(){
+
+     if('true' != bb_get_session_ticket('spreads')){
+
+          return false;
+     }
+
+     echo <<<EOD
+          <div class=''>The spreads be shown here as for debug reasons</div>
+EOD;
+
+}
