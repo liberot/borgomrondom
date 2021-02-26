@@ -100,7 +100,6 @@ EOD;
                break;
 
           case 'short_text':
-          case 'numeric':
           case 'number':
 
                $buf1st = bb_build_short_text_view($field, $rec);
@@ -210,7 +209,7 @@ function bb_build_multiple_choice_view($field, $rec){
           foreach($choices as $choice){
 
                 $title = esc_html($choice->title);
-                $value = $choice->ref;
+                $value = esc_html($choice->ref);
                 $checked = '';
                 if($title == $rec->doc){
                      $checked = 'checked';
@@ -314,3 +313,6 @@ function bb_build_client_spread_view(){
 EOD;
 
 }
+
+
+

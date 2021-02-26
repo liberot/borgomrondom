@@ -39,13 +39,15 @@ function bb_insert_typeform_survey_from_descriptor($survey_file_name){
      $groups = bb_parse_groups($doc['fields'], null, null);
      $fields = bb_parse_fields($doc['fields'], null, null);
      $yesnos = bb_parse_yesnos($doc['fields'], null, null);
+     $choices_of_no_choice = bb_parse_choices_of_no_choice($doc['fields'], null, null);
      $choices = bb_parse_choices($doc['fields'], null, null);
      $actions = bb_parse_actions($doc['logic'], null, null);
 
      $res = bb_insert_survey($survey, $data);
      $res&= bb_insert_groups($survey, $groups);
      $res&= bb_insert_fields($survey, $fields);
-     $res&= bb_insert_yesnos($survey, $yesnos);
+     $res&= bb_insert_choices($survey, $choices_of_no_choice);
+     $res&= bb_insert_choices($survey, $yesnos);
      $res&= bb_insert_choices($survey, $choices);
      $res&= bb_insert_actions($survey, $actions);
 
@@ -110,16 +112,18 @@ EOD;
 
 
 
-
 function bb_insert_choices($survey, $choices){
 
-     $res = false;
+     $res = null;
 
      global $wpdb;
 
      $survey_ref = esc_sql($survey['id']);
      $prefix = $wpdb->prefix;
      $pos = 0;
+     if(is_null($choices)){
+          return $res;
+     }
      foreach($choices as $choice){
 
           $ref = esc_sql($choice['ref']);
@@ -130,65 +134,6 @@ function bb_insert_choices($survey, $choices){
           $description = esc_sql($choice['description']);
           $label = esc_sql($choice['label']);
           $doc = esc_sql(base64_encode(json_encode($choice)));
-
-          $sql = <<<EOD
-               insert into {$prefix}ts_bb_choice
-                    (
-                         ref, 
-                         survey_ref,
-                         group_ref, 
-                         parent_ref, 
-                         field_ref, 
-                         title, 
-                         description, 
-                         doc, 
-                         pos,
-                         init
-                    )
-               values 
-                    (
-                         '{$ref}', 
-                         '{$survey_ref}', 
-                         '{$group_ref}', 
-                         '{$parent_ref}', 
-                         '{$field_ref}', 
-                         '{$label}', 
-                         '{$description}', 
-                         '{$doc}', 
-                         '{$pos}',
-                         now() 
-                    )
-EOD;
-
-          $sql = bb_debug_sql($sql);
-          $res = $wpdb->query($sql);
-          $pos = $pos +1;
-     }
-
-     return $res;
-}
-
-
-
-function bb_insert_yesnos($survey, $yesnos){
-
-     $res = false;
-
-     global $wpdb;
-
-     $survey_ref = esc_sql($survey['id']);
-     $prefix = $wpdb->prefix;
-     $pos = 0;
-     foreach($yesnos as $yesno){
-
-          $ref = esc_sql($yesno['ref']);
-          $parent_ref = esc_sql($yesno['parent_ref']);
-          $group_ref = esc_sql($yesno['parent_ref']);
-          $field_ref = esc_sql($yesno['field_ref']);
-          $title = esc_sql($yesno['title']);
-          $description = esc_sql($yesno['description']);
-          $label = esc_sql($yesno['label']);
-          $doc = esc_sql(base64_encode(json_encode($yesno)));
 
           $sql = <<<EOD
                insert into {$prefix}ts_bb_choice
@@ -438,13 +383,10 @@ function bb_parse_yesnos($fields, $parent_ref, $res){
 
                switch($field['type']){
                     case 'yes_no':
-
                          $picks = ['yes', 'no'];
                          foreach($picks as $pick){
                               $yesno = [];
                               $yesno['label'] = $pick;
-                              // $yesno['id'] = bb_get_random_string(37);
-                              // $yesno['ref'] = bb_get_random_string(37);
                               $yesno['id'] = sprintf('%s_%s', $field['ref'], $pick);
                               $yesno['ref'] = sprintf('%s_%s', $field['ref'], $pick);
                               $yesno['parent_ref'] = $parent_ref;
@@ -452,13 +394,56 @@ function bb_parse_yesnos($fields, $parent_ref, $res){
                               $yesno['field_ref'] = $field['ref'];
                               $res[]= $yesno;
                          };
-
                          break;
                }
           }
           else {
                $parent_ref = $field['ref'];
                $res = bb_parse_yesnos($childs, $parent_ref, $res);
+          }
+     }
+
+     return $res;
+}
+
+
+
+function bb_parse_choices_of_no_choice($fields, $parent_ref, $res){
+
+     if(is_null($fields)){ return $res; }
+     if(is_null($parent_ref)){ $parent_ref = 'root'; }
+     if(is_null($res)){ $res = []; }
+
+     foreach($fields as $field){
+
+          $properties = $field['properties'];
+          $childs = $field['properties']['fields'];
+
+
+          if(is_null($childs)){
+
+               switch($field['type']){
+
+                    case 'statement':
+                    case 'number':
+                    case 'short_text':
+
+                         $choice_of_no_choice = [];
+                         $choice_of_no_choice['label'] = 'choice_of_no_choice';
+                         $choice_of_no_choice['id'] = sprintf('%s_%s', $field['ref'], 'choice_of_no_choice');
+                         $choice_of_no_choice['ref'] = sprintf('%s_%s', $field['ref'], 'choice_of_no_choice');
+                         $choice_of_no_choice['parent_ref'] = $parent_ref;
+                         $choice_of_no_choice['typeform_ref'] = $field['id'];
+                         $choice_of_no_choice['field_ref'] = $field['ref'];
+
+                         $res[]= $choice_of_no_choice;
+
+                         break;
+               }
+          }
+          else {
+               $parent_ref = $field['ref'];
+               $res = bb_parse_choices_of_no_choice($childs, $parent_ref, $res);
           }
      }
 

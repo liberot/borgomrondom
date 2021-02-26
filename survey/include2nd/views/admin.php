@@ -378,6 +378,9 @@ EOD;
 
                case 'yes_no':
                case 'multiple_choice':
+               case 'number':
+               case 'short_text':
+               case 'statement':
 
                     foreach($field->choices as $choice){
 
