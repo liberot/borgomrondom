@@ -50,3 +50,6 @@ function bb_set_target_survey(){
      echo json_encode(array('res'=>$suc, 'message'=>$message));
 
 }
+
+
+

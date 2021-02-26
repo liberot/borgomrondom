@@ -272,8 +272,13 @@ function bb_init_thread_table(){
                title varchar(255),
                note varchar(255),
                description varchar(255),
-               init datetime,
                doc longtext,
+               init datetime,
+
+               field_ref varchar(255),
+               view_state varchar(255),
+               pos int unsigned not null,
+
                primary key (id)
           )
           engine=innodb
@@ -304,6 +309,7 @@ function bb_init_rec_table(){
                survey_ref varchar(255),
                group_ref varchar(255),
                field_ref varchar(255),
+               choice_ref varchar(255),
                title varchar(255),
                note varchar(255),
                description varchar(255),
@@ -665,7 +671,7 @@ EOD;
 
 
 
-function bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos){
+function bb_insert_rec($client_id, $thread_id, $field, $choice_ref, $rec_pos, $answer){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -673,15 +679,26 @@ function bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos){
      $survey_ref = esc_sql($field->survey_ref);
      $group_ref = esc_sql($field->group_ref);
      $field_ref = esc_sql($field->ref);
+     $choice_ref = esc_sql($choice_ref);
      $answer = esc_sql($answer);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           insert into {$prefix}ts_bb_rec
-               (client_id, thread_id, survey_ref, group_ref, field_ref, pos, doc, init) 
+               (client_id, thread_id, survey_ref, group_ref, field_ref, choice_ref, pos, doc, init)
           values 
-               ('{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', '{$rec_pos}', '{$answer}', now())
+               (
+                    '{$client_id}',
+                    '{$thread_id}',
+                    '{$survey_ref}',
+                    '{$group_ref}',
+                    '{$field_ref}',
+                    '{$choice_ref}',
+                    '{$rec_pos}',
+                    '{$answer}',
+                    now()
+               )
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);

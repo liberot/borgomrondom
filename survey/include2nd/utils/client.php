@@ -377,7 +377,18 @@ function bb_write_rec(){
 
      $field = bb_get_field_by_ref($field_ref)[0];
 
-     $res = bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos);
+     $choice_ref = '';;
+     if('multiple_choice' == $field->type){
+          $choices = bb_get_choices_of_field($field->ref);
+          foreach($choices as $choice){
+               if($answer == $choice->ref){
+                    $choice_ref = $choice->ref;
+                    $answer = $choice->title;
+               }
+          }
+     }
+
+     $res = bb_insert_rec($client_id, $thread_id, $field, $choice_ref, $rec_pos, $answer);
      if(is_null($res)){
      }
      else {
