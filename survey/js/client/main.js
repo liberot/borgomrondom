@@ -271,7 +271,7 @@ BBClient.bbRenderAssetCopies = function(scan){
 
 
 
-BBClient.bbClientInit = function(){
+BBClient.bbInitClient = function(){
      window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
      history.pushState(null, null, window.location.href);
      window.onpopstate = function(e){
@@ -315,7 +315,7 @@ BBClient.bbPostData = function(data, suc, err){
 
 
 jQuery(document).ready(function(){
-     BBClient.bbClientInit();
+     BBClient.bbInitClient();
      BBClient.bbRenderFileupload();
      BBClient.bbRenderAssetCopies();
      BBClient.bbSetupKeys();

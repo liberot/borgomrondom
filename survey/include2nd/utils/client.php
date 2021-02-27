@@ -81,12 +81,10 @@ function bb_process_incoming(){
 function bb_proceed_to_next_field(){
 
      $client_id = bb_get_author_id();
-
      $ticket = bb_get_ticket_of_client($client_id)[0];
-
      $field = bb_eval_next_field($ticket->field_ref);
      if(is_null($field)){
-          return;
+          return false;
      }
 
      $rec_pos = intval($ticket->rec_pos);
@@ -111,7 +109,7 @@ function bb_proceed_to_kickoff_field($thread_id){
      $field = bb_get_kickoff_field()[0];
 
      if(is_null($field)){
-          return;
+          return false;
      }
 
      $res = bb_set_ticket_of_client(
@@ -213,8 +211,8 @@ bb_add_debug_field('jump found, stepping to: ', $field);
 function bb_eval_jumps($actions){
 
      $client_id = bb_get_author_id();
-
      $ticket = bb_get_ticket_of_client($client_id)[0];
+
      $jumps = [];
 
      foreach($actions as $action){
@@ -307,7 +305,7 @@ function bb_decorate_field_title($field){
 
      $client_id = bb_get_author_id();
 
-     $ticket = bb_get_ticket_of_client($client_id);
+     $ticket = bb_get_ticket_of_client($client_id)[0];
 
      $temp = $field->title;
      preg_match_all('/{{(.{42})}}/', $temp, $match);
@@ -352,7 +350,8 @@ function bb_init_new_thread(){
 
      $res = bb_proceed_to_kickoff_field($thread_id);
 
-     wp_redirect('');
+     // wp_redirect('');
+     return $res;
 }
 
 
@@ -367,14 +366,8 @@ function bb_init_existing_thread(){
           $thread_id = $res->id;
           $res = bb_get_last_record_of_client($res->client_id, $thread_id)[0];
           if(is_null($res)){
-               $res = bb_set_ticket_of_client(
-                    $client_id,
-                    $thread_id,
-                    null,
-                    null,
-                    'survey'
-                );
-                $res = bb_proceed_to_kickoff_field();
+
+                $res = bb_proceed_to_kickoff_field($thread_id);
           }
           else{
                $res = bb_set_ticket_of_client(
@@ -449,7 +442,9 @@ function bb_write_rec(){
 function bb_show_spreads(){
 
      $client_id = bb_get_author_id();
-     $ticket = bb_get_ticket_of_client($client_id);
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+
      $res = bb_set_ticket_of_client(
           $ticket->client_id,
           $ticket->thread_id,
@@ -464,7 +459,9 @@ function bb_show_spreads(){
 function bb_show_survey(){
 
      $client_id = bb_get_author_id();
-     $ticket = bb_get_ticket_of_client($client_id);
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+
      $res = bb_set_ticket_of_client(
           $ticket->client_id,
           $ticket->thread_id,
