@@ -130,7 +130,7 @@ function bb_proceed_to_kickoff_field($thread_id){
 */
 function bb_eval_next_field($field_ref){
 
-bb_add_debug_field('eval_next_field:', $field_ref);
+//bb_add_debug_field('eval_next_field:', $field_ref);
 
      $client_id = bb_get_author_id();
      $ticket = bb_get_ticket_of_client($client_id)[0];
@@ -138,7 +138,7 @@ bb_add_debug_field('eval_next_field:', $field_ref);
 // bossjump
 // evaluates jumps to foreign surveys - to be adjuste in the wp admin area
      $choices = bb_get_choices_of_field($field_ref);
-bb_add_debug_field('choices:', $choices);
+//bb_add_debug_field('choices:', $choices);
 
      if(empty($choices)){
      }
@@ -187,15 +187,15 @@ bb_add_debug_field('choices:', $choices);
                $pos = intval($field->pos);
                $pos = $pos+1;
                $field = bb_get_field_of_survey_at_pos($field->survey_ref, $pos)[0];
-bb_add_debug_field('no jumps, stepping to: ', $field);
-bb_add_debug_field('at pos: ', $pos);
+//bb_add_debug_field('no jumps, stepping to: ', $field);
+//bb_add_debug_field('at pos: ', $pos);
           }
           else {
                $link_ref = $jumps[0];
                $field = bb_get_field_by_ref($link_ref)[0];
                if(is_null($field)){
                     $field = bb_get_first_field_of_group($link_ref)[0];
-bb_add_debug_field('jump found, stepping to: ', $field);
+//bb_add_debug_field('jump found, stepping to: ', $field);
                }
           }
      }
@@ -217,13 +217,13 @@ function bb_eval_jumps($actions){
 
      foreach($actions as $action){
 
-bb_add_debug_field('action', $action);
+//bb_add_debug_field('action', $action);
           $condition = json_decode(base64_decode($action->doc, true));
 
           if(is_null($condition)){
                continue;
           }
-bb_add_debug_field('condition', $condition);
+//bb_add_debug_field('condition', $condition);
 
           // is or and always...
           $op = $condition->op;
@@ -295,7 +295,7 @@ bb_add_debug_field('condition', $condition);
           }
      }
 
-bb_add_debug_field('jumps', $jumps);
+//bb_add_debug_field('jumps', $jumps);
      return $jumps;
 }
 

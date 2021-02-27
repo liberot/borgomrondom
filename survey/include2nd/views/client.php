@@ -7,12 +7,11 @@ function bb_build_client_survey_view($ticket){
      $client_id = bb_get_author_id();
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
+     $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
+//bb_add_debug_field('rec:', $rec);
 
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
-
-     $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
-bb_add_debug_field('rec:', $rec);
 
      wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
      wp_enqueue_style('client_style');
@@ -27,7 +26,7 @@ bb_add_debug_field('rec:', $rec);
 EOD;
 
      $field = bb_decorate_field_title($field);
-bb_add_debug_field('field:', $field);
+//bb_add_debug_field('field:', $field);
 
      echo <<<EOD
 
@@ -121,6 +120,7 @@ EOD;
      echo PHP_EOL;
      echo "</script>";
 
+/***
      echo <<<EOD
           <div class='debug-out'>
                <div class=''>client_id: {$ticket->client_id}</div>
@@ -131,8 +131,9 @@ EOD;
                <div class=''>field_ref: {$field->ref}</div>
                <div class=''>type: {$field->type}</div>
 EOD;
+***/
 
-bb_flush_debug_field();
+//bb_flush_debug_field();
 
      echo <<<EOD
           </div>
@@ -271,7 +272,19 @@ EOD;
 
 
 
-function bb_build_client_spread_view(){
+function bb_build_client_spread_view($ticket){
+
+     wp_register_style('spread_style', Path::get_plugin_url().'/css/client/spread.css');
+     wp_enqueue_style('spread_style');
+
+     $headline = esc_html(__('BookBuilder Spreads', 'bookbuilder'));
+     $welcome = esc_html(__(':', 'bookbuilder'));
+     echo <<<EOD
+          <div class='wrap'>
+               <h1 class='wp-heading-inline'>{$headline}</h1>
+               <div class='page-title-action messages'><span>{$welcome}</span></div>
+               <hr class='wp-header-end'>
+EOD;
 
      echo <<<EOD
           <div class=''>The spreads be shown here as for debug reasons</div>

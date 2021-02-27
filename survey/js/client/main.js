@@ -255,6 +255,7 @@ BBClient.bbRenderAssetCopies = function(scan){
 
      let buf = '';
 
+     buf+= '<div>';
      for(let idx in BBClient.bbAssetCopies){
           buf+= "<img src='";
           if(null != BBClient.bbAssetCopies[idx]['doc']){
@@ -265,6 +266,7 @@ BBClient.bbRenderAssetCopies = function(scan){
           }
           buf+= "'/>";
      }
+     buf+= '</div>';
 
      jQuery('.asset-copies').html(buf);
 }
