@@ -4,8 +4,8 @@ let BBClient = {};
 
 BBClient.submitKeyPressed = function(e){
 
-     let activeElement = document.activeElement;
      let types = ['text', 'textinput', 'textarea'];
+     let activeElement = document.activeElement;
      if(null != activeElement){
           if(null != activeElement.type){
                if(-1 !== types.indexOf(activeElement.type.toLowerCase())){
@@ -15,12 +15,16 @@ BBClient.submitKeyPressed = function(e){
      }
 
      let btnSubmitRec = jQuery('.btn-submit-rec');
+     if(null == btnSubmitRec){ 
+          return false;
+     }
+
      let clientInput = jQuery('.client-input-form');
-     if(null == btnSubmitRec || null == clientInput){
+     if(null == clientInput){
+          return false;
      }
-     else {
-          clientInput.submit();
-     }
+
+     clientInput.submit();
 }
 
 
