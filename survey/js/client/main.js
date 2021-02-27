@@ -2,11 +2,25 @@ let BBClient = {};
 
 
 
+BBClient.submitKeyPressed = function(e){
+
+     let btnSubmitRec = jQuery('.btn-submit-rec');
+     let clientInput = jQuery('.client-input-form');
+     if(null == btnSubmitRec || null == clientInput){
+     }
+     else {
+          clientInput.submit();
+     }
+}
+
+
+
 BBClient.bbSetupKeys = function(){
 
      let ref = this;
 
      jQuery(document).off('keydown');
+     jQuery(document).off('keyup');
 
      jQuery(document).keydown(function(e){
 
@@ -38,7 +52,7 @@ BBClient.bbSetupKeys = function(){
 
                case 'b':
                case 'B':
-                    console.log('b: ', e.key);
+                    BBClient.submitKeyPressed(e);
                     break;
 
                case 'Shift':

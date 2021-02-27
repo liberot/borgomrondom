@@ -128,11 +128,11 @@ EOD;
      }
 
      echo <<<EOD
-          <form class='input-form' method='post' action=''>
+          <form class='client-input-form' method='post' action=''>
                {$buf1st}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field_ref}'></input> 
-               <div class=''><input type='submit' value='Submit REC'></div>
+               <div class=''><input class='btn-submit-rec' type='submit' value='Submit REC'></div>
           </form>
 EOD;
 
