@@ -256,9 +256,9 @@ function bb_build_picture_choice_view($field, $rec){
           foreach($choices as $choice){
 
                 $title = esc_html($choice->title);
-                $value = $choice->ref;
+                $value = esc_html($choice->ref);
                 $checked = '';
-                if($value == $rec->doc){
+                if($title == $rec->doc){
                      $checked = 'checked';
                 }
 

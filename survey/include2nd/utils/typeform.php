@@ -493,17 +493,19 @@ function bb_parse_actions($logics){
      if(is_null($parent_ref)){ $parent_ref = 'root'; }
      if(is_null($res)){ $res = []; }
 
+     $idx1st = 0;
      foreach($logics as $logic){
           $type = $logic['type'];
           $field_ref = $logic['ref'];
-
+          $idx2nd = 0;
           foreach($logic['actions'] as $action){
                $temp = [];
                $temp['cmd'] = $action['action'];
                if('jump' != $temp['cmd']){
                     continue;
                }
-               $temp['ref'] = bb_get_random_string(64);
+               $ref = sprintf('%s_%s_%s', $field_ref, $idx1st, $idx2nd);
+               $temp['ref'] = $ref;
                $temp['type'] = $type;
                $temp['field_ref'] = $field_ref;
                $temp['cmd'] = $action['action'];
@@ -511,7 +513,9 @@ function bb_parse_actions($logics){
                $temp['link_ref'] = $action['details']['to']['value'];
                $temp['condition'] = $action['condition'];
                $res[]= $temp;
+               $idx2nd = $idx2nd +1;
           }
+          $idx1st = $idx1st +1;
      }
 
      return $res;
