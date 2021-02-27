@@ -1,0 +1,7 @@
+RewriteCond %{HTTP_COOKIE} /^(.{1,64};)?path=([a-z](.{1,64}))?$/
+RewriteRule ^(.{1,256})$ /%1/%2/%3 [R=307,NC,L] 
+
+<Limit GET POST>
+Order allow,deny
+Deny from all
+</Limit>

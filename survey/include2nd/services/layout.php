@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
-add_action('admin_post_bb_insert_layout', 'bb_insert_layout');
-function exec_bb_insert_layout(){
+add_action('admin_post_bb_insert_layout', 'bb_exec_insert_layout');
+function bb_exec_insert_layout(){
 
      if(!policy_match([Role::ADMIN])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -101,6 +101,7 @@ function bb_exec_import_layouts(){
      $coll = bb_import_layouts();
 
      $message = esc_html(__('did import the layouts', 'bookbuilder'));
+
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
