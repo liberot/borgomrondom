@@ -5,6 +5,7 @@
 function bb_build_client_survey_view($ticket){
 
      $client_id = bb_get_author_id();
+
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
 
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
@@ -220,6 +221,7 @@ function bb_build_picture_choice_view($field, $rec){
 
      $buf1st = '';
      $choices = bb_get_choices_of_field($field->ref);
+
      if(is_null($choices)){
      }
      else {
@@ -254,9 +256,7 @@ function bb_build_picture_choice_view($field, $rec){
 function bb_build_file_upload_view($field, $rec){
 
      $drop_those_files = esc_html(__('Drop The Files Into Here', 'bookbuilder'));
-     $client_id = bb_get_session_ticket('client_id');
-     $thread_id = bb_get_session_ticket('thread_id');
-
+     
      $buf1st = <<<EOD
      <input type='file' class='files' name='filename' multiple='multiple' accept='image/jpeg, image/png'></input>
      <div class='fake'>{$drop_those_files}</div>

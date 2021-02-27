@@ -135,7 +135,6 @@ function bb_eval_next_field($field_ref){
 bb_add_debug_field('eval_next_field:', $field_ref);
 
      $client_id = bb_get_author_id();
-
      $ticket = bb_get_ticket_of_client($client_id)[0];
 
 // bossjump
@@ -162,7 +161,6 @@ bb_add_debug_field('choices:', $choices);
                          }
                     }
 
-                    // if($rec->doc == $choice->ref){
                     if($rec->choice_ref == $choice->ref){
                          $survey_ref = $choice->target_survey_ref;
                          $field = bb_get_first_field_of_survey_by_ref($survey_ref)[0];
@@ -216,8 +214,7 @@ function bb_eval_jumps($actions){
 
      $client_id = bb_get_author_id();
 
-     $ticket = bb_get_ticket_of_client($client_id);
-
+     $ticket = bb_get_ticket_of_client($client_id)[0];
      $jumps = [];
 
      foreach($actions as $action){
@@ -433,6 +430,9 @@ function bb_write_rec(){
           if($answer == $choice->ref){
                $choice_ref = $choice->ref;
                $answer = $choice->title;
+          }
+          if('choice_of_no_choice' == $choice->title){
+               $choice_ref = $choice->ref;
           }
      }
 
