@@ -2,6 +2,70 @@ let BBClient = {};
 
 
 
+BBClient.bbSetupKeys = function(){
+
+     let ref = this;
+
+     jQuery(document).off('keydown');
+
+     jQuery(document).keydown(function(e){
+
+          switch(e.key){
+
+               case 'Shift':
+               case 'Meta':
+                    console.log('modifier: ', e.key);
+                    break;
+          }
+     });
+
+     jQuery(document).keyup(function(e){
+
+          switch(e.key){
+
+               case '0':
+               case '1':
+               case '2':
+               case '3':
+               case '4':
+               case '5':
+               case '6':
+               case '7':
+               case '8':
+               case '9':
+                    console.log('numpad: ', e.key);
+                    break;
+
+               case 'b':
+               case 'B':
+                    console.log('b: ', e.key);
+                    break;
+
+               case 'Shift':
+               case 'Meta':
+                    console.log('modifier: ', e.key);
+                    break;
+
+               case 'Escape':
+                    console.log('esc: ', e.key);
+                    break;
+
+               case 'Enter':
+                    console.log('enter: ', e.key);
+                    break;
+
+               case 'ArrowLeft':
+               case 'ArrowRight':
+               case 'ArrowUp':
+               case 'ArrowDown':
+                    console.log('arrow: ', e.key);
+                    break;
+          }
+     });
+}
+
+
+
 BBClient.bbRenderFileupload = function(){
 
      let form = document.querySelector('.files');
@@ -225,6 +289,7 @@ jQuery(document).ready(function(){
      BBClient.bbClientInit();
      BBClient.bbRenderFileupload();
      BBClient.bbRenderAssetCopies();
+     BBClient.bbSetupKeys();
 });
 
 
