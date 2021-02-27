@@ -2,7 +2,7 @@ let BBClient = {};
 
 
 
-BBClient.submitKeyPressed = function(e){
+BBClient.btnSubmitRecPressed = function(e){
 
      let types = ['text', 'textinput', 'textarea'];
      let activeElement = document.activeElement;
@@ -66,7 +66,7 @@ BBClient.bbSetupKeys = function(){
 
                case 'b':
                case 'B':
-                    BBClient.submitKeyPressed(e);
+                    BBClient.btnSubmitRecPressed(e);
                     break;
 
                case 'Shift':

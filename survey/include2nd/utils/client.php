@@ -106,6 +106,19 @@ bb_add_debug_field('choices:', $choices);
           }
           else {
                foreach($choices as $choice){
+
+// text input field are of type no choice still the field can link a survey
+                    if('choice_of_no_choice' == $choice->title){
+                         $survey_ref = $choice->target_survey_ref;
+                         $field = bb_get_first_field_of_survey_by_ref($survey_ref)[0];
+                         if(is_null($field)){
+                         }
+                         else{
+                              return $field;
+                         }
+                    }
+
+// multiple choice can link a survey a choice each
                     if($rec->doc == $choice->ref){
                          $survey_ref = $choice->target_survey_ref;
                          $field = bb_get_first_field_of_survey_by_ref($survey_ref)[0];
