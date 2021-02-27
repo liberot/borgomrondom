@@ -18,6 +18,7 @@ function bb_remove_v1_records(){
           'surveyprint_layout',
           'surveyprint_survey',
           'surveyprint_thread',
+          'surveyprint_ticket',
           'surveyprint_toc',
           'surveyprint_log'
      ];
@@ -42,7 +43,7 @@ function bb_drop_tables(){
 
      $tables = [
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
-          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec',
+          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec', 'ts_bb_ticket',
           'ts_bb_asset',
           'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread'
      ];
@@ -72,6 +73,7 @@ function bb_init_tables(){
      $res&= bb_init_action_table();
 
      $res&= bb_init_thread_table();
+     $res&= bb_init_ticket_table();
      $res&= bb_init_rec_table();
 
      $res&= bb_init_asset_table();
@@ -268,17 +270,45 @@ function bb_init_thread_table(){
           {$prefix}ts_bb_thread (
                id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
-               thread_id bigint(20) unsigned not null,
                title varchar(255),
                note varchar(255),
                description varchar(255),
                doc longtext,
                init datetime,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
 
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
+}
+
+
+
+function bb_init_ticket_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_ticket (
+               id bigint(20) not null auto_increment,
+               client_id bigint(20) unsigned not null,
+               title varchar(255),
+               note varchar(255),
+               description varchar(255),
+               init datetime,
+               thread_id bigint(20) unsigned not null,
                field_ref varchar(255),
                view_state varchar(255),
-               pos int unsigned not null,
-
+               rec_pos int unsigned not null,
                primary key (id)
           )
           engine=innodb
@@ -671,14 +701,16 @@ EOD;
 
 
 
-function bb_insert_rec($client_id, $thread_id, $field, $choice_ref, $rec_pos, $answer){
+function bb_insert_rec($client_id, $thread_id, $rec_pos, $field, $choice_ref, $answer){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
      $rec_pos = esc_sql($rec_pos);
+
      $survey_ref = esc_sql($field->survey_ref);
      $group_ref = esc_sql($field->group_ref);
      $field_ref = esc_sql($field->ref);
+
      $choice_ref = esc_sql($choice_ref);
      $answer = esc_sql($answer);
 
@@ -707,7 +739,7 @@ EOD;
 
 
 
-function bb_insert_asset($client_id, $thread_id, $field, $scan, $rec_pos){
+function bb_insert_asset($client_id, $thread_id, $rec_pos, $field, $scan){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
@@ -949,6 +981,56 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 }
+
+
+
+function bb_get_ticket_of_client($client_id){
+
+     $client_id = esc_sql($client_id);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_ticket where client_id = '{$client_id}'
+          order by init desc
+          limit 1
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_set_ticket_of_client($client_id, $thread_id, $field_ref, $rec_pos, $view_state){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $field_ref = esc_sql($field_ref);
+     $rec_pos = esc_sql($rec_pos);
+     $view_state = esc_sql($view_state);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_ticket
+               (client_id, thread_id, field_ref, rec_pos, view_state, init)
+          values 
+               (
+                    '{$client_id}',
+                    '{$thread_id}',
+                    '{$field_ref}',
+                    '{$rec_pos}',
+                    '{$view_state}',
+                    now()
+               )
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+
+}
+
 
 
 

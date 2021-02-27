@@ -1,15 +1,46 @@
 <?php defined('ABSPATH') || exit;
 
 
-add_action('init', 'bb_init_thread');
-function bb_init_thread(){
 
-     if(!is_user_logged_in()){
-          return;
-     }
+add_shortcode('bb_client_view', 'bb_build_client_view');
+function bb_build_client_view(){
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
+
+     if(!is_user_logged_in()){
+          echo '<p>ProfileBuilder Authentication Procedere</p>';
+          echo do_shortcode('[wppb-login]');
+          echo do_shortcode('[wppb-register]');
+          echo do_shortcode('[wppb-recover-password]');
+          return false;
+     }
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          $res = bb_init_existing_thread();
+     }
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          $res = bb_init_new_thread();
+     }
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          return false;
+     }
+
+     switch($ticket->view_state){
+
+          case 'spread':
+              bb_build_client_spread_view($ticket);
+              break;
+
+          case 'survey':
+          default:
+              bb_build_client_survey_view($ticket);
+              break;
+     }
 }
 
 
@@ -49,25 +80,32 @@ function bb_process_incoming(){
 
 function bb_proceed_to_next_field(){
 
-     $field_ref = bb_get_session_ticket('field_ref');
-     $rec_pos = bb_get_session_ticket('rec_pos');
+     $client_id = bb_get_author_id();
 
-     $field = bb_eval_next_field($field_ref);
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+
+     $field = bb_eval_next_field($ticket->field_ref);
      if(is_null($field)){
           return;
      }
 
-     $rec_pos = intval($rec_pos);
+     $rec_pos = intval($ticket->rec_pos);
      $rec_pos = $rec_pos +1;
 
-     bb_set_session_ticket('field_ref', $field->ref);
-     bb_set_session_ticket('rec_pos', $rec_pos);
-     bb_set_session_ticket('view_state', null);
+     $res = bb_set_ticket_of_client(
+          $ticket->client_id,
+          $ticket->thread_id,
+          $field->ref,
+          $rec_pos,
+          'survey'
+     );
+
+     return $res;
 }
 
 
 
-function bb_proceed_to_kickoff_field(){
+function bb_proceed_to_kickoff_field($thread_id){
 
      $client_id = bb_get_author_id();
      $field = bb_get_kickoff_field()[0];
@@ -76,9 +114,15 @@ function bb_proceed_to_kickoff_field(){
           return;
      }
 
-     bb_set_session_ticket('field_ref', $field->ref);
-     bb_set_session_ticket('rec_pos', 0);
-     bb_set_session_ticket('view_state', null);
+     $res = bb_set_ticket_of_client(
+          $client_id,
+          $thread_id,
+          $field->ref,
+          0,
+          'survey'
+     );
+
+     return $res;
 }
 
 
@@ -91,7 +135,8 @@ function bb_eval_next_field($field_ref){
 bb_add_debug_field('eval_next_field:', $field_ref);
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
 
 // bossjump
 // evaluates jumps to foreign surveys - to be adjuste in the wp admin area
@@ -101,7 +146,7 @@ bb_add_debug_field('choices:', $choices);
      if(empty($choices)){
      }
      else {
-          $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
+          $rec = bb_get_rec_of_client_by_field_ref($client_id, $ticket->thread_id, $field_ref)[0];
           if(is_null($rec)){
           }
           else {
@@ -170,7 +215,8 @@ bb_add_debug_field('jump found, stepping to: ', $field);
 function bb_eval_jumps($actions){
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
+
+     $ticket = bb_get_ticket_of_client($client_id);
 
      $jumps = [];
 
@@ -205,7 +251,7 @@ bb_add_debug_field('condition', $condition);
 
                     case 'constant':
 
-                         $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
+                         $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $condition_field_ref)[0];
 
                          $val = $condition_var->value;
                          $rvl = $rec->doc;                         
@@ -219,7 +265,7 @@ bb_add_debug_field('condition', $condition);
                     case 'choice':
 
                          $val = $condition_var->value;
-                         $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
+                         $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $condition_field_ref)[0];
                          $condition_results[]= $rec->choice_ref == $val ? 'true' : 'false';
 
                          break;
@@ -263,7 +309,8 @@ bb_add_debug_field('jumps', $jumps);
 function bb_decorate_field_title($field){
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
+
+     $ticket = bb_get_ticket_of_client($client_id);
 
      $temp = $field->title;
      preg_match_all('/{{(.{42})}}/', $temp, $match);
@@ -273,7 +320,7 @@ function bb_decorate_field_title($field){
      else {
           foreach($match[1] as $m){
                $field_ref = preg_replace('/field:/', '', $m);
-               $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
+               $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $field_ref)[0];
                $insert = '';
                if(is_null($rec)){
                }
@@ -301,19 +348,12 @@ function bb_init_new_thread(){
 
      $client_id = bb_get_author_id();
 
-     bb_set_session_ticket('thread_id', null);
-     bb_set_session_ticket('field_ref', null);
-     bb_set_session_ticket('rec_pos', null);
-     bb_set_session_ticket('view_statee', null);
-
      $thread_id = bb_insert_thread($client_id);
      if(false == $thread_id){
          return;
      }
 
-     bb_set_session_ticket('thread_id', $thread_id);
-
-     bb_proceed_to_kickoff_field();
+     $res = bb_proceed_to_kickoff_field($thread_id);
 
      wp_redirect('');
 }
@@ -323,28 +363,33 @@ function bb_init_new_thread(){
 function bb_init_existing_thread(){
 
      $client_id = bb_get_author_id();
-     $rec = bb_get_last_thread_of_client($client_id)[0];
-
-     if(is_null($rec)){
+     $res = bb_get_last_thread_of_client($client_id)[0];
+     if(is_null($res)){
      }
-     else {
-
-          $thread_id = $rec->id;
-
-          $rec = bb_get_last_record_of_client($client_id, $thread_id)[0];
-          if(is_null($rec)){
+     else{
+          $thread_id = $res->id;
+          $res = bb_get_last_record_of_client($res->client_id, $thread_id)[0];
+          if(is_null($res)){
+               $res = bb_set_ticket_of_client(
+                    $client_id,
+                    $thread_id,
+                    null,
+                    null,
+                    'survey'
+                );
+                $res = bb_proceed_to_kickoff_field();
           }
-          else {
-
-               bb_set_session_ticket('client_id', $rec->client_id);
-               bb_set_session_ticket('thread_id', $rec->thread_id);
-               bb_set_session_ticket('field_ref', $rec->field_ref);
-               bb_set_session_ticket('rec_pos', $rec->pos);
-               bb_set_session_ticket('view_state', null);
-
-               wp_redirect('');
+          else{
+               $res = bb_set_ticket_of_client(
+                    $res->client_id,
+                    $res->thread_id,
+                    $res->field_ref,
+                    $res->rec_pos,
+                    'survey'
+                );
           }
      }
+     return $res;
 }
 
 
@@ -352,24 +397,21 @@ function bb_init_existing_thread(){
 function bb_write_rec(){
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
-     $field_ref = bb_get_session_ticket('field_ref');
 
-     $rec_pos = bb_get_session_ticket('rec_pos');
+     $ticket = bb_get_ticket_of_client($client_id)[0];
 
-     $ticket = bb_trim_incoming_filename($_POST['ticket']);
-     if($ticket != $field_ref){
+     $incoming_ticket = bb_trim_incoming_filename($_POST['ticket']);
+     if($incoming_ticket != $ticket->field_ref){
           return;
      }
 
-     
-     $field = bb_get_field_by_ref($field_ref)[0];
+     $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
           return;
      }
 
      if('file_upload' == $field->type){
-          $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field_ref);
+          $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field->ref);
           if(empty($assets)){
                return;
           }
@@ -385,8 +427,6 @@ function bb_write_rec(){
           return;
      }
 
-     $field = bb_get_field_by_ref($field_ref)[0];
-
      $choice_ref = '';;
      $choices = bb_get_choices_of_field($field->ref);
      foreach($choices as $choice){
@@ -396,7 +436,7 @@ function bb_write_rec(){
           }
      }
 
-     $res = bb_insert_rec($client_id, $thread_id, $field, $choice_ref, $rec_pos, $answer);
+     $res = bb_insert_rec($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $choice_ref, $answer);
      if(is_null($res)){
      }
      else {
@@ -406,16 +446,34 @@ function bb_write_rec(){
 
 
 
-// todo 
 function bb_show_spreads(){
 
-     bb_set_session_ticket('view_state', 'spread');
+     $client_id = bb_get_author_id();
+     $ticket = bb_get_ticket_of_client($client_id);
+     $res = bb_set_ticket_of_client(
+          $ticket->client_id,
+          $ticket->thread_id,
+          $ticket->field_ref,
+          $ticket->rec_pos,
+          'spread'
+     );
 }
 
 
 
 function bb_show_survey(){
 
-     bb_set_session_ticket('view_state', null);
+     $client_id = bb_get_author_id();
+     $ticket = bb_get_ticket_of_client($client_id);
+     $res = bb_set_ticket_of_client(
+          $ticket->client_id,
+          $ticket->thread_id,
+          $ticket->field_ref,
+          $ticket->rec_pos,
+          'survey'
+     );
 }
+
+
+
 

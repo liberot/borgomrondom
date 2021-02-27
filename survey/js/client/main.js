@@ -281,6 +281,7 @@ BBClient.bbClientInit = function(){
                     'action': 'bb_nav_prev_field'
                },
                function(e){
+                    console.log(e);
                     window.location.reload();
                },
                function(e){ 

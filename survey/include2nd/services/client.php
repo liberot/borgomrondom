@@ -12,29 +12,32 @@ function bb_nav_prev_field(){
      }
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
 
-     $rec_pos = bb_get_session_ticket('rec_pos');
-     if(is_null($client_id)){
-          echo json_encode(array('res'=>'success', 'message'=>'no rec_pos'));
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          echo json_encode(array('res'=>'failed', 'message'=>'no ticket'));
           return;
      }
 
-     $rec_pos = intval($rec_pos);
+     $rec_pos = intval($ticket->rec_pos);
      $rec_pos = $rec_pos -1;
      if(0 >= $rec_pos){
           $rec_pos = 0;
      }
 
-     $rec = bb_get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos)[0];
+     $rec = bb_get_rec_of_client_by_rec_pos($ticket->client_id, $ticket->thread_id, $rec_pos)[0];
      if(is_null($rec)){
-          echo json_encode(array('res'=>'success', 'message'=>'no rec'));
+          echo json_encode(array('res'=>'failed', 'message'=>'no rec'));
           return;
      }
 
-     bb_set_session_ticket('field_ref', $rec->field_ref);
-     bb_set_session_ticket('rec_pos', $rec->pos);
-     bb_set_session_ticket('view_state', 'survey');
+     $res = bb_set_ticket_of_client(
+          $ticket->client_id,
+          $ticket->thread_id,
+          $rec->field_ref,
+          $rec->pos,
+          'survey'
+     );
 
      echo json_encode(array('res'=>'success', 'message'=>'prev_field', 'rec'=>$rec));
 }
@@ -51,9 +54,12 @@ function bb_upload_asset(){
      }
 
      $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
-     $field_ref = bb_get_session_ticket('field_ref');
-     $rec_pos = bb_get_session_ticket('rec_pos');
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          echo json_encode(array('res'=>'success', 'message'=>'no ticket'));
+          return;
+     }
 
      $scan = $_POST['scan'];
 
@@ -66,14 +72,14 @@ function bb_upload_asset(){
           return false;
      }
 
-     $field = bb_get_field_by_ref($field_ref)[0];
+     $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
           $message = esc_html(__('No field', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
-     $res = bb_insert_asset($client_id, $thread_id, $field, $scan, $rec_pos);
+     $res = bb_insert_asset($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $scan);
      if(false == $res){
           $message = esc_html(__('No insert', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
@@ -81,9 +87,11 @@ function bb_upload_asset(){
      }
 
      $answer = 'upload';
-     $res = bb_insert_rec($client_id, $thread_id, $field, $answer, $rec_pos);
+     $choice_ref = 'upload';
+     $res = bb_insert_rec($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $choice_ref, $answer);
 
      $message = esc_html(__('File is uploaded', 'bookbuilder'));
+
      echo json_encode(array('res'=>'success', 'message'=>$message));
 }
 

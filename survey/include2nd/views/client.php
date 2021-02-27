@@ -2,46 +2,15 @@
 
 
 
-add_shortcode('bb_client_view', 'bb_build_client_view');
-function bb_build_client_view(){
+function bb_build_client_survey_view($ticket){
 
-     if(!is_user_logged_in()){
-          echo '<p>ProfileBuilder Authentication Procedere</p>';
-          echo do_shortcode('[wppb-login]');
-          echo do_shortcode('[wppb-register]');
-          echo do_shortcode('[wppb-recover-password]');
-          return;
-     }
-
-     $view_state = bb_get_session_ticket('view_state');
-
-     switch($view_state){
-
-          case 'spread':
-              bb_build_client_spread_view();
-              break;
-
-          case 'survey':
-          default:
-              bb_build_client_survey_view();
-              break;
-     }
-}
-
-
-
-function bb_build_client_survey_view(){
+     $client_id = bb_get_author_id();
+     $field = bb_get_field_by_ref($ticket->field_ref)[0];
 
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
 
-     $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
-     $field_ref = bb_get_session_ticket('field_ref');
-
-     $field = bb_get_field_by_ref($field_ref)[0];
-
-     $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref)[0];
+     $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
 bb_add_debug_field('rec:', $rec);
 
      wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
@@ -58,10 +27,6 @@ EOD;
 
      $field = bb_decorate_field_title($field);
 bb_add_debug_field('field:', $field);
-
-     $client_id = bb_get_author_id();
-     $thread_id = bb_get_session_ticket('thread_id');
-     $rec_pos = bb_get_session_ticket('rec_pos');
 
      echo <<<EOD
 
@@ -92,38 +57,45 @@ EOD;
 
      $buf1st = '';
      $assets = null;
+
      switch($field->type){
 
           case 'statement':
 
                $buf1st = bb_build_statement_view($field, $rec);
+
                break;
 
           case 'short_text':
           case 'number':
 
                $buf1st = bb_build_short_text_view($field, $rec);
+
                break;
 
           case 'multiple_choice':
 
                $buf1st = bb_build_multiple_choice_view($field, $rec);
+
                break;
 
           case 'yes_no':
 
                $buf1st = bb_build_yes_no_view($field, $rec);
+
                break;
 
           case 'picture_choice':
 
                $buf1st = bb_build_picture_choice_view($field, $rec);
+
                break;
 
           case 'file_upload':
 
                $buf1st = bb_build_file_upload_view($field, $rec);
-               $assets = bb_get_assets_by_field_ref($client_id, $thread_id, $field->ref);
+               $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field->ref);
+
                break;
      }
 
@@ -131,7 +103,7 @@ EOD;
           <form class='client-input-form' method='post' action=''>
                {$buf1st}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
-               <input type='hidden' name='ticket' value='{$field_ref}'></input> 
+               <input type='hidden' name='ticket' value='{$field->ref}'></input> 
                <div class=''><input class='btn-submit-rec' type='submit' value='Submit REC'></div>
           </form>
 EOD;
@@ -148,15 +120,14 @@ EOD;
      echo PHP_EOL;
      echo "</script>";
 
-
      echo <<<EOD
           <div class='debug-out'>
-               <div class=''>client_id: {$client_id}</div>
-               <div class=''>thread_id: {$thread_id}</div>
-               <div class=''>rec_pos: {$rec_pos}</div>
+               <div class=''>client_id: {$ticket->client_id}</div>
+               <div class=''>thread_id: {$ticket->thread_id}</div>
+               <div class=''>rec_pos: {$ticket->rec_pos}</div>
                <div class=''>survey_ref: {$field->survey_ref}</div>
                <div class=''>group_ref: {$field->group_ref}</div>
-               <div class=''>field_ref: {$field_ref}</div>
+               <div class=''>field_ref: {$field->ref}</div>
                <div class=''>type: {$field->type}</div>
 EOD;
 
