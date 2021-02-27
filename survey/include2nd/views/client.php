@@ -186,7 +186,7 @@ function bb_build_yes_no_view($field, $rec){
                 $title = esc_html(__($choice->title, 'bookbuilder'));
                 $value = $choice->ref;
                 $checked = '';
-                if($value == $rec->doc){
+                if($value == $rec->choice_ref){
                      $checked = 'checked';
                 }
                 $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $title);

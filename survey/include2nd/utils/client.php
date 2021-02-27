@@ -107,7 +107,6 @@ bb_add_debug_field('choices:', $choices);
           else {
                foreach($choices as $choice){
 
-// text input field are of type no choice still the field can link a survey
                     if('choice_of_no_choice' == $choice->title){
                          $survey_ref = $choice->target_survey_ref;
                          $field = bb_get_first_field_of_survey_by_ref($survey_ref)[0];
@@ -118,8 +117,8 @@ bb_add_debug_field('choices:', $choices);
                          }
                     }
 
-// multiple choice can link a survey a choice each
-                    if($rec->doc == $choice->ref){
+                    // if($rec->doc == $choice->ref){
+                    if($rec->choice_ref == $choice->ref){
                          $survey_ref = $choice->target_survey_ref;
                          $field = bb_get_first_field_of_survey_by_ref($survey_ref)[0];
                          if(is_null($field)){
@@ -207,13 +206,12 @@ bb_add_debug_field('condition', $condition);
                     case 'constant':
 
                          $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
+
                          $val = $condition_var->value;
-                         $rvl = $rec->doc;
-                         // yes_no
-                         preg_match('/^.{36}_(.{2,3})/', $rvl, $match);
-                         if(!is_null($match[1])){
-                              $rvl = 'yes' == $match[1] ? 'true' : 'false';
-                         }
+                         $rvl = $rec->doc;                         
+
+                         if('yes' == $rvl){ $rvl = 'true'; }
+                         if('no' == $rvl){ $rvl = 'false'; }
 
                          $condition_results[]= $rvl == $val ? 'true' : 'false';
                          break;
@@ -222,8 +220,7 @@ bb_add_debug_field('condition', $condition);
 
                          $val = $condition_var->value;
                          $rec = bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $condition_field_ref)[0];
-
-                         $condition_results[]= $rec->doc == $val ? 'true' : 'false';
+                         $condition_results[]= $rec->choice_ref == $val ? 'true' : 'false';
 
                          break;
 
@@ -391,13 +388,11 @@ function bb_write_rec(){
      $field = bb_get_field_by_ref($field_ref)[0];
 
      $choice_ref = '';;
-     if('multiple_choice' == $field->type){
-          $choices = bb_get_choices_of_field($field->ref);
-          foreach($choices as $choice){
-               if($answer == $choice->ref){
-                    $choice_ref = $choice->ref;
-                    $answer = $choice->title;
-               }
+     $choices = bb_get_choices_of_field($field->ref);
+     foreach($choices as $choice){
+          if($answer == $choice->ref){
+               $choice_ref = $choice->ref;
+               $answer = $choice->title;
           }
      }
 
