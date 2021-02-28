@@ -19,13 +19,31 @@ function bb_build_debug_spread($ticket){
           return false;
      }
 
-     foreach($layouts as $layout){
-          $layout->doc = json_decode(base64_decode($layout->doc), true);
-     }
+//fixdiss
+     $client_asset = $assets[0];
 
+//fixdiss
+     $layout = $layouts[0];
+     $layout->doc = json_decode(base64_decode($layout->doc), true);
+
+     $doc = $layout->doc;
+     $doc = bb_walk_the_doc($doc);
+
+     $assets_of_document = [];
+     foreach($doc['assets'] as $asset){
+          if('image' == $asset['type']){
+               $asset['src'] = $client_asset->doc;
+               $asset = bb_fit_image_asset_into_slot($doc, $asset);
+          }
+          $assets_of_document[]= $asset;
+     }
+     $doc['assets'] = $assets_of_document;
+
+
+bb_add_debug_field('doc:', $doc);
 bb_add_debug_field('field:', $field);
 bb_add_debug_field('code:', $code);
-bb_add_debug_field('layouts:', $layouts);
+bb_add_debug_field('layout:', $layout);
 bb_add_debug_field('group:', $group);
 bb_add_debug_field('rec:', $rec);
 bb_add_debug_field('assets:', $assets);
