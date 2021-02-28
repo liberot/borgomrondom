@@ -32,20 +32,21 @@ function bb_build_debug_spread($ticket){
           return false;
      }
 
-     $layout->doc = json_decode(base64_decode($layout->doc), true);
-
-     $doc = $layout->doc;
+     $doc = json_decode(base64_decode($layout->doc), true);
      $doc = bb_walk_the_doc($doc);
+     if(is_null($doc)){
+          return false;
+     }
 
-     $assets_of_document = [];
+     $assets_of_doc = [];
      foreach($doc['assets'] as $asset){
           if('image' == $asset['type']){
                $asset['src'] = $client_asset->doc;
                $asset = bb_fit_image_asset_into_slot($doc, $asset);
           }
-          $assets_of_document[]= $asset;
+          $assets_of_doc[]= $asset;
      }
-     $doc['assets'] = $assets_of_document;
+     $doc['assets'] = $assets_of_doc;
 
 
 //fixdiss text document

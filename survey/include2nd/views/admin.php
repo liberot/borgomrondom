@@ -466,67 +466,10 @@ EOD;
 
 
 
-add_shortcode('bb_spreads_view', 'bb_build_spreads_view');
-function bb_build_spreads_view() {
-
-     wp_register_script(     'viewer-config', Path::get_plugin_dir().'/js/spread/src/main/config-spreads.js');
-     wp_register_script(       'viewer-main', Path::get_plugin_dir().'/js/spread/src/main/main.js');
-     wp_register_script(      'viewer-tools', Path::get_plugin_dir().'/js/spread/src/main/module/tools/main.js');
-     wp_register_script(     'viewer-screen', Path::get_plugin_dir().'/js/spread/src/main/module/screen/main.js');
-     wp_register_script(    'viewer-correct', Path::get_plugin_dir().'/js/spread/src/main/module/screen/correct.js');
-     wp_register_script(     'viewer-bitmap', Path::get_plugin_dir().'/js/spread/src/main/module/screen/bitmap.js');
-     wp_register_script(        'viewer-svg', Path::get_plugin_dir().'/js/spread/lib/svg.js');
-     wp_register_script('viewer-layout_util', Path::get_plugin_dir().'/js/spread/src/main/module/util/main.js');
-     wp_register_script( 'viewer-layout_net', Path::get_plugin_dir().'/js/spread/src/main/module/net/main.js');
-     wp_register_script('viewer-layout_init', Path::get_plugin_dir().'/js/spread/init.js', array('jquery'));
-
-     wp_enqueue_script('viewer-config');
-     wp_enqueue_script('viewer-main');
-     wp_enqueue_script('viewer-tools');
-     wp_enqueue_script('viewer-bitmap');
-     wp_enqueue_script('viewer-correct');
-     wp_enqueue_script('viewer-screen');
-     wp_enqueue_script('viewer-svg');
-     wp_enqueue_script('viewer-layout_util');
-     wp_enqueue_script('viewer-layout_net');
-     wp_enqueue_script('viewer-layout_init');
-
-     wp_register_style('constructor_style', Path::get_plugin_url().'/css/spread/style.css');
-     wp_enqueue_style('constructor_style');
-
-     $headline = esc_html(__('Spread Manager', 'bookbuilder'));
-     $welcome = esc_html(__('', 'bookbuilder'));
-     $res = <<<EOD
-     <div class='wrap'>
-          <h1 class='wp-heading-inline'>{$headline}</h1>
-          <div class='page-title-action'><span>{$welcome}</span></div>
-          <hr class='wp-header-end'>
-          <div class='layout-edit'>
-               <div class='layout-messages'></div>
-               <div class='layout-main'>
-                    <div class='layout-rows'>
-                         <div class='layout-buff'><div class='screen'></div></div>
-                    </div>
-                    <div class='layout-controls'>
-                         <div class='layout-pages'></div>
-                         <div class='layout-tools'></div>
-                         <div class='layout-library'></div>
-                         <div class='layout-actions'></div>
-                    </div>
-               </div>
-          </div>
-          <div class='offscreen'></div>
-          <div class='printscreen'></div>
-     </div>
-EOD;
-
-     echo $res;
-}
-
 add_shortcode('bb_layouts_view', 'bb_build_layouts_view');
 function bb_build_layouts_view() {
 
-     wp_register_script(     'viewer-config', Path::get_plugin_url().'/js/spread/src/main/config-layouts.js');
+     wp_register_script(     'viewer-config', Path::get_plugin_url().'/js/spread/src/main/config-admin.js');
      wp_register_script(       'viewer-main', Path::get_plugin_url().'/js/spread/src/main/main.js');
      wp_register_script(      'viewer-tools', Path::get_plugin_url().'/js/spread/src/main/module/tools/main.js');
      wp_register_script(     'viewer-screen', Path::get_plugin_url().'/js/spread/src/main/module/screen/main.js');
