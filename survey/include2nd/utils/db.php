@@ -984,6 +984,22 @@ EOD;
 
 
 
+function bb_get_group_by_ref($group_ref){
+
+     $group_ref = esc_sql($group_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_group where ref = '{$group_ref}'
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
 function bb_get_ticket_of_client($client_id){
 
      $client_id = esc_sql($client_id);

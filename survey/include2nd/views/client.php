@@ -4,11 +4,9 @@
 
 function bb_build_client_survey_view($ticket){
 
-     $client_id = bb_get_author_id();
-
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
      $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
-//bb_add_debug_field('rec:', $rec);
+bb_add_debug_field('rec:', $rec);
 
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
@@ -26,7 +24,6 @@ function bb_build_client_survey_view($ticket){
 EOD;
 
      $field = bb_decorate_field_title($field);
-//bb_add_debug_field('field:', $field);
 
      echo <<<EOD
 
@@ -120,20 +117,11 @@ EOD;
      echo PHP_EOL;
      echo "</script>";
 
-/***
-     echo <<<EOD
-          <div class='debug-out'>
-               <div class=''>client_id: {$ticket->client_id}</div>
-               <div class=''>thread_id: {$ticket->thread_id}</div>
-               <div class=''>rec_pos: {$ticket->rec_pos}</div>
-               <div class=''>survey_ref: {$field->survey_ref}</div>
-               <div class=''>group_ref: {$field->group_ref}</div>
-               <div class=''>field_ref: {$field->ref}</div>
-               <div class=''>type: {$field->type}</div>
-EOD;
-***/
 
-//bb_flush_debug_field();
+
+bb_add_debug_field('ticket: ', $ticket);
+bb_add_debug_field('field: ', $field);
+bb_flush_debug_field();
 
      echo <<<EOD
           </div>
@@ -273,6 +261,8 @@ EOD;
 
 
 function bb_build_client_spread_view($ticket){
+
+     $res = bb_build_debug_spread($ticket);
 
      wp_register_script('viewer-config', Path::get_plugin_url().'/js/spread/src/main/config-client.js');
      wp_register_script('main', Path::get_plugin_url().'/js/spread/src/main/main.js');
