@@ -72,7 +72,7 @@ class Layout {
      const            ASSUMED_SVG_UNIT = 72;
      const                 DESIRED_PPI = 300;
 // --------------------------------------------------------
-     const             IMAGE_MAX_SCALE = 1.25;
+     const             IMAGE_MAX_SCALE = 1.5;
 // --------------------------------------------------------
      const                    NO_SCALE = 'no_scale';
      const               CUT_INTO_SLOT = 'cut_into_slot';

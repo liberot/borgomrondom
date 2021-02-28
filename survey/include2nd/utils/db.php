@@ -1090,7 +1090,7 @@ function bb_get_spreads_of_client_by_field_ref($client_id, $thread_id, $field_re
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from wp_ts_bb_spread 
+          select * from {$prefix}ts_bb_spread 
                where client_id = '{$client_id}' 
                and thread_id = '{$thread_id}' 
                and field_ref = '{$field_ref}'

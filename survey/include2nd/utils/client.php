@@ -33,12 +33,12 @@ function bb_build_client_view(){
      switch($ticket->view_state){
 
           case 'spread':
-              bb_build_client_spread_view($ticket);
+              bb_build_client_spread_view();
               break;
 
           case 'survey':
           default:
-              bb_build_client_survey_view($ticket);
+              bb_build_client_survey_view();
               break;
      }
 }

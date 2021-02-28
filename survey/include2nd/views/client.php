@@ -2,9 +2,12 @@
 
 
 
-function bb_build_client_survey_view($ticket){
+function bb_build_client_survey_view(){
 
+     $client_id = bb_get_author_id();
+     $ticket = bb_get_ticket_of_client($client_id)[0];
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
+
      $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
 bb_add_debug_field('rec:', $rec);
 
@@ -260,7 +263,10 @@ EOD;
 
 
 
-function bb_build_client_spread_view($ticket){
+function bb_build_client_spread_view(){
+
+     $client_id = bb_get_author_id();
+     $ticket = bb_get_ticket_of_client($client_id)[0];
 
      $res = bb_build_debug_spread($ticket);
 

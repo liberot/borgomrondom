@@ -174,7 +174,8 @@ BBClient.bbParseAssets = function(){
 
 BBClient.bbScanAsset = function(index, base){
 
-     let scaleR = 0.33;
+     // let scaleR = 0.33;
+     let scaleR = 1.00;
 
      let img = new Image();
 
