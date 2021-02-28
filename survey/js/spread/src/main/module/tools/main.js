@@ -1139,6 +1139,14 @@ console.log('bindTextInput(): ', msg);
           return models;
      }
 
+     this.bindCurrentDoc = function(msg){
+          console.log(msg);
+          if(null == msg.model[0]){ return false; }
+          if(null == msg.model[0].doc){ return false; }
+          this.model.doc = LayoutUtil.pagpick(msg.model[0].doc);
+          this.initDocument();
+     }
+
 // init
      this.model = new ToolsModel();
      let ref = this;
@@ -1169,12 +1177,13 @@ console.log('bindTextInput(): ', msg);
      this.register(new Subscription(    'layoutgroup::loaded', 'bindLoadedLayoutGroup', this));
      this.register(new Subscription(  'layoutpresets::loaded', 'bindLoadedLayoutPresets', this));
      this.register(new Subscription(      'layouts::imported', 'bindImportedLayouts', this));
+     this.register(new Subscription(     'currentdoc::loaded', 'bindCurrentDoc', this));
      //
      this.setupAssetPossibs();
      if(SpreadViewerConfig.mouseControls){ this.setupMouseControls(); }
      this.loadLocalDocument();
      this.setupToolbar();
-     this.notify(new Message('spread-iewer::inited', this.model));
+     this.notify(new Message('spread-viewer::inited', this.model));
 }
 
 let __msg__001__tmpl = "";

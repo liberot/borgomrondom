@@ -52,16 +52,6 @@ function bb_build_debug_spread($ticket){
 //fixdiss text document
      $doc = base64_encode(json_encode($doc));
      $res = bb_insert_spread($ticket->client_id, $ticket->thread_id, $field, $doc);
-
-bb_add_debug_field('doc:', $doc);
-bb_add_debug_field('field:', $field);
-bb_add_debug_field('code:', $code);
-bb_add_debug_field('layout:', $layout);
-bb_add_debug_field('group:', $group);
-bb_add_debug_field('rec:', $rec);
-bb_add_debug_field('assets:', $assets);
-bb_flush_debug_field();
-
 }
 
 

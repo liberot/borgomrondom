@@ -1081,4 +1081,27 @@ EOD;
 
 
 
+function bb_get_spreads_of_client_by_field_ref($client_id, $thread_id, $field_ref){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $field_ref = esc_sql($field_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from wp_ts_bb_spread 
+               where client_id = '{$client_id}' 
+               and thread_id = '{$thread_id}' 
+               and field_ref = '{$field_ref}'
+               order by init desc
+               limit 1
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
 

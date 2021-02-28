@@ -14,6 +14,17 @@ let Net = function(controller){
           this.controller.notify(message);
      }
 
+     this.loadCurrentDocument = function(msg){
+          let ref = this;
+          let data = {
+               action: 'bb_load_current_document'
+          }
+          let cb = function(e){
+               ref.notify(new Message('currentdoc::loaded', e.coll));
+          }
+          this.postData(data, cb);
+     }
+
      this.importLayouts = function(msg){
           let ref = this;
           let data = {
@@ -181,6 +192,14 @@ console.log('postData(): error e: ', e);
                }
           });
      }
+
+     this.initLoads = function(msg){
+          switch(SpreadViewerConfig.mode){
+               case SpreadViewerConfig.WEB_CLIENT:
+                    this.loadCurrentDocument();
+                    break;
+          }
+     }
      
      // controls
      this.register(new Subscription(            'init::book', 'initBook', this));
@@ -193,5 +212,6 @@ console.log('postData(): error e: ', e);
      this.register(new Subscription(  'delmockbtn::released', 'deleteMockData', this));
      this.register(new Subscription('writemockbtn::released', 'writeMockSurvey', this));
      this.register(new Subscription(       'image::selected', 'uploadImage', this));
+     this.register(new Subscription( 'spread-viewer::inited', 'initLoads', this));
 
 }

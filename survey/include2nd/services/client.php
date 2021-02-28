@@ -2,8 +2,32 @@
 
 
 
-add_action('client_post_bb_nav_prev_field', 'bb_nav_prev_field');
-function bb_nav_prev_field(){
+add_action('client_post_bb_load_current_document', 'bb_exec_load_current_document');
+function bb_exec_load_current_document(){
+
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $coll = [];
+     $client_id = bb_get_author_id();
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          echo json_encode(array('res'=>'failed', 'message'=>'current document NOT loaded', 'coll'=>$coll));
+     }
+
+     $coll = bb_get_spreads_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref);
+
+     echo json_encode(array('res'=>'success', 'message'=>'current document loaded', 'coll'=>$coll));
+}
+
+
+
+add_action('client_post_bb_nav_prev_field', 'bb_exec_nav_prev_field');
+function bb_exec_nav_prev_field(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
@@ -44,8 +68,8 @@ function bb_nav_prev_field(){
 
 
 
-add_action('client_post_bb_upload_asset', 'bb_upload_asset');
-function bb_upload_asset(){
+add_action('client_post_bb_upload_asset', 'bb_exec_upload_asset');
+function bb_exec_upload_asset(){
 
      if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
           $message = esc_html(__('policy match', 'bookbuilder'));
