@@ -203,9 +203,12 @@ function bb_init_spread_table(){
                id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
-               book_id bigint(20) unsigned not null,
-               chapter_id bigint(20) unsigned not null,
-               section_id bigint(20) unsigned not null,
+               book_id bigint(20),
+               chapter_id bigint(20),
+               section_id bigint(20),
+               field_ref varchar(255),
+               group_ref varchar(255),
+               survey_ref varchar(255),
                title varchar(255),
                note varchar(255),
                description varchar(255),
@@ -413,7 +416,7 @@ function bb_init_survey_table(){
                title varchar(255),
                headline varchar(255),
                linked_survey_id bigint(20) unsigned,
-               linked_survey_ref bigint(20) unsigned,
+               linked_survey_ref varchar(255),
                description varchar(255),
                init datetime,
                doc longtext,
@@ -444,7 +447,6 @@ function bb_init_group_table(){
                typeform_ref varchar(255)not null,
                parent_ref varchar(255) not null,
                survey_ref varchar(255) not null,
-               linked_survey_ref varchar(255),
                title varchar(255),
                description varchar(255),
                init datetime,
@@ -478,8 +480,6 @@ function bb_init_field_table(){
                parent_ref varchar(255),
                group_ref varchar(255),
                survey_ref varchar(255),
-               linked_survey_ref varchar(255),
-               linked_field_ref varchar(255),
                type varchar(255),
                init datetime,
                title longtext,
@@ -1045,6 +1045,38 @@ EOD;
      $res = $wpdb->query($sql);
      return $res;
 
+}
+
+
+
+function bb_insert_spread($client_id, $thread_id, $field, $doc){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+
+     $survey_ref = esc_sql($field->survey_ref);
+     $group_ref = esc_sql($field->group_ref);
+     $field_ref = esc_sql($field->ref);
+
+     $doc = esc_sql($doc);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_spread
+               (
+               client_id, thread_id, survey_ref, group_ref, field_ref, 
+               doc, init
+               )
+          values 
+               (
+               '{$client_id}', '{$thread_id}', '{$survey_ref}', '{$group_ref}', '{$field_ref}', 
+               '{$doc}', now()
+               )
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
 }
 
 

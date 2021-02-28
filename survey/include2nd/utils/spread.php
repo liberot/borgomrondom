@@ -21,9 +21,17 @@ function bb_build_debug_spread($ticket){
 
 //fixdiss
      $client_asset = $assets[0];
+// assets have layout codes
+// doc asset slots hase layout codes
+// 
 
 //fixdiss
+//there is a heaps of matching layout suggestions
      $layout = $layouts[0];
+     if(is_null($layout)){
+          return false;
+     }
+
      $layout->doc = json_decode(base64_decode($layout->doc), true);
 
      $doc = $layout->doc;
@@ -39,6 +47,10 @@ function bb_build_debug_spread($ticket){
      }
      $doc['assets'] = $assets_of_document;
 
+
+//fixdiss text document
+     $doc = base64_encode(json_encode($doc));
+     $res = bb_insert_spread($ticket->client_id, $ticket->thread_id, $field, $doc);
 
 bb_add_debug_field('doc:', $doc);
 bb_add_debug_field('field:', $field);
