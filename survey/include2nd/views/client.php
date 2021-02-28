@@ -274,11 +274,36 @@ EOD;
 
 function bb_build_client_spread_view($ticket){
 
-     wp_register_style('spread_style', Path::get_plugin_url().'/css/client/spread.css');
+     wp_register_script('viewer-config', Path::get_plugin_url().'/js/spread/src/main/config-client.js');
+     wp_register_script('main', Path::get_plugin_url().'/js/spread/src/main/main.js');
+     wp_register_script('viewer-tools', Path::get_plugin_url().'/js/spread/src/main/module/tools/main.js');
+     wp_register_script('viewer-screen', Path::get_plugin_url().'/js/spread/src/main/module/screen/main.js');
+     wp_register_script('viewer-correct', Path::get_plugin_url().'/js/spread/src/main/module/screen/correct.js');
+     wp_register_script('viewer-bitmap', Path::get_plugin_url().'/js/spread/src/main/module/screen/bitmap.js');
+     wp_register_script('viewer-svg', Path::get_plugin_url().'/js/spread/lib/svg.js');
+     wp_register_script('viewer-layout_util', Path::get_plugin_url().'/js/spread/src/main/module/util/main.js');
+     wp_register_script('viewer-layout_net', Path::get_plugin_url().'/js/spread/src/main/module/net/main.js');
+     wp_register_script('viewer-layout_init', Path::get_plugin_url().'/js/spread/init.js', array('jquery'));
+
+     wp_enqueue_script('viewer-config');
+     wp_enqueue_script('main');
+     wp_enqueue_script('viewer-tools');
+     wp_enqueue_script('viewer-bitmap');
+     wp_enqueue_script('viewer-correct');
+     wp_enqueue_script('viewer-screen');
+     wp_enqueue_script('viewer-svg');
+     wp_enqueue_script('viewer-layout_util');
+     wp_enqueue_script('viewer-layout_net');
+     wp_enqueue_script('viewer-layout_init');
+
+     wp_register_style('spread_style', Path::get_plugin_url().'/css/spread/style.css');
      wp_enqueue_style('spread_style');
 
      $headline = esc_html(__('BookBuilder Spreads', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
+
+
+
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -286,15 +311,45 @@ function bb_build_client_spread_view($ticket){
                <hr class='wp-header-end'>
 EOD;
 
-     echo <<<EOD
-          <div class=''>The spreads be shown here as for debug reasons</div>
 
+
+     echo <<<EOD
+          <div class='layout-edit'>
+               <div class='layout-messages'></div>
+               <div class='layout-main'>
+                    <div class='layout-rows'>
+                         <div class='layout-buff'>
+                              <div class='screen'></div>
+                         </div>
+                    </div>
+               </div>
+          </div>
+          <div class='layout-controls'>
+               <div class='layout-pages'></div>
+               <div class='layout-tools'></div>
+               <div class='layout-library'></div>
+               <div class='layout-actions'></div>
+          </div>
+
+          <div class='offscreen'></div>
+          <div class='printscreen'></div>
+EOD;
+
+
+
+     echo <<<EOD
           <form class='input-form block' method='post' action=''>
                <input type='hidden' name='cmd' value='bb_show_survey'></input> 
                <div class=''><input type='submit' value='Switch to survey'></div>
           </form>
-
 EOD;
+
+
+
+     echo <<<EOD
+          </div>
+EOD;
+
 
 }
 

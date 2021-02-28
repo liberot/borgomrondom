@@ -1,12 +1,19 @@
+
+
+
 body {
      font-size: 0.9em;
      background-color: #eeeee;
 }
 
+
+
 .layout-edit {
      margin-top: 12px;
      margin-bottom: 36px;
 }
+
+
 
 .layout-main {
      width: 100%;
@@ -15,6 +22,8 @@ body {
      justify-content: center;
 }
 
+
+
 .layout-rows {
      width: 100%;
      display: flex;
@@ -22,9 +31,13 @@ body {
      justify-content: center;
 }
 
+
+
 .layout-buff {
      width: 100%;
 }
+
+
 
 .screen {
      border-style: dotted;
@@ -45,11 +58,15 @@ body {
      user-drag: none; 
 }
 
+
+
 .layout-messages {
      margin-bottom: 12px;
      margin-right: 36px;
      font-size: 0.7em;
 }
+
+
 
 .offscreen {
      position: absolute;
@@ -57,10 +74,14 @@ body {
      left: -5000px;
 }
 
+
+
 .printscreen {
      visibility: hidden;
      display: none;
 }
+
+
 
 .layout-tools {
      width: 100%;
@@ -72,11 +93,15 @@ body {
      margin-left: 9px;
 }
 
+
+
 .layout-controls textarea {
       resize: none;
       width: 100%;
       height: 75px;
 }
+
+
 
 .layout-controls .label {
      width: 100%;
@@ -84,9 +109,13 @@ body {
      margin-right: 12px;
 }
 
+
+
 .layout-controls .input {
      float: none;
 }
+
+
 
 .imgpanel {
      width: 100%;
@@ -95,6 +124,8 @@ body {
      padding: 13px 0px 13px 0px;
 }
 
+
+
 .row {
      width: 100%;
      display: flex;
@@ -102,23 +133,48 @@ body {
      justify-content: center;
 }
 
+
+
 .block {
      width: 100%;
 }
+
+
 
 .block input, .block select {
      width: 100%;
      max-width: 100% !important;
 }
 
+
+
 .docicon {
      font-size: 0.7em;
      margin-right: 3px;
 }
 
+
+
 a:hover {
      background-color: red;
 }
 
-.toolsvg {
+
+
+#branding img {
+    visibility: hidden !important;
+    display: none !important;
+    height: 0px !important;
+    content: url('');
+    float: left;
 }
+
+
+
+#primary {
+    visibility: hidden !inportant;
+    display: none !important;
+}
+
+
+
