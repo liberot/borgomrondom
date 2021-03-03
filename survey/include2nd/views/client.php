@@ -9,7 +9,6 @@ function bb_build_client_survey_view(){
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
 
      $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
-bb_add_debug_field('rec:', $rec);
 
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
@@ -122,13 +121,16 @@ EOD;
 
 
 
-bb_add_debug_field('ticket: ', $ticket);
-bb_add_debug_field('field: ', $field);
-bb_flush_debug_field();
 
      echo <<<EOD
           </div>
 EOD;
+
+
+bb_add_debug_field('rec:', $rec);
+bb_add_debug_field('ticket: ', $ticket);
+bb_add_debug_field('field: ', $field);
+bb_flush_debug_field();
 
 }
 
