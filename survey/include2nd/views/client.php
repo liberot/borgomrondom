@@ -94,7 +94,7 @@ EOD;
           case 'file_upload':
 
                $buf1st = bb_build_file_upload_view($field, $rec);
-               $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field->ref);
+               $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field);
 
                break;
      }

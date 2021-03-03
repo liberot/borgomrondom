@@ -1,7 +1,8 @@
 <?php defined('ABSPATH') || exit;
 
 
-// wer beim lesen schreibt und so ....
+
+// fixdiss: build spreads on rec write rather than read
 function bb_build_debug_spread($ticket){
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
@@ -9,9 +10,10 @@ function bb_build_debug_spread($ticket){
           return false;
      }
 
-     $group = bb_get_group_by_ref($field->group_ref);
+     $group = bb_get_group_by_ref($field->group_ref)[0];
      $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
-     $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref);
+     $assets = bb_get_assets_by_group_ref($ticket->client_id, $ticket->thread_id, $field);
+
      $code = bb_get_layout_code($assets);
 
      $layouts = bb_get_layouts_by_code($code);
@@ -45,7 +47,28 @@ function bb_build_debug_spread($ticket){
      $doc['assets'] = $assets_of_doc;
 
 
-//fixdiss text document
+// fixdiss
+     $mockup_text = [];
+
+     $mockup_text[0] = bb_trim_for_print('Mockup Entry 1st');
+     $mockup_text[1] = sprintf('%s: %s', 'Group', bb_trim_for_print($group->title));
+     $mockup_text[2] = sprintf('%s: %s', 'Rec', bb_trim_for_print($rec->doc));
+
+     $assets_of_doc = [];
+     $idx = 0;
+     foreach($doc['assets'] as $asset){
+          if('text' == $asset['type']){
+               $asset['text'] = [];
+               if($idx == 0){
+                    $asset['text'] = $mockup_text;
+               }
+               $idx = $idx +1;
+          }
+          $assets_of_doc[]= $asset;
+     }
+     $doc['assets'] = $assets_of_doc;
+
+
      $doc = base64_encode(json_encode($doc));
      $res = bb_insert_spread($ticket->client_id, $ticket->thread_id, $field, $doc);
 }

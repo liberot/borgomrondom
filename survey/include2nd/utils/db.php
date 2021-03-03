@@ -962,11 +962,11 @@ EOD;
 
 
 
-function bb_get_assets_by_field_ref($client_id, $thread_id, $field_ref){
+function bb_get_assets_by_field_ref($client_id, $thread_id, $field){
 
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
-     $field_ref = esc_sql($field_ref);
+     $field_ref = esc_sql($field->ref);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -974,6 +974,28 @@ function bb_get_assets_by_field_ref($client_id, $thread_id, $field_ref){
           select * from {$prefix}ts_bb_asset where client_id = '{$client_id}'
                and thread_id = '{$thread_id}'
                and field_ref = '{$field_ref}'
+          order by init desc
+EOD;
+
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_get_assets_by_group_ref($client_id, $thread_id, $field){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $group_ref = esc_sql($field->group_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_asset where client_id = '{$client_id}'
+               and thread_id = '{$thread_id}'
+               and group_ref = '{$group_ref}'
           order by init desc
 EOD;
 
@@ -1122,7 +1144,6 @@ EOD;
      $res = $wpdb->get_results($sql);
      return $res;
 }
-
 
 
 

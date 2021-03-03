@@ -401,7 +401,7 @@ function bb_write_rec(){
      }
 
      if('file_upload' == $field->type){
-          $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field->ref);
+          $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field);
           if(empty($assets)){
                return;
           }

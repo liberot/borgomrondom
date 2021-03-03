@@ -88,13 +88,13 @@ function bb_exec_upload_asset(){
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
           $message = esc_html(__('no field', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
      if($ticket->field_ref != $field->ref){
           $message = esc_html(__('corrupt', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
@@ -107,7 +107,7 @@ function bb_exec_upload_asset(){
      $res = bb_get_assetcount_of_field($ticket->client_id, $ticket->thread_id, $field->ref)[0];
      if(intval($res->max) >= intval(Proc::MAX_ASSETS_OF_FIELD)){
           $message = esc_html(__('no more assets', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
@@ -117,14 +117,14 @@ function bb_exec_upload_asset(){
      $temp = $finf->buffer($temp);
      if(-1 == strpos('image/png', $temp)){
           $message = esc_html(__('corrupt', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
      $res = bb_insert_asset($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $scan);
      if(false == $res){
           $message = esc_html(__('no insert', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          echo json_encode(array('res'=>'success', 'message'=>$message));
           return false;
      }
 
