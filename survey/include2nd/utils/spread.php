@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
 
-
+// wer beim lesen schreibt und so ....
 function bb_build_debug_spread($ticket){
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
@@ -61,3 +61,7 @@ function bb_get_layout_code($assets){
 
      return $res;
 }
+
+
+
+
