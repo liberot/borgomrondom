@@ -336,7 +336,7 @@ EOD;
      echo <<<EOD
           <form class='input-form block' method='post' action=''>
                <input type='hidden' name='cmd' value='bb_show_survey'></input> 
-               <div class=''><input type='submit' value='Switch to survey'></div>
+               <div class=''><input type='submit' value='Close'></div>
           </form>
 EOD;
 
