@@ -20,12 +20,6 @@ function bb_build_debug_spread($ticket){
      }
 
 //fixdiss
-     $client_asset = $assets[0];
-// assets have layout codes
-// doc asset slots hase layout codes
-// 
-
-//fixdiss
 //there is a heaps of matching layout suggestions
      $layout = $layouts[0];
      if(is_null($layout)){
@@ -39,10 +33,12 @@ function bb_build_debug_spread($ticket){
      }
 
      $assets_of_doc = [];
+     $idx = 0;
      foreach($doc['assets'] as $asset){
           if('image' == $asset['type']){
-               $asset['src'] = $client_asset->doc;
+               $asset['src'] = is_null($assets[$idx]) ? '' : $assets[$idx]->doc;
                $asset = bb_fit_image_asset_into_slot($doc, $asset);
+               $idx = $idx +1;
           }
           $assets_of_doc[]= $asset;
      }

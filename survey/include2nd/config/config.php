@@ -96,7 +96,7 @@ class Proc {
   // const     KICKOFF_SURVEY_TITLE = '210902fielding questions and payment';
   // const     KICKOFF_SURVEY_TITLE = '210902Preface';
      const            BASE64_UPLOAD = 'base64_upload';
-     const      MAX_ASSETS_OF_FIELD = 3;
+     const      MAX_ASSETS_OF_FIELD = 5;
 }
 
 
