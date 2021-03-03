@@ -60,41 +60,29 @@ EOD;
      switch($field->type){
 
           case 'statement':
-
                $buf1st = bb_build_statement_view($field, $rec);
-
                break;
 
           case 'short_text':
           case 'number':
-
                $buf1st = bb_build_short_text_view($field, $rec);
-
                break;
 
           case 'multiple_choice':
-
                $buf1st = bb_build_multiple_choice_view($field, $rec);
-
                break;
 
           case 'yes_no':
-
                $buf1st = bb_build_yes_no_view($field, $rec);
-
                break;
 
           case 'picture_choice':
-
                $buf1st = bb_build_picture_choice_view($field, $rec);
-
                break;
 
           case 'file_upload':
-
                $buf1st = bb_build_file_upload_view($field, $rec);
                $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field);
-
                break;
      }
 
@@ -118,7 +106,6 @@ EOD;
      echo ';';
      echo PHP_EOL;
      echo "</script>";
-
 
 
 
@@ -270,7 +257,9 @@ function bb_build_client_spread_view(){
      $client_id = bb_get_author_id();
      $ticket = bb_get_ticket_of_client($client_id)[0];
 
-     $res = bb_build_debug_spread($ticket);
+// fixdiss: build on write - not on read
+// fixdiss: build in batch mode
+     $res = bb_build_debug_spread();
 
      wp_register_script('viewer-config', Path::get_plugin_url().'/js/spread/src/main/config-client.js');
      wp_register_script('main', Path::get_plugin_url().'/js/spread/src/main/main.js');

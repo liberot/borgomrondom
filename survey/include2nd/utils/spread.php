@@ -3,7 +3,10 @@
 
 
 // fixdiss: build spreads on rec write rather than read
-function bb_build_debug_spread($ticket){
+function bb_build_debug_spread(){
+
+     $client_id = bb_get_author_id();
+     $ticket = bb_get_ticket_of_client($client_id);
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
