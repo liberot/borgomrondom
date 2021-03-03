@@ -116,14 +116,7 @@ console.log('initDocument(): ', this.model);
           }
           this.updateEditor();
      }
-/*
-     this.loadThread = function(){
-          let coll = window.location.href.split('/');
-          if(coll.length >= 4){
-               this.notify(new Message('thread::requested', { threadId: coll[4] } ));
-          }
-     }
-*/
+
      this.lockControlKeys = function(msg){
           this.model.controlKeysLocked = true;
      }
@@ -479,26 +472,9 @@ console.log('initDocument(): ', this.model);
 
      this.bindLayoutGroup = function(msg){
           this.model.selectedLayoutGroupName = 'default';
-          let model = {
-               group: this.model.selectedLayoutGroupName
-          }
-          this.notify(new Message('load::layoutgroup', model));
      }
-
-     this.bindLoadedLayoutGroup = function(msg){
-console.log('bindLoadedLayoutGroup():', msg);
-          this.model.loadedLayoutGroup = msg.model;
-          for(let idx in this.model){
-               this.model[idx].doc = LayoutUtil.pagpick(this.model[idx].doc);
-          }
-console.log('bindLoadedLayoutGroup():', this.model.loadedLayoutGroup);
-     }
-
-
-
 
      this.bindLoadedLayoutPresets = function(msg){
-
 
           this.model.loadedLayoutPresets = msg.model;
 
