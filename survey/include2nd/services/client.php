@@ -85,27 +85,45 @@ function bb_exec_upload_asset(){
           return;
      }
 
-     $scan = $_POST['scan'];
-
-     $temp = base64_decode($scan['base'], true);
-     $finf = new finfo(FILEINFO_MIME);
-     $temp = $finf->buffer($temp);
-     if(-1 == strpos('image/png', $temp)){
-          $message = esc_html(__('Corrupt', 'bookbuilder'));
+     $field = bb_get_field_by_ref($ticket->field_ref)[0];
+     if(is_null($field)){
+          $message = esc_html(__('no field', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
-     $field = bb_get_field_by_ref($ticket->field_ref)[0];
-     if(is_null($field)){
-          $message = esc_html(__('No field', 'bookbuilder'));
+     if($ticket->field_ref != $field->ref){
+          $message = esc_html(__('corrupt', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          return false;
+     }
+
+     if('file_upload' != $field->type){
+          $message = esc_html(__('corrupt', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          return false;
+     }
+
+     $res = bb_get_assetcount_of_field($ticket->client_id, $ticket->thread_id, $field->ref)[0];
+     if(intval($res->max) >= intval(Proc::MAX_ASSETS_OF_FIELD)){
+          $message = esc_html(__('no more assets', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
+          return false;
+     }
+
+     $scan = $_POST['scan'];
+     $temp = base64_decode($scan['base'], true);
+     $finf = new finfo(FILEINFO_MIME);
+     $temp = $finf->buffer($temp);
+     if(-1 == strpos('image/png', $temp)){
+          $message = esc_html(__('corrupt', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message, 'finf'=>$finf));
           return false;
      }
 
      $res = bb_insert_asset($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $scan);
      if(false == $res){
-          $message = esc_html(__('No insert', 'bookbuilder'));
+          $message = esc_html(__('no insert', 'bookbuilder'));
           echo json_encode(array('res'=>'failed', 'message'=>$message));
           return false;
      }
@@ -114,7 +132,7 @@ function bb_exec_upload_asset(){
      $choice_ref = 'upload';
      $res = bb_insert_rec($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $choice_ref, $answer);
 
-     $message = esc_html(__('File is uploaded', 'bookbuilder'));
+     $message = esc_html(__('file is uploaded', 'bookbuilder'));
 
      echo json_encode(array('res'=>'success', 'message'=>$message));
 }

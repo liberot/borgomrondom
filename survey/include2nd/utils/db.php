@@ -1104,4 +1104,25 @@ EOD;
 
 
 
+function bb_get_assetcount_of_field($client_id, $thread_id, $field_ref){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $field_ref = esc_sql($field_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select count(id) as max from wp_ts_bb_asset 
+               where client_id = '{$client_id}' 
+               and thread_id = '{$thread_id}'
+               and field_ref = '{$field_ref}'
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
 
