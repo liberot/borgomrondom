@@ -627,7 +627,7 @@ function bb_get_field_by_ref($ref) {
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field 
-          where ref = '{$ref}' 
+               where ref = '{$ref}' 
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
