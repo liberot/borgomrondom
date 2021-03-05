@@ -13,8 +13,16 @@ function bb_build_debug_spread(){
      }
 
      $group = bb_get_group_by_ref($field->group_ref)[0];
+     if(is_null($group)){
+          return false;
+     }
+
      $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $ticket->field_ref)[0];
+
      $assets = bb_get_assets_by_group_ref($ticket->client_id, $ticket->thread_id, $field);
+     if(empty($assets)){
+          return false;
+     }
 
      $code = bb_get_layout_code($assets);
      $layouts = bb_get_layouts_by_code($code);

@@ -41,6 +41,8 @@ function bb_get_layouts_by_group($group_ref){
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
                where group = '{$group}'
+               order by init desc
+               limit 1
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
@@ -58,6 +60,8 @@ function bb_get_layouts_by_code($code){
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
                where code = '{$code}'
+               order by init desc
+               limit 1
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
