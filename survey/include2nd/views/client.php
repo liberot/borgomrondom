@@ -257,10 +257,6 @@ function bb_build_client_spread_view(){
      $client_id = bb_get_author_id();
      $ticket = bb_get_ticket_of_client($client_id)[0];
 
-// fixdiss: build on write - not on read
-// fixdiss: build in batch mode
-     $res = bb_build_debug_spread();
-
      wp_register_script('viewer-config', Path::get_plugin_url().'/js/spread/src/main/config-client.js');
      wp_register_script('main', Path::get_plugin_url().'/js/spread/src/main/main.js');
      wp_register_script('viewer-tools', Path::get_plugin_url().'/js/spread/src/main/module/tools/main.js');

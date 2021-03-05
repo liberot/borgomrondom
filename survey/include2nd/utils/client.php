@@ -72,6 +72,7 @@ function bb_process_incoming(){
 
           case 'bb_write_rec':
                 bb_write_rec();
+                bb_build_debug_spread();
                 break;
 
      }
