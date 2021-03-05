@@ -366,7 +366,6 @@ function bb_init_existing_thread(){
           $thread_id = $res->id;
           $res = bb_get_last_record_of_client($res->client_id, $thread_id)[0];
           if(is_null($res)){
-
                 $res = bb_proceed_to_kickoff_field($thread_id);
           }
           else{

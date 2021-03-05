@@ -2,6 +2,17 @@ let BBAdmin = {};
 
 
 
+BBAdmin.bbSelectRootSurvey = function(ref){
+     let target_survey_title = jQuery(ref).val();
+     let data = {
+          action: 'bb_set_root_survey',
+          target_survey_title: target_survey_title
+     }
+     BBAdmin.bbPostCommand(data);
+}
+
+
+
 BBAdmin.bbSelectTargetField = function(ref){
 }
 
@@ -11,7 +22,6 @@ BBAdmin.bbSelectTargetSurvey = function(ref){
      let target_survey_ref = jQuery(ref).val();
      let clazz = jQuery(ref).attr('class');
      let match = clazz.match(/bind:(.{1,128})/);
-console.log(target_survey_ref, clazz, match);
      if(null == match || null == match[1]){
           return false;
      }

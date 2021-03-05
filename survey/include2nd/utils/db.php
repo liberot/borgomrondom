@@ -43,9 +43,11 @@ function bb_drop_tables(){
 
      $tables = [
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
-          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec', 'ts_bb_ticket',
+          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec', 
+          'ts_bb_ticket',
           'ts_bb_asset',
-          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread'
+          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread',
+          'ts_bb_conf'
      ];
 
      global $wpdb;
@@ -83,6 +85,8 @@ function bb_init_tables(){
      $res&= bb_init_section_table();
      $res&= bb_init_layout_table();
      $res&= bb_init_spread_table();
+
+     $res&= bb_init_conf_table();
 
      return $res;
 }
@@ -215,6 +219,33 @@ function bb_init_spread_table(){
                pos int unsigned not null,
                init datetime,
                doc longtext,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
+}
+
+
+
+function bb_init_conf_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_conf (
+               id bigint(20) not null auto_increment,
+               root_survey_title varchar(255),
+               init datetime,
                primary key (id)
           )
           engine=innodb
@@ -1135,13 +1166,49 @@ function bb_get_assetcount_of_field($client_id, $thread_id, $field_ref){
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select count(id) as max from wp_ts_bb_asset 
+          select count(id) as max from {$prefix}ts_bb_asset 
                where client_id = '{$client_id}' 
                and thread_id = '{$thread_id}'
                and field_ref = '{$field_ref}'
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_get_conf(){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_conf 
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_init_conf(){
+
+     $root_survey_title = esc_sql(Proc::KICKOFF_SURVEY_TITLE);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_conf
+               (root_survey_title, init)
+          values 
+               (
+                    '{$root_survey_title}',
+                    now()
+               )
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
      return $res;
 }
 

@@ -563,15 +563,40 @@ function bb_get_kickoff_field() {
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-     $title = Proc::KICKOFF_SURVEY_TITLE;
+     $conf = bb_get_conf()[0];
+     if(is_null($conf)){
+          return false;
+     }
+     $title = $conf->root_survey_title;
+     if(is_null($title)){
+          $title = Proc::KICKOFF_SURVEY_TITLE;
+     }
      $sql = <<<EOD
-          select f.* from {$prefix}ts_bb_survey s, {$prefix}ts_bb_field f 
-               where s.ref = f.survey_ref 
-               and s.title like '%{$title}%' 
-               order by pos 
-               limit 1; 
+          select f.* from {$prefix}ts_bb_survey s, {$prefix}ts_bb_field f
+               where s.ref = f.survey_ref
+               and s.title like '%{$title}%'
+               order by pos
+               limit 1;
 EOD;
+     $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_set_root_survey_title($root_survey_title){
+
+     $root_survey_title = esc_sql($root_survey_title);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          update {$prefix}ts_bb_conf
+               set root_survey_title = '{$root_survey_title}'
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
      return $res;
 }
 

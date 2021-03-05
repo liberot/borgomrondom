@@ -46,20 +46,20 @@ function bb_setup_admin_menu() {
      $capability = 'administrator';
      $function = 'bb_build_thread_view';
      add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
-/*
+
      $parent_slug = 'surveyprint_admin_utils';
-     $menu_title = esc_html(__('Spread Manager', 'survey'));
+     $menu_title = esc_html(__('Books', 'survey'));
      $page_title = 'spreads';
      $menu_slug = 'spreads';
      $capability = 'administrator';
      $function = 'bb_build_spreads_view';
      add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
-*/
+
      $parent_slug = 'surveyprint_admin_utils';
      $page_title = 'layouts';
      $menu_slug = 'layouts';
      $capability = 'administrator';
-     $menu_title = esc_html(__('Layout Zentrale', 'survey'));
+     $menu_title = esc_html(__('Layouts', 'survey'));
      $function = 'bb_build_layouts_view';
      add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
@@ -430,6 +430,9 @@ function bb_build_questionnaire_list_view(){
      wp_register_style('admin_style', Path::get_plugin_url().'/css/admin/style.css');
      wp_enqueue_style('admin_style');
  
+     wp_register_script('service_i18n', Path::get_plugin_url().'/js/admin/i18n.js');
+     wp_enqueue_script('service_i18n');
+
      wp_register_script('service', Path::get_plugin_url().'/js/admin/main.js', array('jquery'));
      wp_enqueue_script('service');
 
@@ -454,6 +457,24 @@ function bb_build_questionnaire_list_view(){
 EOD;
 
      $surveys = bb_get_typeform_surveys();
+
+
+
+     $plz_select_root_survey = esc_html(__('The Survey to start with', 'bookbuilder'));
+     $buf1st = sprintf("<option value=''>%s</option>", $plz_select_root_survey);
+     foreach($surveys as $survey){
+          $selected = '';
+          $buf1st.= sprintf("<option value='%s' %s>%s</option>", $survey->title, $selected, $survey->title);
+     }
+     echo <<<EOD
+                <select onchange='javascript:BBAdmin.bbSelectRootSurvey(this);'>
+                     {$buf1st}
+                </select>
+           </div>
+EOD;
+
+
+
      foreach($surveys as $survey){
      $href = sprintf('%s?page=questionnaire&action=edit&ref=%s', Path::SERVICE_BASE, $survey->ref);
      echo <<<EOD

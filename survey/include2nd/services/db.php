@@ -38,6 +38,7 @@ function bb_init_db(){
      }
 
      $res = bb_init_tables();
+     $res = bb_init_conf();
 
      $suc = 'failed';
      $message = esc_html(__('Typform DB is NOt inited', 'bookbuilder'));
