@@ -2,7 +2,6 @@
 
 
 
-// fixdiss: build spreads on rec write rather than read
 function bb_build_debug_spread(){
 
      $client_id = bb_get_author_id();
@@ -25,14 +24,7 @@ function bb_build_debug_spread(){
      }
 
      $code = bb_get_layout_code($assets);
-     $layouts = bb_get_layouts_by_code($code);
-     if(is_null($layouts)){
-          return false;
-     }
-
-//fixdiss
-//there is a heaps of matching layout suggestions
-     $layout = $layouts[0];
+     $layout = bb_get_layouts_by_code($code)[0];
      if(is_null($layout)){
           return false;
      }

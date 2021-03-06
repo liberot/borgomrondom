@@ -1,15 +1,24 @@
 
 
 
-.field-title {
-   font-size: 1.7em;
-   font-style: italic;
-   line-height: 1.7em;
+.field-description {
+   font-size: 1.1em;
+   line-height: 1.2em;
+   margin-bottom: 2em;
 }
 
 
 
-.clein-input-form {
+.field-title {
+   font-size: 1.7em;
+   font-style: italic;
+   line-height: 1.7em;
+   margin-bottom: 2em;
+}
+
+
+
+.client-input-form {
    margin: .5em 0em .5em 0em;
 }
 
@@ -18,7 +27,7 @@
 .input-text {
    width: 100%;
    font-size: 3em !important;
-   height: 3em;
+   height: 3em !important;
    padding: 1em;
    font-weight: 700;
 }
@@ -48,63 +57,113 @@
 
 
 .row {
-     width: 100%;
-     display: flex;
-     flex-direction: row;
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   margin-left: 0em !important;
+   margin-bottom: 1em;
 }
 
 
 
 .block {
-     width: 25%;
+   width: 25%;
 }
 
 
 
 #primary {
-    visibility: hidden !inportant;
-    display: none !important;
+   visibility: hidden !inportant;
+   display: none !important;
 }
 
 
 
 .drag {
-     background-color: pink;
+   background-color: pink;
 }
 
 
 
 .files {
-     visibility: hidden;
-     display: none;
+   visibility: hidden;
+   display: none;
 }
 
 
 
 .fake {
-     position: relative;
-     left: 0px;
-     top: 0px;
-     margin: 12px 0px 12px 0px;
-     width: 98%;
-     height: 35px;
-     padding: 5px;
-     border: 1px dotted #cedece;
-     font-size: 0.5em;
+   position: relative;
+   left: 0px;
+   top: 0px;
+   margin: 12px 0px 12px 0px;
+   width: 98%;
+   height: 35px;
+   padding: 5px;
+   border: 1px dotted #cedece;
+   font-size: 0.5em;
 }
 
 
 
 .asset-copies img {
 
-     height: 99px;
+   height: 99px;
 }
 
 
 
 .debug-out {
 
-     background-color: rgba(100,100,40,0.2);
-     font-size: 0.75em;
-     font-family: Helvetica;
+   background-color: rgba(100,100,40,0.2);
+   font-size: 0.75em;
+   font-family: Helvetica;
 }
+
+
+
+.label {
+
+   font-size: 1.1em !important;
+   font-weight: normal !important;
+}
+
+
+
+.entry-content, .entry-summary {
+
+   padding: 0 0 0 0 !important;
+}
+
+
+
+.hentry {
+
+   margin 0 0 0 0 !important;
+}
+
+
+
+#content {
+
+   margin: 0 0 0 0 !important;
+   margin-bottom: 0px;
+}
+
+
+
+input[type="submit"] {
+
+   background-color: #cac84d !important;
+   border: #cde84d !important;
+}
+
+
+
+#branding, #main, #wrapper {
+   width: initial;
+}
+
+
+
+

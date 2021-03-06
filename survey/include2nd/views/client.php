@@ -16,6 +16,11 @@ function bb_build_client_survey_view(){
      wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
      wp_enqueue_style('client_style');
 
+     wp_register_style('mg_style', Path::get_plugin_url().'/css/client/milligram.css');
+     wp_enqueue_style('mg_style');
+
+     $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
+
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
      echo <<<EOD
@@ -50,7 +55,7 @@ EOD;
 EOD;
 
      echo <<<EOD
-          <div class='field-title'>{$field->description}</div>
+          <div class='field-description'>{$field->description}</div>
           <div class='field-title'>{$field->title}</div>
 EOD;
 
@@ -91,7 +96,7 @@ EOD;
                {$buf1st}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field->ref}'></input> 
-               <div class=''><input class='btn-submit-rec' type='submit' value='Submit REC'></div>
+               <div class='input-choice row'><input class='btn-submit-rec' type='submit' value='Submit REC'></div>
           </form>
 EOD;
 
@@ -114,10 +119,12 @@ EOD;
 EOD;
 
 
+/*
 bb_add_debug_field('rec:', $rec);
 bb_add_debug_field('ticket: ', $ticket);
 bb_add_debug_field('field: ', $field);
 bb_flush_debug_field();
+*/
 
 }
 
@@ -134,16 +141,22 @@ function bb_build_yes_no_view($field, $rec){
      if(is_null($choices)){
      }
      else {
-          $buf1st.= sprintf("<div class='input-choice'>");
+          $buf1st.= sprintf("<div class='input-choice row'>");
           foreach($choices as $choice){
                 $title = esc_html(__($choice->title, 'bookbuilder'));
+                $title = 'yes' == $choice->title ? $yes : $no;
                 $value = $choice->ref;
                 $checked = '';
                 if($value == $rec->choice_ref){
                      $checked = 'checked';
                 }
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $title);
+                $buf1st.= "<div class='block'>";
+                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s><br/>", $value, $checked);
+                $buf1st.= sprintf("<label class='label' for='%s'>%s</label>", $value, $title);
+                $buf1st.= '</input>';
+                $buf1st.= '</div>';
           }
+          $buf1st.= '</div>';
      }
 
      return $buf1st;
@@ -158,7 +171,7 @@ function bb_build_multiple_choice_view($field, $rec){
      if(is_null($choices)){
      }
      else {
-          $buf1st.= sprintf("<div class='input-choice'>");
+          $buf1st.= sprintf("<div class='input-choice row'>");
           foreach($choices as $choice){
 
                 $title = esc_html($choice->title);
@@ -168,9 +181,15 @@ function bb_build_multiple_choice_view($field, $rec){
                      $checked = 'checked';
                 }
 
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $title);
+                $buf1st.= "<div class='block'>";
+                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s>", $value, $checked);
+                $buf1st.= sprintf("<label class='label' for='%s'>%s</label>", $value, $title);
+                $buf1st.= '</label>';
+                $buf1st.= '</div>';
           }
+          $buf1st.= '</div>';
      }
+
      return $buf1st;
 }
 
@@ -217,7 +236,9 @@ function bb_build_picture_choice_view($field, $rec){
                 }
 
                 $buf1st.= "<div class='block'>";
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s> %s</input><br/>", $value, $checked, $choice->title);
+                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s>", $value, $checked);
+                $buf1st.= sprintf("<label class='label' for='%s'>%s</label>", $value, $choice->title);
+                $buf1st.= '</input>';
 
                 $temp = json_decode(base64_decode($choice->doc, true));
                 if(is_null($temp)){
@@ -281,6 +302,9 @@ function bb_build_client_spread_view(){
 
      wp_register_style('spread_style', Path::get_plugin_url().'/css/spread/style.css');
      wp_enqueue_style('spread_style');
+
+     wp_register_style('mg_style', Path::get_plugin_url().'/css/client/milligram.css');
+     wp_enqueue_style('mg_style');
 
      $headline = esc_html(__('BookBuilder Spreads', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
