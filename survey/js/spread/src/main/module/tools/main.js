@@ -76,7 +76,8 @@ console.log('initDocument(): ', this.model);
 
      this.setupNavigation = function(){
 
-          jQuery('.layout-pages').html(__tool__991__tmpl);
+          // jQuery('.layout-pages').html(__tool__991__tmpl);
+          jQuery('.layout-pages').html('');
      }
 
      this.bindImportedLayouts = function(msg){
@@ -1235,12 +1236,6 @@ let __tool__001__tmpl = ""+
           "<option value='1'>1</option>"+
      "</select>"+
 "</div>"+
-"</div>";
-
-let __tool__981__tmpl = ""+
-"<div>"+
-     "<a href='javascript:layoutQueue.route(\"prevsectbtn::released\", \"\");'>prev</a>"+
-     "<a href='javascript:layoutQueue.route(\"nextsectbtn::released\", \"\");'>next</a>"+
 "</div>";
 
 let __tool__991__tmpl = ""+
