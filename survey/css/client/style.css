@@ -27,6 +27,7 @@
 .input-text {
    width: 100%;
    font-size: 3em !important;
+   font-family: Helvetica;
    height: 3em !important;
    padding: 1em;
    font-weight: 700;
@@ -162,6 +163,14 @@ input[type="submit"] {
 
 #branding, #main, #wrapper {
    width: initial;
+}
+
+
+
+#footer {
+    visibility: hidden !important;
+    display: none !important;
+    height: 0px !important;
 }
 
 

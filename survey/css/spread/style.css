@@ -184,3 +184,19 @@ input[type="submit"] {
    border: #cde84d !important;
 }
 
+
+
+#branding, #main, #wrapper {
+   width: initial;
+}
+
+
+
+#footer {
+    visibility: hidden !important;
+    display: none !important;
+    height: 0px !important;
+}
+
+
+
