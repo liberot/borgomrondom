@@ -13,11 +13,11 @@ function bb_build_client_survey_view(){
      wp_register_script('service', Path::get_plugin_url().'/js/client/main.js', array('jquery'));
      wp_enqueue_script('service');
 
-     wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
-     wp_enqueue_style('client_style');
-
      wp_register_style('mg_style', Path::get_plugin_url().'/css/client/milligram.css');
      wp_enqueue_style('mg_style');
+
+     wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
+     wp_enqueue_style('client_style');
 
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
 
@@ -302,16 +302,17 @@ function bb_build_client_spread_view(){
      wp_enqueue_script('viewer-layout_net');
      wp_enqueue_script('viewer-layout_init');
 
-     wp_register_style('spread_style', Path::get_plugin_url().'/css/spread/style.css');
-     wp_enqueue_style('spread_style');
-
      wp_register_style('mg_style', Path::get_plugin_url().'/css/client/milligram.css');
      wp_enqueue_style('mg_style');
 
+     wp_register_style('client_style', Path::get_plugin_url().'/css/client/style.css');
+     wp_enqueue_style('client_style');
+
+     wp_register_style('spread_style', Path::get_plugin_url().'/css/spread/style.css');
+     wp_enqueue_style('spread_style');
+
      $headline = esc_html(__('BookBuilder Spreads', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
-
-
 
      echo <<<EOD
           <div class='wrap'>
