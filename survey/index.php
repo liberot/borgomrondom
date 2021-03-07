@@ -19,6 +19,7 @@ require_once('include2nd/services/layout.php');
 
 require_once('include2nd/views/admin.php');
 require_once('include2nd/views/client.php');
+require_once('include2nd/views/header.php');
 
 
 
