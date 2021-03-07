@@ -308,32 +308,43 @@ function bb_decorate_field_title($field){
 
      $ticket = bb_get_ticket_of_client($client_id)[0];
 
-     $temp = $field->title;
-     preg_match_all('/{{(.{42})}}/', $temp, $match);
+     $title = $field->title;
+     preg_match_all('/{{(.{1,42}?)}}/', $title, $match1st);
 
-     if(empty($match)){
+     if(empty($match1st)){
      }
      else {
-          foreach($match[1] as $m){
-               $field_ref = preg_replace('/field:/', '', $m);
-               $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $field_ref)[0];
+          foreach($match1st[1] as $match2nd){
+
+               preg_match('/(^field:)/', $match2nd, $match3rd);
+               if(empty($match3rd)){
+               }
+               else {
+                    $field_ref = preg_replace('/^field:/', '', $match2nd);
+                    $rec = bb_get_rec_of_client_by_field_ref($ticket->client_id, $ticket->thread_id, $field_ref)[0];
+               }
+
+               preg_match('/(^hidden:)/', $match2nd, $match3rd);
+               if(empty($match3rd)){
+               }
+               else {
+                    $field_ref = preg_replace('/hidden:/', '', $match2nd);
+                    $rec = bb_get_hidden_field_of_client_by_title($ticket->client_id, $ticket->thread_id, $hidden_field_title)[0];
+               }
+
                $insert = '';
                if(is_null($rec)){
                }
                else {
                     $insert = $rec->doc;
                }
-               $temp = str_replace($m, $insert, $temp);
+
+               $title = preg_replace('/{{'.$match2nd.'}}/', $insert, $title);
+               // $title = str_replace($field_ref, $insert, $title);
           }
      }
 
-     if(is_null($temp)){
-     }
-     else {
-          $temp = str_replace('{{', '', $temp);
-          $temp = str_replace('}}', '', $temp);
-          $field->title = $temp;
-     }
+     $field->title = $title;
 
      return $field;
 }

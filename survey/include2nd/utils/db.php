@@ -42,12 +42,11 @@ function bb_drop_tables(){
      $res = false;
 
      $tables = [
-          'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action',
-          'ts_bb_thread', 'ts_bb_input', 'ts_bb_rec', 
+          'ts_bb_conf',
+          'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action', 'ts_bb_hidden',
           'ts_bb_ticket',
-          'ts_bb_asset',
-          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread',
-          'ts_bb_conf'
+          'ts_bb_thread', 'ts_bb_rec', 'ts_bb_asset',
+          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread'
      ];
 
      global $wpdb;
@@ -73,6 +72,7 @@ function bb_init_tables(){
      $res&= bb_init_field_table();
      $res&= bb_init_choice_table();
      $res&= bb_init_action_table();
+     $res&= bb_init_hidden_table();
 
      $res&= bb_init_thread_table();
      $res&= bb_init_ticket_table();
@@ -604,6 +604,37 @@ EOD;
 
 
 
+function bb_init_hidden_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_hidden (
+               id bigint(20) not null auto_increment,
+               client_id bigint(20) unsigned not null,
+               thread_id bigint(20) unsigned not null,
+               survey_ref varchar(255),
+               title varchar(255) not null unique,
+               note varchar(255) not null unique,
+               doc longtext,
+               init datetime,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+}
+
+
+
 function bb_debug_sql($sql){
 
      if(true != Proc::TMP_WRITE_SQL){
@@ -784,7 +815,7 @@ function bb_insert_asset($client_id, $thread_id, $rec_pos, $field, $scan){
      $width = esc_sql($scan['width']);
      $height = esc_sql($scan['height']);
      $layout_code = esc_sql($scan['layout_code']);
-     
+
      $rec_pos = esc_sql($rec_pos);
 
      global $wpdb;
@@ -1210,6 +1241,32 @@ EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
+}
+
+
+
+function bb_get_hidden_field_of_client_by_title($client_id, $thread_id, $title){
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+     $title = esc_sql($title);
+
+     global $wpdb;
+
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_hidden 
+               where client_id = '{$client_id}',
+               and thread_id = '{$thread_id}',
+               and title = '{$title}',
+               order by init desc,
+               limit 1
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+
+
 }
 
 
