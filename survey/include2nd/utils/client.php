@@ -328,7 +328,7 @@ function bb_decorate_field_title($field){
                if(empty($match3rd)){
                }
                else {
-                    $field_ref = preg_replace('/hidden:/', '', $match2nd);
+                    $field_ref = preg_replace('/^hidden:/', '', $match2nd);
                     $rec = bb_get_hidden_field_of_client_by_title($ticket->client_id, $ticket->thread_id, $hidden_field_title)[0];
                }
 

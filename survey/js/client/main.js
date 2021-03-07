@@ -2,7 +2,7 @@ let BBClient = {};
 
 
 
-BBClient.btnSubmitRecPressed = function(e){
+BBClient.bbBtnSubmitRecPressed = function(e){
 
      let types = ['text', 'textinput', 'textarea'];
      let activeElement = document.activeElement;
@@ -66,7 +66,7 @@ BBClient.bbSetupKeys = function(){
 
                case 'b':
                case 'B':
-                    BBClient.btnSubmitRecPressed(e);
+                    BBClient.bbBtnSubmitRecPressed(e);
                     break;
 
                case 'Shift':
@@ -244,7 +244,6 @@ BBClient.bbUploadAsset = function(scan){
 
      let cb = function(e){
           console.log(e);
-          // window.location.reload();
      }
 
      BBClient.bbPostData(data, cb);
@@ -275,23 +274,26 @@ BBClient.bbRenderAssetCopies = function(scan){
 
 
 BBClient.bbInitClient = function(){
-     window.addEventListener('hashchange', function(e){ ref.bindHashChange(e); });
-     history.pushState(null, null, window.location.href);
+
+     history.pushState({}, document.title, window.location.href);
      window.onpopstate = function(e){
-          history.pushState(null, null, window.location.href);
+          history.pushState({}, document.title, window.location.href);
           BBClient.bbPostData(
                { 
                     'action': 'bb_nav_prev_field'
                },
                function(e){
                     console.log(e);
-                    window.location.reload();
+                    console.log('<-- nav the prev');
+                    window.location.reload(true);
                },
                function(e){ 
                     console.log(e); 
+                    console.log('<-- cannot nav the prev');
                }
           );
      };
+
      BBClient.bbAssetCopies = null == assetsOfField ? [] : assetsOfField;
 }
 

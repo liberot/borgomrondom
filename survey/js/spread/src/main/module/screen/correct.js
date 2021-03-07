@@ -20,10 +20,8 @@ let Correct = function(controller) {
      }
 
      this.corrAssetSize = function(msg){
-return;
 
-
-
+/*
           let target = msg.model.target;
           let width = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.ow, target.conf.unit);
           let height = LayoutUtil.pxToUnit(this.model.doc.ppi, target.conf.oh, target.conf.unit);
@@ -90,8 +88,9 @@ return;
           target.conf.ypos = parseFloat(slotY) +yoffset;
 
           this.notify(new Message('asset::corrected'));
-
           // console.log({ conf: target.conf, r: r, xoffset: xoffset, yoffset: yoffset });
+
+*/
      }
 
      this.corrBlockWidth = function(target){
