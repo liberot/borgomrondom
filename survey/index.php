@@ -1,6 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-define ('BOOKBUILDER_VERSION', 'feri.lightweight.0.2');
+define ('BOOKBUILDER_VERSION', 'boomer.booMER.BBOOOMER.0.2');
 
 require_once('include2nd/config/config.php');
 
