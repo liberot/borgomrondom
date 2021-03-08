@@ -1,6 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-define ('BOOKBUILDER_VERSION', 'boomer.booMER.BBOOOMER.0.2');
+define ('BOOKBUILDER_VERSION', 'okäh.pinotttschie.thänn.bia.guud.ähn.donndtha.luyyy');
 
 require_once('include2nd/config/config.php');
 

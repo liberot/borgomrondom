@@ -357,14 +357,19 @@ BBClient.isTextInputActive = function(){
 
 BBClient.bbFetchHiddenFields = function(){
 
+     // #h1st=1st&h2nd=2nd&h3rd=3rd
+     // #h1st=1st&h2nd=2nd&h3rd=%C3%A4rzt%C3%BClallLL%C3%9C%C3%9C%C3%9C%C3%9C
+
      let fields = null;
-     //#h1st=1st&h2nd=2nd&h3rd=3rd
+
      let h = window.location.hash;
      if(null == h){
           return false;
      }
      h = h.replace(/^#/, '');
+
      let temp1st = h.split('&');
+
      for(let idx in temp1st){
 
           let temp2nd = temp1st[idx].split('=');
@@ -384,10 +389,7 @@ BBClient.bbFetchHiddenFields = function(){
                fields = [];
           }
 
-          fields.push({
-               key: decodeURIComponent(key),
-               val: decodeURIComponent(val)
-          })
+          fields.push({ key: key, val: val });
      }
 
      if(null == fields){

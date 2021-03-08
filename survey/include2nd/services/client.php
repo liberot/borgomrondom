@@ -135,7 +135,13 @@ function bb_exec_bb_set_hidden_fields(){
      }
 
      $fields = bb_trim_incoming_hidden_fields($_POST['fields']);
-// todo
+
+     $res = bb_insert_hidden_fields($ticket->client_id, $ticket->thread_id, $fields);
+     if(false == $res){
+          $message = esc_html(__('hidden fields is NOT set', 'bookbuilder'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'fields'=>$fields));
+          return false;
+     }
 
      $message = esc_html(__('hidden fields is set', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'fields'=>$fields));

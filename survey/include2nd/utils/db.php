@@ -618,9 +618,9 @@ function bb_init_hidden_table(){
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                survey_ref varchar(255),
-               title varchar(255) not null unique,
-               note varchar(255) not null unique,
-               doc longtext,
+               title varchar(255) not null,
+               doc longtext not null,
+               note varchar(255),
                init datetime,
                primary key (id)
           )
@@ -1252,7 +1252,6 @@ function bb_get_hidden_field_of_client_by_title($client_id, $thread_id, $title){
      $title = esc_sql($title);
 
      global $wpdb;
-
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_hidden 
@@ -1265,9 +1264,37 @@ EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
-
-
 }
 
 
 
+function bb_insert_hidden_fields($client_id, $thread_id, $fields){
+
+     if(is_null($fields)){
+          return false;
+     }
+
+     $client_id = esc_sql($client_id);
+     $thread_id = esc_sql($thread_id);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $res = true;
+     foreach($fields as $field){
+
+          $title = esc_sql($field['key']);
+          $doc = esc_sql($field['val']);
+
+          $sql = <<<EOD
+               insert into {$prefix}ts_bb_hidden
+                    (client_id, thread_id, title, doc, init)
+               values 
+                    ('{$client_id}', '{$thread_id}', '{$title}', '{$doc}', now())
+EOD;
+          $sql = bb_debug_sql($sql);
+          $ins = $wpdb->query($sql);
+          $res = false == $res ? false : $ins;
+     }
+     return $res;
+}
