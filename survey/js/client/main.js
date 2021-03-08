@@ -4,14 +4,8 @@ let BBClient = {};
 
 BBClient.bbBtnSubmitRecReleased = function(e){
 
-     let types = ['text', 'textinput', 'textarea'];
-     let activeElement = document.activeElement;
-     if(null != activeElement){
-          if(null != activeElement.type){
-               if(-1 !== types.indexOf(activeElement.type.toLowerCase())){
-                    return false;
-               }
-          }
+     if(BBClient.isTextInputActive()){
+          return false;
      }
 
      let btnSubmitRec = jQuery('.btn-submit-rec');
@@ -31,12 +25,16 @@ BBClient.bbBtnSubmitRecReleased = function(e){
 
 BBClient.bbBtnSubmitPrevReleased = function(e){
 
-     let btn = jQuery('.nav_prev_field');
-     if(null == btn){
+     if(BBClient.isTextInputActive()){
           return false;
      }
 
-     btn.submit();
+     let btnPrev = jQuery('.nav_prev_field');
+     if(null == btnPrev){
+          return false;
+     }
+
+     btnPrev.submit();
 }
 
 
@@ -339,12 +337,35 @@ BBClient.bbPostData = function(data, suc, err){
 
 
 
+BBClient.isTextInputActive = function(){
+
+     let res = false;
+     let types = ['text', 'textinput', 'textarea'];
+     let activeElement = document.activeElement;
+     if(null != activeElement){
+          if(null != activeElement.type){
+               if(-1 !== types.indexOf(activeElement.type.toLowerCase())){
+                    res = true;
+               }
+          }
+     }
+
+     return res;
+}
+
+
+
+
+
+
+
 jQuery(document).ready(function(){
      BBClient.bbInitClient();
      BBClient.bbRenderFileupload();
      BBClient.bbRenderAssetCopies();
      BBClient.bbSetupKeys();
 });
+
 
 
 
