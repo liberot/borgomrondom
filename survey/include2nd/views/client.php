@@ -96,14 +96,14 @@ EOD;
 
      echo <<<EOD
 
-          <form class='client-input-form submit_rec' method='post' action=''>
+          <form class='client-input-form' method='post' action=''>
                {$buf1st}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field->ref}'></input> 
-               <div class='input-choice'><input class='btn-submit-rec' type='submit' value='{$submit_rec}'></div>
+               <div class='input-choice'><input class='btn-prev-rec' type='submit' value='{$submit_rec}'></div>
           </form>
 
-          <form class='client-input-form nav_prev_field' method='post' action=''>
+          <form class='nav_prev_field' method='post' action=''>
                <input type='hidden' name='cmd' value='bb_nav_prev_field'></input> 
                <input type='hidden' name='ticket' value='{$field->ref}'></input> 
                <div class='input-choice'><input class='btn-submit-rec' type='submit' value='{$previous_field}'></div>

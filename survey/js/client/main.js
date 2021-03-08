@@ -2,7 +2,7 @@ let BBClient = {};
 
 
 
-BBClient.bbBtnSubmitRecPressed = function(e){
+BBClient.bbBtnSubmitRecReleased = function(e){
 
      let types = ['text', 'textinput', 'textarea'];
      let activeElement = document.activeElement;
@@ -25,6 +25,18 @@ BBClient.bbBtnSubmitRecPressed = function(e){
      }
 
      clientInput.submit();
+}
+
+
+
+BBClient.bbBtnSubmitPrevReleased = function(e){
+
+     let btn = jQuery('.nav_prev_field');
+     if(null == btn){
+          return false;
+     }
+
+     btn.submit();
 }
 
 
@@ -66,7 +78,12 @@ BBClient.bbSetupKeys = function(){
 
                case 'b':
                case 'B':
-                    BBClient.bbBtnSubmitRecPressed(e);
+                    BBClient.bbBtnSubmitRecReleased(e);
+                    break;
+
+               case 'v':
+               case 'V':
+                    BBClient.bbBtnSubmitPrevReleased(e);
                     break;
 
                case 'Shift':
@@ -278,7 +295,7 @@ BBClient.bbInitClient = function(){
      history.pushState({}, document.title, window.location.href);
      window.onpopstate = function(e){
           history.pushState({}, document.title, window.location.href);
-          jQuery('.nav_prev_field').submit();
+          BBClient.bbBtnSubmitPrevReleased(e);
           /*
           BBClient.bbPostData(
                { 
