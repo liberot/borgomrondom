@@ -1254,10 +1254,10 @@ function bb_get_hidden_field_of_client_by_title($client_id, $thread_id, $title){
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_hidden 
-               where client_id = '{$client_id}',
-               and thread_id = '{$thread_id}',
-               and title = '{$title}',
-               order by init desc,
+               where client_id = '{$client_id}'
+               and thread_id = '{$thread_id}'
+               and title = '{$title}'
+               order by init desc
                limit 1
 EOD;
      $sql = bb_debug_sql($sql);

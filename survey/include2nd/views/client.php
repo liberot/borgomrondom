@@ -23,6 +23,7 @@ function bb_build_client_survey_view(){
 
      $headline = esc_html(__('BookBuilder Questionnaire', 'bookbuilder'));
      $welcome = esc_html(__(':', 'bookbuilder'));
+
      echo <<<EOD
           <div class='wrap'>
                <h1 class='wp-heading-inline'>{$headline}</h1>
@@ -31,6 +32,9 @@ function bb_build_client_survey_view(){
 EOD;
 
      $field = bb_decorate_field_title($field);
+
+     $field->title = esc_html($field->title);
+     $field->description = esc_html($field->description);
 
      echo <<<EOD
 

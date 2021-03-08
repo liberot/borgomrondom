@@ -52,7 +52,7 @@
   "fields": [
     {
       "id": "oBiqUFR9VjLA",
-      "title": "Our family books tell the story of your child at the heart of your family. The This Story book builder will take you through the book, chapter by chapter, asking questions that can be answered quickly and prompting you to upload images. Let's start with the cover",
+      "title": "{{hidden:child}} Our family books tell the story of your child at the heart of your family. The This Story book builder will take you through the book, chapter by chapter, asking questions that can be answered quickly and prompting you to upload images. Let's start with the cover",
       "ref": "4baff887-61e1-40b5-ae84-344bfd9f6883",
       "properties": {
         "button_text": "Continue",
