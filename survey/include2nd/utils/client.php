@@ -399,6 +399,13 @@ function bb_init_existing_thread(){
 
 
 
+function bb_notify_about_corrupt_ticket(){
+
+     bb_init_existing_thread();
+}
+
+
+
 function bb_write_rec(){
 
      $client_id = bb_get_author_id();
@@ -407,13 +414,13 @@ function bb_write_rec(){
 
      $incoming_ticket = bb_trim_incoming_filename($_POST['ticket']);
      if($incoming_ticket != $ticket->field_ref){
-          bb_init_existing_thread();
+          bb_notify_about_corrupt_ticket();
           return false;
      }
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
-          bb_init_existing_thread();
+          bb_notify_about_corrupt_ticket();
           return false;
      }
 
