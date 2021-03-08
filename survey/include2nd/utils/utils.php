@@ -303,4 +303,21 @@ function bb_add_base_to_chunk($chunk){
 
 
 
+function bb_trim_incoming_hidden_fields($coll){
+
+     $res = [];
+
+     foreach($coll as $field){
+
+          $key = $field['key'];
+          $val = $field['val'];
+
+          $res[]= ['key'=>$key, 'val'=>$val];
+     }
+
+     return $res;
+}
+
+
+
 

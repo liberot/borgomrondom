@@ -117,4 +117,30 @@ function bb_exec_upload_asset(){
 
 
 
+add_action('client_post_bb_set_hidden_fields', 'bb_exec_bb_set_hidden_fields');
+function bb_exec_bb_set_hidden_fields(){
+
+     if(!policy_match([Role::ADMIN, Role::CUSTOMER, Role::SUBSCRIBER])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $client_id = bb_get_author_id();
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          echo json_encode(array('res'=>'success', 'message'=>'no ticket'));
+          return;
+     }
+
+     $fields = bb_trim_incoming_hidden_fields($_POST['fields']);
+// todo
+
+     $message = esc_html(__('hidden fields is set', 'bookbuilder'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'fields'=>$fields));
+};
+
+
+
 

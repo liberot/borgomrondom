@@ -288,7 +288,7 @@ BBClient.bbRenderAssetCopies = function(scan){
 
 
 
-BBClient.bbInitClient = function(){
+BBClient.bbSetupPrevBtn = function(){
 
      history.pushState({}, document.title, window.location.href);
      window.onpopstate = function(e){
@@ -355,15 +355,67 @@ BBClient.isTextInputActive = function(){
 
 
 
+BBClient.bbFetchHiddenFields = function(){
 
+     let fields = null;
+     //#h1st=1st&h2nd=2nd&h3rd=3rd
+     let h = window.location.hash;
+     if(null == h){
+          return false;
+     }
+     h = h.replace(/^#/, '');
+     let temp1st = h.split('&');
+     for(let idx in temp1st){
+
+          let temp2nd = temp1st[idx].split('=');
+
+          if(null == temp2nd){
+               continue;
+          }
+
+          if(2 != temp2nd.length){
+               continue;
+          }
+
+          let key = decodeURIComponent(temp2nd[0]);
+          let val = decodeURIComponent(temp2nd[1]);
+
+          if(null == fields){
+               fields = [];
+          }
+
+          fields.push({
+               key: decodeURIComponent(key),
+               val: decodeURIComponent(val)
+          })
+     }
+
+     if(null == fields){
+          return false;
+     }
+
+     let data = {
+          'action': 'bb_set_hidden_fields',
+          'fields': fields 
+     }
+
+     let suc = function(e){
+          console.log(e);
+     }
+
+     BBClient.bbPostData(data, suc);
+
+     return fields;
+}
 
 
 
 jQuery(document).ready(function(){
-     BBClient.bbInitClient();
+     BBClient.bbFetchHiddenFields();
+     BBClient.bbSetupPrevBtn();
+     BBClient.bbSetupKeys();
      BBClient.bbRenderFileupload();
      BBClient.bbRenderAssetCopies();
-     BBClient.bbSetupKeys();
 });
 
 

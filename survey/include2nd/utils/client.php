@@ -406,29 +406,31 @@ function bb_write_rec(){
 
      $incoming_ticket = bb_trim_incoming_filename($_POST['ticket']);
      if($incoming_ticket != $ticket->field_ref){
-          return;
+          bb_init_existing_thread();
+          return false;
      }
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
-          return;
+          bb_init_existing_thread();
+          return false;
      }
 
      if('file_upload' == $field->type){
           $assets = bb_get_assets_by_field_ref($ticket->client_id, $ticket->thread_id, $field);
           if(empty($assets)){
-               return;
+               return false;
           }
           else{
                bb_proceed_to_next_field();
-               return;
+               return false;
           }
      }
 
      $answer = bb_trim_incoming_string($_POST['answer']);
      $answer = bb_trim_for_print($answer);
      if(empty($answer)){
-          return;
+          return false;
      }
 
      $choice_ref = '';;
@@ -449,6 +451,8 @@ function bb_write_rec(){
      else {
           bb_proceed_to_next_field();
      }
+
+     return true;
 }
 
 
