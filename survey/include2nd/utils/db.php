@@ -614,15 +614,14 @@ function bb_init_hidden_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_hidden (
-               id bigint(20) not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
-               survey_ref varchar(255),
                title varchar(255) not null,
                doc longtext not null,
+               survey_ref varchar(255),
                note varchar(255),
                init datetime,
-               primary key (id)
+               primary key (client_id, thread_id, title)
           )
           engine=innodb
           default charset='utf8'
@@ -1285,12 +1284,16 @@ function bb_insert_hidden_fields($client_id, $thread_id, $fields){
 
           $title = esc_sql($field['key']);
           $doc = esc_sql($field['val']);
-
           $sql = <<<EOD
                insert into {$prefix}ts_bb_hidden
                     (client_id, thread_id, title, doc, init)
                values 
                     ('{$client_id}', '{$thread_id}', '{$title}', '{$doc}', now())
+               on duplicate key update 
+                    client_id = '{$client_id}', 
+                    thread_id = '{$thread_id}', 
+                    title = '{$title}',
+                    doc = '{$doc}'
 EOD;
           $sql = bb_debug_sql($sql);
           $ins = $wpdb->query($sql);
