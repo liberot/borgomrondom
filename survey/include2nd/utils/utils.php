@@ -309,8 +309,8 @@ function bb_trim_incoming_hidden_fields($coll){
 
      foreach($coll as $field){
 
-          $key = $field['key'];
-          $val = $field['val'];
+          $key = bb_trim_for_print(bb_trim_incoming_string($field['key']));
+          $val = bb_trim_for_print(bb_trim_incoming_string($field['val']));
 
           $res[]= ['key'=>$key, 'val'=>$val];
      }
