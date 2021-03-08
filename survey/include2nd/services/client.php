@@ -35,35 +35,13 @@ function bb_exec_nav_prev_field(){
           return false;
      }
 
-     $client_id = bb_get_author_id();
-
-     $ticket = bb_get_ticket_of_client($client_id)[0];
-     if(is_null($ticket)){
-          echo json_encode(array('res'=>'failed', 'message'=>'no ticket'));
-          return;
+     $res = bb_nav_prev_field();
+     if(false == $res){
+          echo json_encode(array('res'=>'failed', 'message'=>'prev_field'));
+          return false;
      }
 
-     $rec_pos = intval($ticket->rec_pos);
-     $rec_pos = $rec_pos -1;
-     if(0 >= $rec_pos){
-          $rec_pos = 0;
-     }
-
-     $rec = bb_get_rec_of_client_by_rec_pos($ticket->client_id, $ticket->thread_id, $rec_pos)[0];
-     if(is_null($rec)){
-          echo json_encode(array('res'=>'failed', 'message'=>'no rec'));
-          return;
-     }
-
-     $res = bb_set_ticket_of_client(
-          $ticket->client_id,
-          $ticket->thread_id,
-          $rec->field_ref,
-          $rec->pos,
-          'survey'
-     );
-
-     echo json_encode(array('res'=>'success', 'message'=>'prev_field', 'rec'=>$rec));
+     echo json_encode(array('res'=>'success', 'message'=>'prev_field'));
 }
 
 

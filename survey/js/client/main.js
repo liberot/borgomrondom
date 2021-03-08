@@ -278,6 +278,8 @@ BBClient.bbInitClient = function(){
      history.pushState({}, document.title, window.location.href);
      window.onpopstate = function(e){
           history.pushState({}, document.title, window.location.href);
+          jQuery('.nav_prev_field').submit();
+          /*
           BBClient.bbPostData(
                { 
                     'action': 'bb_nav_prev_field'
@@ -292,6 +294,7 @@ BBClient.bbInitClient = function(){
                     console.log('<-- cannot nav the prev');
                }
           );
+          */
      };
 
      BBClient.bbAssetCopies = null == assetsOfField ? [] : assetsOfField;

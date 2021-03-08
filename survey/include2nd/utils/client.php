@@ -70,6 +70,10 @@ function bb_process_incoming(){
                 bb_show_survey();
                 break;
 
+          case 'bb_nav_prev_field':
+                bb_nav_prev_field();
+                break;
+
           case 'bb_write_rec':
                 bb_write_rec();
                 bb_build_debug_spread();
@@ -362,7 +366,6 @@ function bb_init_new_thread(){
 
      $res = bb_proceed_to_kickoff_field($thread_id);
 
-     // wp_redirect('');
      return $res;
 }
 
@@ -482,6 +485,40 @@ function bb_show_survey(){
      );
 }
 
+
+
+function bb_nav_prev_field(){
+
+     $client_id = bb_get_author_id();
+
+     $ticket = bb_get_ticket_of_client($client_id)[0];
+     if(is_null($ticket)){
+          return false;
+     }
+
+     $rec_pos = intval($ticket->rec_pos);
+     $rec_pos = $rec_pos -1;
+     if(0 >= $rec_pos){
+          $rec_pos = 0;
+     }
+
+     $rec = bb_get_rec_of_client_by_rec_pos($ticket->client_id, $ticket->thread_id, $rec_pos)[0];
+     if(is_null($rec)){
+          return false;
+     }
+
+     $res = bb_set_ticket_of_client(
+          $ticket->client_id,
+          $ticket->thread_id,
+          $rec->field_ref,
+          $rec->pos,
+          'survey'
+     );
+
+     wp_redirect('');
+
+     return $res;
+}
 
 
 
