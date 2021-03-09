@@ -655,10 +655,18 @@ function bb_get_field_by_ref($ref) {
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field 
                where ref = '{$ref}' 
 EOD;
+*/
+
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+               where ref = '%s' 
+EOD;
+     $sql = $wpdb->prepare($sql, $ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -672,10 +680,17 @@ function bb_get_actions_of_field_by_ref($ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_action 
-          where field_ref = '{$ref}' 
+               where field_ref = '{$ref}' 
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_action 
+               where field_ref = '%s' 
+EOD;
+     $sql = $wpdb->prepare($sql, $ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -690,11 +705,19 @@ function bb_get_field_of_survey_at_pos($survey_ref, $pos){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field 
-          where survey_ref = '{$survey_ref}' 
-          and pos = '{$pos}' 
+               where survey_ref = '{$survey_ref}' 
+               and pos = '{$pos}' 
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+               where survey_ref = '%s' 
+               and pos = '%s' 
+EOD;
+     $sql = $wpdb->prepare($sql, $survey_ref, $pos);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -710,6 +733,7 @@ function bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_rec where client_id = '{$client_id}' 
                and thread_id = '{$thread_id}' 
@@ -717,6 +741,16 @@ function bb_get_rec_of_client_by_field_ref($client_id, $thread_id, $field_ref){
           order by init desc
           limit 1 
 EOD;
+*/
+
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec where client_id = '%s' 
+               and thread_id = '%s' 
+               and field_ref = '%s'
+          order by init desc
+          limit 1 
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $field_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -732,6 +766,7 @@ function bb_get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_rec where client_id = '{$client_id}' 
                and thread_id = '{$thread_id}' 
@@ -739,6 +774,15 @@ function bb_get_rec_of_client_by_rec_pos($client_id, $thread_id, $rec_pos){
           order by init desc
           limit 1 
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec where client_id = '%s' 
+               and thread_id = '%s' 
+               and pos = '%s'
+          order by init desc
+          limit 1 
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $rec_pos);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -752,9 +796,15 @@ function bb_get_choices_of_field($field_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}' 
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_choice where field_ref = '%s' 
+EOD;
+     $sql = $wpdb->prepare($sql, $field_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -777,6 +827,7 @@ function bb_insert_rec($client_id, $thread_id, $rec_pos, $field, $choice_ref, $a
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_rec
                (client_id, thread_id, survey_ref, group_ref, field_ref, choice_ref, pos, doc, init)
@@ -793,6 +844,24 @@ function bb_insert_rec($client_id, $thread_id, $rec_pos, $field, $choice_ref, $a
                     now()
                )
 EOD;
+*/
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_rec
+               (client_id, thread_id, survey_ref, group_ref, field_ref, choice_ref, pos, doc, init)
+          values 
+               (
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    now()
+               )
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $survey_ref, $group_ref, $field_ref, $choice_ref, $rec_pos, $answer);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
@@ -819,6 +888,7 @@ function bb_insert_asset($client_id, $thread_id, $rec_pos, $field, $scan){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_asset
                (
@@ -833,6 +903,22 @@ function bb_insert_asset($client_id, $thread_id, $rec_pos, $field, $scan){
                '{$doc}', now()
                )
 EOD;
+*/
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_asset
+               (
+               client_id, thread_id, survey_ref, group_ref, field_ref, 
+               rec_pos, title, width, height, layout_code,
+               doc, init
+               )
+          values 
+               (
+               '%s', '%s', '%s', '%s', '%s', 
+               '%s', '%s', '%s', '%s', '%s',
+               '%s', now()
+               )
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $survey_ref, $group_ref, $field_ref, $rec_pos, $index, $width, $height, $layout_code, $doc);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
@@ -850,29 +936,48 @@ function bb_get_survey_by_ref($ref) {
 
 
 // surveys
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_survey where ref = '{$ref}'
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_survey where ref = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $ref);
      $sql = bb_debug_sql($sql);
      $res['survey'] = $wpdb->get_results($sql);
 
 
 
 // groups
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_group where survey_ref = '{$ref}'
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_group where survey_ref = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $ref);
      $sql = bb_debug_sql($sql);
      $res['groups'] = $wpdb->get_results($sql);
 
 
 
 // fields
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field where survey_ref = '{$ref}'
           order by pos
 EOD;
-          $sql = bb_debug_sql($sql);
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field where survey_ref = '%s'
+          order by pos
+EOD;
+     $sql = $wpdb->prepare($sql, $ref);
+     $sql = bb_debug_sql($sql);
      $res['fields'] = $wpdb->get_results($sql);
 
 
@@ -882,10 +987,17 @@ EOD;
 
           $field_ref = $field->ref;
           $field->choices = [];
+/*
           $sql = <<<EOD
                select * from {$prefix}ts_bb_choice where field_ref = '{$field_ref}'
                order by pos
 EOD;
+*/
+          $sql = <<<EOD
+               select * from {$prefix}ts_bb_choice where field_ref = '%s'
+               order by pos
+EOD;
+          $sql = $wpdb->prepare($sql, $field_ref);
           $sql = bb_debug_sql($sql);
           $field->choices = $wpdb->get_results($sql);
      }
@@ -917,13 +1029,21 @@ function bb_get_first_field_of_group($group_ref){
      global $wpdb;
 
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field 
-          where group_ref = '{$group_ref}'
+               where group_ref = '{$group_ref}'
           order by pos asc
           limit 1
 EOD;
-
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+               where group_ref = '%s'
+          order by pos asc
+          limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $group_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -937,13 +1057,21 @@ function bb_get_first_field_of_survey_by_ref($survey_ref){
      global $wpdb;
 
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_field 
           where survey_ref = '{$survey_ref}'
           order by pos asc
           limit 1
 EOD;
-
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_field 
+               where survey_ref = '%s'
+          order by pos asc
+          limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $survey_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -959,9 +1087,15 @@ function bb_insert_thread($client_id){
      $client_id = esc_sql($client_id);
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_thread (client_id, init) values ('{$client_id}', now());
 EOD;
+*/
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_thread (client_id, init) values ('%s', now());
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $wpdb->insert_id;
@@ -974,10 +1108,19 @@ function bb_get_thread_by_id($client_id, $thread_id){
      $id = esc_sql($id);
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_thread where id = '{$thread_id}'
-          and client_id = '{$client_id}'
+          select * from {$prefix}ts_bb_thread 
+               where id = '{$thread_id}'
+               and client_id = '{$client_id}'
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_thread 
+               where id = '%s'
+               and client_id = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $thread_id, $client_id);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -990,11 +1133,21 @@ function bb_get_last_thread_of_client($client_id){
      $client_id = esc_sql($client_id);
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_thread where client_id = '{$client_id}'
+          select * from {$prefix}ts_bb_thread 
+               where client_id = '{$client_id}'
           order by init desc
           limit 1
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_thread 
+               where client_id = '%s'
+          order by init desc
+          limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1009,12 +1162,21 @@ function bb_get_last_record_of_client($client_id, $thread_id){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_rec where client_id = '{$client_id}'
                and thread_id = '{$thread_id}'
           order by init desc
           limit 1
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_rec where client_id = '%s'
+               and thread_id = '%s'
+          order by init desc
+          limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1031,13 +1193,21 @@ function bb_get_assets_by_field_ref($client_id, $thread_id, $field){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_asset where client_id = '{$client_id}'
                and thread_id = '{$thread_id}'
                and field_ref = '{$field_ref}'
           order by init desc
 EOD;
-
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_asset where client_id = '%s'
+               and thread_id = '%s'
+               and field_ref = '%s'
+          order by init desc
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $field_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1053,13 +1223,21 @@ function bb_get_assets_by_group_ref($client_id, $thread_id, $field){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_asset where client_id = '{$client_id}'
                and thread_id = '{$thread_id}'
                and group_ref = '{$group_ref}'
           order by init desc
 EOD;
-
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_asset where client_id = '{$client_id}'
+               and thread_id = '{$thread_id}'
+               and group_ref = '{$group_ref}'
+          order by init desc
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $group_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1073,9 +1251,15 @@ function bb_get_group_by_ref($group_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_group where ref = '{$group_ref}'
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_group where ref = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $group_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1089,11 +1273,19 @@ function bb_get_ticket_of_client($client_id){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_ticket where client_id = '{$client_id}'
-          order by init desc
-          limit 1
+               order by init desc
+               limit 1
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_ticket where client_id = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1111,6 +1303,7 @@ function bb_set_ticket_of_client($client_id, $thread_id, $field_ref, $rec_pos, $
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_ticket
                (client_id, thread_id, field_ref, rec_pos, view_state, init)
@@ -1124,6 +1317,22 @@ function bb_set_ticket_of_client($client_id, $thread_id, $field_ref, $rec_pos, $
                     now()
                )
 EOD;
+*/
+
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_ticket
+               (client_id, thread_id, field_ref, rec_pos, view_state, init)
+          values 
+               (
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    now()
+               )
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $field_ref, $rec_pos, $view_state);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
@@ -1145,6 +1354,7 @@ function bb_insert_spread($client_id, $thread_id, $field, $doc){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_spread
                (
@@ -1157,6 +1367,20 @@ function bb_insert_spread($client_id, $thread_id, $field, $doc){
                '{$doc}', now()
                )
 EOD;
+*/
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_spread
+               (
+               client_id, thread_id, survey_ref, group_ref, field_ref, 
+               doc, init
+               )
+          values 
+               (
+               '%s', '%s', '%s', '%s', '%s', 
+               '%s', now()
+               )
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $survey_ref, $group_ref, $field_ref, $doc);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
@@ -1172,6 +1396,7 @@ function bb_get_spreads_of_client_by_field_ref($client_id, $thread_id, $field_re
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_spread 
                where client_id = '{$client_id}' 
@@ -1180,6 +1405,16 @@ function bb_get_spreads_of_client_by_field_ref($client_id, $thread_id, $field_re
                order by init desc
                limit 1
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_spread 
+               where client_id = '%s' 
+               and thread_id = '%s' 
+               and field_ref = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $field_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1195,12 +1430,21 @@ function bb_get_assetcount_of_field($client_id, $thread_id, $field_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select count(id) as max from {$prefix}ts_bb_asset 
                where client_id = '{$client_id}' 
                and thread_id = '{$thread_id}'
                and field_ref = '{$field_ref}'
 EOD;
+*/
+     $sql = <<<EOD
+          select count(id) as max from {$prefix}ts_bb_asset 
+               where client_id = '%s' 
+               and thread_id = '%s'
+               and field_ref = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $field_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1228,6 +1472,7 @@ function bb_init_conf(){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_conf
                (root_survey_title, init)
@@ -1237,6 +1482,18 @@ function bb_init_conf(){
                     now()
                )
 EOD;
+*/
+
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_conf
+               (root_survey_title, init)
+          values 
+               (
+                    '%s',
+                    now()
+               )
+EOD;
+     $sql = $wpdb->prepare($sql, $root_survey_title);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
      return $res;
@@ -1252,6 +1509,7 @@ function bb_get_hidden_field_of_client_by_title($client_id, $thread_id, $title){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_hidden 
                where client_id = '{$client_id}'
@@ -1260,6 +1518,17 @@ function bb_get_hidden_field_of_client_by_title($client_id, $thread_id, $title){
                order by init desc
                limit 1
 EOD;
+*/
+
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_hidden 
+               where client_id = '%s'
+               and thread_id = '%s'
+               and title = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $client_id, $thread_id, $title);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -1284,6 +1553,7 @@ function bb_insert_hidden_fields($client_id, $thread_id, $fields){
 
           $title = esc_sql($field['key']);
           $doc = esc_sql($field['val']);
+
           $sql = <<<EOD
                insert into {$prefix}ts_bb_hidden
                     (client_id, thread_id, title, doc, init)
@@ -1293,11 +1563,30 @@ function bb_insert_hidden_fields($client_id, $thread_id, $fields){
                     client_id = '{$client_id}', 
                     thread_id = '{$thread_id}', 
                     title = '{$title}',
-                    doc = '{$doc}'
+                    doc = '{$doc}',
+                    init = now()
 EOD;
+/*
+          $sql = <<<EOD
+               insert into {$prefix}ts_bb_hidden
+                    (client_id, thread_id, title, doc, init)
+               values 
+                    ('%s', '%s', '%s', '%s', now())
+               on duplicate key update 
+                    client_id = '%s', 
+                    thread_id = '%s', 
+                    title = '%s',
+                    doc = '%s',
+                    init = now()
+EOD;
+*/
+          $sql = $wpdb->prepare($sql, $client_id, $thread_id, $title, $doc);
           $sql = bb_debug_sql($sql);
           $ins = $wpdb->query($sql);
           $res = false == $res ? false : $ins;
      }
      return $res;
 }
+
+
+
