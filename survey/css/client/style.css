@@ -19,7 +19,7 @@
 
 
 .client-input-form {
-   margin: .5em 0em .5em 0em;
+   margin: 1em 0em 1em 0em !important;
 }
 
 
@@ -62,13 +62,12 @@
    display: flex;
    flex-direction: row;
    margin-left: 0em !important;
-   margin-bottom: 1em;
 }
 
 
 
 .block {
-   width: 25%;
+   margin: 0 1em 0 0;
 }
 
 

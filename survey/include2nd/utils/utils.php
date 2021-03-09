@@ -46,6 +46,7 @@ function bb_trim_for_print($string){
      $res = preg_replace('/\"/', '“', $res);
      $res = preg_replace('/\'/', '’', $res);
      $res = preg_replace('/\\n+/', "\n\r", $res);
+     $res = preg_replace('/\\\{0,}/', "", $res);
 
      $res = stripslashes($res);
 

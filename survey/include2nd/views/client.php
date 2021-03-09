@@ -59,6 +59,7 @@ EOD;
                </form>
 
           </div>
+
 EOD;
 
      echo <<<EOD
@@ -103,19 +104,18 @@ EOD;
 
      echo <<<EOD
 
-          <form class='client-input-form' method='post' action=''>
+          <form class='client-input-form block' method='post' action=''>
                {$buf1st}
                <input type='hidden' name='cmd' value='bb_write_rec'></input> 
                <input type='hidden' name='ticket' value='{$field->ref}'></input> 
                <div class='input-choice'><input class='btn-prev-rec' type='submit' value='{$submit_rec}'></div>
           </form>
 
-          <form class='nav_prev_field' method='post' action=''>
+          <form class='nav_prev_field block' method='post' action=''>
                <input type='hidden' name='cmd' value='bb_nav_prev_field'></input> 
                <input type='hidden' name='ticket' value='{$field->ref}'></input> 
                <div class='input-choice'><input class='btn-submit-rec' type='submit' value='{$previous_field}'></div>
           </form>
-
 EOD;
 
      echo "<script type='text/javascript'>";
@@ -218,7 +218,7 @@ function bb_build_short_text_view($field, $rec){
      $answer = esc_html($rec->doc);
 
      $buf1st = '';
-     $buf1st.= "<div class=''>";
+     $buf1st.= "<div class='row'>";
      $buf1st.= sprintf("<input type='text' class='input-text' name='answer' value='%s'></input>", $answer);
      $buf1st.= "</div>";
      return $buf1st;
