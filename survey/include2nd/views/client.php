@@ -34,7 +34,10 @@ EOD;
      $field = bb_decorate_field_title($field);
 
      $field->title = esc_html($field->title);
+     $field->title = preg_replace('/\\\n\\\r/', '<br/>', $field->title);
+
      $field->description = esc_html($field->description);
+     $field->description = preg_replace('/\\\n\\\r/', '<br/>', $field->description);
 
      echo <<<EOD
 

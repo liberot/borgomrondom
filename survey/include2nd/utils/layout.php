@@ -18,12 +18,21 @@ function bb_insert_layout($layout_doc){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_layout
                (title, origin, lgrp, code, doc, init) 
           values 
                ('{$title}', '{$origin}', '{$lgrp}','{$code}','{$doc}', now())
 EOD;
+*/
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_layout
+               (title, origin, lgrp, code, doc, init) 
+          values 
+               ('%s', '%s', '%s','%s','%s', now())
+EOD;
+     $sql = $wpdb->prepare($sql, $title, $origin, $lgrp, $code, $doc);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -38,12 +47,21 @@ function bb_get_layouts_by_group($group_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
                where group = '{$group}'
                order by init desc
                limit 1
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where group = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $group);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -57,12 +75,21 @@ function bb_get_layouts_by_code($code){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
                where code = '{$code}'
                order by init desc
                limit 1
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where code = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $code);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
@@ -77,11 +104,19 @@ function bb_get_layouts_by_group_and_code($lgrp, $code){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
+/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
                where lgrp = '{$lgrp}'
                and code = '{$code}'
 EOD;
+*/
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where lgrp = '%s'
+               and code = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $lgrp, $code);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
 

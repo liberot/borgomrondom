@@ -52,7 +52,7 @@ function bb_setup_admin_menu() {
      $page_title = 'spreads';
      $menu_slug = 'spreads';
      $capability = 'administrator';
-     $function = 'bb_build_spreads_view';
+     $function = 'bb_build_book_utils_view';
      add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function);
 
      $parent_slug = 'surveyprint_admin_utils';
@@ -65,6 +65,13 @@ function bb_setup_admin_menu() {
 
      remove_submenu_page('surveyprint_admin_utils', 'surveyprint_admin_utils');
 };
+
+
+
+//  book utilities
+add_shortcode('bb_book_utils_view', 'bb_build_book_utils_view');
+function bb_build_book_utils_view(){
+}
 
 
 
