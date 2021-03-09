@@ -1,3 +1,10 @@
+let CorrectModel = function(){
+     this.offScreen; 
+     this.doc;
+}
+
+
+
 let Correct = function(controller) {
 
      this.controller = controller;
@@ -191,6 +198,8 @@ let Correct = function(controller) {
      }
 
      this.model = new CorrectModel();
+console.log('', this.model);
+
      this.model.offScreen = SVG().addTo('.offscreen'); 
 
      this.register(new Subscription('document::inited', 'initWorker', this));
@@ -201,7 +210,6 @@ let Correct = function(controller) {
      this.register(new Subscription('adaptclayout::released', 'implementLayout', this));
 }
 
-let CorrectModel = function(){
-     this.offScreen; 
-     this.doc;
-}
+
+
+
