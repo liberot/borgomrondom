@@ -42,10 +42,10 @@ function exec_get_layouts_by_group(){
           return false;
      }
 
-     init_log('admin_post_exec_get_layouts_by_group', []);
-
      $group = bb_trim_incoming_filename($_POST['group']);
-     $coll = get_layouts_by_group($group);
+
+     $coll = bb_get_layouts_by_group($group);
+
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
@@ -61,10 +61,10 @@ function bb_exec_get_layouts_by_group_and_code(){
           return false;
      }
 
-     $lgrp = bb_trim_incoming_filename($_POST['lgrp']);
+     $group = bb_trim_incoming_filename($_POST['group']);
      $code = bb_trim_incoming_filename($_POST['code']);
 
-     $coll = bb_get_layouts_by_group_and_code($lgrp, $code);
+     $coll = bb_get_layouts_by_group_and_code($group, $code);
 
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
 

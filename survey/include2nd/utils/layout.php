@@ -1,5 +1,7 @@
 <?php if(true != defined('ABSPATH')){ exit(); };
 
+
+
 add_action('init', 'bb_init_layout_utils');
 function bb_init_layout_utils(){
 }
@@ -8,33 +10,28 @@ function bb_init_layout_utils(){
 
 function bb_insert_layout($layout_doc){
 
-     $title = esc_sql('Default Layout from SVG');
-     $origin = esc_sql($layout_doc['origin']);
+     $group = esc_sql($layout_doc['layout']['group']);
+     $group = empty($group) ? 'default' : $group;
+
      $code = esc_sql($layout_doc['layout']['code']);
-     $lgrp = esc_sql($layout_doc['layout']['lgrp']);
-     $lgrp = empty($lgrp) ? 'default' : $lgrp;
+
+     $title = esc_sql('Imported Layout');
+
+     $origin = esc_sql($layout_doc['origin']);
 
      $doc = base64_encode(json_encode($layout_doc));
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-/*
      $sql = <<<EOD
           insert into {$prefix}ts_bb_layout
-               (title, origin, lgrp, code, doc, init) 
+               (`group`, code, title, origin, doc, init) 
           values 
-               ('{$title}', '{$origin}', '{$lgrp}','{$code}','{$doc}', now())
+               ('%s', '%s', '%s', '%s', '%s', now())
 EOD;
-*/
-     $sql = <<<EOD
-          insert into {$prefix}ts_bb_layout
-               (title, origin, lgrp, code, doc, init) 
-          values 
-               ('%s', '%s', '%s','%s','%s', now())
-EOD;
-     $sql = $wpdb->prepare($sql, $title, $origin, $lgrp, $code, $doc);
+     $sql = $wpdb->prepare($sql, $group, $code, $title, $origin, $doc);
      $sql = bb_debug_sql($sql);
-     $res = $wpdb->get_results($sql);
+     $res = $wpdb->query($sql);
      return $res;
 
 }
@@ -47,17 +44,9 @@ function bb_get_layouts_by_group($group_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
-               where group = '{$group}'
-               order by init desc
-               limit 1
-EOD;
-*/
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_layout 
-               where group = '%s'
+               where `group` = '%s'
                order by init desc
                limit 1
 EOD;
@@ -75,14 +64,6 @@ function bb_get_layouts_by_code($code){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-/*
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_layout 
-               where code = '{$code}'
-               order by init desc
-               limit 1
-EOD;
-*/
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
                where code = '%s'
@@ -97,26 +78,19 @@ EOD;
 
 
 
-function bb_get_layouts_by_group_and_code($lgrp, $code){
+function bb_get_layouts_by_group_and_code($group, $code){
 
-     $lgrp = esc_sql($lgrp);
+     $group = esc_sql($group);
      $code = esc_sql($code);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-/*
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
-               where lgrp = '{$lgrp}'
-               and code = '{$code}'
-EOD;
-*/
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_layout 
-               where lgrp = '%s'
+               where `group` = '%s'
                and code = '%s'
 EOD;
-     $sql = $wpdb->prepare($sql, $lgrp, $code);
+     $sql = $wpdb->prepare($sql, $group, $code);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
 
@@ -133,12 +107,15 @@ function bb_px_to_unit($ppi = 300, $pxs = 0, $unit = 'mm'){
      $res = 0;
 
      switch($unit){
+
           case 'px':
                $res = $pxs;
                break;
+
           case 'inch':
                $res = $pxs /((2480 /(210 /25.4) /300) *$ppi);
                break;
+
           case 'mm':
                $res = $pxs /((2480 /(210 /1 ) /300) *$ppi);
                break;

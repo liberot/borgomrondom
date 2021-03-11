@@ -40,7 +40,7 @@ let Net = function(controller){
           let ref = this;
           let data = {
                action: 'bb_get_layouts_by_group_and_code',
-               lgrp: msg.model.group,
+               group: msg.model.group,
                code: msg.model.rule 
           }
           let cb = function(e){
@@ -52,7 +52,7 @@ let Net = function(controller){
      this.loadLayoutGroup = function(msg){
           let ref = this;
           let data = {
-               action: 'exec_get_layouts_by_group',
+               action: 'bb_get_layouts_by_group',
                group: 'default' 
           }
           let cb = function(e){
@@ -64,7 +64,7 @@ let Net = function(controller){
      this.saveLayout = function(msg){
           let ref = this;
           let data = {
-               action: 'exec_init_layout',
+               action: 'bb_save_layout',
                doc: msg.model.doc,
                group: msg.model.group,
                rule: msg.model.rule,

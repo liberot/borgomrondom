@@ -76,34 +76,6 @@ function bb_insert_actions($survey, $actions){
           $link_type = esc_sql($action['link_type']);
           $link_ref = esc_sql($action['link_ref']);
           $doc = esc_sql(base64_encode(json_encode($action['condition'])));
-/*
-          $sql = <<<EOD
-               insert into {$prefix}ts_bb_action
-                    (
-                         ref, 
-                         survey_ref,
-                         field_ref,
-                         type,
-                         cmd,
-                         link_type,
-                         link_ref,
-                         doc,
-                         init
-                    )
-               values 
-                    (
-                         '{$ref}',
-                         '{$survey_ref}',
-                         '{$field_ref}',
-                         '{$type}',
-                         '{$cmd}',
-                         '{$link_type}',
-                         '{$link_ref}',
-                         '{$doc}',
-                         now()
-                    )
-EOD;
-*/
           $sql = <<<EOD
                insert into {$prefix}ts_bb_action
                     (
@@ -162,36 +134,6 @@ function bb_insert_choices($survey, $choices){
           $description = esc_sql($choice['description']);
           $label = esc_sql($choice['label']);
           $doc = esc_sql(base64_encode(json_encode($choice)));
-/*
-          $sql = <<<EOD
-               insert into {$prefix}ts_bb_choice
-                    (
-                         ref, 
-                         survey_ref,
-                         group_ref, 
-                         parent_ref, 
-                         field_ref, 
-                         title, 
-                         description, 
-                         doc, 
-                         pos,
-                         init
-                    )
-               values 
-                    (
-                         '{$ref}', 
-                         '{$survey_ref}', 
-                         '{$group_ref}', 
-                         '{$parent_ref}', 
-                         '{$field_ref}', 
-                         '{$label}', 
-                         '{$description}', 
-                         '{$doc}', 
-                         '{$pos}',
-                         now() 
-                    )
-EOD;
-*/
           $sql = <<<EOD
                insert into {$prefix}ts_bb_choice
                     (
@@ -254,38 +196,6 @@ function bb_insert_fields($survey, $fields){
           $doc = esc_sql($field['doc']);
 
           $prefix = $wpdb->prefix;
-/*
-          $sql = <<<EOD
-               insert into {$prefix}ts_bb_field
-                    (
-                         ref,
-                         typeform_ref,
-                         parent_ref,
-                         group_ref,
-                         survey_ref,
-                         title,
-                         description,
-                         type,
-                         doc,
-                         pos,
-                         init
-                    )
-               values 
-                    (
-                         '{$ref}',
-                         '{$typeform_ref}',
-                         '{$parent_ref}',
-                         '{$group_ref}',
-                         '{$survey_ref}',
-                         '{$title}',
-                         '{$description}',
-                         '{$type}',
-                         '{$doc}',
-                         '{$pos}',
-                         now()
-                    )
-EOD;
-*/
           $sql = <<<EOD
                insert into {$prefix}ts_bb_field
                     (
@@ -342,14 +252,6 @@ function bb_insert_groups($survey, $groups){
           $typeform_ref = esc_sql($group['id']);
           $title = esc_sql($group['title']);
           $doc = esc_sql($group['doc']);
-/*
-          $sql = <<<EOD
-               insert into {$prefix}ts_bb_group
-                    (ref, typeform_ref, parent_ref, survey_ref, title, doc, init) 
-               values 
-                    ('{$ref}', '{$typeform_ref}', '{$parent_ref}', '{$survey_ref}', '{$title}', '{$doc}', now())
-EOD;
-*/
           $sql = <<<EOD
                insert into {$prefix}ts_bb_group
                     (ref, typeform_ref, parent_ref, survey_ref, title, doc, init) 
@@ -378,14 +280,6 @@ function bb_insert_survey($survey, $data){
      $doc = esc_sql(base64_encode($data));
 
      $prefix = $wpdb->prefix;
-/*
-     $sql = <<<EOD
-          insert into {$prefix}ts_bb_survey 
-               (ref, title, headline, doc, init) 
-          values 
-               ('{$ref}', '{$title}', '{$headline}', '{$doc}', now())
-EOD;
-*/
      $sql = <<<EOD
           insert into {$prefix}ts_bb_survey 
                (ref, title, headline, doc, init) 
