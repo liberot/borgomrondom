@@ -326,7 +326,7 @@ console.log('initScreen(): ', this.model.doc);
           let rect = this.model.currentScreen.rect(slotW, slotH).move(slotX, slotY);
 
           img.clipWith(rect);
-          img.on('mouseover', function(e){ console.log(e); })
+          // img.on('mouseover', function(e){ console.log(e); })
      }
 
      this.renderCircles = function(){
