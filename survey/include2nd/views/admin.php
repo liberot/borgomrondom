@@ -89,6 +89,7 @@ function bb_build_surveyprint_utils_view(){
      $welcome = esc_html(__(':', 'bookbuilder'));
      $delete_db = esc_html(__('Removal of the BookBuider DB', 'bookbuilder'));
      $init_db = esc_html(__('Initialization of the BookBuilder DB', 'bookbuilder'));
+     $init_page = esc_html(__('Initialization of the BookBuilder Page', 'bookbuilder'));
 
      echo <<<EOD
           <div class='wrap'>
@@ -101,6 +102,7 @@ function bb_build_surveyprint_utils_view(){
      <div class='edit'>
           <div class='unit'><a href='javascript:BBAdmin.bbDeleteDB();'>{$delete_db}</a></div>
           <div class='unit'><a href='javascript:BBAdmin.bbInitDB();'>{$init_db}</a></div>
+          <div class='unit'><a href='javascript:BBAdmin.bbInitPage();'>{$init_page}</a></div>
      </div>
 EOD;
 

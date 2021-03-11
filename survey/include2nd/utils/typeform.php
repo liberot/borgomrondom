@@ -9,7 +9,7 @@ function bb_insert_typeform_surveys(){
      $files = bb_read_typeform_json_descriptors();
      foreach($files as $file){
 
-          $res = bb_insert_typeform_survey_from_descriptor($file);
+          $res&= bb_insert_typeform_survey_from_descriptor($file);
      }
 
      return $res;
@@ -48,7 +48,9 @@ function bb_insert_typeform_survey_from_descriptor($survey_file_name){
      $res = bb_insert_survey($survey, $data);
      $res&= bb_insert_groups($survey, $groups);
      $res&= bb_insert_fields($survey, $fields);
+
      $res&= bb_insert_choices($survey, $choices_of_no_choice);
+
      $res&= bb_insert_choices($survey, $yesnos);
      $res&= bb_insert_choices($survey, $choices);
      $res&= bb_insert_actions($survey, $actions);

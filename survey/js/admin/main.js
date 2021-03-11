@@ -57,6 +57,15 @@ BBAdmin.bbInitDB = function(){
 
 
 
+BBAdmin.bbInitPage = function(){
+     let data = { 
+          action: 'bb_init_page'
+     };
+     BBAdmin.bbPostCommand(data);
+}
+
+
+
 BBAdmin.bbInsertTypeformSurveys = function(){
      let data = { 
           action: 'bb_insert_typeform_surveys'

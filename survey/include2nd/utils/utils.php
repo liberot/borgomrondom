@@ -159,8 +159,6 @@ function bb_trim_incoming_filename($val){
 
 function bb_insert_survey_page(){
 
-     bb_delete_survey_page();
-
      $post_content = <<<EOD
         <p>[bb_client_view]</p>
 EOD;
@@ -168,7 +166,7 @@ EOD;
      $page_id = wp_insert_post([
           'post_author'=>bb_get_author_id(),
           'post_content'=>$post_content,
-          'post_title'=>'Questionnaire',
+          'post_title'=>'BookBuilder',
           'post_status'=>'publish',
           'comment_status'=>'closed',
           'ping_status'=>'closed',
@@ -190,16 +188,13 @@ function bb_delete_survey_page(){
      $sql = <<<EOD
           delete from {$prefix}posts 
                where post_type = 'page' 
-               and post_title = 'Questionnaire' 
+               and post_name = 'bookbuilder' 
 EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
      return $res;
-
 }
-
-
 
 
 

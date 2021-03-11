@@ -270,10 +270,10 @@ function bb_init_layout_table(){
      create table if not exists
           {$prefix}ts_bb_layout (
                id bigint(20) not null auto_increment,
+               origin varchar(255) not null unique,
                `group` varchar(255),
                code varchar(255),
                title varchar(255),
-               origin varchar(255),
                description varchar(255),
                note varchar(255),
                init datetime,
@@ -442,6 +442,7 @@ function bb_init_survey_table(){
           {$prefix}ts_bb_survey (
                id bigint(20) not null auto_increment,
                ref varchar(255) not null unique,
+               `group` varchar(255),
                title varchar(255),
                headline varchar(255),
                linked_survey_id bigint(20) unsigned,

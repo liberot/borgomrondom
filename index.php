@@ -16,8 +16,9 @@ require_once('survey/index.php');
 
 register_activation_hook(__FILE__, 'on_plugin_activation');
 function on_plugin_activation(){
-     bb_insert_survey_page();
+     bb_delete_survey_page();
      bb_insert_guest_client();
+     bb_insert_survey_page();
 }
 
 register_deactivation_hook(__FILE__, 'on_plugin_deactivation');

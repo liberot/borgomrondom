@@ -11,8 +11,6 @@ function bb_delete_db(){
           return false;
      }
 
-     // init_log('bb_delete_db', []);
-
      $res = bb_remove_v1_records();
      $res = bb_drop_tables();
 
@@ -45,6 +43,30 @@ function bb_init_db(){
      if(true == $res){
           $suc = 'success';
           $message = esc_html(__('Typeform DB is inited', 'bookbuilder'));
+     }
+
+     echo json_encode(array('res'=>$suc, 'message'=>$message));
+}
+
+
+
+add_action('admin_post_bb_init_page', 'bb_init_page');
+function bb_init_page(){
+
+     if(!policy_match([Role::ADMIN])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $res = bb_delete_survey_page();
+     $res&= bb_insert_survey_page();
+
+     $suc = 'failed';
+     $message = esc_html(__('Typform page is NOt inited', 'bookbuilder'));
+     if(true == $res){
+          $suc = 'success';
+          $message = esc_html(__('Typeform page is inited', 'bookbuilder'));
      }
 
      echo json_encode(array('res'=>$suc, 'message'=>$message));

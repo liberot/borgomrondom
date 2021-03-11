@@ -168,10 +168,10 @@ function bb_build_yes_no_view($field, $rec){
                 if($value == $rec->choice_ref){
                      $checked = 'checked';
                 }
+                $title = esc_html($choice->title);
                 $buf1st.= "<div class='block'>";
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s><br/>", $value, $checked);
-                $buf1st.= sprintf("<label class='label' for='%s'>%s</label>", $value, $title);
-                $buf1st.= '</input>';
+                $buf1st.= sprintf("<label class='label' for='_%s'>%s</label>", $value, $title);
+                $buf1st.= sprintf("<input type='radio' id='_%s' name='answer' value='%s' %s></input>", $value, $value, $checked);
                 $buf1st.= '</div>';
           }
           $buf1st.= '</div>';
@@ -199,10 +199,10 @@ function bb_build_multiple_choice_view($field, $rec){
                      $checked = 'checked';
                 }
 
+                $title = esc_html($choice->title);
                 $buf1st.= "<div class='block'>";
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s>", $value, $checked);
-                $buf1st.= sprintf("<label class='label' for='%s'>%s</label>", $value, $title);
-                $buf1st.= '</label>';
+                $buf1st.= sprintf("<label class='label' for='_%s'>%s</label>", $value, $title);
+                $buf1st.= sprintf("<input type='radio' id='_%s' name='answer' value='%s' %s></input>", $value, $value, $checked);
                 $buf1st.= '</div>';
           }
           $buf1st.= '</div>';
@@ -253,17 +253,17 @@ function bb_build_picture_choice_view($field, $rec){
                      $checked = 'checked';
                 }
 
+                $title = esc_html($choice->title);
                 $buf1st.= "<div class='block'>";
-                $buf1st.= sprintf("<input type='radio' name='answer' value='%s' %s>", $value, $checked);
-                $buf1st.= sprintf("<label class='label' for='%s'>%s</label>", $value, $choice->title);
-                $buf1st.= '</input>';
-
+                $buf1st.= sprintf("<label class='label' for='_%s'>%s</label>", $value, $title);
+                $buf1st.= sprintf("<input type='radio' id='_%s' name='answer' value='%s' %s><br/>", $value, $value, $checked);
                 $temp = json_decode(base64_decode($choice->doc, true));
                 if(is_null($temp)){
                 }
                 else {
                      $buf1st.= sprintf("<img class='image-choice' src='%s'>", $temp->attachment->href);
                 }
+                $buf1st.= "</input>";
                 $buf1st.= "</div>";
           }
           $buf1st.= "</div>";

@@ -27,6 +27,7 @@ function bb_build_client_view(){
 
      $ticket = bb_get_ticket_of_client($client_id)[0];
      if(is_null($ticket)){
+          bb_init_log('bb_build_client_view', ['message'=>'no ticket at thread init, seems there is no stored surveys to start from']);
           return false;
      }
 
