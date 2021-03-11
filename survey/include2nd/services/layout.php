@@ -1,5 +1,7 @@
 <?php defined('ABSPATH') || exit;
 
+
+
 add_action('admin_post_bb_insert_layout', 'bb_exec_insert_layout');
 function bb_exec_insert_layout(){
 
@@ -32,6 +34,8 @@ function bb_exec_insert_layout(){
      $message = esc_html(__('layout inited', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'term_id'=>$term_id));
 }
+
+
 
 add_action('admin_post_exec_get_layouts_by_group', 'exec_get_layouts_by_group');
 function exec_get_layouts_by_group(){
@@ -70,6 +74,7 @@ function bb_exec_get_layouts_by_group_and_code(){
 
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
+
 
 
 /***********************************************************************

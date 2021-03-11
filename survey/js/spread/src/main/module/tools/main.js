@@ -774,7 +774,8 @@ console.log('bindTextInput(): ', msg);
           }
           rule = rule.join('');
           let model = {
-               group: this.model.selectedLayoutGroupName,
+               // group: this.model.selectedLayoutGroupName,
+               group: 'orange',
                rule: rule
           }
           ref.notify(new Message('load::layoutpresets', model));

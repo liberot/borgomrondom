@@ -4,8 +4,7 @@
 
 function bb_insert_typeform_surveys(){
 
-     $res = false;
-
+     $res = null;
      $files = bb_read_typeform_json_descriptors();
      foreach($files as $file){
 
@@ -19,7 +18,7 @@ function bb_insert_typeform_surveys(){
 
 function bb_insert_typeform_survey_from_descriptor($survey_file_name){
 
-     $res = false;
+     $res = null;
 
      $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
 

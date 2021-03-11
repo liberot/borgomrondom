@@ -8,9 +8,9 @@ function bb_init_layout_utils(){
 
 
 
-function bb_insert_layout($layout_doc){
+function bb_insert_layout($group, $layout_doc){
 
-     $group = esc_sql($layout_doc['layout']['group']);
+     $group = esc_sql($group);
      $group = empty($group) ? 'default' : $group;
 
      $code = esc_sql($layout_doc['layout']['code']);
@@ -418,7 +418,6 @@ function bb_match_font_weight($style){
 
 
 function bb_import_layouts(){
-// reads layout svg fro the given rsloc
      $path = Path::get_layout_template_dir();
 
      if(!is_dir($path)){
@@ -428,34 +427,46 @@ function bb_import_layouts(){
      }
 
      $dh = @opendir($path);
-
-     $files = [];
-     $targets = [];
+     $groups = [];
      while(false !== $file = @readdir($dh)){
           $rsloc = $path.DIRECTORY_SEPARATOR.$file;
-          $files[] = $rsloc;
-          if(
-               'image/svg' == mime_content_type($rsloc) ||
-               'image/svg+xml' == mime_content_type($rsloc)
+          if(is_dir($rsloc)){
+               if('..' === $file){
+                    continue;
+               }
+               if('.' === $file){
+                    continue;
+               }
+               $groups[]= ['name'=>$file, 'path'=>$rsloc];
+          }
+     }
+     while(is_resource($dh)){
+          @closedir($dh);
+     }
 
-          ){
-               $targets[] = $rsloc;
+     foreach($groups as $group){
+          $path = $group['path'];
+          $dh = @opendir($path);
+          $targets = [];
+          while(false !== $file = @readdir($dh)){
+               $rsloc = $path.DIRECTORY_SEPARATOR.$file;
+               if(
+                    'image/svg' == mime_content_type($rsloc) ||
+                    'image/svg+xml' == mime_content_type($rsloc)
+               ){
+                    $targets[] = ['group'=>$group['name'], 'rsloc'=>$rsloc];
+               }
+          }
+          while(is_resource($dh)){
+               @closedir($dh);
           }
      }
 
 // parses svg documents into layout JSON collections
+     foreach($targets as $target){
 
-     $coll = [];
-     $coll['ids'] = [];
-     $coll['rules'] = [];
-     $coll['paths'] = [];
-     $coll['docs'] = [];
-
-     foreach($targets as $svg_path){
-
-          $layout_doc = bb_parse_layout_doc($svg_path);
-          $coll['ids'][]= bb_insert_layout($layout_doc);
-
+          $layout_doc = bb_parse_layout_doc($target['rsloc']);
+          $res&= bb_insert_layout($target['group'], $layout_doc);
      }
 
      return $res;
