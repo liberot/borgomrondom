@@ -159,6 +159,8 @@ function bb_trim_incoming_filename($val){
 
 function bb_insert_survey_page(){
 
+     $res = bb_delete_survey_page();
+
      $post_content = <<<EOD
         <p>[bb_client_view]</p>
 EOD;

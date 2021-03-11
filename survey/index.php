@@ -1,6 +1,6 @@
 <?php defined('ABSPATH') || exit;
 
-define ('BOOKBUILDER_VERSION', 'okäh.pinotttschie.thänn.bia.guud.ähn.donndtha.luyyy');
+define ('BOOKBUILDER_VERSION', 'yello');
 
 require_once('include2nd/config/config.php');
 

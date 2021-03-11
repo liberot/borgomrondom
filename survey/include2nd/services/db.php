@@ -59,7 +59,6 @@ function bb_init_page(){
           return false;
      }
 
-     $res = bb_delete_survey_page();
      $res&= bb_insert_survey_page();
 
      $suc = 'failed';
