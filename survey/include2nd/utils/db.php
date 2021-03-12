@@ -45,7 +45,7 @@ function bb_drop_tables(){
           'ts_bb_survey', 'ts_bb_group', 'ts_bb_field', 'ts_bb_choice', 'ts_bb_action', 'ts_bb_hidden',
           'ts_bb_ticket',
           'ts_bb_thread', 'ts_bb_rec', 'ts_bb_asset',
-          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread'
+          'ts_bb_book', 'ts_bb_chapter', 'ts_bb_section', 'ts_bb_layout', 'ts_bb_spread', 'ts_bb_layoutgroup'
      ];
 
      global $wpdb;
@@ -82,6 +82,7 @@ function bb_init_tables(){
      $res&= bb_init_book_table();
      $res&= bb_init_chapter_table();
      $res&= bb_init_section_table();
+     $res&= bb_init_layoutgroup_table();
      $res&= bb_init_layout_table();
      $res&= bb_init_spread_table();
 
@@ -203,7 +204,7 @@ function bb_init_spread_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_spread (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                book_id bigint(20),
@@ -242,7 +243,7 @@ function bb_init_conf_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_conf (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                root_survey_title varchar(255),
                init datetime,
                primary key (id)
@@ -259,6 +260,35 @@ EOD;
 
 
 
+function bb_init_layoutgroup_table(){
+
+     $res = false;
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+     create table if not exists
+          {$prefix}ts_bb_layoutgroup (
+               id bigint(20) unsigned not null auto_increment,
+               ref varchar(255) not null unique,
+               parent_ref varchar(255),
+               path varchar(255) not null unique,
+               title varchar(255),
+               description varchar(255),
+               init datetime,
+               primary key (id)
+          )
+          engine=innodb
+          default charset='utf8'
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+}
+
+
+
 function bb_init_layout_table(){
 
      $res = false;
@@ -269,9 +299,9 @@ function bb_init_layout_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_layout (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
+               group_id bigint(20) unsigned not null,
                origin varchar(255) not null unique,
-               `group` varchar(255),
                code varchar(255),
                title varchar(255),
                description varchar(255),
@@ -300,7 +330,7 @@ function bb_init_thread_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_thread (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                client_id bigint(20) unsigned not null,
                title varchar(255),
                note varchar(255),
@@ -331,7 +361,7 @@ function bb_init_ticket_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_ticket (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                client_id bigint(20) unsigned not null,
                title varchar(255),
                note varchar(255),
@@ -365,7 +395,7 @@ function bb_init_rec_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_rec (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                survey_ref varchar(255),
@@ -402,7 +432,7 @@ function bb_init_asset_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_asset (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                client_id bigint(20) unsigned not null,
                thread_id bigint(20) unsigned not null,
                survey_ref varchar(255) not null,
@@ -440,9 +470,9 @@ function bb_init_survey_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_survey (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                ref varchar(255) not null unique,
-               `group` varchar(255),
+               group_ref varchar(255),
                title varchar(255),
                headline varchar(255),
                linked_survey_id bigint(20) unsigned,
@@ -472,7 +502,7 @@ function bb_init_group_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_group (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                ref varchar(255) not null unique,
                typeform_ref varchar(255)not null,
                parent_ref varchar(255) not null,
@@ -504,7 +534,7 @@ function bb_init_field_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_field (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                ref varchar(255) not null unique,
                typeform_ref varchar(255),
                parent_ref varchar(255),
@@ -543,7 +573,7 @@ function bb_init_choice_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_choice (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                ref varchar(255) not null unique,
                parent_ref varchar(255),
                survey_ref varchar(255),
@@ -580,7 +610,7 @@ function bb_init_action_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_action (
-               id bigint(20) not null auto_increment,
+               id bigint(20) unsigned not null auto_increment,
                ref varchar(255) not null unique,
                survey_ref varchar(255),
                field_ref varchar(255),
@@ -1338,8 +1368,157 @@ EOD;
           $ins = $wpdb->query($sql);
           $res = false == $res ? false : $ins;
      }
+
      return $res;
 }
+
+
+
+function bb_insert_layoutgroup($group){
+
+     $title = esc_sql($group['title']);
+     $path = esc_sql($group['path']);
+     $ref = bb_get_random_string(42);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_layoutgroup
+               (title, ref, path, init)
+          values 
+               ('%s', '%s', '%s', now())
+EOD;
+
+     $sql = $wpdb->prepare($sql, $title, $ref, $path);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
+}
+
+
+
+function bb_get_layoutgroup_by_path($path){
+
+     $path = esc_sql($path);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layoutgroup 
+               where path = '%s' 
+EOD;
+     $sql = $wpdb->prepare($sql, $path);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
+
+
+
+function bb_insert_layout($group_id, $layout_doc){
+
+     $group_id = esc_sql($group_id);
+     $code = esc_sql($layout_doc['layout']['code']);
+     $title = esc_sql('Imported Layout');
+     $origin = esc_sql($layout_doc['origin']);
+
+     $doc = base64_encode(json_encode($layout_doc));
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_layout
+               (group_id, code, title, origin, doc, init) 
+          values 
+               ('%s', '%s', '%s', '%s', '%s', now())
+EOD;
+     $sql = $wpdb->prepare($sql, $group_id, $code, $title, $origin, $doc);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+     return $res;
+}
+
+
+
+function bb_get_layouts_by_group($group_ref){
+
+     $group_ref = esc_sql($group_ref);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where group_ref = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $group);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_get_layouts_by_code($code){
+
+     $code = esc_sql($code);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where code = '%s'
+               order by init desc
+               limit 1
+EOD;
+     $sql = $wpdb->prepare($sql, $code);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+     return $res;
+}
+
+
+
+function bb_get_layouts_by_group_and_code($group_ref, $code){
+
+     $group_ref = esc_sql($group_ref);
+     $code = esc_sql($code);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layout 
+               where group_ref = '%s'
+               and code = '%s'
+EOD;
+     $sql = $wpdb->prepare($sql, $group_ref, $code);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
+
+
+
+function bb_get_layoutgroups(){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_layoutgroup 
+EOD;
+     $sql = $wpdb->prepare($sql, $path);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
+
+
 
 
 

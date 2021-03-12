@@ -135,6 +135,17 @@ let Net = function(controller){
           this.postData(data, cb);
      }
 
+     this.loadLayoutGroups = function(){
+          let ref = this;
+          let data = {
+               'action': 'bb_get_layoutgroups',
+          };
+          let cb = function(e){
+               console.log(cb);
+          }
+          this.postData(data, cb);
+     }
+
      this.postData = function(data, suc, err){
           let ref = this;
           jQuery('.layout-messages').html('wait...');
@@ -194,9 +205,15 @@ console.log('postData(): error e: ', e);
      }
 
      this.initLoads = function(msg){
+
           switch(SpreadViewerConfig.mode){
+
                case SpreadViewerConfig.WEB_CLIENT:
                     this.loadCurrentDocument();
+                    break;
+
+               case SpreadViewerConfig.ADMIN_CLIENT:
+                    this.loadLayoutGroups();
                     break;
           }
      }

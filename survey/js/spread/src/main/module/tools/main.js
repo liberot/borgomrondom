@@ -56,12 +56,7 @@ console.log('initDocument(): ', this.model);
                     this.setupNavigation();
                     break;
 
-               case SpreadViewerConfig.SPREAD_CLIENT:
-                    this.setupTools();
-                    this.setupLibrary();
-                    break;
-
-               case SpreadViewerConfig.LAYOUT_CLIENT:
+               case SpreadViewerConfig.ADMIN_CLIENT:
                     this.setupTools();
                     this.setupLibrary();
                     break;
@@ -1125,6 +1120,11 @@ console.log('bindTextInput(): ', msg);
           this.initDocument();
      }
 
+     this.bindLayoutGroups = function(msg){
+console.log('>>>', msg);
+     }
+
+
 // init
      this.model = new ToolsModel();
      let ref = this;
@@ -1158,7 +1158,9 @@ console.log('bindTextInput(): ', msg);
      this.register(new Subscription(     'currentdoc::loaded', 'bindCurrentDoc', this));
      //
      this.setupAssetPossibs();
-     if(SpreadViewerConfig.mouseControls){ this.setupMouseControls(); }
+     if(SpreadViewerConfig.mouseControls){ 
+          this.setupMouseControls(); 
+     }
      this.loadLocalDocument();
      this.setupToolbar();
      this.notify(new Message('spread-viewer::inited', this.model));

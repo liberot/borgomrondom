@@ -2,6 +2,22 @@
 
 
 
+add_action('admin_post_bb_get_layoutgroups', 'bb_exec_get_layoutgroups');
+function bb_exec_get_layoutgroups(){
+
+     if(!policy_match([Role::ADMIN])){
+          $message = esc_html(__('policy match', 'bookbuilder'));
+          echo json_encode(array('res'=>'failed', 'message'=>$message));
+          return false;
+     }
+
+     $coll = bb_get_layoutgroups();
+     $message = esc_html(__('layoutgroups loaded', 'bookbuilder'));
+     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+}
+
+
+
 add_action('admin_post_bb_insert_layout', 'bb_exec_insert_layout');
 function bb_exec_insert_layout(){
 

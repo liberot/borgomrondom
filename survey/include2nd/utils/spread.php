@@ -70,8 +70,8 @@ function bb_build_debug_spread(){
      $doc['assets'] = $assets_of_doc;
 
      $doc = base64_encode(json_encode($doc));
-     $res = bb_insert_spread($ticket->client_id, $ticket->thread_id, $field, $doc);
 
+     $res = bb_insert_spread($ticket->client_id, $ticket->thread_id, $field, $doc);
 }
 
 

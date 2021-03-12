@@ -8,97 +8,6 @@ function bb_init_layout_utils(){
 
 
 
-function bb_insert_layout($group, $layout_doc){
-
-     $group = esc_sql($group);
-     $group = empty($group) ? 'default' : $group;
-
-     $code = esc_sql($layout_doc['layout']['code']);
-
-     $title = esc_sql('Imported Layout');
-
-     $origin = esc_sql($layout_doc['origin']);
-
-     $doc = base64_encode(json_encode($layout_doc));
-
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          insert into {$prefix}ts_bb_layout
-               (`group`, code, title, origin, doc, init) 
-          values 
-               ('%s', '%s', '%s', '%s', '%s', now())
-EOD;
-     $sql = $wpdb->prepare($sql, $group, $code, $title, $origin, $doc);
-     $sql = bb_debug_sql($sql);
-     $res = $wpdb->query($sql);
-     return $res;
-
-}
-
-
-
-function bb_get_layouts_by_group($group_ref){
-
-     $group_ref = esc_sql($group_ref);
-
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_layout 
-               where `group` = '%s'
-               order by init desc
-               limit 1
-EOD;
-     $sql = $wpdb->prepare($sql, $group);
-     $sql = bb_debug_sql($sql);
-     $res = $wpdb->get_results($sql);
-     return $res;
-}
-
-
-
-function bb_get_layouts_by_code($code){
-
-     $code = esc_sql($code);
-
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_layout 
-               where code = '%s'
-               order by init desc
-               limit 1
-EOD;
-     $sql = $wpdb->prepare($sql, $code);
-     $sql = bb_debug_sql($sql);
-     $res = $wpdb->get_results($sql);
-     return $res;
-}
-
-
-
-function bb_get_layouts_by_group_and_code($group, $code){
-
-     $group = esc_sql($group);
-     $code = esc_sql($code);
-
-     global $wpdb;
-     $prefix = $wpdb->prefix;
-     $sql = <<<EOD
-          select * from {$prefix}ts_bb_layout 
-               where `group` = '%s'
-               and code = '%s'
-EOD;
-     $sql = $wpdb->prepare($sql, $group, $code);
-     $sql = bb_debug_sql($sql);
-     $res = $wpdb->get_results($sql);
-
-     return $res;
-}
-
-
-
 function bb_px_to_unit($ppi = 300, $pxs = 0, $unit = 'mm'){
 
      $ppi = floatval($ppi);
@@ -418,9 +327,10 @@ function bb_match_font_weight($style){
 
 
 function bb_import_layouts(){
-     $path = Path::get_layout_template_dir();
+ 
+    $path = Path::get_layout_template_dir();
 
-     if(!is_dir($path)){
+     if(!@is_dir($path)){
           $message = esc_html(__('nothing to import', 'bookbuilder'));
           echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
           return true;
@@ -437,7 +347,7 @@ function bb_import_layouts(){
                if('.' === $file){
                     continue;
                }
-               $groups[]= ['name'=>$file, 'path'=>$rsloc];
+               $groups[]= ['title'=>$file, 'path'=>$rsloc];
           }
      }
      while(is_resource($dh)){
@@ -445,16 +355,28 @@ function bb_import_layouts(){
      }
 
      foreach($groups as $group){
+          $res = bb_insert_layoutgroup($group);
+     }
+
+     foreach($groups as $group){
+
           $path = $group['path'];
+
+          $group = bb_get_layoutgroup_by_path($path)[0];
+          if(is_null($group)){
+               continue;
+          }
+
           $dh = @opendir($path);
-          $targets = [];
+
+          $documents = [];
           while(false !== $file = @readdir($dh)){
                $rsloc = $path.DIRECTORY_SEPARATOR.$file;
                if(
                     'image/svg' == mime_content_type($rsloc) ||
                     'image/svg+xml' == mime_content_type($rsloc)
                ){
-                    $targets[] = ['group'=>$group['name'], 'rsloc'=>$rsloc];
+                    $documents[] = ['group_id'=>$group->id, 'rsloc'=>$rsloc];
                }
           }
           while(is_resource($dh)){
@@ -463,10 +385,9 @@ function bb_import_layouts(){
      }
 
 // parses svg documents into layout JSON collections
-     foreach($targets as $target){
-
-          $layout_doc = bb_parse_layout_doc($target['rsloc']);
-          $res&= bb_insert_layout($target['group'], $layout_doc);
+     foreach($documents as $document){
+          $layout_doc = bb_parse_layout_doc($document['rsloc']);
+          $res&= bb_insert_layout($document['group_id'], $layout_doc);
      }
 
      return $res;
