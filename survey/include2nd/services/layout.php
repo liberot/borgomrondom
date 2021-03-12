@@ -84,7 +84,8 @@ function bb_exec_get_layouts_by_group_and_code(){
      $group = bb_trim_incoming_filename($_POST['group']);
      $code = bb_trim_incoming_filename($_POST['code']);
 
-     $coll = bb_get_layouts_by_group_and_code($group, $code);
+     // $coll = bb_get_layouts_by_group_and_code($group, $code);
+     $coll = bb_get_layouts_by_code($code);
 
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
 

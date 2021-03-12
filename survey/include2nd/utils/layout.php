@@ -358,6 +358,7 @@ function bb_import_layouts(){
           $res = bb_insert_layoutgroup($group);
      }
 
+     $documents = [];
      foreach($groups as $group){
 
           $path = $group['path'];
@@ -369,7 +370,6 @@ function bb_import_layouts(){
 
           $dh = @opendir($path);
 
-          $documents = [];
           while(false !== $file = @readdir($dh)){
                $rsloc = $path.DIRECTORY_SEPARATOR.$file;
                if(

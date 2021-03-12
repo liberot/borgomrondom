@@ -141,7 +141,7 @@ let Net = function(controller){
                'action': 'bb_get_layoutgroups',
           };
           let cb = function(e){
-               console.log(cb);
+               ref.notify(new Message('layoutgroups::loaded', e.coll));
           }
           this.postData(data, cb);
      }

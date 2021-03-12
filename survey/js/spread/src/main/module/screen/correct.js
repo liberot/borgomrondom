@@ -198,7 +198,6 @@ let Correct = function(controller) {
      }
 
      this.model = new CorrectModel();
-console.log('', this.model);
 
      this.model.offScreen = SVG().addTo('.offscreen'); 
 

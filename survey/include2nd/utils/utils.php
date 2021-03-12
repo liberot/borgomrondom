@@ -195,6 +195,22 @@ EOD;
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
+     $sql = <<<EOD
+          delete from {$prefix}posts 
+               where post_type = 'page' 
+               and post_title = 'BookBuilder' 
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     $sql = <<<EOD
+          delete from {$prefix}posts 
+               where post_type = 'page' 
+               and post_title = 'Questionnaire' 
+EOD;
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+
      return $res;
 }
 

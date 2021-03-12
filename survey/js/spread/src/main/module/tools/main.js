@@ -1121,7 +1121,23 @@ console.log('bindTextInput(): ', msg);
      }
 
      this.bindLayoutGroups = function(msg){
-console.log('>>>', msg);
+
+          jQuery('.select_group select').off();
+
+          let buf = '';
+          for(let idx in msg.model){
+               buf+= '<option value="'+msg.model[idx].id+'">';
+               buf+= msg.model[idx].title;
+               buf+= '</option>';
+          }
+          jQuery('.select_group select').html(buf);
+
+          jQuery('.select_group select').val(0);
+
+          jQuery('.select_group select').change(function(e){
+               console.log('selected layoutgroup: ', parseInt(e.target.value));
+          });
+
      }
 
 
@@ -1156,6 +1172,8 @@ console.log('>>>', msg);
      this.register(new Subscription(  'layoutpresets::loaded', 'bindLoadedLayoutPresets', this));
      this.register(new Subscription(      'layouts::imported', 'bindImportedLayouts', this));
      this.register(new Subscription(     'currentdoc::loaded', 'bindCurrentDoc', this));
+     this.register(new Subscription(   'layoutgroups::loaded', 'bindLayoutGroups', this));
+
      //
      this.setupAssetPossibs();
      if(SpreadViewerConfig.mouseControls){ 

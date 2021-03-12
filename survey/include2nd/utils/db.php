@@ -275,6 +275,7 @@ function bb_init_layoutgroup_table(){
                parent_ref varchar(255),
                path varchar(255) not null unique,
                title varchar(255),
+               value varchar(255),
                description varchar(255),
                init datetime,
                primary key (id)
@@ -1376,21 +1377,25 @@ EOD;
 
 function bb_insert_layoutgroup($group){
 
-     $title = esc_sql($group['title']);
+
+     $value = esc_sql($group['title']);
      $path = esc_sql($group['path']);
      $ref = bb_get_random_string(42);
+
+     $title = __($value, 'bookbuilder');
+     $title = ucfirst($title);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
 
      $sql = <<<EOD
           insert into {$prefix}ts_bb_layoutgroup
-               (title, ref, path, init)
+               (title, value, ref, path, init)
           values 
-               ('%s', '%s', '%s', now())
+               ('%s', '%s', '%s', '%s', now())
 EOD;
 
-     $sql = $wpdb->prepare($sql, $title, $ref, $path);
+     $sql = $wpdb->prepare($sql, $title, $value, $ref, $path);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
