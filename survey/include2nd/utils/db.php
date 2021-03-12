@@ -1488,22 +1488,21 @@ EOD;
 
 
 
-function bb_get_layouts_by_group_and_code($group_ref, $code){
+function bb_get_layouts_by_group_and_code($group_id, $code){
 
-     $group_ref = esc_sql($group_ref);
+     $group_id = esc_sql($group_id);
      $code = esc_sql($code);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_layout 
-               where group_ref = '%s'
+               where group_id = '%s'
                and code = '%s'
 EOD;
-     $sql = $wpdb->prepare($sql, $group_ref, $code);
+     $sql = $wpdb->prepare($sql, $group_id, $code);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
-
      return $res;
 }
 

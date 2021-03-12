@@ -40,7 +40,7 @@ let Net = function(controller){
           let ref = this;
           let data = {
                action: 'bb_get_layouts_by_group_and_code',
-               group: msg.model.group,
+               group_id: msg.model.groupId,
                code: msg.model.rule 
           }
           let cb = function(e){

@@ -77,7 +77,7 @@ console.log('initDocument(): ', this.model);
 
      this.bindImportedLayouts = function(msg){
  console.log('bindImportedLayouts(): ', msg);
-          jQuery('.layout-messages').html(msg.model.rules.join('; '));
+          // jQuery('.layout-messages').html(msg.model.rules.join('; '));
      }
 
      this.getLayoutIndex = function(coll){
@@ -467,7 +467,7 @@ console.log('initDocument(): ', this.model);
      }
 
      this.bindLayoutGroup = function(msg){
-          this.model.selectedLayoutGroupName = 'default';
+          this.model.selectedLayoutGroupId = msg.model.arguments[1];
      }
 
      this.bindLoadedLayoutPresets = function(msg){
@@ -758,7 +758,7 @@ console.log('bindTextInput(): ', msg);
                ref.model.selectedLayoutRule = parseInt(0);
                ref.loadLayoutPresets();
           });
-          jQuery('.select_group select').val(0);
+          jQuery('.select_preset_size select').val(0);
      }
 
      this.loadLayoutPresets = function(){
@@ -769,8 +769,7 @@ console.log('bindTextInput(): ', msg);
           }
           rule = rule.join('');
           let model = {
-               // group: this.model.selectedLayoutGroupName,
-               group: 'orange',
+               groupId: this.model.selectedLayoutGroupId,
                rule: rule
           }
           ref.notify(new Message('load::layoutpresets', model));
@@ -1124,16 +1123,18 @@ console.log('bindTextInput(): ', msg);
 
           jQuery('.select_group select').off();
 
+          let val = '';
           let buf = '';
           for(let idx in msg.model){
                buf+= '<option value="'+msg.model[idx].id+'">';
                buf+= msg.model[idx].title;
                buf+= '</option>';
+               if(0 == idx){
+                    val = msg.model[idx].id;
+               }
           }
           jQuery('.select_group select').html(buf);
-
-          jQuery('.select_group select').val(0);
-
+          jQuery('.select_group select').val(val);
           jQuery('.select_group select').change(function(e){
                console.log('selected layoutgroup: ', parseInt(e.target.value));
           });
@@ -1202,7 +1203,6 @@ let __tool__bar__tmpl = ""+
 "<div class='row'>"+
 "<div class='block select_group'>"+
      "<select onchange='javascript:layoutQueue.route(\"layoutgroup::selected\", this.value)'>"+
-          "<option value='x'>Layout Groups</option>"+
           "<option value='0'>Default Group</option>"+
      "</select>"+
 "</div>"+
@@ -1493,9 +1493,9 @@ let ToolsModel = function() {
      this.section;
      this.selectedLayouts;
      this.layoutDescriptor;
-     this.selectedLayoutRule = 'x';
-     this.selectedLayoutImageSize = 'x';
-     this.selectedLayoutGroupName = 'default';
+     this.selectedLayoutRule;
+     this.selectedLayoutImageSize;
+     this.selectedLayoutGroupId;
      this.loadedLayoutGroup;
      this.loadedLayoutPresets;
      this.mockText1st = 'Local punk Kyla Waters has spent the past 24 hours trying to decide if her roommate’s new tattoo either looks nothing like Jack…';

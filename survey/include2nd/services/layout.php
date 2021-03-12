@@ -12,61 +12,8 @@ function bb_exec_get_layoutgroups(){
      }
 
      $coll = bb_get_layoutgroups();
+
      $message = esc_html(__('layoutgroups loaded', 'bookbuilder'));
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
-}
-
-
-
-add_action('admin_post_bb_insert_layout', 'bb_exec_insert_layout');
-function bb_exec_insert_layout(){
-
-     if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
-     $rule = bb_trim_incoming_filename($_POST['rule']);
-     $group = bb_trim_incoming_filename($_POST['group']);
-
-     $doc = bb_walk_the_doc($_POST['doc']);
-     if(false == $doc){
-          $message = esc_html(__('doc invalid', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
-     $conf = [
-          'post_type'=>'surveyprint_layout',
-          'post_name'=>'layout_rule',
-          'post_title'=>$group,
-          'post_excerpt'=>$rule,
-          'post_content'=>$doc,
-          'tags_input'=>$tags_input
-     ];
-
-     $coll = bb_insert_layout($conf);
-     $message = esc_html(__('layout inited', 'bookbuilder'));
-     echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll, 'term_id'=>$term_id));
-}
-
-
-
-add_action('admin_post_exec_get_layouts_by_group', 'exec_get_layouts_by_group');
-function exec_get_layouts_by_group(){
-
-     if(!policy_match([Role::ADMIN])){
-          $message = esc_html(__('policy match', 'bookbuilder'));
-          echo json_encode(array('res'=>'failed', 'message'=>$message));
-          return false;
-     }
-
-     $group = bb_trim_incoming_filename($_POST['group']);
-
-     $coll = bb_get_layouts_by_group($group);
-
-     $message = esc_html(__('layouts loaded', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
 }
 
@@ -81,11 +28,11 @@ function bb_exec_get_layouts_by_group_and_code(){
           return false;
      }
 
-     $group = bb_trim_incoming_filename($_POST['group']);
+     $group_id = bb_trim_incoming_filename($_POST['group_id']);
      $code = bb_trim_incoming_filename($_POST['code']);
 
-     // $coll = bb_get_layouts_by_group_and_code($group, $code);
-     $coll = bb_get_layouts_by_code($code);
+     $coll = bb_get_layouts_by_group_and_code($group_id, $code);
+     // $coll = bb_get_layouts_by_code($code);
 
      $message = esc_html(__('layouts loaded', 'bookbuilder'));
 
