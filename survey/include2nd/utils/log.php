@@ -33,8 +33,8 @@ function bb_init_log($title, $log){
           return false; 
      }
 
-     $surveyprint_uuid = psuuid();
-     $author_id = esc_sql(get_author_id());
+     $surveyprint_uuid = bb_get_psuuid();
+     $author_id = esc_sql(bb_get_author_id());
 
      if(is_null($title)){ 
           $title = surveyprint_uuid; 
@@ -56,7 +56,6 @@ function bb_init_log($title, $log){
 
      return true;
 }
-
 
 
 

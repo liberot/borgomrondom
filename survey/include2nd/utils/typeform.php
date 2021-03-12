@@ -276,7 +276,10 @@ function bb_insert_survey($survey, $data){
      global $wpdb;
 
      $ref = esc_sql($survey['id']);
-     $title = esc_sql($survey['title']);
+
+     $title = bb_trim_incoming_filename($survey['title']);
+     $title = esc_sql($title);
+
      $headline = esc_sql($survey['welcome']);
      $doc = esc_sql(base64_encode($data));
 
@@ -578,15 +581,6 @@ function bb_get_kickoff_field() {
      if(is_null($title)){
           $title = Proc::KICKOFF_SURVEY_TITLE;
      }
-/*
-     $sql = <<<EOD
-          select f.* from {$prefix}ts_bb_survey s, {$prefix}ts_bb_field f
-               where s.ref = f.survey_ref
-               and s.title like '%{$title}%'
-               order by pos
-               limit 1;
-EOD;
-*/
      $sql = <<<EOD
           select f.* from {$prefix}ts_bb_survey s, {$prefix}ts_bb_field f
                where s.ref = f.survey_ref

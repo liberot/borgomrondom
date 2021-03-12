@@ -363,7 +363,7 @@ function bb_init_new_thread(){
 
      $thread_id = bb_insert_thread($client_id);
      if(false == $thread_id){
-         return;
+         return false;
      }
 
      $res = bb_proceed_to_kickoff_field($thread_id);
