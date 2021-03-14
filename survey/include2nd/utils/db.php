@@ -1333,14 +1333,15 @@ function bb_get_hidden_field_of_client_by_title($client_id, $thread_id, $title){
      $client_id = esc_sql($client_id);
      $thread_id = esc_sql($thread_id);
      $title = esc_sql($title);
-
+// select r.doc from wp_ts_bb_rec r, wp_ts_bb_hidden h where r.field_ref = h.field_ref order by r.init desc limit 1;
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
-          select * from {$prefix}ts_bb_hidden 
-               where client_id = '%s'
+          select doc from {$prefix}ts_bb_rec r, {$prefix}ts_bb_hidden h
+               where r.field_ref == h.field_ref
+               and client_id = '%s'
                and thread_id = '%s'
-               and title = '%s'
+               and h.title = '%s'
                order by init desc
                limit 1
 EOD;
