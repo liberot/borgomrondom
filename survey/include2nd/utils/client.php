@@ -76,7 +76,7 @@ function bb_process_incoming(){
                 break;
 
           case 'bb_write_rec':
-                bb_write_rec();
+                bb_write_rec_and_proceed_to_next_field();
                 bb_build_debug_spread();
                 break;
 
@@ -378,36 +378,38 @@ function bb_init_existing_thread(){
      $client_id = bb_get_author_id();
      $res = bb_get_last_thread_of_client($client_id)[0];
      if(is_null($res)){
+          // $res = bb_init_new_thread();
+          return false;
      }
-     else{
-          $thread_id = $res->id;
-          $res = bb_get_last_record_of_client($res->client_id, $thread_id)[0];
-          if(is_null($res)){
-                $res = bb_proceed_to_kickoff_field($thread_id);
-          }
-          else{
-               $res = bb_set_ticket_of_client(
-                    $res->client_id,
-                    $res->thread_id,
-                    $res->field_ref,
-                    $res->rec_pos,
-                    'survey'
-                );
-          }
+
+     $thread_id = $res->id;
+     $res = bb_get_last_record_of_client($res->client_id, $thread_id)[0];
+     if(is_null($res)){
+           $res = bb_proceed_to_kickoff_field($thread_id);
+           return true;
      }
+
+     $res = bb_set_ticket_of_client(
+          $res->client_id,
+          $res->thread_id,
+          $res->field_ref,
+          $res->pos,
+          'survey'
+     );
+
      return $res;
 }
 
 
 
-function bb_notify_about_corrupt_ticket(){
+function handle_corrupt_ticket(){
 
      bb_init_existing_thread();
 }
 
 
 
-function bb_write_rec(){
+function bb_write_rec_and_proceed_to_next_field(){
 
      $client_id = bb_get_author_id();
 
@@ -415,13 +417,13 @@ function bb_write_rec(){
 
      $incoming_ticket = bb_trim_incoming_filename($_POST['ticket']);
      if($incoming_ticket != $ticket->field_ref){
-          bb_notify_about_corrupt_ticket();
+          handle_corrupt_ticket();
           return false;
      }
 
      $field = bb_get_field_by_ref($ticket->field_ref)[0];
      if(is_null($field)){
-          bb_notify_about_corrupt_ticket();
+          handle_corrupt_ticket();
           return false;
      }
 
@@ -455,13 +457,12 @@ function bb_write_rec(){
      }
 
      $res = bb_insert_rec($ticket->client_id, $ticket->thread_id, $ticket->rec_pos, $field, $choice_ref, $answer);
-     if(is_null($res)){
-     }
-     else {
+
+     if(true == $res){
           bb_proceed_to_next_field();
      }
 
-     return true;
+     return $res;
 }
 
 
@@ -527,8 +528,6 @@ function bb_nav_prev_field(){
           $rec->pos,
           'survey'
      );
-
-     wp_redirect('');
 
      return $res;
 }
