@@ -41,6 +41,7 @@ function bb_insert_typeform_survey_from_descriptor($descriptor){
 
      $choices = bb_parse_choices($doc['fields'], null, null);
      $actions = bb_parse_actions($doc['logic'], null, null);
+     $hidden_fields = bb_parse_hidden_fields($doc, null, null);
 
      $res = bb_insert_survey($descriptor, $survey, $data);
      $res&= bb_insert_groups($survey, $groups);
@@ -293,6 +294,23 @@ EOD;
      $sql = $wpdb->prepare($sql, $ref, $group_id, $title, $headline, $path, $doc);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
+
+     return $res;
+}
+
+
+
+function bb_parse_hidden_fields($doc){
+
+     $temp = $doc['settings']['redirect_after_submit_url'];
+
+     preg_match_all('/#(.*?)={{field:(.*?)}}/', $temp, $m1st);
+     preg_match_all('/&(.*?)={{field:(.*?)}}/', $temp, $m2nd);
+
+     $res = [
+          'pre'=>$m1st,
+          'cct'=>$m2nd
+     ];
 
      return $res;
 }
