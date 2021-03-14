@@ -117,6 +117,7 @@ function bb_exec_upload_asset(){
 
 
 
+/***
 add_action('client_post_bb_set_hidden_fields', 'bb_exec_bb_set_hidden_fields');
 function bb_exec_bb_set_hidden_fields(){
 
@@ -146,6 +147,8 @@ function bb_exec_bb_set_hidden_fields(){
      $message = esc_html(__('hidden fields is set', 'bookbuilder'));
      echo json_encode(array('res'=>'success', 'message'=>$message, 'fields'=>$fields));
 };
+*/
+
 
 
 

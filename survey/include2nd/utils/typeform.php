@@ -41,6 +41,7 @@ function bb_insert_typeform_survey_from_descriptor($descriptor){
 
      $choices = bb_parse_choices($doc['fields'], null, null);
      $actions = bb_parse_actions($doc['logic'], null, null);
+
      $hidden_fields = bb_parse_hidden_fields($doc, null, null);
 
      $res = bb_insert_survey($descriptor, $survey, $data);
@@ -53,6 +54,8 @@ function bb_insert_typeform_survey_from_descriptor($descriptor){
      $res&= bb_insert_choices($survey, $choices);
      $res&= bb_insert_actions($survey, $actions);
 
+     $res&= bb_insert_hidden_fields($survey, $hidden_fields);
+
      return $res;
 }
 
@@ -60,7 +63,6 @@ function bb_insert_typeform_survey_from_descriptor($descriptor){
 
 function bb_insert_actions($survey, $actions){
 
-     $res = false;
 
      global $wpdb;
      $prefix = $wpdb->prefix;
@@ -307,10 +309,41 @@ function bb_parse_hidden_fields($doc){
      preg_match_all('/#(.*?)={{field:(.*?)}}/', $temp, $m1st);
      preg_match_all('/&(.*?)={{field:(.*?)}}/', $temp, $m2nd);
 
-     $res = [
-          'pre'=>$m1st,
-          'cct'=>$m2nd
-     ];
+     $res = [];
+     if(empty($m1st)){
+     }
+     else {
+          $field_ref = $m1st[2];
+          $field = bb_get_field_by_ref($field_ref)[0];
+          if(is_null($field)){
+          }
+          else {
+               $res[] = [
+                    'title'=>$m1st[1][0],
+                    'field_ref'=>$field->ref,
+                    'group_ref'=>$field->group_ref,
+                    'survey_ref'=>$field->survey_ref
+               ];
+          } 
+     }
+
+     if(empty($m2nd)){
+     }
+     else {
+          for($idx = 0; $idx < count($m2nd[2]); $idx++){
+               $field_ref = $m2nd[2][$idx];
+               $field = bb_get_field_by_ref($field_ref)[0];
+               if(is_null($field)){
+                    continue;
+               }
+               $res[] = [
+                    'title'=>$m2nd[1][$idx],
+                    'field_ref'=>$field->ref,
+                    'group_ref'=>$field->group_ref,
+                    'survey_ref'=>$field->survey_ref
+               ];
+          }
+     }
 
      return $res;
 }

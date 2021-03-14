@@ -677,14 +677,13 @@ function bb_init_hidden_table(){
      $sql = <<<EOD
      create table if not exists
           {$prefix}ts_bb_hidden (
-               client_id bigint(20) unsigned not null,
-               thread_id bigint(20) unsigned not null,
-               title varchar(255) not null,
-               doc longtext not null,
+               id bigint(20) unsigned not null,
+               title varchar(255) unique not null,
+               field_ref varchar(255) not null,
                survey_ref varchar(255),
-               note varchar(255),
-               init datetime,
-               primary key (client_id, thread_id, title)
+               group_ref varchar(255),
+               doc longtext not null,
+               init datetime
           )
           engine=innodb
           default charset='utf8'
@@ -1353,7 +1352,7 @@ EOD;
 
 
 
-function bb_insert_hidden_fields($client_id, $thread_id, $fields){
+function bb_insert_hidden_fields($survey, $fields){
 
      if(is_null($fields)){
           return false;
@@ -1368,36 +1367,20 @@ function bb_insert_hidden_fields($client_id, $thread_id, $fields){
      $res = true;
      foreach($fields as $field){
 
-          $title = esc_sql($field['key']);
+          $title = esc_sql($field['title']);
+          $field_ref = esc_sql($field['field_ref']);
+          $group_ref = esc_sql($field['group_ref']);
+          $survey_ref = esc_sql($field['survey_ref']);
           $doc = esc_sql($field['val']);
 
           $sql = <<<EOD
                insert into {$prefix}ts_bb_hidden
-                    (client_id, thread_id, title, doc, init)
+                    (survey_ref, group_ref, field_ref, title, doc, init)
                values 
-                    ('{$client_id}', '{$thread_id}', '{$title}', '{$doc}', now())
-               on duplicate key update 
-                    client_id = '{$client_id}', 
-                    thread_id = '{$thread_id}', 
-                    title = '{$title}',
-                    doc = '{$doc}',
-                    init = now()
+                    ('%s', '%s', '%s', '%s', '%s', now())
 EOD;
-/*
-          $sql = <<<EOD
-               insert into {$prefix}ts_bb_hidden
-                    (client_id, thread_id, title, doc, init)
-               values 
-                    ('%s', '%s', '%s', '%s', now())
-               on duplicate key update 
-                    client_id = '%s', 
-                    thread_id = '%s', 
-                    title = '%s',
-                    doc = '%s',
-                    init = now()
-EOD;
-*/
-          $sql = $wpdb->prepare($sql, $client_id, $thread_id, $title, $doc);
+
+          $sql = $wpdb->prepare($sql, $survey_ref, $group_ref, $field_ref, $title, $doc);
           $sql = bb_debug_sql($sql);
           $ins = $wpdb->query($sql);
           $res = false == $res ? false : $ins;

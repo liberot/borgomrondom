@@ -355,6 +355,7 @@ BBClient.isTextInputActive = function(){
 
 
 
+/***
 BBClient.bbFetchHiddenFields = function(){
 
      // #h1st=1st&h2nd=2nd&h3rd=3rd
@@ -409,6 +410,7 @@ BBClient.bbFetchHiddenFields = function(){
 
      return fields;
 }
+*/
 
 
 
