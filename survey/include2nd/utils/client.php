@@ -181,7 +181,7 @@ function bb_eval_next_field($field_ref){
 // logicjump (typeform)
 // evaluates the action jumps of the survey descriptor
      $field = bb_get_field_by_ref($field_ref)[0];
-     $actions = bb_get_actions_of_field_by_ref($field_ref);
+     $actions = bb_get_actions_of_field_by_ref($field);
      if(empty($actions)){
           $pos = intval($field->pos);
           $pos = $pos+1;

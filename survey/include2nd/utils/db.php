@@ -731,15 +731,19 @@ EOD;
 
 function bb_get_actions_of_field_by_ref($ref){
 
-     $ref = esc_sql($ref);
+     $survey_ref = esc_sql($field->survey_ref);
+     $group_ref = esc_sql($field->group_ref);
+     $field_ref = esc_sql($field->field_ref);
 
      global $wpdb;
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           select * from {$prefix}ts_bb_action 
-               where field_ref = '%s' 
+               where survey_ref = '%s' 
+               and group_ref = '%s' 
+               and field_ref = '%s' 
 EOD;
-     $sql = $wpdb->prepare($sql, $ref);
+     $sql = $wpdb->prepare($sql, $survey_ref, $group_ref, $field_ref);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->get_results($sql);
      return $res;
