@@ -465,9 +465,11 @@ function bb_build_questionnaire_list_view(){
                <hr class='wp-header-end'>
 EOD;
 
+     $survey_groups = bb_get_surveygroups();
+print_r($survey_groups);
+print '<br/>';
+
      $surveys = bb_get_typeform_surveys();
-
-
 
      $plz_select_root_survey = esc_html(__('The Survey to start with', 'bookbuilder'));
      $buf1st = sprintf("<option value=''>%s</option>", $plz_select_root_survey);

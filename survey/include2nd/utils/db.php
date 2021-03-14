@@ -479,6 +479,7 @@ function bb_init_survey_table(){
                linked_survey_id bigint(20) unsigned,
                linked_survey_ref varchar(255),
                description varchar(255),
+               path varchar(255),
                init datetime,
                doc longtext,
                primary key (id)
@@ -1583,6 +1584,21 @@ EOD;
      return $res;
 }
 
+
+
+function bb_get_surveygroups(){
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_surveygroup 
+EOD;
+     $sql = $wpdb->prepare($sql, $path);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
 
 
 

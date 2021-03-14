@@ -275,6 +275,7 @@ function bb_insert_survey($descriptor, $survey, $data){
 
      $ref = esc_sql($survey['id']);
      $group_id = esc_sql($descriptor['group_id']);
+     $path = esc_sql($descriptor['path']);
 
      $title = bb_trim_incoming_filename($survey['title']);
      $title = esc_sql($title);
@@ -285,11 +286,11 @@ function bb_insert_survey($descriptor, $survey, $data){
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           insert into {$prefix}ts_bb_survey 
-               (ref, group_id, title, headline, doc, init) 
+               (ref, group_id, title, headline, path, doc, init) 
           values 
-               ('%s', '%s', '%s', '%s', '%s', now())
+               ('%s', '%s', '%s', '%s', '%s', '%s', now())
 EOD;
-     $sql = $wpdb->prepare($sql, $ref, $group_id, $title, $headline, $doc);
+     $sql = $wpdb->prepare($sql, $ref, $group_id, $title, $headline, $path, $doc);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
