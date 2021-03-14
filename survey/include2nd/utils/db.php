@@ -473,7 +473,7 @@ function bb_init_survey_table(){
           {$prefix}ts_bb_survey (
                id bigint(20) unsigned not null auto_increment,
                ref varchar(255) not null unique,
-               group_ref varchar(255),
+               group_id varchar(255),
                title varchar(255),
                headline varchar(255),
                linked_survey_id bigint(20) unsigned,
@@ -504,12 +504,11 @@ function bb_init_surveygroup_table(){
      create table if not exists
           {$prefix}ts_bb_surveygroup (
                id bigint(20) unsigned not null auto_increment,
-               ref varchar(255) not null unique,
                parent_id bigint(20) unsigned,
-               parent_ref varchar(255),
+               ref varchar(255) not null unique,
                title varchar(255),
                value varchar(255),
-               path varchar(255),
+               path varchar(255) not null unique,
                init datetime,
                primary key (id)
           )
@@ -1555,6 +1554,34 @@ EOD;
      return $res;
 }
 
+
+
+function bb_insert_surveygroup($group){
+
+
+     $value = esc_sql($group['title']);
+     $path = esc_sql($group['path']);
+     $ref = bb_get_random_string(42);
+
+     $title = __($value, 'bookbuilder');
+     $title = ucfirst($title);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+
+     $sql = <<<EOD
+          insert into {$prefix}ts_bb_surveygroup
+               (title, value, ref, path, init)
+          values 
+               ('%s', '%s', '%s', '%s', now())
+EOD;
+
+     $sql = $wpdb->prepare($sql, $title, $value, $ref, $path);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->query($sql);
+
+     return $res;
+}
 
 
 

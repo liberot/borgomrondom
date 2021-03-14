@@ -11,7 +11,7 @@ function bb_exec_insert_typeform_surveys(){
           return false;
      }
 
-     $res = bb_insert_typeform_surveys();
+     $res = bb_import_typeform_surveys();
 
      $suc = 'failed';
      $message = esc_html(__('Typeform Survey Descriptors is NOt added to the DB', 'bookbuilder'));

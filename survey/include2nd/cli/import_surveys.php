@@ -16,11 +16,11 @@ require_once($path);
 
 
 
-print 'about to import the svg layouts...';
+print 'about to import the typeform surveys...';
+print PHP_EOL;
 
 
-
-$res = bb_import_layouts();
+$res = bb_import_typeform_surveys();
 print_r($res);
 
 

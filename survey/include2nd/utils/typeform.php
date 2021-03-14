@@ -2,13 +2,13 @@
 
 
 
-function bb_insert_typeform_surveys(){
+function bb_import_typeform_surveys(){
 
-     $res = null;
-     $files = bb_read_typeform_json_descriptors();
-     foreach($files as $file){
+     $descriptors = bb_read_typeform_json_descriptors();
 
-          $res&= bb_insert_typeform_survey_from_descriptor($file);
+     foreach($descriptors as $descriptor){
+
+          $res = bb_insert_typeform_survey_from_descriptor($descriptor);
      }
 
      return $res;
@@ -16,11 +16,9 @@ function bb_insert_typeform_surveys(){
 
 
 
-function bb_insert_typeform_survey_from_descriptor($survey_file_name){
+function bb_insert_typeform_survey_from_descriptor($descriptor){
 
-     $res = null;
-
-     $path = sprintf('%s/%s', Path::get_typeform_dir(), $survey_file_name);
+     $path = $descriptor['path'];
 
      $data = @file_get_contents($path);
      if(is_null($data)){ 
@@ -44,7 +42,7 @@ function bb_insert_typeform_survey_from_descriptor($survey_file_name){
      $choices = bb_parse_choices($doc['fields'], null, null);
      $actions = bb_parse_actions($doc['logic'], null, null);
 
-     $res = bb_insert_survey($survey, $data);
+     $res = bb_insert_survey($descriptor, $survey, $data);
      $res&= bb_insert_groups($survey, $groups);
      $res&= bb_insert_fields($survey, $fields);
 
@@ -269,13 +267,14 @@ EOD;
 
 
 
-function bb_insert_survey($survey, $data){
+function bb_insert_survey($descriptor, $survey, $data){
 
      $res = false;
 
      global $wpdb;
 
      $ref = esc_sql($survey['id']);
+     $group_id = esc_sql($descriptor['group_id']);
 
      $title = bb_trim_incoming_filename($survey['title']);
      $title = esc_sql($title);
@@ -286,11 +285,11 @@ function bb_insert_survey($survey, $data){
      $prefix = $wpdb->prefix;
      $sql = <<<EOD
           insert into {$prefix}ts_bb_survey 
-               (ref, title, headline, doc, init) 
+               (ref, group_id, title, headline, doc, init) 
           values 
-               ('%s', '%s', '%s', '%s', now())
+               ('%s', '%s', '%s', '%s', '%s', now())
 EOD;
-     $sql = $wpdb->prepare($sql, $ref, $title, $headline, $doc);
+     $sql = $wpdb->prepare($sql, $ref, $group_id, $title, $headline, $doc);
      $sql = bb_debug_sql($sql);
      $res = $wpdb->query($sql);
 
@@ -529,20 +528,65 @@ function bb_parse_actions($logics){
 
 function bb_read_typeform_json_descriptors(){
 
-     $files = [];
+    $path = Path::get_typeform_dir();
 
-     $path = Path::get_typeform_dir();
-     $h = opendir($path);
-     if(is_null($h)){ return $files; }
-     while(false !== ($file = readdir($h))){
-          if($file != '.' && $file != '..'){
-               preg_match('/(.json$)/', $file, $mtch);
-               if(!empty($mtch)){
-                    $files[]= $file;
+     if(!@is_dir($path)){
+          $message = esc_html(__('nothing to import', 'bookbuilder'));
+          echo json_encode(array('res'=>'success', 'message'=>$message, 'coll'=>$coll));
+          return true;
+     }
+
+     $dh = @opendir($path);
+     $groups = [];
+     while(false !== $file = @readdir($dh)){
+          $rsloc = $path.DIRECTORY_SEPARATOR.$file;
+          if(is_dir($rsloc)){
+               if('..' === $file){
+                    continue;
                }
+               if('.' === $file){
+                    continue;
+               }
+               $groups[]= ['title'=>$file, 'path'=>$rsloc];
           }
      }
-     closedir($h);
+
+     while(is_resource($dh)){
+          @closedir($dh);
+     }
+
+     foreach($groups as $group){
+          $res = bb_insert_surveygroup($group);
+     }
+
+     $files = [];
+     foreach($groups as $group){
+
+          $path = $group['path'];
+          $group = bb_get_surveygroup_by_path($path)[0];
+          if(is_null($group)){
+               continue;
+          }
+
+          $h = opendir($path);
+          if(is_null($h)){ 
+               continue;
+          }
+          while(false !== ($file = readdir($h))){
+               if($file != '.' && $file != '..'){
+                    preg_match('/(.json$)/', $file, $mtch);
+                    if(!empty($mtch)){
+                         $files[]= [
+                              'path'=>$path.DIRECTORY_SEPARATOR.$file,
+                              'title'=>$file,
+                              'group_id'=>$group->id
+                         ];
+                    }
+               }
+          }
+
+          @closedir($h);
+     }
 
      return $files;
 }
@@ -553,11 +597,6 @@ function bb_set_target_survey_ref($choice_ref, $target_survey_ref){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-/*
-     $sql = <<<EOD
-          update {$prefix}ts_bb_choice set target_survey_ref = '{$target_survey_ref}' where ref = '{$choice_ref}';
-EOD;
-*/
      $sql = <<<EOD
           update {$prefix}ts_bb_choice set target_survey_ref = '%s' where ref = '%s';
 EOD;
@@ -602,12 +641,6 @@ function bb_set_root_survey_title($root_survey_title){
 
      global $wpdb;
      $prefix = $wpdb->prefix;
-/*
-     $sql = <<<EOD
-          update {$prefix}ts_bb_conf
-               set root_survey_title = '{$root_survey_title}'
-EOD;
-*/
      $sql = <<<EOD
           update {$prefix}ts_bb_conf
                set root_survey_title = '%s'
@@ -618,6 +651,24 @@ EOD;
      return $res;
 }
 
+
+
+function bb_get_surveygroup_by_path($path){
+
+     $path = esc_sql($path);
+
+     global $wpdb;
+     $prefix = $wpdb->prefix;
+     $sql = <<<EOD
+          select * from {$prefix}ts_bb_surveygroup 
+               where path = '%s' 
+EOD;
+     $sql = $wpdb->prepare($sql, $path);
+     $sql = bb_debug_sql($sql);
+     $res = $wpdb->get_results($sql);
+
+     return $res;
+}
 
 
 
